@@ -4,6 +4,22 @@ import prodCoffees from '../../_data/coffees.json';
 
 const coffees = import.meta.env.DEV ? sampleCoffees : prodCoffees;
 ---
+<div class="filters">
+  <label>
+    Roaster
+    <select id="filter-roaster"><option value="">All</option></select>
+  </label>
+  <label>
+    Origin
+    <select id="filter-origin"><option value="">All</option></select>
+  </label>
+  <label>
+    Process
+    <select id="filter-process"><option value="">All</option></select>
+  </label>
+  <button id="sort-price" type="button" data-dir="asc">Sort by price ▲</button>
+</div>
+<p id="empty-state" hidden>No coffees match the selected filters.</p>
 <table id="coffee-table">
   <thead>
     <tr>
@@ -33,3 +49,65 @@ const coffees = import.meta.env.DEV ? sampleCoffees : prodCoffees;
     ))}
   </tbody>
 </table>
+
+<script>
+  const table = document.getElementById('coffee-table')!;
+  const tbody = table.querySelector('tbody')!;
+  const rows = Array.from(tbody.querySelectorAll<HTMLTableRowElement>('tr'));
+  const emptyState = document.getElementById('empty-state')!;
+
+  function populateSelect(id: string, attr: 'roaster' | 'origin' | 'process') {
+    const select = document.getElementById(id) as HTMLSelectElement;
+    const values = [...new Set(rows.map((r) => r.dataset[attr]).filter(Boolean))].sort();
+    for (const value of values) {
+      const option = document.createElement('option');
+      option.value = value as string;
+      option.textContent = value as string;
+      select.appendChild(option);
+    }
+  }
+  populateSelect('filter-roaster', 'roaster');
+  populateSelect('filter-origin', 'origin');
+  populateSelect('filter-process', 'process');
+
+  const roasterSelect = document.getElementById('filter-roaster') as HTMLSelectElement;
+  const originSelect = document.getElementById('filter-origin') as HTMLSelectElement;
+  const processSelect = document.getElementById('filter-process') as HTMLSelectElement;
+  const sortButton = document.getElementById('sort-price') as HTMLButtonElement;
+
+  function applyFilters() {
+    const roaster = roasterSelect.value;
+    const origin = originSelect.value;
+    const process = processSelect.value;
+    let visibleCount = 0;
+    for (const row of rows) {
+      const matches =
+        (!roaster || row.dataset.roaster === roaster) &&
+        (!origin || row.dataset.origin === origin) &&
+        (!process || row.dataset.process === process);
+      row.hidden = !matches;
+      if (matches) visibleCount++;
+    }
+    emptyState.hidden = visibleCount !== 0;
+  }
+
+  function applySort() {
+    const dir = sortButton.dataset.dir;
+    const sorted = [...rows].sort((a, b) => {
+      const diff = parseFloat(a.dataset.price!) - parseFloat(b.dataset.price!);
+      return dir === 'asc' ? diff : -diff;
+    });
+    for (const row of sorted) tbody.appendChild(row);
+  }
+
+  roasterSelect.addEventListener('change', applyFilters);
+  originSelect.addEventListener('change', applyFilters);
+  processSelect.addEventListener('change', applyFilters);
+  sortButton.addEventListener('click', () => {
+    sortButton.dataset.dir = sortButton.dataset.dir === 'asc' ? 'desc' : 'asc';
+    sortButton.textContent = sortButton.dataset.dir === 'asc' ? 'Sort by price ▲' : 'Sort by price ▼';
+    applySort();
+  });
+
+  applyFilters();
+</script>

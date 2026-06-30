@@ -1,0 +1,53 @@
+/* ── Splash page hero ─────────────────────────────────────────────────── */
+
+/* Tonal surface wash + primary glow using MD3 system colors */
+.hero {
+  background-color: var(--md-sys-color-surface-container-low);
+  background-image: radial-gradient(
+    ellipse 70% 55% at 65% 45%,
+    color-mix(in srgb, var(--md-sys-color-primary-container) 40%, transparent),
+    transparent
+  );
+}
+
+/* Hero title: use MD3 display typescale weight */
+.hero h1 {
+  font-weight: var(--md-sys-typescale-display-small-weight);
+  letter-spacing: var(--md-sys-typescale-display-small-tracking);
+}
+
+/* Hero tagline */
+.hero .tagline {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Hero CTA primary button: filled button shape */
+.hero .action.primary {
+  border-radius: var(--md-sys-shape-corner-full) !important;
+  background: var(--md-sys-color-primary) !important;
+  color: var(--md-sys-color-on-primary) !important;
+  font-weight: var(--md-sys-typescale-label-large-weight) !important;
+  transition: background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard) !important;
+}
+
+.hero .action.primary:hover {
+  background: color-mix(in srgb, var(--md-sys-color-primary) 88%, var(--md-sys-color-on-primary)) !important;
+}
+
+/* Hero CTA secondary button: outlined button shape */
+.hero .action.secondary {
+  border-radius: var(--md-sys-shape-corner-full) !important;
+  border-color: var(--md-sys-color-outline) !important;
+  color: var(--md-sys-color-primary) !important;
+  font-weight: var(--md-sys-typescale-label-large-weight) !important;
+  transition: background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard) !important;
+}
+
+.hero .action.secondary:hover {
+  background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent) !important;
+}
+
+/* Hero SVG illustration: primary tonal drop shadow */
+.hero-image svg {
+  filter: drop-shadow(0 8px 32px color-mix(in srgb, var(--md-sys-color-primary) 22%, transparent));
+}

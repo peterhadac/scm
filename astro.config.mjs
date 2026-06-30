@@ -8,8 +8,10 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'Slovak Coffee Map',
-      plugins: [md3Theme({ seed: '#6f4e37', variant: 'tonalSpot' })],
+      plugins: [md3Theme({ seed: '#FF6037', variant: 'tonalSpot' })],
       sidebar: [{ label: 'Coffees', link: '/coffees/' }],
+      customCss: ['./src/styles/custom.css'],
+      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/peterhadac/scm' }],
     }),
   ],
 });

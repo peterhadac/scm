@@ -1,0 +1,14 @@
+import { defineConfig } from 'astro/config';
+import starlight from '@astrojs/starlight';
+import md3Theme from 'starlight-theme-md3';
+
+export default defineConfig({
+  site: 'https://peterhadac.github.io',
+  base: '/scm',
+  integrations: [
+    starlight({
+      title: 'Slovak Coffee Map',
+      plugins: [md3Theme({ seed: '#6f4e37', variant: 'tonalSpot' })],
+    }),
+  ],
+});

@@ -1,0 +1,19 @@
+# Astro / Node
+node_modules/
+dist/
+.astro/
+*.log
+npm-debug.log*
+
+# Python scraper
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Env / secrets
+.env
+.env.*
+
+# OS
+.DS_Store

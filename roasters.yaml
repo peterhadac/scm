@@ -1,0 +1,12 @@
+roasters:
+  - name: Kavoholik
+    url: https://kavoholik.sk/
+  - name: Ready After
+    url: https://www.readyafter.sk/
+  - name: Kaffa Roastery
+    url: https://kaffaroastery.sk/
+  - name: Suca Roastery
+    url: https://www.sucaroastery.sk/
+  - name: Coffeein
+    url: https://www.coffeein.sk/
+    scraper: playwright

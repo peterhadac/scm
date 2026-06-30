@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Etiópia Yirgacheffe",
+    "roaster": "Kavoholik",
+    "origin": "Etiópia",
+    "process": "Umytá",
+    "price": 12.90,
+    "weight_g": 250,
+    "url": "https://kavoholik.sk/coffee/etiopia-yirgacheffe",
+    "last_seen": "2026-06-30"
+  },
+  {
+    "name": "Kolumbia Huila",
+    "roaster": "Ready After",
+    "origin": "Kolumbia",
+    "process": null,
+    "price": 14.50,
+    "weight_g": 250,
+    "url": "https://www.readyafter.sk/produkty/kolumbia-huila",
+    "last_seen": "2026-06-30"
+  },
+  {
+    "name": "Brazília Cerrado",
+    "roaster": "Kaffa Roastery",
+    "origin": "Brazília",
+    "process": "Prírodná",
+    "price": 11.00,
+    "weight_g": null,
+    "url": "https://kaffaroastery.sk/coffees/brazilia-cerrado",
+    "last_seen": "2026-06-30"
+  },
+  {
+    "name": "Kenya AA",
+    "roaster": "Suca Roastery",
+    "origin": "Keňa",
+    "process": "Umytá",
+    "price": 16.20,
+    "weight_g": 250,
+    "url": "https://www.sucaroastery.sk/coffee/kenya-aa",
+    "last_seen": "2026-06-30"
+  },
+  {
+    "name": "Guatemala Huehuetenango",
+    "roaster": "Coffeein",
+    "origin": "Guatemala",
+    "process": "Umytá",
+    "price": 15.90,
+    "weight_g": 250,
+    "url": "https://www.coffeein.sk/coffee/guatemala-huehuetenango",
+    "last_seen": "2026-06-30"
+  },
+  {
+    "name": "Honduras Marcala",
+    "roaster": "Kavoholik",
+    "origin": null,
+    "process": null,
+    "price": 13.40,
+    "weight_g": 250,
+    "url": "https://kavoholik.sk/coffee/honduras-marcala",
+    "last_seen": "2026-06-30"
+  },
+  {
+    "name": "Ethiopia Natural",
+    "roaster": "Ready After",
+    "origin": "Etiópia",
+    "process": "Prírodná",
+    "price": 15.00,
+    "weight_g": 250,
+    "url": "https://www.readyafter.sk/produkty/ethiopia-natural",
+    "last_seen": "2026-06-30"
+  },
+  {
+    "name": "Rwanda Washed",
+    "roaster": "Kaffa Roastery",
+    "origin": "Rwanda",
+    "process": "Umytá",
+    "price": 17.50,
+    "weight_g": 250,
+    "url": "https://kaffaroastery.sk/coffees/rwanda-washed",
+    "last_seen": "2026-06-30"
+  },
+  {
+    "name": "Peru Organic",
+    "roaster": "Suca Roastery",
+    "origin": "Peru",
+    "process": "Umytá",
+    "price": 13.90,
+    "weight_g": 1000,
+    "url": "https://www.sucaroastery.sk/coffee/peru-organic",
+    "last_seen": "2026-06-30"
+  }
+]

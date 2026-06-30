@@ -9,6 +9,7 @@ export default defineConfig({
     starlight({
       title: 'Slovak Coffee Map',
       plugins: [md3Theme({ seed: '#6f4e37', variant: 'tonalSpot' })],
+      sidebar: [{ label: 'Coffees', link: '/coffees/' }],
     }),
   ],
 });

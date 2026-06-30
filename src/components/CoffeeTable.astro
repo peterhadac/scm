@@ -1,0 +1,35 @@
+---
+import sampleCoffees from '../../_data/coffees.sample.json';
+import prodCoffees from '../../_data/coffees.json';
+
+const coffees = import.meta.env.DEV ? sampleCoffees : prodCoffees;
+---
+<table id="coffee-table">
+  <thead>
+    <tr>
+      <th>Coffee</th>
+      <th>Roaster</th>
+      <th>Origin</th>
+      <th>Process</th>
+      <th>Price</th>
+      <th>Weight</th>
+    </tr>
+  </thead>
+  <tbody>
+    {coffees.map((c) => (
+      <tr
+        data-roaster={c.roaster}
+        data-origin={c.origin ?? ''}
+        data-process={c.process ?? ''}
+        data-price={c.price}
+      >
+        <td><a href={c.url} target="_blank" rel="noopener noreferrer">{c.name}</a></td>
+        <td>{c.roaster}</td>
+        <td>{c.origin ?? '—'}</td>
+        <td>{c.process ?? '—'}</td>
+        <td>€{c.price.toFixed(2)}</td>
+        <td>{c.weight_g ? `${c.weight_g}g` : '—'}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>

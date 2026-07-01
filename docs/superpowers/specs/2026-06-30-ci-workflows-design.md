@@ -20,7 +20,7 @@ Slovak Coffee Map's third and final sub-project: the GitHub Actions workflows th
 ```
 .github/workflows/
   scrape.yml   ← daily cron (06:00 UTC) + workflow_dispatch; scrapes, commits, pushes
-  pages.yml    ← on push to main + workflow_dispatch; builds Astro, deploys to Pages
+  pages.yml    ← on push to main + scrape.yml completion (workflow_run) + workflow_dispatch; builds Astro, deploys to Pages
 ```
 
 ### `scrape.yml`

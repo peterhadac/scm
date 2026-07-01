@@ -4,7 +4,9 @@
 
 **Goal:** Add the two GitHub Actions workflows that scrape coffee data on a schedule and deploy the Astro site to GitHub Pages, per `docs/superpowers/specs/2026-06-30-ci-workflows-design.md`.
 
-**Architecture:** Two independent workflow files. `scrape.yml` runs daily, scrapes, and pushes a data commit only when `_data/coffees.json` actually changed. `pages.yml` runs on every push to `main` (including scrape.yml's own pushes), builds the Astro site, and deploys it to GitHub Pages via the Actions-based deploy flow (not the classic branch-based one).
+**Architecture:** Two independent workflow files. `scrape.yml` runs daily, scrapes, and pushes a data commit only when `_data/coffees.json` actually changed. `pages.yml` runs on every push to `main`, builds the Astro site, and deploys it to GitHub Pages via the Actions-based deploy flow (not the classic branch-based one).
+
+> **Post-implementation correction (2026-06-30):** the line above ("including scrape.yml's own pushes") was this plan's original assumption and turned out to be false — a `GITHUB_TOKEN`-authenticated push (which `scrape.yml`'s does) does not trigger other workflows' `on: push`. The final whole-branch review caught this; the fix (a `workflow_run` trigger on `pages.yml` keyed off `scrape.yml`'s completion) is in commit `dbb8835` and documented in the spec and `CLAUDE.md`. Left uncorrected below as the historical record of what was originally planned.
 
 **Tech Stack:** GitHub Actions (`actions/checkout@v4`, `actions/setup-python@v5`, `actions/setup-node@v4`, `actions/upload-pages-artifact@v3`, `actions/deploy-pages@v4`), Python 3.12, Node 22.
 

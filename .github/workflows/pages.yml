@@ -3,6 +3,11 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # GITHUB_TOKEN-authenticated pushes (like scrape.yml's data commits) don't
+  # trigger on:push workflows — this workflow_run trigger closes that gap.
+  workflow_run:
+    workflows: ["Scrape coffee data"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -17,6 +22,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

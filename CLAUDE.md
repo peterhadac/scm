@@ -133,9 +133,10 @@ Steps: checkout → setup-node → `npm ci` → `npm run build` → `actions/upl
   // ...
   starlight({
     title: 'Slovak Coffee Map',
-    plugins: [md3Theme({ seed: '#6f4e37', variant: 'tonalSpot' })],  // seed = coffee brown; tune to taste
+    plugins: [md3Theme({ seed: '#FF6037', variant: 'tonalSpot' })],  // seed = Toxic Orange, brand accent
   })
   ```
+  Brand palette (also applied as MD3 token overrides in `src/styles/custom.css`, light + dark): Morning Snow `#F5F4ED`, Amazon Mist `#ECECDC`, Black Kite `#351E1C`, Aqua Mist `#A0C9CB`, Toxic Orange `#FF6037`, Garnet `#733635`.
 - **Data source**: plain `import coffees from '../../_data/coffees.json'` inside `CoffeeTable.astro`. No `site.data` magic — JSON is bundled at build time, so a new scrape requires a rebuild (handled by `pages.yml`).
 - **`astro.config.mjs`**: set `site: 'https://<user>.github.io'` and `base: '/scm'` for a project Pages site, or links 404.
 - **UI**: filterable/sortable table

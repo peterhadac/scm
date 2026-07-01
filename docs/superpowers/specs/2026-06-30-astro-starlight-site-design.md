@@ -14,6 +14,8 @@ Nothing of the site exists yet beyond the installed `starlight-theme-md3` npm pa
 - **No client framework** — vanilla JS in a `<script>` tag inside the `.astro` component, matching the existing CLAUDE.md spec.
 - **`last_seen` is not a visible column** — it's freshness metadata, not buyer-facing. Easy to add later if wanted.
 
+> **Post-implementation update (2026-06-30):** the theme seed shipped as `#FF6037` ("Toxic Orange"), not the `#6f4e37` coffee-brown this spec originally called for — a deliberate rebrand by the project owner during implementation, applied alongside a full named palette (Morning Snow, Amazon Mist, Black Kite, Aqua Mist, Toxic Orange, Garnet) as MD3 token overrides in `src/styles/custom.css`. The code sample below and `CLAUDE.md` have been updated to match; the implementation plan (`docs/superpowers/plans/2026-06-30-astro-starlight-site.md`) still shows `#6f4e37` as a historical record of what was originally planned.
+
 ## Architecture
 
 ```
@@ -46,7 +48,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'Slovak Coffee Map',
-      plugins: [md3Theme({ seed: '#6f4e37', variant: 'tonalSpot' })],
+      plugins: [md3Theme({ seed: '#FF6037', variant: 'tonalSpot' })],
       sidebar: [{ label: 'Coffees', link: '/coffees' }],
     }),
   ],

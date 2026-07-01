@@ -19,8 +19,8 @@ src/
 astro.config.mjs       ← Astro + Starlight config (site + base for project Pages)
 package.json           ← astro, @astrojs/starlight, starlight-theme-md3 (npm)
 .github/workflows/
-  scrape.yml           ← daily cron, commits coffees.json (push triggers pages.yml)
-  pages.yml            ← build Astro + deploy to Pages on push to main / manual
+  scrape.yml           ← daily cron, commits coffees.json (its push does NOT trigger pages.yml — see below)
+  pages.yml            ← build Astro + deploy to Pages on push to main / scrape.yml completion / manual
 .gitignore             ← dist/, node_modules/, .astro/, __pycache__/, .venv/
 ```
 
@@ -102,8 +102,8 @@ permissions:
 Steps: checkout → install deps → (`playwright install --with-deps chromium` if any roaster uses playwright) → run scraper → commit `_data/coffees.json` → push.
 
 - Guard the commit so a no-change run doesn't fail the job:
-  `git diff --quiet -- _data/coffees.json || (git commit -am "data: $(date -u +%F)" && git push)`
-- The push to `main` triggers `pages.yml` — that's the only thing that publishes.
+  `git diff --quiet -- _data/coffees.json || (git add _data/coffees.json && git commit -m "data: $(date -u +%F)" && git push)`
+- **The push to `main` does NOT trigger `pages.yml`** — a push made with the default `GITHUB_TOKEN` (which `actions/checkout` uses here) doesn't fire other workflows' `on: push`, to prevent recursive runs. `pages.yml` instead listens for `scrape.yml`'s completion via `workflow_run` (see below). Ordinary human pushes to `main` are unaffected and still trigger `pages.yml` normally.
 
 ### `pages.yml` — build & deploy (Astro is **not** auto-built by Pages)
 
@@ -112,7 +112,12 @@ Unlike Jekyll, GitHub Pages does not build Astro for you. A workflow must run `a
 ```yaml
 on:
   push:
-    branches: [main]        # fires after scrape.yml commits fresh data
+    branches: [main]
+  # GITHUB_TOKEN-authenticated pushes (like scrape.yml's data commits) don't
+  # trigger on:push workflows — this workflow_run trigger closes that gap.
+  workflow_run:
+    workflows: ["Scrape coffee data"]   # must match scrape.yml's `name:`
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -120,6 +125,8 @@ permissions:
   pages: write
   id-token: write
 ```
+
+The `build` job additionally guards `if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'`, so a failed/cancelled scrape run doesn't trigger a pointless (or stale) rebuild.
 
 Steps: checkout → setup-node → `npm ci` → `npm run build` → `actions/upload-pages-artifact` (path `dist/`) → `actions/deploy-pages`. Set Pages source to "GitHub Actions" in repo settings.
 

@@ -13,6 +13,8 @@ Slovak Coffee Map's third and final sub-project: the GitHub Actions workflows th
 - **Node version**: `actions/setup-node@v4` pinned to Node 22, matching local dev (`node --version` → v22.22.0).
 - **Verification**: YAML syntax/structure validation only (via `actionlint` if available). No live `workflow_dispatch` trigger — that costs real Claude API spend and hits live roaster sites, and requires the secret to be set first. The user triggers it themselves once ready.
 
+> **Post-implementation update (2026-06-30):** the final whole-branch review caught a real gap this design missed — `scrape.yml`'s push uses the default `GITHUB_TOKEN` (via plain `actions/checkout`), and GitHub does not trigger other workflows' `on: push` for `GITHUB_TOKEN`-authenticated pushes (this prevents recursive runs). So the original `pages.yml` design below never actually fired after a scrape-driven data commit. Fixed by adding a `workflow_run` trigger to `pages.yml` that listens for `scrape.yml`'s completion, guarded to only build when that run succeeded — see the corrected `pages.yml` section below and `CLAUDE.md`. Ordinary human pushes to `main` were never affected by this gap (they use real user credentials).
+
 ## Architecture
 
 ```
@@ -57,6 +59,11 @@ jobs:
 on:
   push:
     branches: [main]
+  # GITHUB_TOKEN-authenticated pushes (like scrape.yml's data commits) don't
+  # trigger on:push workflows — this workflow_run trigger closes that gap.
+  workflow_run:
+    workflows: ["Scrape coffee data"]   # must match scrape.yml's `name:`
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -67,6 +74,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -88,7 +96,7 @@ jobs:
         id: deployment
 ```
 
-`pages.yml` fires on every push to `main` — both scraper-driven data commits and ordinary site/doc commits — so any change that should appear on the live site triggers a rebuild.
+`pages.yml` fires on ordinary pushes to `main` (site/doc commits) and, separately, on `scrape.yml`'s completion (since that workflow's own push can't trigger `on: push`) — so any change that should appear on the live site triggers a rebuild either way. The `build` job's `if:` skips a rebuild when the referenced scrape run failed or was cancelled.
 
 ## Prerequisites (not automated by this sub-project)
 

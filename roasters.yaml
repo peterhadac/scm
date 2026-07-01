@@ -10,3 +10,41 @@ roasters:
   - name: Coffeein
     url: https://www.coffeein.sk/
     scraper: playwright
+  - name: Black.
+    url: https://black.sk/
+  - name: Blue Mondays Coffee
+    url: https://bluemondayscoffee.com/
+  - name: Caffe4u
+    url: https://caffe4u.sk/
+  - name: Casa del Caffé
+    url: https://casadelcaffe.sk/
+  - name: Diamond's Roastery
+    url: https://diroastery.sk/
+  - name: Dobrá Káva
+    url: https://dobrakava.eu/
+  - name: Good Times Coffee Roasters
+    url: https://goodtimes.coffee/
+  - name: Goriffee
+    url: https://goriffee.com/
+  - name: Jager Kaffee
+    url: https://jagerkaffee.com/
+  - name: Julietta
+    url: https://tvojakava.sk/185-julietta
+  - name: Jungle Roastery
+    url: https://thisisjungle.sk/
+  - name: Kavala
+    url: https://kavalacoffee.sk/
+  - name: Kofisfera
+    url: https://kofisfera.sk/
+  - name: Petimera
+    url: https://petimera.sk/
+  - name: Samay Coffee
+    url: https://samay.sk/
+  - name: Simple Coffee
+    url: https://simplecoffee.eu/
+  - name: Sweet Beans Coffee
+    url: https://sweetbeans.coffee/
+  - name: Triple Five Coffee
+    url: https://triplefivecoffee.com/
+  - name: Urban Coffee
+    url: https://urbancoffee.sk/

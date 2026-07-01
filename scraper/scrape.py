@@ -105,7 +105,8 @@ def extract_coffees(client, roaster_name, cleaned_html):
     )
     for block in response.content:
         if block.type == "tool_use" and block.name == "extract_coffees":
-            return block.input.get("coffees", [])
+            coffees = block.input.get("coffees", [])
+            return [c for c in coffees if isinstance(c, dict)]
     return None
 
 

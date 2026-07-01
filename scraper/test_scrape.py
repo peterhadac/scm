@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -50,6 +50,32 @@ def test_merge_keeps_existing_entries_on_failure():
     ]
     merged = scrape.merge(existing, "Kavoholik", "failed", [], "2026-06-30")
     assert merged == existing
+
+
+def test_extract_coffees_drops_non_dict_items_from_claude_response():
+    # Claude's tool call isn't schema-enforced (no strict: true), so the
+    # "coffees" array can contain items that don't match the object schema —
+    # e.g. a bare string. This must not reach merge()/normalize(), which
+    # assume every entry is a dict.
+    tool_use_block = MagicMock()
+    tool_use_block.type = "tool_use"
+    tool_use_block.name = "extract_coffees"
+    tool_use_block.input = {
+        "coffees": [
+            {"name": "Good Coffee", "price": "10,00 €", "url": "https://example.com/good"},
+            "a malformed string entry Claude sometimes returns",
+        ]
+    }
+    fake_response = MagicMock()
+    fake_response.content = [tool_use_block]
+    fake_client = MagicMock()
+    fake_client.messages.create.return_value = fake_response
+
+    result = scrape.extract_coffees(fake_client, "Test Roaster", "<html></html>")
+
+    assert result == [
+        {"name": "Good Coffee", "price": "10,00 €", "url": "https://example.com/good"}
+    ]
 
 
 def test_merge_replaces_existing_entries_on_ok():

@@ -21,6 +21,8 @@
 - Theme plugin: `starlight-theme-md3` with `seed: '#6f4e37'`, `variant: 'tonalSpot'` (already decided in `CLAUDE.md`).
 - Internal links (sidebar `link`, hero `actions[].link`) are written **without** the `/scm` base prefix — Starlight prepends `base` automatically.
 
+> **Post-implementation correction (2026-07-01):** the line above was wrong for hero action links specifically — only sidebar `link` config auto-prepends `base`; `index.mdx`'s `hero.actions[].link` does not, and needed the `/scm` prefix hardcoded (`link: /scm/coffees/`) to avoid a 404 on the live site. See the spec's matching correction note.
+
 ---
 
 ### Task 1: Astro + Starlight scaffold with a working splash homepage

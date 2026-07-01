@@ -57,6 +57,8 @@ export default defineConfig({
 
 `base: '/scm'` must match whatever the GitHub Pages project slug actually is — confirm this when the repo is created on Pages, or links 404.
 
+> **Post-implementation correction (2026-07-01):** that "or links 404" warning turned out to apply specifically to the splash page's hero `actions[].link` — Starlight's sidebar `link` config auto-prepends `base` (confirmed: renders as `/scm/coffees/`), but hero action links in `index.mdx` frontmatter do **not** go through that same prefixing and render as a raw, un-prefixed href (`/coffees/`, missing `/scm`). Fixed by hardcoding the `/scm` prefix directly in the hero link (`link: /scm/coffees/`). Sidebar links stay unprefixed as originally written.
+
 ### `CoffeeTable.astro` — data source
 
 ```js

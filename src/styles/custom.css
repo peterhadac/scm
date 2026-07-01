@@ -1,27 +1,126 @@
-/* ── Splash page hero ─────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   Slovak Coffee Map — custom palette
+   Morning Snow  #F5F4ED   Amazon Mist  #ECECDC   Black Kite  #351E1C
+   Aqua Mist     #A0C9CB   Toxic Orange #FF6037   Garnet      #733635
+   ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Tonal surface wash + primary glow using MD3 system colors */
-.hero {
-  background-color: var(--md-sys-color-surface-container-low);
-  background-image: radial-gradient(
-    ellipse 70% 55% at 65% 45%,
-    color-mix(in srgb, var(--md-sys-color-primary-container) 40%, transparent),
-    transparent
-  );
+/* ── Light tokens ─────────────────────────────────────────────────────────── */
+:root {
+  /* Secondary → Aqua Mist tonal family (washed = clean / water) */
+  --md-sys-color-secondary:                 #386667;
+  --md-sys-color-on-secondary:              #ffffff;
+  --md-sys-color-secondary-container:       #bde9eb;
+  --md-sys-color-on-secondary-container:    #001f21;
+
+  /* Tertiary → Garnet tonal family (natural = earthy / fermented) */
+  --md-sys-color-tertiary:                  #8b4040;
+  --md-sys-color-on-tertiary:               #ffffff;
+  --md-sys-color-tertiary-container:        #ffdad9;
+  --md-sys-color-on-tertiary-container:     #410009;
+
+  /* Surfaces → Morning Snow / Amazon Mist */
+  --md-sys-color-background:                #f5f4ed;
+  --md-sys-color-on-background:             #1c1b17;
+  --md-sys-color-surface:                   #f5f4ed;
+  --md-sys-color-on-surface:                #1c1b17;
+  --md-sys-color-surface-variant:           #ececdc;
+  --md-sys-color-on-surface-variant:        #4a4938;
+  --md-sys-color-outline:                   #7a7869;
+  --md-sys-color-outline-variant:           #cccbb9;
+  --md-sys-color-surface-container-lowest:  #ffffff;
+  --md-sys-color-surface-container-low:     #f0efe8;
+  --md-sys-color-surface-container:         #eaeae3;
+  --md-sys-color-surface-container-high:    #e4e4dd;
+  --md-sys-color-surface-container-highest: #dfdfd8;
 }
 
-/* Hero title: use MD3 display typescale weight */
+/* ── Dark tokens — prefers-color-scheme ──────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    /* Secondary → Aqua Mist (dark) */
+    --md-sys-color-secondary:                 #a2cdcf;
+    --md-sys-color-on-secondary:              #003738;
+    --md-sys-color-secondary-container:       #1a4f50;
+    --md-sys-color-on-secondary-container:    #bde9eb;
+
+    /* Tertiary → Garnet (dark) */
+    --md-sys-color-tertiary:                  #ffb3ae;
+    --md-sys-color-on-tertiary:               #68000a;
+    --md-sys-color-tertiary-container:        #8f1c1d;
+    --md-sys-color-on-tertiary-container:     #ffdad9;
+
+    /* Surfaces → Black Kite inspired */
+    --md-sys-color-background:                #1a100f;
+    --md-sys-color-on-background:             #ede1dc;
+    --md-sys-color-surface:                   #1a100f;
+    --md-sys-color-on-surface:                #ede1dc;
+    --md-sys-color-surface-variant:           #4d3937;
+    --md-sys-color-on-surface-variant:        #d0c4bf;
+    --md-sys-color-outline:                   #998f8d;
+    --md-sys-color-outline-variant:           #4d3937;
+    --md-sys-color-surface-container-lowest:  #140b0b;
+    --md-sys-color-surface-container-low:     #241614;
+    --md-sys-color-surface-container:         #281a18;
+    --md-sys-color-surface-container-high:    #321f1e;
+    --md-sys-color-surface-container-highest: #3d2927;
+  }
+}
+
+/* ── Dark tokens — explicit toggle ───────────────────────────────────────── */
+html[data-theme="dark"] {
+  /* Secondary → Aqua Mist (dark) */
+  --md-sys-color-secondary:                 #a2cdcf;
+  --md-sys-color-on-secondary:              #003738;
+  --md-sys-color-secondary-container:       #1a4f50;
+  --md-sys-color-on-secondary-container:    #bde9eb;
+
+  /* Tertiary → Garnet (dark) */
+  --md-sys-color-tertiary:                  #ffb3ae;
+  --md-sys-color-on-tertiary:               #68000a;
+  --md-sys-color-tertiary-container:        #8f1c1d;
+  --md-sys-color-on-tertiary-container:     #ffdad9;
+
+  /* Surfaces → Black Kite inspired */
+  --md-sys-color-background:                #1a100f;
+  --md-sys-color-on-background:             #ede1dc;
+  --md-sys-color-surface:                   #1a100f;
+  --md-sys-color-on-surface:                #ede1dc;
+  --md-sys-color-surface-variant:           #4d3937;
+  --md-sys-color-on-surface-variant:        #d0c4bf;
+  --md-sys-color-outline:                   #998f8d;
+  --md-sys-color-outline-variant:           #4d3937;
+  --md-sys-color-surface-container-lowest:  #140b0b;
+  --md-sys-color-surface-container-low:     #241614;
+  --md-sys-color-surface-container:         #281a18;
+  --md-sys-color-surface-container-high:    #321f1e;
+  --md-sys-color-surface-container-highest: #3d2927;
+}
+
+/* ── Splash page hero ─────────────────────────────────────────────────────── */
+.hero {
+  background-color: var(--md-sys-color-surface-container-low);
+  background-image:
+    radial-gradient(
+      ellipse 70% 55% at 65% 45%,
+      color-mix(in oklch, #ff6037 12%, transparent),
+      transparent
+    ),
+    radial-gradient(
+      ellipse 45% 35% at 15% 70%,
+      color-mix(in oklch, #a0c9cb 10%, transparent),
+      transparent
+    );
+}
+
 .hero h1 {
   font-weight: var(--md-sys-typescale-display-small-weight);
   letter-spacing: var(--md-sys-typescale-display-small-tracking);
 }
 
-/* Hero tagline */
 .hero .tagline {
   color: var(--md-sys-color-on-surface-variant);
 }
 
-/* Hero CTA primary button: filled button shape */
 .hero .action.primary {
   border-radius: var(--md-sys-shape-corner-full) !important;
   background: var(--md-sys-color-primary) !important;
@@ -34,7 +133,6 @@
   background: color-mix(in srgb, var(--md-sys-color-primary) 88%, var(--md-sys-color-on-primary)) !important;
 }
 
-/* Hero CTA secondary button: outlined button shape */
 .hero .action.secondary {
   border-radius: var(--md-sys-shape-corner-full) !important;
   border-color: var(--md-sys-color-outline) !important;
@@ -47,7 +145,6 @@
   background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent) !important;
 }
 
-/* Hero SVG illustration: primary tonal drop shadow */
 .hero-image svg {
-  filter: drop-shadow(0 8px 32px color-mix(in srgb, var(--md-sys-color-primary) 22%, transparent));
+  filter: drop-shadow(0 8px 32px color-mix(in oklch, #ff6037 22%, transparent));
 }

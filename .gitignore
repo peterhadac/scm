@@ -16,5 +16,8 @@ venv/
 .env.*
 !.env.example
 
+# Claude Code agent worktrees / local scratch
+.claude/
+
 # OS
 .DS_Store

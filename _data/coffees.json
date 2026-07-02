@@ -1,25 +1,5 @@
 [
   {
-    "name": "Colombia Supremo Medelin Wash - káva 100% Arabica",
-    "roaster": "Ready After",
-    "origin": "Colombia",
-    "process": null,
-    "price": 7.9,
-    "weight_g": null,
-    "url": "/colombia-supremo-medelin-wash/",
-    "last_seen": "2026-07-01"
-  },
-  {
-    "name": "Ethiopia Sookoo Coffee - Guji Okoluu G1 organic - káva 100% Arabica",
-    "roaster": "Ready After",
-    "origin": "Ethiopia",
-    "process": null,
-    "price": 12.5,
-    "weight_g": null,
-    "url": "/ethiopia-sookoo-coffee-guji-okoluu-g1-organic/",
-    "last_seen": "2026-07-01"
-  },
-  {
     "name": "India Plantation AA Karnataka Wash - káva 100% Arabica",
     "roaster": "Ready After",
     "origin": "India",
@@ -27,27 +7,27 @@
     "price": 8.3,
     "weight_g": null,
     "url": "/india-plantation-aa-karnataka-wash/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
-    "name": "Sunset - výberová kávová zmes 80% Arabica 20% Robusta",
+    "name": "Brasil Rodomunho Red bourbon cold room fermentation - káva 100% Arabica",
     "roaster": "Ready After",
-    "origin": null,
+    "origin": "Brazil",
     "process": null,
-    "price": 7.9,
+    "price": 12.9,
     "weight_g": null,
-    "url": "/sunset-vyberova-kavova-zmes/",
-    "last_seen": "2026-07-01"
+    "url": "/brasil-rodomunho-red-bourbon-cold-room-fermentation/",
+    "last_seen": "2026-07-02"
   },
   {
-    "name": "Svadobná edícia - káva 100% arabica",
+    "name": "Colombia Monteblanco Marakuja Extented Fermentation - káva 100% Arabica",
     "roaster": "Ready After",
-    "origin": null,
+    "origin": "Colombia",
     "process": null,
-    "price": 8.9,
-    "weight_g": 500,
-    "url": "/svadobna-edicia-kava/",
-    "last_seen": "2026-07-01"
+    "price": 17.5,
+    "weight_g": null,
+    "url": "/colombia-monteblanco-marakuja-fermentation/",
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Bellissimo blend - výberová kávová zmes 70% Arabica 30% Robusta",
@@ -57,47 +37,57 @@
     "price": 7.9,
     "weight_g": null,
     "url": "/bellissimo-blend-vyberova-kavova-zmes/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
-    "name": "SUMMERTIME Coffee - káva 100% Arabica",
-    "roaster": "Ready After",
-    "origin": null,
-    "process": null,
-    "price": 12.9,
-    "weight_g": null,
-    "url": "/summertime-coffee/",
-    "last_seen": "2026-07-01"
-  },
-  {
-    "name": "PRE NAJ mamu - káva 100% arabica",
+    "name": "Gratulujem - káva 100% arabica",
     "roaster": "Ready After",
     "origin": null,
     "process": null,
     "price": 8.9,
-    "weight_g": 500,
-    "url": "/pre-naj-mamu-kava/",
-    "last_seen": "2026-07-01"
+    "weight_g": null,
+    "url": "/gratulujem-kava/",
+    "last_seen": "2026-07-02"
   },
   {
-    "name": "Burundi Rumanda Muraho Natural Anaerobic - káva 100% Arabica",
+    "name": "Colombia Supremo Medelin Wash - káva 100% Arabica",
     "roaster": "Ready After",
-    "origin": "Burundi",
-    "process": "Natural Anaerobic",
-    "price": 13.9,
+    "origin": "Colombia",
+    "process": null,
+    "price": 7.9,
     "weight_g": null,
-    "url": "/burundi-rumanda-muraho-natural-anaerobic/",
-    "last_seen": "2026-07-01"
+    "url": "/colombia-supremo-medelin-wash/",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Ethiopia Yirgacheffe Gr.2 YCFCU - káva 100% Arabica",
+    "roaster": "Ready After",
+    "origin": "Ethiopia",
+    "process": null,
+    "price": 9.5,
+    "weight_g": null,
+    "url": "/ethiopia-yirgacheffe-gr-2-ycfcu/",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "VŠETKO NAJLEPŠIE - káva 100% arabica",
+    "roaster": "Ready After",
+    "origin": null,
+    "process": null,
+    "price": 8.9,
+    "weight_g": null,
+    "url": "/vsetko-najlepsie-kava/",
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Vietnam Lang Biang Anaerobic - káva 100% Arabica",
     "roaster": "Ready After",
     "origin": "Vietnam",
-    "process": "Anaerobic",
+    "process": null,
     "price": 13.5,
     "weight_g": null,
     "url": "/vietnam-lang-biang-anaerobic/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Costa Rica Hacienda Sonora",
@@ -107,7 +97,7 @@
     "price": 13.69,
     "weight_g": null,
     "url": "https://kaffaroastery.sk/produkt/costa-rica-hacienda-sonora/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Ethiopia Shantawene Ayla",
@@ -117,7 +107,7 @@
     "price": 13.69,
     "weight_g": null,
     "url": "https://kaffaroastery.sk/produkt/ethiopia-shantawene-ayla/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Colombia Juicy Maracuja",
@@ -127,7 +117,7 @@
     "price": 16.42,
     "weight_g": null,
     "url": "https://kaffaroastery.sk/produkt/colombia-juicy-maracuja/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Colombia Melone Candy",
@@ -137,7 +127,107 @@
     "price": 16.42,
     "weight_g": null,
     "url": "https://kaffaroastery.sk/produkt/colombia-melone-candy/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Guatemala Finca Pampojila",
+    "roaster": "Suca Roastery",
+    "origin": "Guatemala",
+    "process": null,
+    "price": 12.9,
+    "weight_g": null,
+    "url": "/p/guatemala-finca-pampojila",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Guatemala La Bella natural",
+    "roaster": "Suca Roastery",
+    "origin": "Guatemala",
+    "process": "natural",
+    "price": 9.8,
+    "weight_g": null,
+    "url": "/p/guatemala-la-bella-natural",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Colombia Monteblanco",
+    "roaster": "Suca Roastery",
+    "origin": "Colombia",
+    "process": null,
+    "price": 18.9,
+    "weight_g": null,
+    "url": "/p/colombia-monteblanco",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Kenya Endebess natural",
+    "roaster": "Suca Roastery",
+    "origin": "Kenya",
+    "process": "natural",
+    "price": 9.8,
+    "weight_g": null,
+    "url": "/p/kenya-endebess-natural",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Costarica Palmichal Los Vindas",
+    "roaster": "Suca Roastery",
+    "origin": "Costa Rica",
+    "process": null,
+    "price": 8.9,
+    "weight_g": null,
+    "url": "/p/costarica-palmichal-los-vindas",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Vietnam Langbiang double washed",
+    "roaster": "Suca Roastery",
+    "origin": "Vietnam",
+    "process": "washed",
+    "price": 11.3,
+    "weight_g": null,
+    "url": "/p/vietnam-langbiang-double-washed",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Ethiopia Abebe Hilu Yirgacheffe",
+    "roaster": "Suca Roastery",
+    "origin": "Ethiopia",
+    "process": null,
+    "price": 9.3,
+    "weight_g": null,
+    "url": "/p/ethiopia-abebe-hilu-yirgacheffe",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Colombia Jesus Barahona Buenavista",
+    "roaster": "Suca Roastery",
+    "origin": "Colombia",
+    "process": null,
+    "price": 11.0,
+    "weight_g": null,
+    "url": "/p/colombia-jesus-barahona-buenavista",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Colombia Finca La Rosa",
+    "roaster": "Suca Roastery",
+    "origin": "Colombia",
+    "process": null,
+    "price": 10.4,
+    "weight_g": null,
+    "url": "/p/colombia-finca-la-rosa",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "test",
+    "roaster": "Suca Roastery",
+    "origin": null,
+    "process": null,
+    "price": 10.0,
+    "weight_g": null,
+    "url": "/p/test",
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Colombia Hacienda La Claudina washed",
@@ -147,27 +237,27 @@
     "price": 8.9,
     "weight_g": null,
     "url": "/p/colombia-hacienda-la-claudina-washed",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Colombia Ombligon sugarcane decaf",
     "roaster": "Suca Roastery",
     "origin": "Colombia",
-    "process": "sugarcane decaf",
+    "process": null,
     "price": 15.9,
     "weight_g": null,
     "url": "/p/colombia-ombligon-sugarcane-decaf",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "El Salvador Finca El Cerro anacafe",
     "roaster": "Suca Roastery",
     "origin": "El Salvador",
-    "process": "anacafe",
+    "process": null,
     "price": 10.9,
     "weight_g": null,
     "url": "/p/el-salvador-finca-el-cerro-anacafe",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Rwanda Gisheke",
@@ -177,7 +267,7 @@
     "price": 10.9,
     "weight_g": null,
     "url": "/p/rwanda-gisheke-natural",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Nicaragua Finca El Ciprés",
@@ -187,7 +277,7 @@
     "price": 10.9,
     "weight_g": null,
     "url": "/p/nicaragua-finca-el-cipres",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Brazil Fazenda das Almas",
@@ -197,177 +287,177 @@
     "price": 10.5,
     "weight_g": null,
     "url": "/p/brazil-fazenda-das-almas",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Brasil Cerrado Diamond (200 g, zrnková káva)",
     "roaster": "Coffeein",
-    "origin": "Brazil",
-    "process": "Dark roast - espresso",
+    "origin": "Brasil",
+    "process": "Tmavé praženie - espresso",
     "price": 7.99,
     "weight_g": 200,
     "url": "/detail/123/brasil-cerrado-diamond-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "El Salvador Santa Ana (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": "El Salvador",
-    "process": "Dark roast - espresso",
+    "process": "Tmavé praženie - espresso",
     "price": 7.99,
     "weight_g": 200,
     "url": "/detail/161/el-salvador-santa-ana-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Mexico Chiapas (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": "Mexico",
-    "process": "Dark roast - espresso",
+    "process": "Tmavé praženie - espresso",
     "price": 7.99,
     "weight_g": 200,
     "url": "/detail/36/mexico-chiapas-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "COFFEEIN Italy - espresso zmes (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": null,
-    "process": "Dark roast - espresso blend",
+    "process": "Tmavé praženie - espresso",
     "price": 7.89,
     "weight_g": 200,
     "url": "/detail/456/coffeein-italy-espresso-zmes-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "COFFEEIN Nový Standard - espresso zmes (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": null,
-    "process": "Dark roast - espresso blend",
+    "process": "Tmavé praženie - espresso",
     "price": 7.89,
     "weight_g": 200,
     "url": "/detail/244/coffeein-novy-standard-espresso-zmes-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "COFFEEIN Elite - espresso zmes (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": null,
-    "process": "Dark roast - espresso blend",
+    "process": "Tmavé praženie - espresso",
     "price": 7.89,
     "weight_g": 200,
     "url": "/detail/115/coffeein-elite-espresso-zmes-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "UGANDA Mubuku - SVETLÉ praženie (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": "Uganda",
-    "process": "Light roast - filter",
+    "process": "Svetlé praženie - filter",
     "price": 12.5,
     "weight_g": 200,
     "url": "/detail/1066/uganda-mubuku-svetle-prazenie-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "BURUNDI Kibingo NATURAL - stredné praženie (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": "Burundi",
-    "process": "Medium roast - espresso, Natural process",
+    "process": "Stredné praženie - espresso",
     "price": 12.5,
     "weight_g": 200,
     "url": "/detail/640/burundi-kibingo-natural-stredne-prazenie-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "BURUNDI Kibingo WASHED - SVETLÉ praženie (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": "Burundi",
-    "process": "Light roast - filter, Washed process",
+    "process": "Svetlé praženie - filter",
     "price": 12.5,
     "weight_g": 200,
     "url": "/detail/573/burundi-kibingo-washed-svetle-prazenie-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Colombia Peñas Blancas - SVETLÉ praženie (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": "Colombia",
-    "process": "Light roast - filter",
+    "process": "Svetlé praženie - filter",
     "price": 15.0,
     "weight_g": 200,
     "url": "/detail/941/colombia-penas-blancas-svetle-prazenie-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "POPEACHY káva - stredné praženie (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": null,
-    "process": "Medium roast - espresso",
+    "process": "Stredné praženie - espresso",
     "price": 15.0,
     "weight_g": 200,
     "url": "/detail/768/popeachy-kava-stredne-prazenie-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "POPEACHY káva - SVETLÉ praženie (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": null,
-    "process": "Light roast - filter",
+    "process": "Svetlé praženie - filter",
     "price": 15.0,
     "weight_g": 200,
     "url": "/detail/767/popeachy-kava-svetle-prazenie-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Káva pre super ocka (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": null,
-    "process": "Dark roast - espresso",
+    "process": "Tmavé praženie - espresso",
     "price": 7.99,
     "weight_g": 200,
     "url": "/detail/832/kava-pre-super-ocka-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Káva pre mamičku (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": null,
-    "process": "Dark roast - espresso",
+    "process": "Tmavé praženie - espresso",
     "price": 7.99,
     "weight_g": 200,
     "url": "/detail/730/kava-pre-mamicku-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Ethiopia Adorsi - stredné praženie (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": "Ethiopia",
-    "process": "Medium roast - espresso",
+    "process": "Stredné praženie - espresso",
     "price": 10.5,
     "weight_g": 200,
     "url": "/detail/879/ethiopia-adorsi-stredne-prazenie-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Colombia Peñas Blancas - stredné praženie (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": "Colombia",
-    "process": "Medium roast - espresso",
+    "process": "Stredné praženie - espresso",
     "price": 15.0,
     "weight_g": 200,
     "url": "/detail/943/colombia-penas-blancas-stredne-prazenie-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Costa Rica Canet BACH – stredné praženie (200 g, zrnková káva)",
     "roaster": "Coffeein",
     "origin": "Costa Rica",
-    "process": "Medium roast - espresso",
+    "process": "Stredné praženie - espresso",
     "price": 15.0,
     "weight_g": 200,
     "url": "/detail/829/costa-rica-canet-bach-stredne-prazenie-200-g-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "blend • black sheep",
@@ -377,7 +467,7 @@
     "price": 9.5,
     "weight_g": null,
     "url": "https://www.black.sk/sk/blend-black-sheep",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "blend • juicy pussy",
@@ -387,7 +477,7 @@
     "price": 13.5,
     "weight_g": null,
     "url": "https://www.black.sk/sk/juicy-pussy",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "drippin.",
@@ -397,17 +487,17 @@
     "price": 12.0,
     "weight_g": null,
     "url": "https://www.black.sk/sk/drippin",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "brazil • doce citrus",
     "roaster": "Black.",
-    "origin": null,
+    "origin": "brazil",
     "process": null,
     "price": 10.5,
     "weight_g": null,
     "url": "https://www.black.sk/sk/brazil-doce-citrus",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Brazil Fazenda Primavera",
@@ -417,7 +507,7 @@
     "price": 9.0,
     "weight_g": null,
     "url": "/products/brazil-fazenda-primavera?variant=56505169576318",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Brazil Fazenda Rodomunho",
@@ -427,7 +517,7 @@
     "price": 11.5,
     "weight_g": null,
     "url": "/products/brazil-fazenda-rodomunho?variant=56505181241726",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Brazil Thiago Corsi",
@@ -437,7 +527,7 @@
     "price": 12.5,
     "weight_g": null,
     "url": "/products/brazil-thiago-corsi?variant=56505352356222",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Candy Crop – house blend",
@@ -447,7 +537,7 @@
     "price": 10.0,
     "weight_g": null,
     "url": "/products/candy-crop-house-blend?variant=56505198150014",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Balíček VARIETY 3 x 200g",
@@ -457,7 +547,7 @@
     "price": 37.8,
     "weight_g": 600,
     "url": "https://caffe4u.sk/produkt/balicek-variety-3-x-200g/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Balíček DOBRODRUH 3 x 200g",
@@ -467,7 +557,7 @@
     "price": 32.3,
     "weight_g": 600,
     "url": "https://caffe4u.sk/produkt/balicek-dobrodruh-3-x-200g/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Balíček SIMPLY THE BEST 3x200g",
@@ -477,7 +567,7 @@
     "price": 37.83,
     "weight_g": 600,
     "url": "https://caffe4u.sk/produkt/balicek-simply-the-best-3x200g/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Keňa Mugaya AB – zrnková káva",
@@ -487,7 +577,7 @@
     "price": 16.0,
     "weight_g": null,
     "url": "https://diroastery.sk/produkt/kena-mugaya-ab-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Kolumbia Kumanday Reserve – zrnková káva",
@@ -497,27 +587,27 @@
     "price": 11.0,
     "weight_g": null,
     "url": "https://diroastery.sk/produkt/kolumbia-kumanday-reserve/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Uganda Nyabirongo Natural – zrnková káva",
     "roaster": "Diamond's Roastery",
     "origin": "Uganda",
-    "process": "Natural",
+    "process": null,
     "price": 15.0,
     "weight_g": null,
     "url": "https://diroastery.sk/produkt/uganda-nyabirongo-natural/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Kolumbia El Buho Decaf – bezkofeínová káva",
     "roaster": "Diamond's Roastery",
     "origin": "Colombia",
-    "process": "Decaf",
+    "process": null,
     "price": 14.0,
     "weight_g": null,
     "url": "https://diroastery.sk/produkt/kolumbia-el-buho-decaf-bezkofeinova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Kongo Kisunga – zrnková káva",
@@ -527,7 +617,7 @@
     "price": 15.0,
     "weight_g": null,
     "url": "https://diroastery.sk/produkt/kongo-kisunga-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Guatemala El Mirador – zrnková káva",
@@ -537,7 +627,7 @@
     "price": 14.0,
     "weight_g": null,
     "url": "https://diroastery.sk/produkt/guatemala-el-mirador/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Kolumbia Yenifer Rojas Trujillo – zrnková káva",
@@ -547,7 +637,7 @@
     "price": 16.0,
     "weight_g": null,
     "url": "https://diroastery.sk/produkt/kolumbia-yenifer-rojas-trujillo/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Kolumbia Efren Echeverri – zrnková káva",
@@ -557,7 +647,7 @@
     "price": 17.0,
     "weight_g": null,
     "url": "https://diroastery.sk/produkt/kolumbia-efren-echeverri/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Kostarika Mirazu Catajo – zrnková káva",
@@ -567,7 +657,7 @@
     "price": 19.0,
     "weight_g": null,
     "url": "https://diroastery.sk/produkt/kostarika-mirazu-catajo-zrnkova-kava/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Peach Please Brew Bags",
@@ -577,7 +667,17 @@
     "price": 16.0,
     "weight_g": null,
     "url": "https://www.goriffee.com/shop/kava/peach-please-brew-bags/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Candy Blast Decaf na filter",
+    "roaster": "Goriffee",
+    "origin": "Kolumbia",
+    "process": null,
+    "price": 19.0,
+    "weight_g": null,
+    "url": "https://www.goriffee.com/shop/kava/candy-blast-decaf-na-filter/",
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Výhodný balík: 3x Ovocné hviezdy",
@@ -587,7 +687,7 @@
     "price": 51.3,
     "weight_g": null,
     "url": "https://www.goriffee.com/shop/kava/vyhodne-baliky/vyhodny-balik-3x-ovocne-hviezdy/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Výhodný balík: 3x Kávové kapsule pre Nespresso",
@@ -597,7 +697,7 @@
     "price": 40.5,
     "weight_g": null,
     "url": "https://www.goriffee.com/shop/kava/kavove-kapsule/vyhodny-balik-3x-kavove-kapsule-pre-nespresso/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Výhodný balík: 3x Klasické Espresso",
@@ -607,7 +707,7 @@
     "price": 29.7,
     "weight_g": null,
     "url": "https://www.goriffee.com/shop/kava/vyhodne-baliky/vyhodny-balik-3x-klasicke-espresso/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Gold coffee",
@@ -617,7 +717,7 @@
     "price": 33.9,
     "weight_g": null,
     "url": "https://jagerkaffee.com/produkt/golf-coffee/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Purple coffee",
@@ -627,7 +727,7 @@
     "price": 32.9,
     "weight_g": null,
     "url": "https://jagerkaffee.com/produkt/purple-coffee/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Edícia Marilyn",
@@ -637,247 +737,247 @@
     "price": 9.5,
     "weight_g": null,
     "url": "https://jagerkaffee.com/produkt/edicia-marilyn/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Supremo \"testovacie balenie\" čerstvo pražená zrnková káva 200 g",
     "roaster": "Julietta",
-    "origin": "Arabika a Robusta",
+    "origin": null,
     "process": null,
     "price": 5.94,
     "weight_g": 200,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2677-julietta-supremo-testovacie-balenie-cerstvo-prazena-zrnkova-kava-200-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Supremo Z lásky pre lásku čerstvo pražená zrnková káva 200 g",
     "roaster": "Julietta",
-    "origin": "Arabika a Robusta",
+    "origin": null,
     "process": null,
     "price": 6.96,
     "weight_g": 200,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2756-julietta-supremo-z-lasky-pre-lasku-cerstvo-prazena-zrnkova-kava-200-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Supremo Nakopni svoj deň čerstvo pražená zrnková káva 200 g",
     "roaster": "Julietta",
-    "origin": "Arabika a Robusta",
+    "origin": null,
     "process": null,
     "price": 6.96,
     "weight_g": 200,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2755-julietta-supremo-nakopni-svoj-den-cerstvo-prazena-zrnkova-kava-200-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Supremo Najlepší starí rodičia čerstvo pražená zrnková káva 200 g",
     "roaster": "Julietta",
-    "origin": "Arabika a Robusta",
+    "origin": null,
     "process": null,
     "price": 6.96,
     "weight_g": 200,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2754-julietta-supremo-najlepsi-stari-rodicia-cerstvo-prazena-zrnkova-kava-200-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Supremo Otec náš superhrdina čerstvo pražená zrnková káva 200 g",
     "roaster": "Julietta",
-    "origin": "Arabika a Robusta",
+    "origin": null,
     "process": null,
     "price": 6.96,
     "weight_g": 200,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2753-julietta-supremo-otec-nas-superhrdina-cerstvo-prazena-zrnkova-kava-200-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Supremo Super mama čerstvo pražená zrnková káva 200 g",
     "roaster": "Julietta",
-    "origin": "Arabika a Robusta",
+    "origin": null,
     "process": null,
     "price": 6.96,
     "weight_g": 200,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2752-julietta-supremo-super-mama-cerstvo-prazena-zrnkova-kava-200-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Brazil Santos čerstvo pražená zrnková káva 250 g",
     "roaster": "Julietta",
-    "origin": "Brazília",
-    "process": "Suchá metóda",
+    "origin": "Brazil",
+    "process": "Dry",
     "price": 7.92,
     "weight_g": 250,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/1585-julietta-brazil-santos-cerstvo-prazena-zrnkova-kava-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Indonézia Java čerstvo pražená zrnková káva 250 g",
     "roaster": "Julietta",
-    "origin": "Indonézia",
-    "process": "Mokrá metóda",
+    "origin": "Indonesia",
+    "process": "Wet",
     "price": 9.92,
     "weight_g": 250,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2771-julietta-indonezia-java-cerstvo-prazena-zrnkova-kava-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Brazil Yellow Bourbon čerstvo pražená zrnková káva 250 g",
     "roaster": "Julietta",
-    "origin": "Brazília",
-    "process": "Honey metóda",
+    "origin": "Brazil",
+    "process": "Honey",
     "price": 9.92,
     "weight_g": 250,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/1874-julietta-brazil-yellow-bourbon-cerstvo-prazena-zrnkova-kava-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Colombia Excelso čerstvo pražená zrnková káva 250 g",
     "roaster": "Julietta",
-    "origin": "Kolumbia",
-    "process": "Mokrá metóda",
+    "origin": "Colombia",
+    "process": "Wet",
     "price": 9.92,
     "weight_g": 250,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/1575-julietta-colombia-excelso-cerstvo-prazena-zrnkova-kava-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Ethiopia Sidamo čerstvo pražená zrnková káva 250 g",
     "roaster": "Julietta",
-    "origin": "Etiópia",
-    "process": "Mokrá metóda",
+    "origin": "Ethiopia",
+    "process": "Wet",
     "price": 9.92,
     "weight_g": 250,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/1573-julietta-ethiopia-sidamo-cerstvo-prazena-zrnkova-kava-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Dominica Barahona AA čerstvo pražená zrnková káva 250 g",
     "roaster": "Julietta",
-    "origin": "Dominikánska republika",
-    "process": "Mokrá metóda",
+    "origin": "Dominican Republic",
+    "process": "Wet",
     "price": 10.0,
     "weight_g": 250,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2772-julietta-dominica-barahona-aa-cerstvo-prazena-zrnkova-kava-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta India Monsooned čerstvo pražená zrnková káva 250 g",
     "roaster": "Julietta",
     "origin": "India",
-    "process": "Monzúnová metóda",
+    "process": "Monsooned",
     "price": 10.0,
     "weight_g": 250,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/1873-julietta-india-monsooned-cerstvo-prazena-zrnkova-kava-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Costa Rica Tarrazú čerstvo pražená zrnková káva 250 g",
     "roaster": "Julietta",
-    "origin": "Kostarika",
-    "process": "Mokrá metóda",
+    "origin": "Costa Rica",
+    "process": "Wet",
     "price": 10.0,
     "weight_g": 250,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/533-costa-rica-tarrazu-cerstvo-prazena-zrnkova-kava-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta China Yunnan čerstvo pražená zrnková káva 250 g",
     "roaster": "Julietta",
-    "origin": "Čína",
-    "process": "Mokrá metóda",
+    "origin": "China",
+    "process": "Wet",
     "price": 10.9,
     "weight_g": 250,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2906-julietta-china-yunnan-cerstvo-prazena-zrnkova-kava-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Papua New Guinea Lamari čerstvo pražená zrnková káva 250 g",
     "roaster": "Julietta",
-    "origin": "Papua Nová Guinea",
-    "process": "Mokrá metóda",
+    "origin": "Papua New Guinea",
+    "process": "Wet",
     "price": 10.95,
     "weight_g": 250,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2952-julietta-papua-new-guinea-lamari-cerstvo-prazena-zrnkova-kava-100-arabika-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Mexico water decaf čerstvo pražená zrnková káva 250 g",
     "roaster": "Julietta",
-    "origin": "Mexiko",
+    "origin": "Mexico",
     "process": "Mountain Water Decaf",
     "price": 11.95,
     "weight_g": 250,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2770-julietta-mexico-water-decaf-cerstvo-prazena-zrnkova-kava-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta Supremo čerstvo pražená zrnková káva 1 kg",
     "roaster": "Julietta",
-    "origin": "Arabika a Robusta",
+    "origin": null,
     "process": null,
     "price": 26.91,
     "weight_g": 1000,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/1147-julietta-supremo-cerstvo-prazena-zrnkova-kava-1-kg.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta čerstvo pražená zrnková káva Balíček Karibik 3 x 250 g",
     "roaster": "Julietta",
-    "origin": "Kolumbia, Dominikánska republika, Kostarika",
+    "origin": "Caribbean",
     "process": null,
     "price": 27.97,
     "weight_g": 750,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2821-julietta-cerstvo-prazena-zrnkova-kava-balicek-karibik-3-x-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta čerstvo pražená zrnková káva Balíček 3 kontinenty 3 x 250 g",
     "roaster": "Julietta",
-    "origin": "Brazília, India, Etiópia",
+    "origin": "Mixed",
     "process": null,
     "price": 27.97,
     "weight_g": 750,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2066-julietta-cerstvo-prazena-zrnkova-kava-balicek-3-kontinenty-3-x-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta čerstvo pražená zrnková káva Balíček Amerika 3 x 250 g",
     "roaster": "Julietta",
-    "origin": "Brazília, Kostarika, Kolumbia",
+    "origin": "Americas",
     "process": null,
     "price": 27.97,
     "weight_g": 750,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2065-julietta-cerstvo-prazena-zrnkova-kava-balicek-amerika-3-x-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta čerstvo pražená zrnková káva – darčekový balíček 3 kontinenty",
     "roaster": "Julietta",
-    "origin": "Brazília, India, Etiópia",
+    "origin": "Mixed",
     "process": null,
     "price": 29.66,
     "weight_g": 750,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2904-julietta-cerstvo-prazena-zrnkova-kava-darcekovy-balicek-3-kontinenty.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
-    "name": "Julietta čerstvo pražená zrnková káva – darčekový balíček Karibik (3 × 250 g)",
+    "name": "Julietta čerstvo pražená zrnková káva – darčekový balíček Karibik",
     "roaster": "Julietta",
-    "origin": "Kolumbia, Dominikánska republika, Kostarika",
+    "origin": "Caribbean",
     "process": null,
     "price": 29.66,
     "weight_g": 750,
     "url": "https://tvojakava.sk/julietta-cerstva-prazena-kava/2903-julietta-cerstvo-prazena-zrnkova-kava-darcekovy-balicek-karibik-3-250-g.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Julietta – Darčekový balíček \"Amerika\" (3 × 250 g, čerstvo pražená zrnková káva)",
     "roaster": "Julietta",
-    "origin": "Brazília, Kostarika, Kolumbia",
+    "origin": "Americas",
     "process": null,
     "price": 29.66,
     "weight_g": 750,
     "url": "https://tvojakava.sk/darcekove-balicky/2887-julietta-darcekovy-balicek-amerika-3-250-g-cerstvo-prazena-zrnkova-kava.html",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "COLOMBIA Supremo",
@@ -886,8 +986,8 @@
     "process": "Espresso - tradičné",
     "price": 10.5,
     "weight_g": 250,
-    "url": "https://www.jungleroastery.sk/colombia-supremo/",
-    "last_seen": "2026-07-01"
+    "url": "/colombia-supremo/",
+    "last_seen": "2026-07-02"
   },
   {
     "name": "RWANDA - Kigali",
@@ -896,8 +996,8 @@
     "process": "Filter",
     "price": 12.5,
     "weight_g": 251,
-    "url": "https://www.jungleroastery.sk/rwanda/",
-    "last_seen": "2026-07-01"
+    "url": "/rwanda/",
+    "last_seen": "2026-07-02"
   },
   {
     "name": "VENEZUELA - Rivero",
@@ -906,8 +1006,8 @@
     "process": "Espresso - moderné",
     "price": 13.5,
     "weight_g": 250,
-    "url": "https://www.jungleroastery.sk/venezuela/",
-    "last_seen": "2026-07-01"
+    "url": "/venezuela/",
+    "last_seen": "2026-07-02"
   },
   {
     "name": "HONDURAS - Café Organico",
@@ -916,78 +1016,78 @@
     "process": "Espresso - moderné",
     "price": 13.0,
     "weight_g": 250,
-    "url": "https://www.jungleroastery.sk/honduras/",
-    "last_seen": "2026-07-01"
+    "url": "/honduras/",
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Simple New Wave Espresso Blend",
     "roaster": "Simple Coffee",
     "origin": null,
-    "process": "Cinnamon",
+    "process": null,
     "price": 7.9,
     "weight_g": null,
     "url": "https://simplecoffee.sk/produkt/simple-new-wave-espresso-blend/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Colombia El Vergel | sugarcane decaf",
     "roaster": "Sweet Beans Coffee",
     "origin": "Colombia",
-    "process": "decaf",
+    "process": "sugarcane decaffeination",
     "price": 14.0,
     "weight_g": null,
     "url": "https://www.sweetbeans.coffee/produkt/colombia-el-vergel-sugarcane-decaf/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "SweetDrip x Colombia",
     "roaster": "Sweet Beans Coffee",
     "origin": "Colombia",
-    "process": "drip bag",
+    "process": null,
     "price": 12.0,
     "weight_g": null,
     "url": "https://www.sweetbeans.coffee/produkt/sweetdrip-x-bolivia/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "SweetDrip x Ethiopia",
     "roaster": "Sweet Beans Coffee",
     "origin": "Ethiopia",
-    "process": "drip bag",
+    "process": null,
     "price": 9.99,
     "weight_g": null,
     "url": "https://www.sweetbeans.coffee/produkt/sweetdrip-x-ethiopia/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "SweetDrip x Kenya",
     "roaster": "Sweet Beans Coffee",
     "origin": "Kenya",
-    "process": "drip bag",
+    "process": null,
     "price": 9.99,
     "weight_g": null,
     "url": "https://www.sweetbeans.coffee/produkt/sweetdrip-x-kenya/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Bio Coffee Pods | Funky Paradise",
     "roaster": "Sweet Beans Coffee",
     "origin": null,
-    "process": "nespresso pod",
+    "process": null,
     "price": 9.0,
     "weight_g": null,
     "url": "https://www.sweetbeans.coffee/produkt/bio-coffee-pods-funky-paradise/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Bio Coffee Pods | Ethiopia Mundayo",
     "roaster": "Sweet Beans Coffee",
     "origin": "Ethiopia",
-    "process": "nespresso pod",
+    "process": null,
     "price": 9.0,
     "weight_g": null,
     "url": "https://www.sweetbeans.coffee/produkt/bio-coffee-pods-ethiopia-beshasha/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Tanzania Geisha (filter)",
@@ -997,7 +1097,7 @@
     "price": 23.0,
     "weight_g": null,
     "url": "https://triplefivecoffee.com/product/tanzania-geisha-filter/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Kenya Orange Crush (filter)",
@@ -1007,97 +1107,7 @@
     "price": 20.0,
     "weight_g": null,
     "url": "https://triplefivecoffee.com/product/kenya-orange-crush-filter/",
-    "last_seen": "2026-07-01"
-  },
-  {
-    "name": "Costa Rica Tres Nubes SHB EP - Pražená výberová káva 100% Arabica",
-    "roaster": "Urban Coffee",
-    "origin": "Costa Rica",
-    "process": null,
-    "price": 11.0,
-    "weight_g": 250,
-    "url": "https://www.urbancoffee.sk/costa-rica-tres-nubes-prazena-vyberova-kava-100--arabica/",
-    "last_seen": "2026-07-01"
-  },
-  {
-    "name": "Mexico Topacio - Pražená výberová káva 100% Arabica",
-    "roaster": "Urban Coffee",
-    "origin": "Mexico",
-    "process": null,
-    "price": 12.0,
-    "weight_g": 250,
-    "url": "https://www.urbancoffee.sk/mexico-topacio-prazena-vyberova-kava-100--arabica/",
-    "last_seen": "2026-07-01"
-  },
-  {
-    "name": "Guatemala Los Volcanes",
-    "roaster": "Urban Coffee",
-    "origin": "Guatemala",
-    "process": null,
-    "price": 12.0,
-    "weight_g": 250,
-    "url": "https://www.urbancoffee.sk/guatemala-los-volcanes/",
-    "last_seen": "2026-07-01"
-  },
-  {
-    "name": "India Monsooned Malabar - Pražená káva 100% Arabica",
-    "roaster": "Urban Coffee",
-    "origin": "India",
-    "process": null,
-    "price": 12.0,
-    "weight_g": 250,
-    "url": "https://www.urbancoffee.sk/india-monsooned-malabar-prazena-kava-100--arabica/",
-    "last_seen": "2026-07-01"
-  },
-  {
-    "name": "Ethiopia Sidamo Gr. 1 - Pražená výberová káva 100% Arabica",
-    "roaster": "Urban Coffee",
-    "origin": "Ethiopia",
-    "process": null,
-    "price": 12.5,
-    "weight_g": 250,
-    "url": "https://www.urbancoffee.sk/ethiopia-sidamo-gr--1-prazena-vyberova-kava/",
-    "last_seen": "2026-07-01"
-  },
-  {
-    "name": "El Salvador Pacamara",
-    "roaster": "Urban Coffee",
-    "origin": "El Salvador",
-    "process": null,
-    "price": 9.0,
-    "weight_g": 250,
-    "url": "https://www.urbancoffee.sk/el-salvador-pacamara/",
-    "last_seen": "2026-07-01"
-  },
-  {
-    "name": "Honduras Guara Verde - Pražená káva 100% Arabica",
-    "roaster": "Urban Coffee",
-    "origin": "Honduras",
-    "process": null,
-    "price": 10.0,
-    "weight_g": 250,
-    "url": "https://www.urbancoffee.sk/honduras-guara-verde/",
-    "last_seen": "2026-07-01"
-  },
-  {
-    "name": "Kenya AB Rungeto Kiangoi",
-    "roaster": "Urban Coffee",
-    "origin": "Kenya",
-    "process": null,
-    "price": 12.0,
-    "weight_g": 250,
-    "url": "https://www.urbancoffee.sk/kenya-ab-rungeto-kiangoi/",
-    "last_seen": "2026-07-01"
-  },
-  {
-    "name": "Papua New Guinea Waghi",
-    "roaster": "Urban Coffee",
-    "origin": "Papua New Guinea",
-    "process": null,
-    "price": 12.0,
-    "weight_g": 250,
-    "url": "https://www.urbancoffee.sk/papua-new-guinea-waghi/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Peru Mestiza Cajamarca",
@@ -1107,16 +1117,96 @@
     "price": 9.0,
     "weight_g": 250,
     "url": "https://www.urbancoffee.sk/peru-mestiza-cajamarca/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Kenya AB Rungeto Kiangoi",
+    "roaster": "Urban Coffee",
+    "origin": "Kenya",
+    "process": null,
+    "price": 12.0,
+    "weight_g": 250,
+    "url": "https://www.urbancoffee.sk/kenya-ab-rungeto-kiangoi/",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "India Monsooned Malabar - Pražená káva 100% Arabica",
+    "roaster": "Urban Coffee",
+    "origin": "India",
+    "process": "Roasted",
+    "price": 12.0,
+    "weight_g": 250,
+    "url": "https://www.urbancoffee.sk/india-monsooned-malabar-prazena-kava-100--arabica/",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Mexico Topacio - Pražená výberová káva 100% Arabica",
+    "roaster": "Urban Coffee",
+    "origin": "Mexico",
+    "process": "Roasted",
+    "price": 12.0,
+    "weight_g": 250,
+    "url": "https://www.urbancoffee.sk/mexico-topacio-prazena-vyberova-kava-100--arabica/",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "El Salvador Pacamara",
+    "roaster": "Urban Coffee",
+    "origin": "El Salvador",
+    "process": null,
+    "price": 9.0,
+    "weight_g": 250,
+    "url": "https://www.urbancoffee.sk/el-salvador-pacamara/",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Costa Rica Tres Nubes SHB EP - Pražená výberová káva 100% Arabica",
+    "roaster": "Urban Coffee",
+    "origin": "Costa Rica",
+    "process": "Roasted",
+    "price": 11.0,
+    "weight_g": 250,
+    "url": "https://www.urbancoffee.sk/costa-rica-tres-nubes-prazena-vyberova-kava-100--arabica/",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Guatemala Los Volcanes",
+    "roaster": "Urban Coffee",
+    "origin": "Guatemala",
+    "process": null,
+    "price": 12.0,
+    "weight_g": 250,
+    "url": "https://www.urbancoffee.sk/guatemala-los-volcanes/",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Honduras Guara Verde - Pražená káva 100% Arabica",
+    "roaster": "Urban Coffee",
+    "origin": "Honduras",
+    "process": "Roasted",
+    "price": 10.0,
+    "weight_g": 250,
+    "url": "https://www.urbancoffee.sk/honduras-guara-verde/",
+    "last_seen": "2026-07-02"
+  },
+  {
+    "name": "Ethiopia Sidamo Gr. 1 - Pražená výberová káva 100% Arabica",
+    "roaster": "Urban Coffee",
+    "origin": "Ethiopia",
+    "process": "Roasted",
+    "price": 12.5,
+    "weight_g": 250,
+    "url": "https://www.urbancoffee.sk/ethiopia-sidamo-gr--1-prazena-vyberova-kava/",
+    "last_seen": "2026-07-02"
   },
   {
     "name": "Brasil Santos Mogiana SS FC 17/18 - Pražená výberová káva 100% Arabica",
     "roaster": "Urban Coffee",
-    "origin": "Brasil",
-    "process": null,
+    "origin": "Brazil",
+    "process": "Roasted",
     "price": 10.0,
     "weight_g": 250,
     "url": "https://www.urbancoffee.sk/brasil-santos-mogiana-ss-fc-17-18-prazena-vyberova-kava-100--arabica/",
-    "last_seen": "2026-07-01"
+    "last_seen": "2026-07-02"
   }
 ]

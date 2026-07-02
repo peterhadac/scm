@@ -35,6 +35,75 @@ def test_normalize_drops_entry_missing_required_field():
     assert scrape.normalize(entry, "2026-06-30") is None
 
 
+# ── URL safety / anti-injection ──────────────────────────────────────────────
+
+def test_safe_url_resolves_relative_against_roaster_base():
+    # Claude routinely returns relative hrefs; they must be resolved to an
+    # absolute URL on the roaster's own domain, not dropped.
+    assert (
+        scrape.safe_url("/produkty/kolumbia", "https://www.readyafter.sk/")
+        == "https://www.readyafter.sk/produkty/kolumbia"
+    )
+
+
+def test_safe_url_accepts_same_registrable_domain_subdomain():
+    assert (
+        scrape.safe_url("https://shop.readyafter.sk/x", "https://www.readyafter.sk/")
+        == "https://shop.readyafter.sk/x"
+    )
+
+
+def test_safe_url_rejects_javascript_scheme():
+    assert scrape.safe_url("javascript:alert(1)", "https://kavoholik.sk/") is None
+
+
+def test_safe_url_rejects_data_scheme():
+    assert scrape.safe_url("data:text/html,<script>alert(1)</script>", "https://kavoholik.sk/") is None
+
+
+def test_safe_url_rejects_offdomain_phishing_link():
+    # A poisoned page injecting an off-domain link (phishing pivot) is dropped.
+    assert scrape.safe_url("https://evil-phish.example/login", "https://kavoholik.sk/") is None
+
+
+def test_safe_url_rejects_empty_and_non_string():
+    assert scrape.safe_url("", "https://kavoholik.sk/") is None
+    assert scrape.safe_url(None, "https://kavoholik.sk/") is None
+
+
+def test_normalize_drops_offdomain_url_when_roaster_url_given():
+    entry = {
+        "name": "Phish Coffee",
+        "roaster": "Kavoholik",
+        "price": "12,90 €",
+        "url": "https://evil-phish.example/pay",
+    }
+    assert scrape.normalize(entry, "2026-06-30", "https://kavoholik.sk/") is None
+
+
+def test_normalize_absolutizes_relative_url():
+    entry = {
+        "name": "Relative Coffee",
+        "roaster": "Ready After",
+        "price": "12,90 €",
+        "url": "/produkty/x",
+    }
+    result = scrape.normalize(entry, "2026-06-30", "https://www.readyafter.sk/")
+    assert result["url"] == "https://www.readyafter.sk/produkty/x"
+
+
+def test_merge_drops_offdomain_entries_on_ok():
+    new_entries = [
+        {"name": "Good", "price": "10,00 €", "url": "/coffee/good"},
+        {"name": "Evil", "price": "10,00 €", "url": "https://evil.example/steal"},
+        {"name": "XSS", "price": "10,00 €", "url": "javascript:alert(1)"},
+    ]
+    merged = scrape.merge([], "Kavoholik", "ok", new_entries, "2026-06-30", "https://kavoholik.sk/")
+    assert len(merged) == 1
+    assert merged[0]["name"] == "Good"
+    assert merged[0]["url"] == "https://kavoholik.sk/coffee/good"
+
+
 def test_merge_keeps_existing_entries_on_failure():
     existing = [
         {

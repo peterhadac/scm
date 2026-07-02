@@ -4,6 +4,22 @@ import prodCoffees from '../../_data/coffees.json';
 
 const coffees = import.meta.env.DEV ? sampleCoffees : prodCoffees;
 
+// Scraped URLs are attacker-influenced data. Astro escapes text but does NOT
+// neutralise dangerous URL schemes in href attributes, so a poisoned page
+// yielding a `javascript:`/`data:` URL would run on click (DOM XSS). Allow only
+// http(s) absolute URLs and root-relative paths; everything else -> "#".
+function safeUrl(raw: string | null | undefined): string {
+  if (typeof raw !== 'string') return '#';
+  const s = raw.trim();
+  if (s.startsWith('/') && !s.startsWith('//')) return s; // root-relative, no scheme
+  try {
+    const u = new URL(s);
+    return u.protocol === 'http:' || u.protocol === 'https:' ? s : '#';
+  } catch {
+    return '#';
+  }
+}
+
 function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
   if (!p) return null;
   const l = p.toLowerCase();
@@ -64,7 +80,7 @@ function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
               data-price={c.price}
             >
               <td>
-                <a href={c.url} target="_blank" rel="noopener noreferrer" class="ct-link">
+                <a href={safeUrl(c.url)} target="_blank" rel="noopener noreferrer" class="ct-link">
                   {c.name}
                   <svg class="ct-ext-icon" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
                     <path d="M1.5 8.5L8.5 1.5M8.5 1.5H3.5M8.5 1.5V6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

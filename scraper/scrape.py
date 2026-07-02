@@ -3,6 +3,7 @@ import json
 import re
 from datetime import date
 from pathlib import Path
+from urllib.parse import urljoin, urlparse
 
 import httpx
 import yaml
@@ -131,9 +132,47 @@ def normalize_price(raw):
         return None
 
 
-def normalize(entry, today):
+def registrable_domain(host):
+    """Best-effort registrable domain (eTLD+1) for the roaster domains in scope.
+
+    All configured roasters use single-label public suffixes (.sk, .com, .eu,
+    .coffee), so the last two labels are the registrable domain. This is NOT a
+    full Public Suffix List implementation; multi-label suffixes (e.g. .co.uk)
+    would need one, but none are in use here.
+    """
+    host = (host or "").lower().strip(".")
+    labels = host.split(".")
+    return ".".join(labels[-2:]) if len(labels) >= 2 else host
+
+
+def safe_url(raw, roaster_url):
+    """Resolve a scraped URL against the roaster's base URL and return it only if
+    it is http(s) and on the same registrable domain as the roaster; otherwise
+    return None.
+
+    Defends against a poisoned/malicious roaster page (or prompt-injected model
+    output) that injects dangerous schemes (javascript:, data:) or off-domain
+    phishing links into coffees.json, which the site later renders as clickable
+    links. Relative hrefs (which Claude routinely returns) are resolved to
+    absolute URLs against the roaster base so legitimate links are preserved.
+    """
+    if not isinstance(raw, str) or not raw.strip():
+        return None
+    absolute = urljoin(roaster_url or "", raw.strip())
+    parsed = urlparse(absolute)
+    if parsed.scheme not in ("http", "https") or not parsed.hostname:
+        return None
+    if roaster_url:
+        roaster_host = urlparse(roaster_url).hostname
+        if registrable_domain(parsed.hostname) != registrable_domain(roaster_host):
+            return None
+    return absolute
+
+
+def normalize(entry, today, roaster_url=None):
     price = normalize_price(entry.get("price", ""))
-    if not entry.get("name") or not entry.get("roaster") or not entry.get("url") or price is None:
+    url = safe_url(entry.get("url"), roaster_url)
+    if not entry.get("name") or not entry.get("roaster") or url is None or price is None:
         return None
     return {
         "name": entry["name"],
@@ -142,17 +181,19 @@ def normalize(entry, today):
         "process": entry.get("process") or None,
         "price": price,
         "weight_g": entry.get("weight_g") or None,
-        "url": entry["url"],
+        "url": url,
         "last_seen": today,
     }
 
 
-def merge(existing, roaster_name, status, new_entries, today):
+def merge(existing, roaster_name, status, new_entries, today, roaster_url=None):
     others = [c for c in existing if c["roaster"] != roaster_name]
     if status != "ok":
         kept = [c for c in existing if c["roaster"] == roaster_name]
         return others + kept
-    normalized = [normalize({**e, "roaster": roaster_name}, today) for e in new_entries]
+    normalized = [
+        normalize({**e, "roaster": roaster_name}, today, roaster_url) for e in new_entries
+    ]
     return others + [n for n in normalized if n is not None]
 
 
@@ -177,7 +218,7 @@ def main():
         extracted = extract_coffees(client, name, cleaned) if cleaned is not None else None
         status = classify_status(html, cleaned, extracted)
         statuses[name] = status
-        existing = merge(existing, name, status, extracted or [], today)
+        existing = merge(existing, name, status, extracted or [], today, roaster.get("url"))
 
     COFFEES_PATH.parent.mkdir(parents=True, exist_ok=True)
     COFFEES_PATH.write_text(json.dumps(existing, indent=2, ensure_ascii=False) + "\n")

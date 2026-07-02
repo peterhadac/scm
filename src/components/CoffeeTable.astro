@@ -12,10 +12,71 @@ function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
   if (l.includes('med') || l.includes('honey')) return 'honey';
   return null;
 }
+
+// ── Build-time stats derived from the imported JSON ──────────────
+const total = coffees.length;
+const roasterCount = new Set(coffees.map((c) => c.roaster)).size;
+const cheapest = total ? Math.min(...coffees.map((c) => c.price)) : null;
+const lastUpdated = coffees.reduce(
+  (max, c) => (c.last_seen && c.last_seen > max ? c.last_seen : max),
+  '',
+);
+
+// Lowest €/100g across items that state a weight → "best value" highlight.
+const per100gValues = coffees
+  .filter((c) => c.weight_g)
+  .map((c) => (c.price / (c.weight_g as number)) * 100);
+const bestPer100g = per100gValues.length ? Math.min(...per100gValues) : null;
+
+const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 ---
 
 <div class="ct-wrap">
+  <!-- ── Stats / freshness header ─────────────────────────────── -->
+  <div class="ct-stats" role="group" aria-label="Catalogue summary">
+    <div class="ct-stat">
+      <span class="ct-stat-value">{total}</span>
+      <span class="ct-stat-label">coffees</span>
+    </div>
+    <div class="ct-stat">
+      <span class="ct-stat-value">{roasterCount}</span>
+      <span class="ct-stat-label">roasters</span>
+    </div>
+    {cheapest !== null && (
+      <div class="ct-stat">
+        <span class="ct-stat-value">{fmtEur(cheapest)}</span>
+        <span class="ct-stat-label">cheapest</span>
+      </div>
+    )}
+    {lastUpdated && (
+      <div class="ct-stat ct-stat--fresh">
+        <span class="ct-stat-value">
+          <span class="ct-fresh-dot" aria-hidden="true"></span>
+          <time datetime={lastUpdated}>{lastUpdated}</time>
+        </span>
+        <span class="ct-stat-label">data updated</span>
+      </div>
+    )}
+  </div>
+
   <div class="ct-toolbar">
+    <div class="ct-search-group">
+      <label class="ct-label" for="filter-search">Search</label>
+      <div class="ct-search-field">
+        <svg class="ct-search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <circle cx="6" cy="6" r="4.25" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M9.5 9.5L12.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input
+          id="filter-search"
+          type="search"
+          class="ct-search"
+          placeholder="Coffee or roaster…"
+          autocomplete="off"
+          aria-describedby="result-count"
+        />
+      </div>
+    </div>
     <div class="ct-filters">
       <div class="ct-filter-group">
         <label class="ct-label" for="filter-roaster">Roaster</label>
@@ -31,8 +92,11 @@ function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
       </div>
     </div>
     <div class="ct-actions">
-      <button id="sort-price" type="button" class="ct-sort-btn" data-dir="asc">
-        Price <span id="sort-icon" aria-hidden="true">↑</span>
+      <button id="clear-filters" type="button" class="ct-clear-btn" hidden>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+          <path d="M3 3L9 9M9 3L3 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Clear
       </button>
       <span id="result-count" class="ct-count" aria-live="polite"></span>
     </div>
@@ -44,24 +108,44 @@ function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
     <table id="coffee-table" class="ct-table">
       <thead>
         <tr>
-          <th>Coffee</th>
+          <th aria-sort="none">
+            <button type="button" class="ct-sort-th" data-sort="name">
+              Coffee <span class="ct-sort-ind" aria-hidden="true"></span>
+            </button>
+          </th>
           <th>Roaster</th>
           <th>Origin</th>
           <th>Process</th>
-          <th class="ct-num">Price</th>
-          <th class="ct-num ct-muted-h">Per 100g</th>
+          <th class="ct-num" aria-sort="none">
+            <button type="button" class="ct-sort-th ct-sort-th--num" data-sort="price">
+              Price <span class="ct-sort-ind" aria-hidden="true"></span>
+            </button>
+          </th>
+          <th class="ct-num ct-muted-h" aria-sort="none">
+            <button type="button" class="ct-sort-th ct-sort-th--num" data-sort="per100g">
+              Per 100g <span class="ct-sort-ind" aria-hidden="true"></span>
+            </button>
+          </th>
         </tr>
       </thead>
       <tbody>
         {coffees.map((c) => {
           const pType = processType(c.process ?? null);
-          const per100g = c.weight_g ? `€${(c.price / c.weight_g * 100).toFixed(2)}` : '—';
+          const per100gNum = c.weight_g ? (c.price / c.weight_g) * 100 : null;
+          const per100g = per100gNum !== null ? fmtEur(per100gNum) : '—';
+          const isBest =
+            per100gNum !== null &&
+            bestPer100g !== null &&
+            per100gNum <= bestPer100g + 0.001;
           return (
             <tr
+              data-name={c.name}
               data-roaster={c.roaster}
               data-origin={c.origin ?? ''}
               data-process={c.process ?? ''}
               data-price={c.price}
+              data-per100g={per100gNum !== null ? per100gNum.toFixed(4) : ''}
+              class={isBest ? 'ct-row--best' : undefined}
             >
               <td>
                 <a href={c.url} target="_blank" rel="noopener noreferrer" class="ct-link">
@@ -81,8 +165,11 @@ function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
                   : <span class="ct-muted">—</span>
                 }
               </td>
-              <td class="ct-num ct-price">€{c.price.toFixed(2)}</td>
-              <td class="ct-num ct-muted">{per100g}</td>
+              <td class="ct-num ct-price">{fmtEur(c.price)}</td>
+              <td class="ct-num ct-muted">
+                {per100g}
+                {isBest && <span class="ct-best" title="Lowest price per 100g">best value</span>}
+              </td>
             </tr>
           );
         })}
@@ -100,7 +187,9 @@ function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
 
   function populateSelect(id: string, attr: 'roaster' | 'origin' | 'process') {
     const select = document.getElementById(id) as HTMLSelectElement;
-    const values = [...new Set(rows.map(r => r.dataset[attr]).filter(Boolean))].sort() as string[];
+    const values = [...new Set(rows.map(r => r.dataset[attr]).filter(Boolean))].sort(
+      (a, b) => (a as string).localeCompare(b as string, 'sk'),
+    ) as string[];
     for (const value of values) {
       const opt = document.createElement('option');
       opt.value = value;
@@ -112,50 +201,133 @@ function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
   populateSelect('filter-origin', 'origin');
   populateSelect('filter-process', 'process');
 
-  const roasterSel = document.getElementById('filter-roaster') as HTMLSelectElement;
-  const originSel  = document.getElementById('filter-origin')  as HTMLSelectElement;
-  const processSel = document.getElementById('filter-process') as HTMLSelectElement;
-  const sortBtn    = document.getElementById('sort-price')     as HTMLButtonElement;
-  const sortIcon   = document.getElementById('sort-icon')      as HTMLElement;
+  const searchInput = document.getElementById('filter-search')  as HTMLInputElement;
+  const roasterSel  = document.getElementById('filter-roaster') as HTMLSelectElement;
+  const originSel   = document.getElementById('filter-origin')  as HTMLSelectElement;
+  const processSel  = document.getElementById('filter-process') as HTMLSelectElement;
+  const clearBtn    = document.getElementById('clear-filters')  as HTMLButtonElement;
+  const sortBtns    = Array.from(
+    table.querySelectorAll<HTMLButtonElement>('.ct-sort-th'),
+  );
+
+  let searchTerm = '';
+
+  function filtersActive() {
+    return !!(searchTerm || roasterSel.value || originSel.value || processSel.value);
+  }
 
   function applyFilters() {
     const roaster = roasterSel.value;
     const origin  = originSel.value;
     const process = processSel.value;
+    const q = searchTerm;
     let count = 0;
     for (const row of rows) {
+      const haystack =
+        (row.dataset.name || '').toLowerCase() + ' ' +
+        (row.dataset.roaster || '').toLowerCase();
       const match =
-        (!roaster || row.dataset.roaster === roaster) &&
-        (!origin  || row.dataset.origin  === origin)  &&
+        (!q       || haystack.includes(q))                &&
+        (!roaster || row.dataset.roaster === roaster)     &&
+        (!origin  || row.dataset.origin  === origin)      &&
         (!process || row.dataset.process === process);
       row.hidden = !match;
       if (match) count++;
     }
     emptyState.hidden = count > 0;
     resultCount.textContent = `${count} coffee${count !== 1 ? 's' : ''}`;
+    clearBtn.hidden = !filtersActive();
+  }
+
+  // ── Sorting: click a column header to sort, click again to flip ──
+  type SortKey = 'name' | 'price' | 'per100g';
+  let sortState: { key: SortKey; dir: 'asc' | 'desc' } | null = null;
+
+  function valueFor(row: HTMLTableRowElement, key: SortKey): number | string {
+    if (key === 'name') return (row.dataset.name || '').toLowerCase();
+    if (key === 'price') return parseFloat(row.dataset.price || '0');
+    // per100g: missing weight sorts to the bottom regardless of direction
+    const raw = row.dataset.per100g;
+    return raw ? parseFloat(raw) : Number.POSITIVE_INFINITY;
   }
 
   function applySort() {
-    const asc = sortBtn.dataset.dir === 'asc';
+    if (!sortState) return;
+    const { key, dir } = sortState;
+    const factor = dir === 'asc' ? 1 : -1;
     const sorted = [...rows].sort((a, b) => {
-      const diff = parseFloat(a.dataset.price!) - parseFloat(b.dataset.price!);
-      return asc ? diff : -diff;
+      const va = valueFor(a, key);
+      const vb = valueFor(b, key);
+      // Keep rows without a per-100g value pinned to the bottom.
+      if (va === Number.POSITIVE_INFINITY && vb !== Number.POSITIVE_INFINITY) return 1;
+      if (vb === Number.POSITIVE_INFINITY && va !== Number.POSITIVE_INFINITY) return -1;
+      let diff: number;
+      if (typeof va === 'string' || typeof vb === 'string') {
+        diff = String(va).localeCompare(String(vb), 'sk');
+      } else {
+        diff = va - vb;
+      }
+      return diff * factor;
     });
     for (const row of sorted) tbody.appendChild(row);
   }
+
+  function updateSortUI() {
+    for (const btn of sortBtns) {
+      const th = btn.closest('th')!;
+      const ind = btn.querySelector<HTMLElement>('.ct-sort-ind')!;
+      if (sortState && btn.dataset.sort === sortState.key) {
+        btn.classList.add('ct-sort-th--active');
+        th.setAttribute('aria-sort', sortState.dir === 'asc' ? 'ascending' : 'descending');
+        ind.textContent = sortState.dir === 'asc' ? '↑' : '↓';
+      } else {
+        btn.classList.remove('ct-sort-th--active');
+        th.setAttribute('aria-sort', 'none');
+        ind.textContent = '';
+      }
+    }
+  }
+
+  for (const btn of sortBtns) {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.sort as SortKey;
+      if (sortState && sortState.key === key) {
+        sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortState = { key, dir: 'asc' };
+      }
+      updateSortUI();
+      applySort();
+    });
+  }
+
+  // Debounced text search.
+  let searchTimer: ReturnType<typeof setTimeout>;
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      searchTerm = searchInput.value.trim().toLowerCase();
+      applyFilters();
+    }, 150);
+  });
 
   roasterSel.addEventListener('change', applyFilters);
   originSel.addEventListener('change',  applyFilters);
   processSel.addEventListener('change', applyFilters);
 
-  sortBtn.addEventListener('click', () => {
-    const wasAsc = sortBtn.dataset.dir === 'asc';
-    sortBtn.dataset.dir = wasAsc ? 'desc' : 'asc';
-    sortIcon.textContent = wasAsc ? '↓' : '↑';
-    sortBtn.classList.toggle('ct-sort-btn--active', !wasAsc);
-    applySort();
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    searchTerm = '';
+    roasterSel.value = '';
+    originSel.value  = '';
+    processSel.value = '';
+    applyFilters();
+    searchInput.focus();
   });
 
+  // Default sort: cheapest first, matching the previous price-asc behaviour.
+  sortState = { key: 'price', dir: 'asc' };
+  updateSortUI();
   applyFilters();
   applySort();
 </script>
@@ -168,6 +340,58 @@ function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
     margin-top: 1.5rem;
   }
 
+  /* ── Stats / freshness header ─────────────────────────────── */
+  .ct-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    padding: 1rem 1.25rem;
+    background: var(--md-sys-color-surface-container-low);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-large);
+  }
+
+  .ct-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .ct-stat-value {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--md-sys-typescale-title-medium-size, 1.05rem);
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ct-stat-label {
+    font-size: var(--md-sys-typescale-label-small-size);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--md-sys-color-outline);
+  }
+
+  .ct-stat--fresh {
+    margin-left: auto;
+    text-align: right;
+  }
+
+  .ct-stat--fresh .ct-stat-value,
+  .ct-stat--fresh .ct-stat-label {
+    justify-content: flex-end;
+  }
+
+  .ct-fresh-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--md-sys-color-secondary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--md-sys-color-secondary) 22%, transparent);
+  }
+
   /* ── Toolbar ──────────────────────────────────────────────── */
   .ct-toolbar {
     display: flex;
@@ -178,6 +402,51 @@ function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
     background: var(--md-sys-color-surface-container);
     border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--md-sys-shape-corner-large);
+  }
+
+  .ct-search-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .ct-search-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .ct-search-icon {
+    position: absolute;
+    left: 0.65rem;
+    color: var(--md-sys-color-outline);
+    pointer-events: none;
+  }
+
+  .ct-search {
+    padding: 0.35rem 0.7rem 0.35rem 2rem;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-small);
+    background: var(--md-sys-color-surface-container-high);
+    color: var(--md-sys-color-on-surface);
+    font-size: var(--md-sys-typescale-body-medium-size);
+    min-width: 13rem;
+    transition:
+      border-color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard),
+      background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+  }
+
+  .ct-search::placeholder { color: var(--md-sys-color-outline); }
+
+  .ct-search:hover {
+    border-color: var(--md-sys-color-outline);
+    background: var(--md-sys-color-surface-container-highest);
+  }
+
+  .ct-search:focus-visible {
+    outline: none;
+    box-shadow: var(--md3-focus-ring);
+    border-color: var(--md-sys-color-primary);
   }
 
   .ct-filters {
@@ -233,37 +502,26 @@ function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
     margin-left: auto;
   }
 
-  /* MD3 Outlined Button */
-  .ct-sort-btn {
+  /* MD3 Text Button */
+  .ct-clear-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    padding: 0.35rem 1rem;
-    border: 1px solid var(--md-sys-color-outline);
+    padding: 0.35rem 0.85rem;
+    border: none;
     border-radius: var(--md-sys-shape-corner-full);
     background: transparent;
     color: var(--md-sys-color-primary);
     font-size: var(--md-sys-typescale-label-large-size);
     font-weight: var(--md-sys-typescale-label-large-weight);
     cursor: pointer;
-    transition:
-      background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard),
-      border-color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+    transition: background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
     white-space: nowrap;
   }
 
-  .ct-sort-btn:hover {
-    background: var(--md3-state-hover);
-    border-color: var(--md-sys-color-primary);
-  }
+  .ct-clear-btn:hover { background: var(--md3-state-hover, color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent)); }
 
-  .ct-sort-btn--active {
-    background: var(--md-sys-color-primary-container);
-    border-color: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary-container);
-  }
-
-  .ct-sort-btn:focus-visible {
+  .ct-clear-btn:focus-visible {
     outline: none;
     box-shadow: var(--md3-focus-ring);
   }
@@ -309,6 +567,41 @@ function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
     white-space: nowrap;
   }
 
+  /* Sortable header buttons */
+  .ct-sort-th {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    color: inherit;
+    cursor: pointer;
+    transition: color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+  }
+
+  .ct-sort-th--num { flex-direction: row-reverse; }
+
+  .ct-sort-th:hover { color: var(--md-sys-color-on-surface); }
+
+  .ct-sort-th--active { color: var(--md-sys-color-primary); }
+
+  .ct-sort-th:focus-visible {
+    outline: none;
+    box-shadow: var(--md3-focus-ring);
+    border-radius: var(--md-sys-shape-corner-extra-small, 4px);
+  }
+
+  .ct-sort-ind {
+    font-size: 0.85em;
+    min-width: 0.7em;
+    line-height: 1;
+  }
+
   .ct-table tbody tr {
     border-bottom: 1px solid var(--md-sys-color-outline-variant);
     transition: background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
@@ -335,6 +628,29 @@ function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
   .ct-muted   { color: var(--md-sys-color-outline); }
   .ct-muted-h { color: var(--md-sys-color-outline); }
   .ct-price   { font-weight: 600; color: var(--md-sys-color-on-surface); }
+
+  /* ── Best value highlight ─────────────────────────────────── */
+  .ct-row--best {
+    background: color-mix(in srgb, var(--md-sys-color-secondary-container) 45%, transparent);
+  }
+
+  .ct-row--best:hover {
+    background: color-mix(in srgb, var(--md-sys-color-secondary-container) 60%, transparent) !important;
+  }
+
+  .ct-best {
+    display: inline-block;
+    margin-left: 0.4rem;
+    padding: 0.05em 0.5em;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    font-size: var(--md-sys-typescale-label-small-size);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
 
   /* ── Coffee link ──────────────────────────────────────────── */
   .ct-link {
@@ -421,9 +737,13 @@ function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
       flex-direction: column;
       align-items: stretch;
     }
+    .ct-search,
+    .ct-search-field { width: 100%; }
+    .ct-search { min-width: 0; }
     .ct-actions {
       margin-left: 0;
       justify-content: space-between;
     }
+    .ct-stat--fresh { margin-left: 0; }
   }
 </style>

@@ -9,7 +9,10 @@ export default defineConfig({
     starlight({
       title: 'Slovak Coffee Map',
       plugins: [md3Theme({ seed: '#FF6037', variant: 'tonalSpot' })],
-      sidebar: [{ label: 'Coffees', link: '/coffees/' }],
+      sidebar: [
+        { label: 'Coffees', link: '/coffees/' },
+        { label: 'Brew Methods', items: [{ label: 'V60', link: '/brew-methods/v60/' }] },
+      ],
       customCss: ['./src/styles/custom.css'],
       social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/peterhadac/scm' }],
     }),

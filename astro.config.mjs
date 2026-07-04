@@ -11,7 +11,13 @@ export default defineConfig({
       plugins: [md3Theme({ seed: '#FF6037', variant: 'tonalSpot' })],
       sidebar: [
         { label: 'Coffees', link: '/coffees/' },
-        { label: 'Brew Methods', items: [{ label: 'V60', link: '/brew-methods/v60/' }] },
+        {
+          label: 'Brew Methods',
+          items: [
+            { label: 'V60', link: '/brew-methods/v60/' },
+            { label: 'French Press', link: '/brew-methods/french-press/' },
+          ],
+        },
       ],
       customCss: ['./src/styles/custom.css'],
       social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/peterhadac/scm' }],

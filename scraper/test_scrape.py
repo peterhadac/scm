@@ -262,8 +262,31 @@ def test_normalize_fills_missing_optional_fields_with_null():
     result = scrape.normalize(entry, "2026-06-30")
     assert result["origin"] is None
     assert result["process"] is None
+    assert result["roast_type"] is None
     assert result["weight_g"] is None
     assert result["last_seen"] == "2026-06-30"
+
+
+def test_normalize_roast_type_from_free_text():
+    entry = {
+        "name": "Ethiopia Yirgacheffe",
+        "roaster": "Kaffa Roastery",
+        "price": "12,90 €",
+        "url": "https://kaffaroastery.sk/coffees/x",
+        "roast_type": "Espresso",
+    }
+    assert scrape.normalize(entry, "2026-06-30")["roast_type"] == "espresso"
+
+
+def test_normalize_roast_type_filter_slovak_text():
+    entry = {
+        "name": "Kolumbia Huila",
+        "roaster": "Ready After",
+        "price": "14,50 €",
+        "url": "https://www.readyafter.sk/produkty/kolumbia-huila",
+        "roast_type": "Prekvapkávaná",
+    }
+    assert scrape.normalize(entry, "2026-06-30")["roast_type"] == "filter"
 
 
 def test_normalize_drops_entry_missing_required_field():

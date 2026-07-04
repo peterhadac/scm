@@ -10,7 +10,14 @@ export default defineConfig({
       title: 'Slovak Coffee Map',
       plugins: [md3Theme({ seed: '#FF6037', variant: 'tonalSpot' })],
       sidebar: [
-        { label: 'Coffees', link: '/coffees/' },
+        {
+          label: 'Coffees',
+          items: [
+            { label: 'All', link: '/coffees/' },
+            { label: 'Filter coffees', link: '/coffees/filter/' },
+            { label: 'Espresso coffees', link: '/coffees/espresso/' },
+          ]
+        },
         {
           label: 'Brew Methods',
           items: [

@@ -101,6 +101,14 @@ EXTRACT_TOOL = {
                         "name": {"type": "string"},
                         "origin": {"type": ["string", "null"]},
                         "process": {"type": ["string", "null"]},
+                        "roast_type": {
+                            "type": ["string", "null"],
+                            "description": (
+                                "How the coffee is roasted for brewing, if the page states it: "
+                                "'Filter' (drip/filter roast) or 'Espresso'. Raw text as shown, "
+                                "null if not stated."
+                            ),
+                        },
                         "price": {
                             "type": "string",
                             "description": "Raw price as shown on the page, e.g. '12,90 €'",
@@ -297,6 +305,23 @@ def normalize_price(raw):
         return None
 
 
+def normalize_roast_type(raw):
+    """Bucket free-text roast info into 'filter' / 'espresso' / None.
+
+    Mirrors normalize_price/parse_weight: the model's tool schema isn't
+    strict, so raw text (Slovak or English) needs coercing into the two
+    values the filter/espresso submenu pages compare against.
+    """
+    if not raw:
+        return None
+    lowered = raw.strip().lower()
+    if "espresso" in lowered:
+        return "espresso"
+    if "filter" in lowered or "prekvapk" in lowered or "filtrovan" in lowered:
+        return "filter"
+    return None
+
+
 def parse_weight(text):
     """Extract a package weight in grams from free text (usually the product name).
 
@@ -369,6 +394,7 @@ def normalize(entry, today):
         "roaster": entry["roaster"],
         "origin": entry.get("origin") or None,
         "process": entry.get("process") or None,
+        "roast_type": normalize_roast_type(entry.get("roast_type")),
         "price": price,
         "weight_g": weight_g or None,
         "url": entry["url"],

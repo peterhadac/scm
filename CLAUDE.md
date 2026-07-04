@@ -34,6 +34,7 @@ Each entry in `_data/coffees.json`:
   "roaster": "Kaffa Roastery",
   "origin": "Ethiopia",
   "process": "Washed",
+  "roast_type": "filter",
   "price": 12.90,
   "weight_g": 250,
   "url": "https://kaffaroastery.sk/...",
@@ -42,7 +43,8 @@ Each entry in `_data/coffees.json`:
 ```
 
 - **Required**: `name`, `roaster`, `price`, `url`. Drop any extracted entry missing these.
-- **Optional / nullable**: `origin`, `process`, `weight_g` — set `null` when the page doesn't state them. Don't guess.
+- **Optional / nullable**: `origin`, `process`, `weight_g`, `roast_type` — set `null` when the page doesn't state them. Don't guess.
+- `roast_type` is `"filter"` | `"espresso"` | `null`, normalized from free text (see `normalize_roast_type` in `scrape.py`). Drives the Filter/Espresso submenu pages (`src/content/docs/coffees/filter.mdx`, `espresso.mdx`) — a coffee with `roast_type: null` shows only on the "All" page.
 - `price` is **EUR**, stored as a JSON number with a `.` decimal. Slovak sites display `12,90 €` — normalize comma→dot and strip the currency symbol during extraction.
 - `last_seen` = date of the last **successful** scrape that included this item (`YYYY-MM-DD`). It stops advancing while the roaster is `failed`/`needs_js`, so a stale `last_seen` flags a roaster that's been unreachable.
 

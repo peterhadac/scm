@@ -2,7 +2,19 @@
 import sampleCoffees from '../../_data/coffees.sample.json';
 import prodCoffees from '../../_data/coffees.json';
 
-const coffees = import.meta.env.DEV ? sampleCoffees : prodCoffees;
+interface Props {
+  // When set, page is locked to one roast profile: the Roast dropdown is
+  // hidden and only matching coffees are shown (used by the filter/espresso
+  // submenu pages). Omit to show every coffee with a Roast filter.
+  roastType?: 'filter' | 'espresso';
+}
+
+const { roastType } = Astro.props;
+
+const allCoffees = import.meta.env.DEV ? sampleCoffees : prodCoffees;
+const coffees = roastType
+  ? allCoffees.filter((c) => c.roast_type === roastType)
+  : allCoffees;
 
 function processType(p: string | null): 'washed' | 'natural' | 'honey' | null {
   if (!p) return null;
@@ -90,6 +102,16 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
         <label class="ct-label" for="filter-process">Process</label>
         <select id="filter-process" class="ct-select"><option value="">All</option></select>
       </div>
+      {!roastType && (
+        <div class="ct-filter-group">
+          <label class="ct-label" for="filter-roast">Roast</label>
+          <select id="filter-roast" class="ct-select">
+            <option value="">All</option>
+            <option value="filter">Filter</option>
+            <option value="espresso">Espresso</option>
+          </select>
+        </div>
+      )}
     </div>
     <div class="ct-actions">
       <button id="clear-filters" type="button" class="ct-clear-btn" hidden>
@@ -100,6 +122,16 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
       </button>
       <span id="result-count" class="ct-count" aria-live="polite"></span>
     </div>
+  </div>
+
+  <div class="ct-legend" aria-label="Process colour key">
+    <span class="ct-legend-label">Process:</span>
+    <span class="ct-badge ct-badge--washed">Washed</span>
+    <span class="ct-badge ct-badge--honey">Honey</span>
+    <span class="ct-badge ct-badge--natural">Natural</span>
+    <span class="ct-legend-sep" aria-hidden="true">·</span>
+    <span class="ct-best" title="Lowest price per 100g">best value</span>
+    <span class="ct-legend-desc">= lowest €/100g</span>
   </div>
 
   <p id="empty-state" hidden class="ct-empty">No coffees match the selected filters.</p>
@@ -143,6 +175,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               data-roaster={c.roaster}
               data-origin={c.origin ?? ''}
               data-process={c.process ?? ''}
+              data-roast={c.roast_type ?? ''}
               data-price={c.price}
               data-per100g={per100gNum !== null ? per100gNum.toFixed(4) : ''}
               class={isBest ? 'ct-row--best' : undefined}
@@ -185,12 +218,14 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   const emptyState  = document.getElementById('empty-state')!;
   const resultCount = document.getElementById('result-count')!;
 
-  function populateSelect(id: string, attr: 'roaster' | 'origin' | 'process') {
-    const select = document.getElementById(id) as HTMLSelectElement;
+  function populateSelect(id: string, attr: 'roaster' | 'origin' | 'process' | 'roast') {
+    const select = document.getElementById(id) as HTMLSelectElement | null;
+    if (!select) return;
     const values = [...new Set(rows.map(r => r.dataset[attr]).filter(Boolean))].sort(
       (a, b) => (a as string).localeCompare(b as string, 'sk'),
     ) as string[];
     for (const value of values) {
+      if (select.querySelector(`option[value="${value}"]`)) continue;
       const opt = document.createElement('option');
       opt.value = value;
       opt.textContent = value;
@@ -205,6 +240,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   const roasterSel  = document.getElementById('filter-roaster') as HTMLSelectElement;
   const originSel   = document.getElementById('filter-origin')  as HTMLSelectElement;
   const processSel  = document.getElementById('filter-process') as HTMLSelectElement;
+  const roastSel    = document.getElementById('filter-roast')   as HTMLSelectElement | null;
   const clearBtn    = document.getElementById('clear-filters')  as HTMLButtonElement;
   const sortBtns    = Array.from(
     table.querySelectorAll<HTMLButtonElement>('.ct-sort-th'),
@@ -213,13 +249,14 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   let searchTerm = '';
 
   function filtersActive() {
-    return !!(searchTerm || roasterSel.value || originSel.value || processSel.value);
+    return !!(searchTerm || roasterSel.value || originSel.value || processSel.value || roastSel?.value);
   }
 
   function applyFilters() {
     const roaster = roasterSel.value;
     const origin  = originSel.value;
     const process = processSel.value;
+    const roast   = roastSel?.value ?? '';
     const q = searchTerm;
     let count = 0;
     for (const row of rows) {
@@ -230,7 +267,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
         (!q       || haystack.includes(q))                &&
         (!roaster || row.dataset.roaster === roaster)     &&
         (!origin  || row.dataset.origin  === origin)      &&
-        (!process || row.dataset.process === process);
+        (!process || row.dataset.process === process)     &&
+        (!roast   || row.dataset.roast   === roast);
       row.hidden = !match;
       if (match) count++;
     }
@@ -314,6 +352,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   roasterSel.addEventListener('change', applyFilters);
   originSel.addEventListener('change',  applyFilters);
   processSel.addEventListener('change', applyFilters);
+  roastSel?.addEventListener('change',  applyFilters);
 
   clearBtn.addEventListener('click', () => {
     searchInput.value = '';
@@ -321,6 +360,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     roasterSel.value = '';
     originSel.value  = '';
     processSel.value = '';
+    if (roastSel) roastSel.value = '';
     applyFilters();
     searchInput.focus();
   });
@@ -344,25 +384,32 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   .ct-stats {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem 2rem;
-    padding: 1rem 1.25rem;
-    background: var(--md-sys-color-surface-container-low);
+    gap: 0;
+    background: var(--md-sys-color-surface-container-lowest);
     border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--md-sys-shape-corner-large);
+    overflow: hidden;
+    border-top: 3px solid var(--md-sys-color-primary);
   }
 
   .ct-stat {
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
+    gap: 0.15rem;
+    padding: 0.9rem 1.5rem;
+    border-right: 1px solid var(--md-sys-color-outline-variant);
   }
+
+  .ct-stat:last-child { border-right: none; }
 
   .ct-stat-value {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: var(--md-sys-typescale-title-medium-size, 1.05rem);
-    font-weight: 600;
+    font-family: var(--font-serif);
+    font-size: clamp(1.3rem, 2.5vw, 1.6rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
     color: var(--md-sys-color-on-surface);
     font-variant-numeric: tabular-nums;
   }
@@ -389,7 +436,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     height: 0.5rem;
     border-radius: 50%;
     background: var(--md-sys-color-secondary);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--md-sys-color-secondary) 22%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--md-sys-color-secondary) 25%, transparent);
   }
 
   /* ── Toolbar ──────────────────────────────────────────────── */
@@ -401,6 +448,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     padding: 1rem 1.25rem;
     background: var(--md-sys-color-surface-container);
     border: 1px solid var(--md-sys-color-outline-variant);
+    border-left: 3px solid var(--md-sys-color-primary);
     border-radius: var(--md-sys-shape-corner-large);
   }
 
@@ -463,6 +511,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
 
   .ct-label {
+    font-family: var(--font-mono);
     font-size: var(--md-sys-typescale-label-small-size);
     font-weight: var(--md-sys-typescale-label-small-weight);
     letter-spacing: 0.07em;
@@ -527,6 +576,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
 
   .ct-count {
+    font-family: var(--font-mono);
     font-size: var(--md-sys-typescale-label-medium-size);
     color: var(--md-sys-color-outline);
     white-space: nowrap;
@@ -555,15 +605,16 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
 
   .ct-table thead th {
-    padding: 0.7rem 1rem;
-    background: var(--md-sys-color-surface-container);
+    padding: 0.65rem 1rem;
+    background: var(--md-sys-color-surface-variant);
+    font-family: var(--font-mono);
     font-size: var(--md-sys-typescale-label-small-size);
     font-weight: var(--md-sys-typescale-label-small-weight);
     letter-spacing: 0.07em;
     text-transform: uppercase;
     color: var(--md-sys-color-outline);
     text-align: left;
-    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    border-bottom: 2px solid var(--md-sys-color-outline-variant);
     white-space: nowrap;
   }
 
@@ -623,6 +674,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     text-align: right;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
   }
 
   .ct-muted   { color: var(--md-sys-color-outline); }
@@ -631,11 +684,16 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   /* ── Best value highlight ─────────────────────────────────── */
   .ct-row--best {
-    background: color-mix(in srgb, var(--md-sys-color-secondary-container) 45%, transparent);
+    background: color-mix(in srgb, var(--md-sys-color-secondary-container) 28%, transparent);
+  }
+
+  .ct-row--best td:first-child {
+    border-left: 3px solid var(--md-sys-color-secondary);
+    padding-left: calc(1rem - 2px);
   }
 
   .ct-row--best:hover {
-    background: color-mix(in srgb, var(--md-sys-color-secondary-container) 60%, transparent) !important;
+    background: color-mix(in srgb, var(--md-sys-color-secondary-container) 45%, transparent) !important;
   }
 
   .ct-best {
@@ -643,8 +701,9 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     margin-left: 0.4rem;
     padding: 0.05em 0.5em;
     border-radius: var(--md-sys-shape-corner-full);
-    background: var(--md-sys-color-secondary-container);
-    color: var(--md-sys-color-on-secondary-container);
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    font-family: var(--font-mono);
     font-size: var(--md-sys-typescale-label-small-size);
     font-weight: 600;
     letter-spacing: 0.02em;
@@ -685,6 +744,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     align-items: center;
     padding: 0.18em 0.65em;
     border-radius: var(--md-sys-shape-corner-full);
+    font-family: var(--font-mono);
     font-size: var(--md-sys-typescale-label-small-size);
     font-weight: var(--md-sys-typescale-label-small-weight);
     letter-spacing: 0.02em;
@@ -692,25 +752,25 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     border: 1px solid transparent;
   }
 
-  /* washed → primary role */
+  /* washed → secondary role (Aqua Mist — clean water) */
   .ct-badge--washed {
-    background: var(--md-sys-color-primary-container);
-    color: var(--md-sys-color-on-primary-container);
-    border-color: color-mix(in srgb, var(--md-sys-color-primary) 32%, transparent);
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    border-color: color-mix(in srgb, var(--md-sys-color-secondary) 32%, transparent);
   }
 
-  /* natural → tertiary role */
+  /* natural → tertiary role (Garnet — earthy / dry) */
   .ct-badge--natural {
     background: var(--md-sys-color-tertiary-container);
     color: var(--md-sys-color-on-tertiary-container);
     border-color: color-mix(in srgb, var(--md-sys-color-tertiary) 32%, transparent);
   }
 
-  /* honey → secondary role */
+  /* honey → primary role (Toxic Orange — warm / amber) */
   .ct-badge--honey {
-    background: var(--md-sys-color-secondary-container);
-    color: var(--md-sys-color-on-secondary-container);
-    border-color: color-mix(in srgb, var(--md-sys-color-secondary) 32%, transparent);
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+    border-color: color-mix(in srgb, var(--md-sys-color-primary) 32%, transparent);
   }
 
   .ct-badge--other {
@@ -718,6 +778,31 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     color: var(--md-sys-color-on-surface-variant);
     border-color: var(--md-sys-color-outline-variant);
   }
+
+  /* ── Process legend ──────────────────────────────────────── */
+  .ct-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem 0.6rem;
+    font-size: var(--md-sys-typescale-label-small-size);
+    color: var(--md-sys-color-outline);
+  }
+
+  .ct-legend-label {
+    font-family: var(--font-mono);
+    font-weight: var(--md-sys-typescale-label-small-weight);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-right: 0.2rem;
+  }
+
+  .ct-legend-sep {
+    color: var(--md-sys-color-outline-variant);
+    font-size: 1.1em;
+  }
+
+  .ct-legend-desc { color: var(--md-sys-color-outline); }
 
   /* ── Empty state ──────────────────────────────────────────── */
   .ct-empty {
@@ -733,6 +818,21 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   /* ── Responsive ───────────────────────────────────────────── */
   @media (max-width: 640px) {
+    .ct-stats {
+      border-top-width: 3px;
+    }
+    .ct-stat {
+      flex: 1 1 45%;
+      border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    }
+    .ct-stat--fresh {
+      margin-left: 0;
+      text-align: left;
+    }
+    .ct-stat--fresh .ct-stat-value,
+    .ct-stat--fresh .ct-stat-label {
+      justify-content: flex-start;
+    }
     .ct-toolbar {
       flex-direction: column;
       align-items: stretch;
@@ -744,6 +844,5 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
       margin-left: 0;
       justify-content: space-between;
     }
-    .ct-stat--fresh { margin-left: 0; }
   }
 </style>

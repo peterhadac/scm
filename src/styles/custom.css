@@ -4,112 +4,117 @@
    Aqua Mist     #A0C9CB   Toxic Orange #FF6037   Garnet      #733635
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* ── Typography (see brand-spec.md) ──────────────────────────────────────── */
+:root {
+  --font-serif: 'Iowan Old Style', 'Charter', Georgia, serif;
+  --font-mono:  'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+}
+
+/* Nav brand + page titles + stat numbers → serif, per brand-spec Typography */
+.site-title,
+h1#_top,
+.hero h1 {
+  font-family: var(--font-serif);
+}
+
 /* ── Light tokens ─────────────────────────────────────────────────────────── */
+/* !important: the md3 plugin injects its own seed-derived tokens as an
+   unlayered inline <style>, which otherwise outranks these on some routes.
+   See the hero .action rules below for the same established pattern. */
 :root {
   /* Secondary → Aqua Mist tonal family (washed = clean / water) */
-  --md-sys-color-secondary:                 #386667;
-  --md-sys-color-on-secondary:              #ffffff;
-  --md-sys-color-secondary-container:       #bde9eb;
-  --md-sys-color-on-secondary-container:    #001f21;
+  --md-sys-color-secondary:                 #386667 !important;
+  --md-sys-color-on-secondary:              #ffffff !important;
+  --md-sys-color-secondary-container:       #bde9eb !important;
+  --md-sys-color-on-secondary-container:    #001f21 !important;
 
   /* Tertiary → Garnet tonal family (natural = earthy / fermented) */
-  --md-sys-color-tertiary:                  #8b4040;
-  --md-sys-color-on-tertiary:               #ffffff;
-  --md-sys-color-tertiary-container:        #ffdad9;
-  --md-sys-color-on-tertiary-container:     #410009;
+  --md-sys-color-tertiary:                  #8b4040 !important;
+  --md-sys-color-on-tertiary:               #ffffff !important;
+  --md-sys-color-tertiary-container:        #ffdad9 !important;
+  --md-sys-color-on-tertiary-container:     #410009 !important;
 
   /* Surfaces → Morning Snow / Amazon Mist */
-  --md-sys-color-background:                #f5f4ed;
-  --md-sys-color-on-background:             #1c1b17;
-  --md-sys-color-surface:                   #f5f4ed;
-  --md-sys-color-on-surface:                #1c1b17;
-  --md-sys-color-surface-variant:           #ececdc;
-  --md-sys-color-on-surface-variant:        #4a4938;
-  --md-sys-color-outline:                   #7a7869;
-  --md-sys-color-outline-variant:           #cccbb9;
-  --md-sys-color-surface-container-lowest:  #ffffff;
-  --md-sys-color-surface-container-low:     #f0efe8;
-  --md-sys-color-surface-container:         #eaeae3;
-  --md-sys-color-surface-container-high:    #e4e4dd;
-  --md-sys-color-surface-container-highest: #dfdfd8;
+  --md-sys-color-background:                #f5f4ed !important;
+  --md-sys-color-on-background:             #1c1b17 !important;
+  --md-sys-color-surface:                   #f5f4ed !important;
+  --md-sys-color-on-surface:                #1c1b17 !important;
+  --md-sys-color-surface-variant:           #ececdc !important;
+  --md-sys-color-on-surface-variant:        #4a4938 !important;
+  --md-sys-color-outline:                   #7a7869 !important;
+  --md-sys-color-outline-variant:           #cccbb9 !important;
+  --md-sys-color-surface-container-lowest:  #ffffff !important;
+  --md-sys-color-surface-container-low:     #f0efe8 !important;
+  --md-sys-color-surface-container:         #eaeae3 !important;
+  --md-sys-color-surface-container-high:    #e4e4dd !important;
+  --md-sys-color-surface-container-highest: #dfdfd8 !important;
 }
 
 /* ── Dark tokens — prefers-color-scheme ──────────────────────────────────── */
 @media (prefers-color-scheme: dark) {
   html:not([data-theme="light"]) {
     /* Secondary → Aqua Mist (dark) */
-    --md-sys-color-secondary:                 #a2cdcf;
-    --md-sys-color-on-secondary:              #003738;
-    --md-sys-color-secondary-container:       #1a4f50;
-    --md-sys-color-on-secondary-container:    #bde9eb;
+    --md-sys-color-secondary:                 #a2cdcf !important;
+    --md-sys-color-on-secondary:              #003738 !important;
+    --md-sys-color-secondary-container:       #1a4f50 !important;
+    --md-sys-color-on-secondary-container:    #bde9eb !important;
 
     /* Tertiary → Garnet (dark) */
-    --md-sys-color-tertiary:                  #ffb3ae;
-    --md-sys-color-on-tertiary:               #68000a;
-    --md-sys-color-tertiary-container:        #8f1c1d;
-    --md-sys-color-on-tertiary-container:     #ffdad9;
+    --md-sys-color-tertiary:                  #ffb3ae !important;
+    --md-sys-color-on-tertiary:               #68000a !important;
+    --md-sys-color-tertiary-container:        #8f1c1d !important;
+    --md-sys-color-on-tertiary-container:     #ffdad9 !important;
 
     /* Surfaces → Black Kite inspired */
-    --md-sys-color-background:                #1a100f;
-    --md-sys-color-on-background:             #ede1dc;
-    --md-sys-color-surface:                   #1a100f;
-    --md-sys-color-on-surface:                #ede1dc;
-    --md-sys-color-surface-variant:           #4d3937;
-    --md-sys-color-on-surface-variant:        #d0c4bf;
-    --md-sys-color-outline:                   #998f8d;
-    --md-sys-color-outline-variant:           #4d3937;
-    --md-sys-color-surface-container-lowest:  #140b0b;
-    --md-sys-color-surface-container-low:     #241614;
-    --md-sys-color-surface-container:         #281a18;
-    --md-sys-color-surface-container-high:    #321f1e;
-    --md-sys-color-surface-container-highest: #3d2927;
+    --md-sys-color-background:                #1a100f !important;
+    --md-sys-color-on-background:             #ede1dc !important;
+    --md-sys-color-surface:                   #1a100f !important;
+    --md-sys-color-on-surface:                #ede1dc !important;
+    --md-sys-color-surface-variant:           #4d3937 !important;
+    --md-sys-color-on-surface-variant:        #d0c4bf !important;
+    --md-sys-color-outline:                   #998f8d !important;
+    --md-sys-color-outline-variant:           #4d3937 !important;
+    --md-sys-color-surface-container-lowest:  #140b0b !important;
+    --md-sys-color-surface-container-low:     #241614 !important;
+    --md-sys-color-surface-container:         #281a18 !important;
+    --md-sys-color-surface-container-high:    #321f1e !important;
+    --md-sys-color-surface-container-highest: #3d2927 !important;
   }
 }
 
 /* ── Dark tokens — explicit toggle ───────────────────────────────────────── */
 html[data-theme="dark"] {
   /* Secondary → Aqua Mist (dark) */
-  --md-sys-color-secondary:                 #a2cdcf;
-  --md-sys-color-on-secondary:              #003738;
-  --md-sys-color-secondary-container:       #1a4f50;
-  --md-sys-color-on-secondary-container:    #bde9eb;
+  --md-sys-color-secondary:                 #a2cdcf !important;
+  --md-sys-color-on-secondary:              #003738 !important;
+  --md-sys-color-secondary-container:       #1a4f50 !important;
+  --md-sys-color-on-secondary-container:    #bde9eb !important;
 
   /* Tertiary → Garnet (dark) */
-  --md-sys-color-tertiary:                  #ffb3ae;
-  --md-sys-color-on-tertiary:               #68000a;
-  --md-sys-color-tertiary-container:        #8f1c1d;
-  --md-sys-color-on-tertiary-container:     #ffdad9;
+  --md-sys-color-tertiary:                  #ffb3ae !important;
+  --md-sys-color-on-tertiary:               #68000a !important;
+  --md-sys-color-tertiary-container:        #8f1c1d !important;
+  --md-sys-color-on-tertiary-container:     #ffdad9 !important;
 
   /* Surfaces → Black Kite inspired */
-  --md-sys-color-background:                #1a100f;
-  --md-sys-color-on-background:             #ede1dc;
-  --md-sys-color-surface:                   #1a100f;
-  --md-sys-color-on-surface:                #ede1dc;
-  --md-sys-color-surface-variant:           #4d3937;
-  --md-sys-color-on-surface-variant:        #d0c4bf;
-  --md-sys-color-outline:                   #998f8d;
-  --md-sys-color-outline-variant:           #4d3937;
-  --md-sys-color-surface-container-lowest:  #140b0b;
-  --md-sys-color-surface-container-low:     #241614;
-  --md-sys-color-surface-container:         #281a18;
-  --md-sys-color-surface-container-high:    #321f1e;
-  --md-sys-color-surface-container-highest: #3d2927;
+  --md-sys-color-background:                #1a100f !important;
+  --md-sys-color-on-background:             #ede1dc !important;
+  --md-sys-color-surface:                   #1a100f !important;
+  --md-sys-color-on-surface:                #ede1dc !important;
+  --md-sys-color-surface-variant:           #4d3937 !important;
+  --md-sys-color-on-surface-variant:        #d0c4bf !important;
+  --md-sys-color-outline:                   #998f8d !important;
+  --md-sys-color-outline-variant:           #4d3937 !important;
+  --md-sys-color-surface-container-lowest:  #140b0b !important;
+  --md-sys-color-surface-container-low:     #241614 !important;
+  --md-sys-color-surface-container:         #281a18 !important;
+  --md-sys-color-surface-container-high:    #321f1e !important;
+  --md-sys-color-surface-container-highest: #3d2927 !important;
 }
 
 /* ── Splash page hero ─────────────────────────────────────────────────────── */
 .hero {
   background-color: var(--md-sys-color-surface-container-low);
-  background-image:
-    radial-gradient(
-      ellipse 70% 55% at 65% 45%,
-      color-mix(in oklch, #ff6037 12%, transparent),
-      transparent
-    ),
-    radial-gradient(
-      ellipse 45% 35% at 15% 70%,
-      color-mix(in oklch, #a0c9cb 10%, transparent),
-      transparent
-    );
 }
 
 .hero h1 {

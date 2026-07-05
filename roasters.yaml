@@ -1,48 +1,76 @@
 roasters:
   - name: Kavoholik
+    slug: kavoholik
     url: https://kavoholik.sk/
   - name: Ready After
+    slug: ready-after
     url: https://www.readyafter.sk/
   - name: Kaffa Roastery
+    slug: kaffa-roastery
     url: https://kaffaroastery.sk/
   - name: Suca Roastery
+    slug: suca-roastery
     url: https://www.sucaroastery.sk/
   - name: Coffeein
+    slug: coffeein
     url: https://www.coffeein.sk/
     scraper: playwright
   - name: Black.
+    slug: black
     url: https://black.sk/
   - name: Blue Mondays Coffee
+    slug: blue-mondays-coffee
     url: https://bluemondayscoffee.com/
   - name: Caffe4u
+    slug: caffe4u
     url: https://caffe4u.sk/
   - name: Casa del Caffé
+    slug: casa-del-caffe
     url: https://casadelcaffe.sk/
   - name: Diamond's Roastery
+    slug: diamonds-roastery
     url: https://diroastery.sk/
   - name: Dobrá Káva
+    slug: dobra-kava
     url: https://dobrakava.eu/
   - name: Good Times Coffee Roasters
+    slug: good-times-coffee-roasters
     url: https://goodtimes.coffee/
   - name: Goriffee
+    slug: goriffee
     url: https://goriffee.com/
   - name: Jager Kaffee
+    slug: jager-kaffee
     url: https://jagerkaffee.com/
   - name: Jungle Roastery
+    slug: jungle-roastery
     url: https://thisisjungle.sk/
+    metadata:
+      city: Bratislava
   - name: Kavala
+    slug: kavala
     url: https://kavalacoffee.sk/
   - name: Kofisfera
+    slug: kofisfera
     url: https://kofisfera.sk/
   - name: Petimera
+    slug: petimera
     url: https://petimera.sk/
   - name: Samay Coffee
+    slug: samay-coffee
     url: https://samay.sk/
   - name: Simple Coffee
+    slug: simple-coffee
     url: https://simplecoffee.eu/
   - name: Sweet Beans Coffee
+    slug: sweet-beans-coffee
     url: https://sweetbeans.coffee/
   - name: Triple Five Coffee
+    slug: triple-five-coffee
     url: https://triplefivecoffee.com/
   - name: Urban Coffee
+    slug: urban-coffee
     url: https://urbancoffee.sk/
+  - name: Trip Coffee Roasters
+    slug: trip-roasters
+    url: https://triproasters.sk/

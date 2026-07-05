@@ -153,3 +153,8 @@ html[data-theme="dark"] {
 .hero-image svg {
   filter: drop-shadow(0 8px 32px color-mix(in oklch, #ff6037 22%, transparent));
 }
+
+/* ── Starlight content container ─────────────────────────────────────────── */
+.sl-container {
+  background: none !important;
+}

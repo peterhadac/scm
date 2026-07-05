@@ -1,5 +1,4 @@
-httpx
+crawl4ai==0.9.0
 beautifulsoup4
-playwright
-anthropic
+openai
 pyyaml

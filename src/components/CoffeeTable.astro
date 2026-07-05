@@ -71,6 +71,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     )}
   </div>
 
+  <div class="ct-toolbar-wrap">
   <div class="ct-toolbar">
     <div class="ct-search-group">
       <label class="ct-label" for="filter-search">Search</label>
@@ -123,12 +124,13 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
       <span id="result-count" class="ct-count" aria-live="polite"></span>
     </div>
   </div>
+  </div>
 
   <div class="ct-legend" aria-label="Process colour key">
     <span class="ct-legend-label">Process:</span>
-    <span class="ct-badge ct-badge--washed">Washed</span>
-    <span class="ct-badge ct-badge--honey">Honey</span>
-    <span class="ct-badge ct-badge--natural">Natural</span>
+    <span class="ct-badge ct-badge--washed">Washed · Umytá</span>
+    <span class="ct-badge ct-badge--honey">Honey · Med</span>
+    <span class="ct-badge ct-badge--natural">Natural · Prírodná</span>
     <span class="ct-legend-sep" aria-hidden="true">·</span>
     <span class="ct-best" title="Lowest price per 100g">best value</span>
     <span class="ct-legend-desc">= lowest €/100g</span>
@@ -161,7 +163,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
         </tr>
       </thead>
       <tbody>
-        {coffees.map((c) => {
+        {coffees.map((c, i) => {
           const pType = processType(c.process ?? null);
           const per100gNum = c.weight_g ? (c.price / c.weight_g) * 100 : null;
           const per100g = per100gNum !== null ? fmtEur(per100gNum) : '—';
@@ -171,6 +173,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
             per100gNum <= bestPer100g + 0.001;
           return (
             <tr
+              style={`--i: ${i}`}
               data-name={c.name}
               data-roaster={c.roaster}
               data-origin={c.origin ?? ''}
@@ -431,31 +434,46 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     justify-content: flex-end;
   }
 
+  @keyframes dot-pulse {
+    0%  { box-shadow: 0 0 0 0px color-mix(in srgb, var(--md-sys-color-secondary) 50%, transparent); }
+    60% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--md-sys-color-secondary) 0%, transparent); }
+    100%{ box-shadow: 0 0 0 0px color-mix(in srgb, var(--md-sys-color-secondary) 0%, transparent); }
+  }
+
   .ct-fresh-dot {
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 50%;
     background: var(--md-sys-color-secondary);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--md-sys-color-secondary) 25%, transparent);
+    animation: dot-pulse 2.4s ease-in-out infinite;
+    flex-shrink: 0;
   }
 
   /* ── Toolbar ──────────────────────────────────────────────── */
+  .ct-toolbar-wrap {
+    position: sticky;
+    top: var(--sl-nav-height, 3.5rem);
+    z-index: 10;
+    margin: 0 0 0.75rem;
+    background: color-mix(in srgb, var(--md-sys-color-surface) 92%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    padding: 0.5rem 0;
+  }
+
   .ct-toolbar {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 0.75rem 1rem;
-    padding: 1rem 1.25rem;
-    background: var(--md-sys-color-surface-container);
-    border: 1px solid var(--md-sys-color-outline-variant);
-    border-left: 3px solid var(--md-sys-color-primary);
-    border-radius: var(--md-sys-shape-corner-large);
+    align-items: center;
+    gap: 0.5rem 0.75rem;
   }
 
   .ct-search-group {
     display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.4rem;
   }
 
   .ct-search-field {
@@ -506,8 +524,9 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   .ct-filter-group {
     display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.4rem;
   }
 
   .ct-label {
@@ -653,9 +672,16 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     line-height: 1;
   }
 
+  @keyframes row-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: none; }
+  }
+
   .ct-table tbody tr {
     border-bottom: 1px solid var(--md-sys-color-outline-variant);
     transition: background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+    animation: row-in 0.22s ease both;
+    animation-delay: calc(var(--i, 0) * 12ms);
   }
 
   .ct-table tbody tr:last-child { border-bottom: none; }
@@ -844,5 +870,14 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
       margin-left: 0;
       justify-content: space-between;
     }
+    /* Hide per-100g column on mobile */
+    .ct-table td:nth-child(6),
+    .ct-table th:nth-child(6) { display: none; }
+  }
+
+  @media (max-width: 440px) {
+    /* Hide origin column on very small screens */
+    .ct-table td:nth-child(3),
+    .ct-table th:nth-child(3) { display: none; }
   }
 </style>

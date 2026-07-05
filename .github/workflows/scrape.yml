@@ -17,11 +17,11 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install -r scraper/requirements.txt
-      - run: playwright install --with-deps chromium
+      - run: crawl4ai-setup
       - run: python scraper/scrape.py
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git diff --quiet -- _data/coffees.json || (git add _data/coffees.json && git commit -m "data: $(date -u +%F)" && git push)
+          git diff --quiet -- _data/coffees.json data/products.yaml || (git add _data/coffees.json data/products.yaml && git commit -m "data: $(date -u +%F)" && git push)

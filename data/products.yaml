@@ -1,0 +1,162 @@
+jungle-roastery:
+- last_seen: '2026-07-04'
+  name: RWANDA - Kigali
+  origin: Rwanda
+  packaging:
+  - price: 44.0
+    weight_g: 1000
+  - price: 12.5
+    weight_g: 250
+  page_hash: 4e5a8f3841902af82b9fe5f5395e54f2c10db8c7c5d8ee0fbbb3e7bdb352d1de
+  process: washed
+  roast_type: filter
+  status: ok
+  url: https://www.jungleroastery.sk/rwanda/
+- last_seen: '2026-07-04'
+  name: VENEZUELA - Rivero
+  origin: Venezuela
+  packaging:
+  - price: 48.0
+    weight_g: 1000
+  - price: 13.5
+    weight_g: 250
+  page_hash: 94f76d6ea6d4481ca62ca76883b3724f33e07022807f248b0b808f5a2664d3df
+  process: washed
+  roast_type: espresso
+  status: ok
+  url: https://www.jungleroastery.sk/venezuela/
+- last_seen: '2026-07-04'
+  name: HONDURAS - Café Organico
+  origin: Honduras, Marcala
+  packaging:
+  - price: 46.0
+    weight_g: 1000
+  - price: 13.0
+    weight_g: 250
+  page_hash: 406ac3623987c967c6e6767cfb467baa2fa6587b58514bcf6529850dd877aec5
+  process: washed
+  roast_type: espresso
+  status: ok
+  url: https://www.jungleroastery.sk/honduras/
+- last_seen: '2026-07-04'
+  name: COLOMBIA Supremo
+  origin: Tolima, Colombia
+  packaging:
+  - price: 36.0
+    weight_g: 1000
+  - price: 10.5
+    weight_g: 250
+  page_hash: fd4c169df170d3686d27479b65aebb79c3ea1740f1c4ddd2c8009b56072ff55d
+  process: washed
+  roast_type: espresso
+  status: ok
+  url: https://www.jungleroastery.sk/colombia-supremo/
+- last_seen: '2026-07-04'
+  page_hash: placeholder-category-page-hash-changes-often
+  status: not_a_product
+  url: https://www.jungleroastery.sk/kava/
+- last_seen: '2026-07-04'
+  page_hash: placeholder-category-page-hash-changes-often
+  status: not_a_product
+  url: https://www.jungleroastery.sk/doplnky/
+kavoholik:
+- last_seen: '2026-07-05'
+  page_hash: 6e786976a1dd12f62d3ff90f2323e2fea540664e4b072e6b18ac353d97e6b3d2
+  status: not_a_product
+  url: https://kavoholik.sk/zlavove-kupony
+- last_seen: '2026-07-05'
+  page_hash: 25aaed28b6860aca81c8053c3ab6762b92b91dd6b3acedbd3595f8cd03559875
+  status: not_a_product
+  url: https://kavoholik.sk/mapa-stranky
+- last_seen: '2026-07-05'
+  page_hash: 58f9f9ade6b22b4f79d79443445224a1dcf698319df3577ffbd34a6b805b64b8
+  status: not_a_product
+  url: https://kavoholik.sk/755-sposob-pripravy
+- last_seen: '2026-07-05'
+  page_hash: ac5a0e9090927343287eb4404b5d9d770ff61fb4c970e173b7c46b796d202bcd
+  status: not_a_product
+  url: https://kavoholik.sk/content/17-platobna-brana-gopay
+- last_seen: '2026-07-05'
+  page_hash: e40eed2c683186f2a01be45bc4b765a564fbcdc1082b2bda6ae1499826f4ae97
+  status: not_a_product
+  url: https://kavoholik.sk/osobne-udaje
+- last_seen: '2026-07-05'
+  page_hash: ad8a30d632211f7c0ff530420e409d81d2c203e0af2f9df80492fb3714657cd8
+  status: not_a_product
+  url: https://kavoholik.sk/751-espresso
+- last_seen: '2026-07-05'
+  page_hash: cf53a733dff7f6d0e45c9c9fca633923abca96466116fa2679ae7aab4ce2533b
+  status: not_a_product
+  url: https://kavoholik.sk/dobropisy
+- last_seen: '2026-07-05'
+  page_hash: a2729a10f0d7f56a33e91787e59b93dc2b1402064d4094b4be59fa53ef01e17d
+  status: not_a_product
+  url: https://kavoholik.sk/nase-obchody
+- last_seen: '2026-07-05'
+  page_hash: d07286a78c8ea0e596654aaa9fff4ea94106071c2404cc9a75deb7574a8bc4b2
+  status: not_a_product
+  url: https://kavoholik.sk/content/9-vsetko-o-cookies
+- last_seen: '2026-07-05'
+  page_hash: 6064428c18a1e8c74615f37b098e7d62aef30649ed04aafd5fb4fc05a934b4e8
+  status: not_a_product
+  url: https://kavoholik.sk/brand/30-mahlkonig
+- last_seen: '2026-07-05'
+  page_hash: 0c60052aa1c569abb57d89f4951793c903ac2f2b3aaca17a7390a85fe421bb60
+  status: not_a_product
+  url: https://kavoholik.sk/content/1-servis
+- last_seen: '2026-07-05'
+  page_hash: 02c43729422d45e787002c2c246ab94cef5e05832df830c7c8925a458fdb3379
+  status: not_a_product
+  url: https://kavoholik.sk/764-to-najlepsie-na-filter
+- last_seen: '2026-07-05'
+  page_hash: 4b2715bc83ea4bda164b3a721b9baffb6f82b7ccf8f681a22c91247c9ad81b45
+  status: not_a_product
+  url: https://kavoholik.sk/module/ps_emailalerts/account
+- last_seen: '2026-07-05'
+  page_hash: 1fc511cf9a0ed8f605ced9214b300e8c50e3172b72ed95139686a9b76ef09a61
+  status: not_a_product
+  url: https://kavoholik.sk/module/tvcmswishlist/mywishlist
+- last_seen: '2026-07-05'
+  page_hash: f7ff8691755e855d2d7a7d25aea351f966f0c6d9d9feaf62cfca1ab8ed22c857
+  status: not_a_product
+  url: https://kavoholik.sk/zoznam-adries
+- last_seen: '2026-07-05'
+  page_hash: a38f019aae5e3856d05d944ff190a17cfb57010f99dd6b70a89a21abb357e2ea
+  status: not_a_product
+  url: https://kavoholik.sk/content/3-obchodne-a-dodacie-podmienky
+- last_seen: '2026-07-05'
+  page_hash: 692c756bdc4ec06c6f0d618b36f8552d43e58bd1b6e0e7089694b05a4e975bce
+  status: not_a_product
+  url: https://kavoholik.sk/
+- last_seen: '2026-07-05'
+  page_hash: 638b32ce08c2bbfedc29bd0e72cb141817d6bff603eab4a0c2e09818b484042d
+  status: not_a_product
+  url: https://kavoholik.sk/782-ocenene-kavy
+- last_seen: '2026-07-05'
+  page_hash: 8e7283d80229c9251f8be2a4a0da487b5abb9145ad9670a6a8bacc1f59d37a9d
+  status: not_a_product
+  url: https://kavoholik.sk/historia-objednavok
+- last_seen: '2026-07-05'
+  page_hash: 18f0242eb0f687ae43f6cb66fac6415273d9fee94c4c939adecadca80b4e8523
+  status: not_a_product
+  url: https://kavoholik.sk/module/tvcmsproductcompare/productcomparelist
+- last_seen: '2026-07-05'
+  page_hash: fd4e1f2e9405068376e2aa66083b33b26fe92bd965b9e5424a9ba9f80a84cdbe
+  status: not_a_product
+  url: https://kavoholik.sk/brand/45-la-marzocco
+- last_seen: '2026-07-05'
+  page_hash: 7da113eb12b4bc0cfbfdd93dcff48386f7d60740e5aca6bd1bc8680cfe64ba08
+  status: not_a_product
+  url: https://kavoholik.sk/moj-ucet
+- last_seen: '2026-07-05'
+  page_hash: 9da33f1e6c9c8c05ff707f6e5c8fde6418233d6026afffcb2ff642b5052a0b9b
+  status: not_a_product
+  url: https://kavoholik.sk/content/19-statuty-sutazi
+- last_seen: '2026-07-05'
+  page_hash: dfac7663b9d77d17676e0044c79fd94d560e04fb8e7b00c99a9c3c24b5a5c94a
+  status: not_a_product
+  url: https://kavoholik.sk/12-e-shop
+- last_seen: '2026-07-05'
+  page_hash: eb91d6d983a450ea0c79cad48c3c5e8963f9170afcb19d82ba9c0c717b316291
+  status: not_a_product
+  url: https://kavoholik.sk/akciove-produkty

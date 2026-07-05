@@ -611,3 +611,66 @@ def test_flatten_to_coffees_dedupes_same_url_and_weight():
     roasters = [{"name": "Jungle Roastery", "slug": "jungle-roastery"}]
     rows = scrape.flatten_to_coffees(products, roasters)
     assert len(rows) == 1
+
+
+# --- validate_entry -------------------------------------------------------------
+
+
+def test_validate_entry_accepts_ok_product():
+    entry = {
+        "name": "Rwanda Kigali",
+        "url": "https://x.sk/rwanda/",
+        "origin": "Rwanda",
+        "process": "washed",
+        "roast_type": "filter",
+        "status": "ok",
+        "last_seen": "2026-07-04",
+        "page_hash": "abc123",
+        "packaging": [{"weight_g": 250, "price": 12.5}],
+        "schema_version": scrape.SCHEMA_VERSION,
+    }
+    scrape.validate_entry(entry)  # must not raise
+
+
+def test_validate_entry_accepts_incomplete_product():
+    entry = {
+        "name": "House Blend",
+        "url": "https://x.sk/house-blend/",
+        "origin": None,
+        "process": None,
+        "roast_type": None,
+        "status": "incomplete",
+        "missing_fields": ["origin", "roast_type"],
+        "last_seen": "2026-07-04",
+        "page_hash": "abc123",
+        "packaging": [{"weight_g": 250, "price": 12.5}],
+        "schema_version": scrape.SCHEMA_VERSION,
+    }
+    scrape.validate_entry(entry)  # must not raise
+
+
+def test_validate_entry_accepts_not_a_product():
+    entry = {
+        "url": "https://x.sk/kosik/",
+        "status": "not_a_product",
+        "last_seen": "2026-07-04",
+        "page_hash": "abc123",
+    }
+    scrape.validate_entry(entry)  # must not raise
+
+
+def test_validate_entry_rejects_bad_roast_type():
+    entry = {
+        "name": "Rwanda Kigali",
+        "url": "https://x.sk/rwanda/",
+        "origin": "Rwanda",
+        "process": "washed",
+        "roast_type": "cappuccino",  # not a valid enum value
+        "status": "ok",
+        "last_seen": "2026-07-04",
+        "page_hash": "abc123",
+        "packaging": [{"weight_g": 250, "price": 12.5}],
+        "schema_version": scrape.SCHEMA_VERSION,
+    }
+    with pytest.raises(Exception):
+        scrape.validate_entry(entry)

@@ -9,6 +9,7 @@ from datetime import date
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
+import jsonschema
 import yaml
 from bs4 import BeautifulSoup
 from openai import OpenAI
@@ -25,8 +26,16 @@ from crawl4ai.async_crawler_strategy import AsyncHTTPCrawlerStrategy
 ROOT = Path(__file__).resolve().parent.parent
 ROASTERS_PATH = ROOT / "roasters.yaml"
 PRODUCTS_PATH = ROOT / "data" / "products.yaml"
+SCHEMA_PATH = ROOT / "data" / "products.schema.yaml"
 COUNTRIES_PATH = ROOT / "data" / "coffee_origins.yaml"
 COFFEES_PATH = ROOT / "_data" / "coffees.json"
+
+# Bump whenever normalize_product's rules change in a way that would alter
+# the output for already-scraped pages — this forces process_roaster's
+# hash-gate to re-extract every existing entry once, even if the page's
+# content hasn't changed, since there's no cached raw LLM output to replay
+# against the new rules.
+SCHEMA_VERSION = 2
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -234,6 +243,23 @@ def load_country_aliases(path=COUNTRIES_PATH):
 
 
 COUNTRY_ALIASES = load_country_aliases()
+
+
+def load_schema(path=SCHEMA_PATH):
+    return yaml.safe_load(path.read_text())
+
+
+PRODUCT_SCHEMA = load_schema()
+
+
+def validate_entry(entry):
+    """Validate one products.yaml entry against data/products.schema.yaml.
+
+    A failure here means normalize_product produced a shape the schema
+    doesn't allow — a bug in this module, not bad website content — so it
+    raises rather than being caught and swallowed.
+    """
+    jsonschema.validate(entry, PRODUCT_SCHEMA)
 
 
 def normalize_origin(raw, name, aliases=None):

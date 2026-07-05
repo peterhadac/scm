@@ -25,6 +25,7 @@ from crawl4ai.async_crawler_strategy import AsyncHTTPCrawlerStrategy
 ROOT = Path(__file__).resolve().parent.parent
 ROASTERS_PATH = ROOT / "roasters.yaml"
 PRODUCTS_PATH = ROOT / "data" / "products.yaml"
+COUNTRIES_PATH = ROOT / "data" / "coffee_origins.yaml"
 COFFEES_PATH = ROOT / "_data" / "coffees.json"
 
 MODEL = "google/gemini-2.5-flash-lite"
@@ -220,6 +221,43 @@ def load_products(path=PRODUCTS_PATH):
 def save_products(products, path=PRODUCTS_PATH):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(yaml.safe_dump(products, allow_unicode=True, sort_keys=True) or "")
+
+
+def load_country_aliases(path=COUNTRIES_PATH):
+    """Flatten data/coffee_origins.yaml into a {lowercase alias: canonical name} map."""
+    data = yaml.safe_load(path.read_text()) or {}
+    aliases = {}
+    for canonical, alias_list in data.items():
+        for alias in alias_list:
+            aliases[alias.lower()] = canonical
+    return aliases
+
+
+COUNTRY_ALIASES = load_country_aliases()
+
+
+def normalize_origin(raw, name, aliases=None):
+    """Translate a stated origin to its canonical English country name.
+
+    Only falls back to scanning the product name when `raw` is empty —
+    trusts an LLM-stated origin as-is (translating known aliases), it never
+    cross-checks it against the name. Text that matches no known country is
+    kept verbatim rather than discarded (better than losing real data for a
+    producing country not yet in the list).
+    """
+    aliases = COUNTRY_ALIASES if aliases is None else aliases
+    if raw:
+        lowered = raw.lower()
+        for alias, canonical in aliases.items():
+            if alias in lowered:
+                return canonical
+        return raw.strip()
+    if name:
+        lowered = name.lower()
+        for alias, canonical in aliases.items():
+            if alias in lowered:
+                return canonical
+    return None
 
 
 def find_next_page_url(html, current_url):

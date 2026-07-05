@@ -244,6 +244,30 @@ def test_normalize_roast_type_none_when_unstated():
     assert scrape.normalize_roast_type("") is None
 
 
+# --- normalize_origin ---------------------------------------------------------
+
+
+def test_normalize_origin_translates_slovak_text():
+    assert scrape.normalize_origin("Etiópia", "some name") == "Ethiopia"
+
+
+def test_normalize_origin_falls_back_to_name_when_raw_missing():
+    assert scrape.normalize_origin(None, "brazil • doce citrus") == "Brazil"
+
+
+def test_normalize_origin_trusts_raw_over_name_when_both_present():
+    # LLM origin wins as-is — no cross-check against a differing name mention.
+    assert scrape.normalize_origin("Colombia", "brazil • doce citrus") == "Colombia"
+
+
+def test_normalize_origin_keeps_unmatched_raw_text_as_is():
+    assert scrape.normalize_origin("Fantasyland", None) == "Fantasyland"
+
+
+def test_normalize_origin_none_when_nothing_matches():
+    assert scrape.normalize_origin(None, "House Blend") is None
+
+
 # --- normalize_product --------------------------------------------------------
 
 

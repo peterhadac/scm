@@ -1,31 +1,2433 @@
-jungle-roastery:
-- last_seen: '2026-07-04'
-  name: RWANDA - Kigali
-  origin: Rwanda
+black:
+- last_seen: '2026-07-05'
+  page_hash: d02937dc8e5388e598eb20c9d0af4ac18e74c0dba58f047290172debdb24af5b
+  status: not_a_product
+  url: https://www.black.sk/sk/simplify-idealna-volba-na-doma
+- last_seen: '2026-07-05'
+  name: blend • juicy pussy
+  origin: null
   packaging:
-  - price: 44.0
-    weight_g: 1000
-  - price: 12.5
-    weight_g: 250
-  page_hash: 4e5a8f3841902af82b9fe5f5395e54f2c10db8c7c5d8ee0fbbb3e7bdb352d1de
-  process: washed
+  - price: 13.5
+    weight_g: 200
+  page_hash: 96f9c09591ad051e73b7a76c5ddaed5deaa307b71248d9b37c05ecec55c36d07
+  process: filter roast
+  roast_type: null
+  status: ok
+  url: https://www.black.sk/sk/juicy-pussy
+- last_seen: '2026-07-05'
+  page_hash: aaa6b625bb0ab7e4870b14deb769bb6dbac26145b45dec8cc4ec83db09e4d5ad
+  status: not_a_product
+  url: https://www.black.sk/sk/e-shop
+- last_seen: '2026-07-05'
+  page_hash: 79b165ff98e7826addf5711dfc638275d2b938c30ea5b6b549f18fe9e51a6275
+  status: not_a_product
+  url: https://www.black.sk/sk/reklamacny-poriadok
+- last_seen: '2026-07-05'
+  name: drippin.
+  origin: null
+  packaging:
+  - price: 12.0
+    weight_g: null
+  page_hash: 14ae3da4335b4184f0f85f38306b7acc8efadc868ea02d0c5db35b8e332879f0
+  process: Filter
   roast_type: filter
   status: ok
-  url: https://www.jungleroastery.sk/rwanda/
-- last_seen: '2026-07-04'
-  name: VENEZUELA - Rivero
-  origin: Venezuela
+  url: https://www.black.sk/drippin
+- last_seen: '2026-07-05'
+  name: blend • black sheep
+  origin: null
   packaging:
-  - price: 48.0
-    weight_g: 1000
-  - price: 13.5
-    weight_g: 250
-  page_hash: 94f76d6ea6d4481ca62ca76883b3724f33e07022807f248b0b808f5a2664d3df
-  process: washed
+  - price: 9.5
+    weight_g: 200
+  page_hash: 8d24dede37fb956179032f4b5601fc1d73f82ac427da695425036e6a79151501
+  process: null
   roast_type: espresso
   status: ok
-  url: https://www.jungleroastery.sk/venezuela/
-- last_seen: '2026-07-04'
+  url: https://www.black.sk/sk/blend-black-sheep
+- last_seen: '2026-07-05'
+  page_hash: 6c4aaafdb3a3a3c680d874312222fe44cf345baa0233f97042fa96a95249935a
+  status: not_a_product
+  url: https://www.black.sk/sk/e-shop/merch
+- last_seen: '2026-07-05'
+  page_hash: 0abacae894d6a8d0dcbed7829b074d38d030a0c601731379bfcba054e957331a
+  status: not_a_product
+  url: https://www.black.sk/sk/
+- last_seen: '2026-07-05'
+  name: drippin.
+  origin: null
+  packaging:
+  - price: 12.0
+    weight_g: null
+  page_hash: 14ae3da4335b4184f0f85f38306b7acc8efadc868ea02d0c5db35b8e332879f0
+  process: Filter
+  roast_type: filter
+  status: ok
+  url: https://www.black.sk/sk/drippin
+- last_seen: '2026-07-05'
+  page_hash: afe1a2c8d15ecf83d5b1dfd602e6de4b4110edc9695adf562accfb5215e907d6
+  status: not_a_product
+  url: https://www.black.sk/sk/e-shop/doplnky
+- last_seen: '2026-07-05'
+  page_hash: 1656c6d418dd0e3afb111163a8503b2537a43f1eb6c441e84ac976e2ea164ff3
+  status: not_a_product
+  url: https://www.black.sk/sk/e-shop/kava
+- last_seen: '2026-07-05'
+  page_hash: 1e6d1008d5116836df7263b5beff54ed5dc1d91a27d174d2435a2925acd8bf44
+  status: not_a_product
+  url: https://www.black.sk/sk/spoluprace-2
+- last_seen: '2026-07-05'
+  name: brazil • doce citrus
+  origin: null
+  packaging:
+  - price: 10.5
+    weight_g: 200
+  - price: 10.5
+    weight_g: 500
+  - price: 10.5
+    weight_g: 1000
+  page_hash: 31e235140b73c796ff9c5f61f8e61d94673bc2e14c451159d76f551a0e543125
+  process: natural
+  roast_type: espresso
+  status: ok
+  url: https://www.black.sk/sk/brazil-doce-citrus
+- last_seen: '2026-07-05'
+  page_hash: 4eb7183f71bacfc70d76d9a9a1c3d040873f3ed7f23d504bcd451725b547787f
+  status: not_a_product
+  url: https://www.black.sk/sk/home
+- last_seen: '2026-07-05'
+  page_hash: 02201c3b2967e3788376601c02c9eb9265b30cbd1d00bbbfe1f4b10fcd811816
+  status: not_a_product
+  url: https://www.black.sk/sk/spolupraca
+- last_seen: '2026-07-05'
+  page_hash: dd96c30caf4144521fb955bb60e01177e2b30b783112be87d4ba1844be86a019
+  status: not_a_product
+  url: https://www.black.sk/sk
+- last_seen: '2026-07-05'
+  page_hash: 2d4afa5bc27cc95043bd33b0c9104b4eddb2aca12f7f1735262947773e0e5b8d
+  status: not_a_product
+  url: https://www.black.sk/sk/doprava-platba
+- last_seen: '2026-07-05'
+  page_hash: aaa6b625bb0ab7e4870b14deb769bb6dbac26145b45dec8cc4ec83db09e4d5ad
+  status: not_a_product
+  url: https://www.black.sk/e-shop
+- last_seen: '2026-07-05'
+  page_hash: 16321484489c9255fce5cfdb336662b1ee7a0d5bf3ae2d31dc2d604f3c5efa6a
+  status: not_a_product
+  url: https://www.black.sk/nase-kaviarne
+- last_seen: '2026-07-05'
+  page_hash: c72c838fe051434f07b628f361af4198de2168501a25363f917ffdd5ae3fe38b
+  status: not_a_product
+  url: https://www.black.sk/sk/black-v-dubravke
+- last_seen: '2026-07-05'
+  page_hash: 1656c6d418dd0e3afb111163a8503b2537a43f1eb6c441e84ac976e2ea164ff3
+  status: not_a_product
+  url: https://www.black.sk/e-shop/kava
+- last_seen: '2026-07-05'
+  page_hash: 16321484489c9255fce5cfdb336662b1ee7a0d5bf3ae2d31dc2d604f3c5efa6a
+  status: not_a_product
+  url: https://www.black.sk/sk/nase-kaviarne
+- last_seen: '2026-07-05'
+  page_hash: 2d108bd4507e045919581145f90393d9e9c3ebb89b3e506b4779a7425d3fc926
+  status: not_a_product
+  url: https://www.black.sk/en
+blue-mondays-coffee:
+- last_seen: '2026-07-05'
+  name: Brazil Fazenda Rodomunho
+  origin: null
+  packaging:
+  - price: 11.5
+    weight_g: 250
+  page_hash: 922cf35894c657171fd3d70aacbd5d1d419cf197908efe0187c57445a87a7e0d
+  process: null
+  roast_type: null
+  status: ok
+  url: https://bluemondays.sk/products/brazil-fazenda-rodomunho?variant=56505181241726
+- last_seen: '2026-07-05'
+  name: Brazil Fazenda Primavera
+  origin: null
+  packaging:
+  - price: 9.0
+    weight_g: 250
+  - price: 9.0
+    weight_g: 1000
+  page_hash: 9cfd33c2d55a5d1ed6f74f30dfe3614e4724fddf80294a8bb51153b23b5fa24a
+  process: pulpled natural, 900 – 1050 m.n.m.
+  roast_type: null
+  status: ok
+  url: https://bluemondays.sk/products/brazil-fazenda-primavera
+- last_seen: '2026-07-05'
+  page_hash: 81181c17e4e51b25d20677629fc08199148f6f243002cf51c21721ef6a90626e
+  status: not_a_product
+  url: https://bluemondays.sk/collections/moderne-espresso
+- last_seen: '2026-07-05'
+  page_hash: c4230c538b70064a8ce122a58765731ddad0454f95c8b96baf99708b43790930
+  status: not_a_product
+  url: https://bluemondays.sk/collections/all
+- last_seen: '2026-07-05'
+  page_hash: 1881d92d37b19d45ede7b28033d1eddcbc8a9b25edf8e580b58091aeac6e1f68
+  status: not_a_product
+  url: https://bluemondays.sk/collections/special-edition
+- last_seen: '2026-07-05'
+  page_hash: 0af2cf84dc3343826243adc2cccef6312506771ebd92a2311e42df7bc60906de
+  status: not_a_product
+  url: https://bluemondays.sk/collections/perfektne-cappuccino
+- last_seen: '2026-07-05'
+  name: Candy Crop – house blend
+  origin: null
+  packaging:
+  - price: 10.0
+    weight_g: 250
+  - price: 10.0
+    weight_g: 1000
+  page_hash: bc9f9a96b15060d50ee4c10a6a6786545e924b5126b8aa9318fb2f62ff5cc4ca
+  process: null
+  roast_type: null
+  status: ok
+  url: https://bluemondays.sk/products/candy-crop-house-blend
+- last_seen: '2026-07-05'
+  page_hash: 8bdcf0939234e8abb7ca981fe42f80edac13c8649824d3347c8964a3027cb6bd
+  status: not_a_product
+  url: https://bluemondays.sk/policies/refund-policy
+- last_seen: '2026-07-05'
+  name: Brazil Fazenda Rodomunho
+  origin: Minas Gerais
+  packaging:
+  - price: 11.5
+    weight_g: 250
+  page_hash: 598cefe12ef46e0253a049c09eafa79ac866774fd6d0ed0e5009a6829ad6d208
+  process: natural, 1000 – 1200 m.n.m.
+  roast_type: null
+  status: ok
+  url: https://bluemondays.sk/products/brazil-fazenda-rodomunho
+- last_seen: '2026-07-05'
+  page_hash: 9efa075d9281b1ec125cf2fc7472e9fd6dafb0dc3ae2d53bc85b6f9affd493a8
+  status: not_a_product
+  url: https://bluemondays.sk/pages/contact
+- last_seen: '2026-07-05'
+  name: Brazil Fazenda Primavera
+  origin: null
+  packaging:
+  - price: 9.0
+    weight_g: 250
+  - price: 9.0
+    weight_g: 1000
+  page_hash: 8251c42a4fc8ad2edd903887edeeebb6eb1c1d120cd87b07dea656adb52f2297
+  process: pulpled natural
+  roast_type: null
+  status: ok
+  url: https://bluemondays.sk/products/brazil-fazenda-primavera?variant=56505169576318
+- last_seen: '2026-07-05'
+  page_hash: b0b84580eb3b390038076e516a69eb17679af42447643dfd485a0744ba25bb81
+  status: not_a_product
+  url: https://bluemondays.sk/collections/odporucame-do-automatu
+- last_seen: '2026-07-05'
+  page_hash: 3375531bf3a363aa94e256bb4da56c1dc8618a90d6f7774bf7e9d79f89c65ed0
+  status: not_a_product
+  url: https://bluemondays.sk/policies/contact-information
+- last_seen: '2026-07-05'
+  name: Brazil Thiago Corsi
+  origin: null
+  packaging:
+  - price: 12.5
+    weight_g: 250
+  - price: 12.5
+    weight_g: 1000
+  page_hash: 10fe4e95f84a6733a145fca4f66fcd584d5383ee44ae4c1cf40ae0a57ebb7bd7
+  process: null
+  roast_type: espresso
+  status: ok
+  url: https://bluemondays.sk/products/brazil-thiago-corsi
+- last_seen: '2026-07-05'
+  name: Brazil Thiago Corsi
+  origin: null
+  packaging:
+  - price: 12.5
+    weight_g: 250
+  - price: 12.5
+    weight_g: 1000
+  page_hash: 65dea870d4e6454781b02c1aa2395ea3782dd7ff5486dac699f87f537ac2f18d
+  process: null
+  roast_type: espresso
+  status: ok
+  url: https://bluemondays.sk/products/brazil-thiago-corsi?variant=56505352356222
+- last_seen: '2026-07-05'
+  page_hash: 08d00faa48d1a2b287bfb24a7407ea2b8b1d98c4d7bcdc9ad103c1bedeaf6de5
+  status: not_a_product
+  url: https://bluemondays.sk/collections/kavy-na-filter
+- last_seen: '2026-07-05'
+  page_hash: fab3fabbda0282dd92156e1377d1775726baed850a08ab92744fa943fc25c859
+  status: not_a_product
+  url: https://bluemondays.sk/collections/prazenie-na-filter
+- last_seen: '2026-07-05'
+  page_hash: 24781343d80dad717cc4031f4bb923749cb22a3119fc859a26a5ed158dacfebe
+  status: not_a_product
+  url: https://bluemondays.sk/collections/nechcem-kyslu-kavu
+- last_seen: '2026-07-05'
+  page_hash: 0721cc9f42e4fabcd4d67df2ee0c2945e1143361f0b9d676331ac583478b0dc2
+  status: not_a_product
+  url: https://bluemondays.sk/
+- last_seen: '2026-07-05'
+  page_hash: 7645ff9fbe7ede56eac737ba005e14373b96a265c04e71d5c05958087ebbfe0e
+  status: not_a_product
+  url: https://bluemondays.sk/products/candy-crop-house-blend?variant=56505198150014
+- last_seen: '2026-07-05'
+  page_hash: 30b916ea7b468c8102fe833f2b550380cf98ec58d25cafae1d0b8abfdc597ca8
+  status: not_a_product
+  url: https://bluemondays.sk/policies/terms-of-service
+caffe4u:
+- last_seen: '2026-07-05'
+  page_hash: 4a040a27d2f551fc1e6e8babf3056e920674986b652a08ff8b53aed8e9e3299e
+  status: not_a_product
+  url: https://caffe4u.sk/moj-ucet/
+- last_seen: '2026-07-05'
+  name: Blendiana Jones
+  origin: null
+  packaging:
+  - price: 16.5
+    weight_g: 1000
+  - price: 16.5
+    weight_g: 200
+  - price: 16.5
+    weight_g: 500
+  page_hash: 8b76cb11767b04e97cda1bbf547e5a24b49688afed7cfdcb40eeb116c68ee6cf
+  process: null
+  roast_type: null
+  status: ok
+  url: https://caffe4u.sk/produkt/blendiana-jones/
+- last_seen: '2026-07-05'
+  name: RANNÉ VTÁČA
+  origin: null
+  packaging:
+  - price: 9.0
+    weight_g: 250
+  - price: 30.0
+    weight_g: 1000
+  page_hash: 31308c8f43d7a46f17ce54565f47a0ac5cc741af94ba14c2a0ce0da42b026a1f
+  process: null
+  roast_type: null
+  status: ok
+  url: https://caffe4u.sk/produkt/ranne-vtaca/
+- last_seen: '2026-07-05'
+  name: Kuba Turquino Lavado
+  origin: null
+  packaging:
+  - price: 13.0
+    weight_g: 1000
+  - price: 200.0
+    weight_g: null
+  - price: 500.0
+    weight_g: null
+  page_hash: f22b2183faf6d1b3855108680dfba739a2cb3c63585b36e663c37ee3a72cbac3
+  process: Mokré (washed)
+  roast_type: null
+  status: ok
+  url: https://caffe4u.sk/produkt/kuba-turquino-lavado/
+- last_seen: '2026-07-05'
+  page_hash: a17f845307d19a2810b19f9eb7ac4396c238173167785d78857d385624d549a3
+  status: not_a_product
+  url: https://caffe4u.sk/?add-to-cart=1588
+- last_seen: '2026-07-05'
+  name: OBEDNÁ PAUZIČKA
+  origin: null
+  packaging:
+  - price: 9.5
+    weight_g: 250
+  - price: 9.5
+    weight_g: 1000
+  page_hash: dee006e0609d0ca90ec85799aeb88eec9eb95e9e70ffe866ca87c14b367354c4
+  process: null
+  roast_type: null
+  status: ok
+  url: https://caffe4u.sk/produkt/obedna-pauzicka/
+- last_seen: '2026-07-05'
+  name: Balíček VARIETY 3 x 200g
+  origin: null
+  packaging:
+  - price: 44.5
+    weight_g: 200
+  - price: 37.8
+    weight_g: 200
+  page_hash: 23bffaa57872c1e2358b07237bbe0ac6b6c0a179e100701d8f4def93b646ed57
+  process: null
+  roast_type: null
+  status: ok
+  url: https://caffe4u.sk/produkt/balicek-variety-3-x-200g/
+- last_seen: '2026-07-05'
+  name: VEČERNÁ SOVA
+  origin: null
+  packaging:
+  - price: 10.0
+    weight_g: 250
+  - price: 32.0
+    weight_g: 1000
+  page_hash: 15d40c868fae82f844eb5aff8753a88ef61c1475ca941622b3b2610c265b3503
+  process: null
+  roast_type: null
+  status: ok
+  url: https://caffe4u.sk/produkt/vecerna-sova/
+- last_seen: '2026-07-05'
+  page_hash: e053588ed647427287544ff101cb4bd50ffb3643b455934d2782a9ffdf1c6f1a
+  status: not_a_product
+  url: https://caffe4u.sk/odstupenie-od-zmluvy/
+- last_seen: '2026-07-05'
+  name: Decaf Mexiko – Sugar Cane Process
+  origin: null
+  packaging:
+  - price: 13.0
+    weight_g: 1000
+  - price: 13.0
+    weight_g: 200
+  - price: 13.0
+    weight_g: 500
+  page_hash: 8d92267269baea7078717af78954b6b3272d071ecb105deff4d1660d56967f98
+  process: Sugar cane process
+  roast_type: null
+  status: ok
+  url: https://caffe4u.sk/produkt/decaf-mexiko-sugar-cane-process/
+- last_seen: '2026-07-05'
+  page_hash: c2897125bbcf956677b2b3ee7395968afd847afc98014021419c545b3ebde53a
+  status: not_a_product
+  url: https://caffe4u.sk/blendy-zmesi/
+- last_seen: '2026-07-05'
+  page_hash: 1c4f74837ce00c40a6534440c74d26d4c059d36113567667afc2f7acb374a04c
+  status: not_a_product
+  url: https://caffe4u.sk/spolupraca/
+- last_seen: '2026-07-05'
+  page_hash: 3fdaf259864301bea53cea218fdbe24479199d4f70a80174f62f271fcd44ee07
+  status: not_a_product
+  url: https://caffe4u.sk/kava-tyzdna/
+- last_seen: '2026-07-05'
+  page_hash: 1e1e7b20e42c11ed7de5f17b2dd1dd046eda45d7e963aaeff33003617690fb6f
+  status: not_a_product
+  url: https://caffe4u.sk/?add-to-cart=5379
+- last_seen: '2026-07-05'
+  page_hash: dde7654e811ac4a85328473e0aa91f4842c21f7dc9b12e323e2b284541b0e072
+  status: not_a_product
+  url: https://caffe4u.sk/prislusenstvo-ku-kave/
+- last_seen: '2026-07-05'
+  name: BUDÍČEK
+  origin: Brazília, Honduras, India, Nikaragua
+  packaging:
+  - price: 8.0
+    weight_g: 1000
+  - price: 8.0
+    weight_g: 250
+  page_hash: 52d932f833bc4b150ee3345ad583df0dd4e87914588de71ff7883d44b792721f
+  process: null
+  roast_type: null
+  status: ok
+  url: https://caffe4u.sk/produkt/budik/
+- last_seen: '2026-07-05'
+  page_hash: ba9663158725eb2fafa8bdb4dfae7b19ea930478c9b304a5326a2c718ca6384f
+  status: not_a_product
+  url: https://caffe4u.sk/eshop/
+- last_seen: '2026-07-05'
+  page_hash: 9ccaa9f98e7db3aa55b1f256d64ed1ab0b4f4b1a1b8be12cd6cd557e98765b8b
+  status: not_a_product
+  url: https://caffe4u.sk/akciove-kavy/
+- last_seen: '2026-07-05'
+  page_hash: 48333679f57421fd7d43980871232cd073852d6c0b2842a31d77fa84a12a8fd4
+  status: not_a_product
+  url: https://caffe4u.sk/novinky-prazena-kava/
+- last_seen: '2026-07-05'
+  page_hash: 5f954b4def15913632a909213ca57485f1f391d7b462fd82ee896a6ea0f1f146
+  status: not_a_product
+  url: https://caffe4u.sk/zelena-kava/
+- last_seen: '2026-07-05'
+  name: MAJSTERŠTYK
+  origin: null
+  packaging:
+  - price: 10.5
+    weight_g: 250
+  page_hash: 8fd269fa6fb6fde854a48f91d4e573e0cf35414e1a71dfb35b9b170216b3a705
+  process: null
+  roast_type: null
+  status: ok
+  url: https://caffe4u.sk/produkt/majsterstyk/
+- last_seen: '2026-07-05'
+  page_hash: 95f3eae5e1f4c6b26c0fab81d92d0522301bc161809da576537b97ec8be8d020
+  status: not_a_product
+  url: https://caffe4u.sk/produkt/kostarika-bach/
+- last_seen: '2026-07-05'
+  name: Balíček SIMPLY THE BEST 3x200g
+  origin: null
+  packaging:
+  - price: 44.5
+    weight_g: 200
+  - price: 37.83
+    weight_g: 200
+  page_hash: 4aa5cc49c229473bae1c04f3114b5682d047a8474a638187b80a9118098de52f
+  process: null
+  roast_type: null
+  status: ok
+  url: https://caffe4u.sk/produkt/balicek-simply-the-best-3x200g/
+- last_seen: '2026-07-05'
+  name: Balíček DOBRODRUH 3 x 200g
+  origin: null
+  packaging:
+  - price: 32.3
+    weight_g: 200
+  - price: 32.3
+    weight_g: 200
+  - price: 32.3
+    weight_g: 200
+  page_hash: e752ed172840cef228ed18a8b263002ef54c26ec993526bbcd4c42efb064269c
+  process: Rôzne
+  roast_type: filter
+  status: ok
+  url: https://caffe4u.sk/produkt/balicek-dobrodruh-3-x-200g/
+- last_seen: '2026-07-05'
+  page_hash: daf01aa1b412056c86f4b6df80e5e2c9710c2cefd3a304e661e52338b8266766
+  status: not_a_product
+  url: https://caffe4u.sk/zelena-mleta-kava/
+- last_seen: '2026-07-05'
+  page_hash: 4705f38a777376026d9b27078cca17f702518d3c5f99184330ef8a2fb865b01e
+  status: not_a_product
+  url: https://caffe4u.sk/?add-to-cart=1590
+- last_seen: '2026-07-05'
+  name: Salvádor El Borbollon
+  origin: null
+  packaging:
+  - price: 12.0
+    weight_g: 200
+  - price: 12.0
+    weight_g: 500
+  - price: 12.0
+    weight_g: 1000
+  page_hash: fc1e29a5f711004da5eb8f8c8944c7582fb3b13f0d47362beb71b3fac9f61f48
+  process: Mokré (washed)
+  roast_type: null
+  status: ok
+  url: https://caffe4u.sk/produkt/salvador-el-borbollon/
+- last_seen: '2026-07-05'
+  page_hash: f9e8c6524b62407b7f6716aa27ff1ea0b0b2816443aca1e5572edbc750b3166c
+  status: not_a_product
+  url: https://caffe4u.sk/kavove-sety-a-balicky/
+- last_seen: '2026-07-05'
+  page_hash: fc88ddb62c243b6d9eb63e533300f8447e8c249aaf93391b35f8f41a4543d29b
+  status: not_a_product
+  url: https://caffe4u.sk/bez-kofeinu-decaf/
+- last_seen: '2026-07-05'
+  page_hash: 81fa513fdfa840e1b91402cef9029aaf74d78b468f32f68a35e8b79d0c9f243a
+  status: not_a_product
+  url: https://caffe4u.sk/magazin/
+- last_seen: '2026-07-05'
+  page_hash: 637c918848993e9fdac0d8711b83c1d5e2f3f71a2e08429e661e8cfc190352c1
+  status: not_a_product
+  url: https://caffe4u.sk/novinky-zelena-kava/
+- last_seen: '2026-07-05'
+  page_hash: 930a25d610559a5081fbe3ed9c42c5c7353e6e625e698a8f7ad8c4f64da8045f
+  status: not_a_product
+  url: https://caffe4u.sk/prazena-kava/
+- last_seen: '2026-07-05'
+  page_hash: 5ec61808ad040be396742dea60a8df7a8cf24383095229874e50565719131e95
+  status: not_a_product
+  url: https://caffe4u.sk/
+- last_seen: '2026-07-05'
+  page_hash: 17d6cc6c3711dbf76c00c1eca12dfa30d4979ce968a595e821a5741dea1030fc
+  status: not_a_product
+  url: https://caffe4u.sk/limitovane-zrnkove-kavy/
+- last_seen: '2026-07-05'
+  page_hash: 3a8a5bfbde9fd1ad42a3fbc03d5d6165182294ac7bf8d3501005eca59e6cfc8b
+  status: not_a_product
+  url: https://caffe4u.sk/zelena-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 2b8a46123af30d4e2ac751186cad3b4c2f4a3ac8d52ba45e4ebd69913cfee14d
+  status: not_a_product
+  url: https://caffe4u.sk/subory-cookies/
+- last_seen: '2026-07-05'
+  page_hash: 35fa305ff7fbeebe297f998988febe3ba7eee6694bdf2e77dac5f0341334d2cc
+  status: not_a_product
+  url: https://caffe4u.sk/prazena-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: fc1241cefe188dde6786d79fe775ab18c652818c9171bdafc26a5ba64404f7a7
+  status: not_a_product
+  url: https://caffe4u.sk/moj-ucet/?action=register
+casa-del-caffe:
+- last_seen: '2026-07-05'
+  page_hash: d2fb1a42e82c8876f7aa6913a37172c273d10e2f7d58d227d02ee5708462b216
+  status: not_a_product
+  url: https://casadelcaffe.sk/author/sturinka55gmail-com/
+- last_seen: '2026-07-05'
+  page_hash: ebaca26738665ee03c68c849b30e2d0e0e2adc8a2407a75adde31eea5096a874
+  status: not_a_product
+  url: https://casadelcaffe.sk/category/kava/
+- last_seen: '2026-07-05'
+  page_hash: a17753439a238e3f1daed231d47f03bdc7693884305f591b2c042f8d6c299ce6
+  status: not_a_product
+  url: https://casadelcaffe.sk/?post_type=product&p=5187
+- last_seen: '2026-07-05'
+  page_hash: 2e363dfd5464341f9afd4c3d3be8cc8c747ee577259ce98a5bbd83ce9aab89c7
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/vianoce
+- last_seen: '2026-07-05'
+  page_hash: 8eb92b5fbe3a61c9562353bd3e61c50d5676a47fb818f3be25aedf245c11c894
+  status: not_a_product
+  url: https://casadelcaffe.sk/?add-to-cart=7419
+- last_seen: '2026-07-05'
+  page_hash: 0c67e9180cf368c9cbc19d952ed0e6d922834723abea4be25a5e7fddc802e8b7
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/kavovary/?filter_znacka=ecm
+- last_seen: '2026-07-05'
+  page_hash: 9ae4b98b9dd42b8eb6cee5b03ed041e6f492db7b3c7198ca334d61da6b64f87b
+  status: not_a_product
+  url: https://casadelcaffe.sk/valentinsky-darcek-ktory-ma-zmysel-kvalitna-kava-a-dizajnove-salky/
+- last_seen: '2026-07-05'
+  page_hash: 0f2986a97fae3319a8f484f45db752c750b63e95b3725c74cb2017f8fe7475bf
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/doplnky/
+- last_seen: '2026-07-05'
+  page_hash: 3e4b4b99e0b93a2ff5c7cab3ab295aef16eaac946debfbf8a5adad5d9b4df182
+  status: not_a_product
+  url: https://casadelcaffe.sk/obchod
+- last_seen: '2026-07-05'
+  page_hash: 10a4ecf7efd0d2364a57b40e0499a1365b3918f9906051da46fb850b199dea19
+  status: not_a_product
+  url: https://casadelcaffe.sk/?add-to-cart=1248
+- last_seen: '2026-07-05'
+  name: Honduras 18 Conejo Demeter
+  origin: null
+  packaging:
+  - price: 11.0
+    weight_g: 250
+  - price: 38.2
+    weight_g: 1000
+  page_hash: 44018b237657483b70eebb88d2d4e99acbb4a934310ad5b17e0f52e9f5c9e23c
+  process: Medium Roast
+  roast_type: filter
+  status: ok
+  url: https://casadelcaffe.sk/obchod/honduras-18-conejo-bio-demeter/
+- last_seen: '2026-07-05'
+  page_hash: fb1992dfa0fdfd8f8c0f92f69debb7c24c1fbb9e11615482722a131d637ecf39
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/kavovary/?filter_znacka=rocket-espresso
+- last_seen: '2026-07-05'
+  page_hash: b07580bd1170e4b5b706eef52cf3e7ec0cb31114135a720aab97441a30ea21b2
+  status: not_a_product
+  url: https://casadelcaffe.sk/obchod/tamper-wiedemann-olive-5800mm/
+- last_seen: '2026-07-05'
+  name: Bezzera Unica PID
+  origin: null
+  packaging:
+  - price: 1359.0
+    weight_g: null
+  page_hash: 41d3fb9b3893eb14af183ed41469cfa8cdcd9a641b3f41c882846dedbd849fad
+  process: null
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/bezzera-unica/
+- last_seen: '2026-07-05'
+  page_hash: ace0d7be68126109a06143c1e0df59485f8bd3b5df2e4e1b199b063ceb142eec
+  status: not_a_product
+  url: https://casadelcaffe.sk/partneri/
+- last_seen: '2026-07-05'
+  page_hash: 1f74ac57922ebe60575a3be31955c3d26eafb2352b597efcd1dc210d5057c4c6
+  status: not_a_product
+  url: https://casadelcaffe.sk/?post_type=product&p=6522
+- last_seen: '2026-07-05'
+  name: Colombia Supremo
+  origin: Kolumbia
+  packaging:
+  - price: 11.9
+    weight_g: 250
+  - price: 21.9
+    weight_g: 500
+  - price: 39.9
+    weight_g: 1000
+  page_hash: 8c6a99e5b96b5d3cd6b37b87b064dcf53da965ddd11069b8c5aa598e81dac73a
+  process: null
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/columbia-supremo/
+- last_seen: '2026-07-05'
+  name: Nicaragua Matagalpa BIO
+  origin: null
+  packaging:
+  - price: 10.1
+    weight_g: 250
+  - price: 10.1
+    weight_g: 500
+  - price: 10.1
+    weight_g: 1000
+  page_hash: c1da9858a9f50e20442d083435beda6ac8cc1661dca79e0a7db877183ab3e703
+  process: Medium Roast
+  roast_type: filter
+  status: ok
+  url: https://casadelcaffe.sk/obchod/nicaragua-matagalpa-bio-2/
+- last_seen: '2026-07-05'
+  page_hash: 5303eb5bf149b299dd490a165ef1952b05c71fe7f3114386a69b7e9f7b22a99b
+  status: not_a_product
+  url: https://casadelcaffe.sk/obchod/ecm-sada-wiedeman-walnut/
+- last_seen: '2026-07-05'
+  page_hash: 13d1c69baff7d651cc2214a1e1cb70ca043bda0aa2c4f455fabdb03c9d9d78f4
+  status: not_a_product
+  url: https://casadelcaffe.sk/obchod/funny-taska-z-bio-bavlny/
+- last_seen: '2026-07-05'
+  page_hash: ab614c4ab9bec3004a2bba35ce0d35d3ad433823cf435bb0c7983249b75991c9
+  status: not_a_product
+  url: https://casadelcaffe.sk/ochrana-udajov/
+- last_seen: '2026-07-05'
+  name: Sumatra Mandheling BIO
+  origin: null
+  packaging:
+  - price: 12.9
+    weight_g: 250
+  - price: 43.9
+    weight_g: 1000
+  - price: 21.9
+    weight_g: 500
+  page_hash: f8f8163b7325b76ae0a6b8ca294d57397eeed42f09e14319fec1c0bccf877843
+  process: ' pesta grown in volcanic regions of northern Indonesia'
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/sumatra-mandheling-bio/
+- last_seen: '2026-07-05'
+  page_hash: faa50ccbc936736361a11dcb1b5e971a35bdef7a785fb8240e402ad69a54fad2
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/kavovary/?filter_znacka=profitec
+- last_seen: '2026-07-05'
+  page_hash: 3167b9514a5967004f838a3f5c01b16eaec3cfc284c080e9537d0cf754bf8d23
+  status: not_a_product
+  url: https://casadelcaffe.sk/?add-to-cart=7571
+- last_seen: '2026-07-05'
+  page_hash: 00781e83898668ecbb09d4563f3e6f0820f035497848d68466055eb14dab9184
+  status: not_a_product
+  url: https://casadelcaffe.sk/praziaren/
+- last_seen: '2026-07-05'
+  page_hash: afc793febd8e85f08c62c068f38711cfe958c983bac5266a7ad87dd6c7b4da81
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/kava/
+- last_seen: '2026-07-05'
+  page_hash: 16e22a57eba53a27cc21d8ca78a986de476cf7557937d7747e4bf6bfd433a30e
+  status: not_a_product
+  url: https://casadelcaffe.sk/reklamacia/
+- last_seen: '2026-07-05'
+  page_hash: 1b1d8eae9351623df9f3c6094e9f06eb2fae21194246626b9b16b7875b09e571
+  status: not_a_product
+  url: https://casadelcaffe.sk/moj-ucet/?action=register
+- last_seen: '2026-07-05'
+  page_hash: b3482f543f3da735f9d56a2d0f16a724d3daf25c7b2bdbc86c010169f0113ff4
+  status: not_a_product
+  url: https://casadelcaffe.sk/porovnanie/
+- last_seen: '2026-07-05'
+  page_hash: fe50d16522f400c60ba289d1f08622365da2ba0ff868df545b975fbb285079b6
+  status: not_a_product
+  url: https://casadelcaffe.sk/nakupny-poriadok/
+- last_seen: '2026-07-05'
+  page_hash: 3ac3f3a27fb7c7f1ae6e2c98866802812755dc76fc0a3231f9364ac7155244e1
+  status: not_a_product
+  url: https://casadelcaffe.sk/zber-zrniecok/
+- last_seen: '2026-07-05'
+  name: Cuba Turquino
+  origin: null
+  packaging:
+  - price: 12.9
+    weight_g: 250
+  - price: 23.9
+    weight_g: 500
+  - price: 46.9
+    weight_g: 1000
+  page_hash: f2748d433dfee3c9fedd80c08e317b7f11f65978a3209ced1cb2e05a28ee9557
+  process: null
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/cuba-turquino-extra/
+- last_seen: '2026-07-05'
+  name: Vianočný punč
+  origin: null
+  packaging:
+  - price: 8.9
+    weight_g: 30
+  page_hash: e44b04e46e0250b3a69e2092b67533d8e1637b7907eaf590c6950825d0c2abb4
+  process: null
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/cascara-vianocny-punc/
+- last_seen: '2026-07-05'
+  page_hash: b606bcb935df69825f58a0134b2c5d08af5ab20a7ac87670857fcd3cda222ec4
+  status: not_a_product
+  url: https://casadelcaffe.sk/?add-to-cart=7410
+- last_seen: '2026-07-05'
+  name: Peru Chanchamayo BIO
+  origin: null
+  packaging:
+  - price: 11.9
+    weight_g: 250
+  - price: 39.9
+    weight_g: 1000
+  - price: 25.9
+    weight_g: 500
+  page_hash: 192ef173d9cc50f0dba8b483e4caafc816ba1890cf7158adf31fdf7135e50ddb
+  process: null
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/peru-chanchamayo-bio-2/
+- last_seen: '2026-07-05'
+  name: ECM portafilter bez dna
+  origin: null
+  packaging:
+  - price: 89.0
+    weight_g: null
+  page_hash: 5a30e5b605df0a79edd0fa8a5fcd14db99ede9e3ae95719565815f0e5a260132
+  process: null
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/naha-paka-ecm-e61/
+- last_seen: '2026-07-05'
+  name: Ethiopia Crown BIO
+  origin: null
+  packaging:
+  - price: 12.9
+    weight_g: 250
+  - price: 43.9
+    weight_g: 1000
+  - price: 43.9
+    weight_g: 500
+  page_hash: 8a8132678fb38f191572eecfc8d20fc9852c1f4e117c00c0deac219616132d82
+  process: Prírodné sušenie pod slnkom
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/ethiopia-crown/
+- last_seen: '2026-07-05'
+  name: Toscana
+  origin: null
+  packaging:
+  - price: 8.9
+    weight_g: 250
+  - price: 8.9
+    weight_g: 500
+  - price: 8.9
+    weight_g: 1000
+  page_hash: 6f73248b182b577104bb136a89e5d2d6335cca4f27ec59f9c274e6b445a236ea
+  process: 100% Arabica
+  roast_type: filter
+  status: ok
+  url: https://casadelcaffe.sk/obchod/toscana/
+- last_seen: '2026-07-05'
+  page_hash: cafc970255dbd81a579837de2e648010a6b4f94910e37824dce53cc4fabcc25a
+  status: not_a_product
+  url: https://casadelcaffe.sk/moj-ucet/?social_auth=google
+- last_seen: '2026-07-05'
+  name: Kenya Gachami AA
+  origin: null
+  packaging:
+  - price: 12.9
+    weight_g: 250
+  - price: 46.9
+    weight_g: null
+  page_hash: 0b8dc5adf55570b9f8fde76bacd3e71ee4ef12d493a1dfcb7b6e3ec4acf534de
+  process: Medium Roast
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/kenya-gachami-aa/
+- last_seen: '2026-07-05'
+  name: Štipec na kávový balík
+  origin: null
+  packaging:
+  - price: 4.9
+    weight_g: null
+  page_hash: 8949ea2e78a41897129559f43e425bddc40106d6c3d7a722216949803d188f0f
+  process: null
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/stipec-na-kavovy-balik/
+- last_seen: '2026-07-05'
+  page_hash: bc265265a94fcc12c1312ef39afa43aea2a039e745c43c4b20ccaeb815538c1c
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/kavovary/?filter_znacka=bezzera
+- last_seen: '2026-07-05'
+  page_hash: 775377bc01c11b3eab4ca477ec1adf6face443989e04d0b770ad880d584ac7c8
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/merch/
+- last_seen: '2026-07-05'
+  page_hash: 224dd651321eac932fd3f3c7e04eee22130727bf22f9734404d31002d4a1a53f
+  status: not_a_product
+  url: https://casadelcaffe.sk/?add-to-cart=5143
+- last_seen: '2026-07-05'
+  page_hash: 49f14397d86f2530ce1a5ba35d062aa4c2dde40194686cad969969bc61d3183b
+  status: not_a_product
+  url: https://casadelcaffe.sk/kava-pre-kancelarie/
+- last_seen: '2026-07-05'
+  page_hash: f92517f09cc2ec3ffba15258f9be3e9164dd4ed190a2d9369362311394aabdc5
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/kavovary/
+- last_seen: '2026-07-05'
+  page_hash: cb7afea2bb832341e9104f3a2dae0c19ce4003391868d586ea0f2d4445962531
+  status: not_a_product
+  url: https://casadelcaffe.sk/zasady-pouzivania-suborov-cookie-eu/
+- last_seen: '2026-07-05'
+  page_hash: 459b3d2b352d83049d07f4dfc1e1e26589f342c435de457f94f3f74c7e307228
+  status: not_a_product
+  url: https://casadelcaffe.sk/newsletter/
+- last_seen: '2026-07-05'
+  page_hash: a52d6a700fc1503f24e91583d09151361381ddf640e909b757c24295051bd38c
+  status: not_a_product
+  url: https://casadelcaffe.sk/firemne-darceky/
+- last_seen: '2026-07-05'
+  page_hash: 04f7046a2877ec1b402b92b03b6466c37f5d4cdd227b7c753dad439e06534e6c
+  status: not_a_product
+  url: https://casadelcaffe.sk/rok-2025-v-casa-del-caffe-rok-plny-kavy-ludi-a-pribehov/
+- last_seen: '2026-07-05'
+  page_hash: 152c63d57d3a413f144ec935197ab2ac79cb60ea3390d73eef8c3d0c857fe3aa
+  status: not_a_product
+  url: https://casadelcaffe.sk/?post_type=product&p=4508
+- last_seen: '2026-07-05'
+  page_hash: 6f05f42c1f9d352db78dca2150bb8c813a81a6d05e6230ce9a5dc3465897fa9c
+  status: not_a_product
+  url: https://casadelcaffe.sk/?add-to-cart=1195
+- last_seen: '2026-07-05'
+  name: Bella Italia
+  origin: null
+  packaging:
+  - price: 8.9
+    weight_g: 250
+  - price: 8.9
+    weight_g: 500
+  - price: 8.9
+    weight_g: 1000
+  page_hash: 6d11b9fb0469ef8abc45abea6d5ac0307637582a74cb2aedff76a7dbfa41a61c
+  process: Medium Roast
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/bella-italia/
+- last_seen: '2026-07-05'
+  name: ECM Classica PID II
+  origin: null
+  packaging:
+  - price: 1399.0
+    weight_g: null
+  page_hash: dfa813ce4bfd38e6af3bc3dc111f32f01ebfd1821e4d53189ca2c11250773a58
+  process: null
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/ecm-classika-pid/
+- last_seen: '2026-07-05'
+  page_hash: 1309078db180930124c9f3b94ab59a49480a6331c41c0ff21270e4bb5e328f6e
+  status: not_a_product
+  url: https://casadelcaffe.sk/casa-del-caffe-na-festivale-kava-caj-cokolada-2025-dva-dni-plne-voni-chuti-a-inspiracie-%e2%98%95%f0%9f%8d%ab%f0%9f%8c%b1/
+- last_seen: '2026-07-05'
+  page_hash: 01200817826f422372da4ec5f848db443ccdc61c01af2fc3330c199eb4f69645
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/kavovary/?filter_znacka=eureka
+- last_seen: '2026-07-05'
+  name: Pero Casa del Caffé
+  origin: null
+  packaging:
+  - price: 2.9
+    weight_g: null
+  page_hash: d493e5257cfe965b3cc3ad0c6e85947dca1826b0ab65e10a99da410ceadcbde1
+  process: null
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/pero-casa-del-caffe/
+- last_seen: '2026-07-05'
+  page_hash: fb11b1c524cb28542adf299bf5e29833846b288cbfdc2d5b0c8e15cfc370a3d8
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/caj/
+- last_seen: '2026-07-05'
+  name: Carnevale
+  origin: null
+  packaging:
+  - price: 8.9
+    weight_g: 250
+  - price: 14.9
+    weight_g: 500
+  - price: 24.9
+    weight_g: 1000
+  page_hash: 105ef91232b1bf5ad9ff7afb72f22ea2734cbd939705d5be4ad7e35b5f5bce81
+  process: Svieža, energická a pestrá. Zmes Carnevale (85% Arabica 15% Robusta) je
+    silná káva s jemnou štruktúrou. Vyznačuje sa hravým, no pritom plným telom a krásne
+    bohatou cremou. V šálke objavíte temperamentnú kombináciu horkej čokolády, pražených
+    mandlí a kakaa, káva ktorá vás okamžite postaví na nohy. Ideálna voľba pre ranné
+    prebudenie alebo vždy, keď potrebujete poriadnu dávku pozitívnej energie.
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/carnevale/
+- last_seen: '2026-07-05'
+  page_hash: d18ad11de2e3f69bff86e2d8fe987d12e71d9ec2251d2b30f8a34801ed15c57c
+  status: not_a_product
+  url: https://casadelcaffe.sk/category/nas-kavovy-svet/
+- last_seen: '2026-07-05'
+  page_hash: 857ba94b83646974c089fcc3986f8b2552ac4f8e453676b425cbf221c8a13ea3
+  status: not_a_product
+  url: https://casadelcaffe.sk/personalizovana-kava/
+- last_seen: '2026-07-05'
+  page_hash: 7945491c60d452fef15e285e733d9e23706a90a2e71020916f9c1897cc0d63b8
+  status: not_a_product
+  url: https://casadelcaffe.sk/dorucenie-a-platby/
+- last_seen: '2026-07-05'
+  page_hash: c99082f9bd68b20647dc4feeb30788d1945b26a021c276b4704c762e1822d0a3
+  status: not_a_product
+  url: https://casadelcaffe.sk/odstupenie-od-zmluvy/
+- last_seen: '2026-07-05'
+  name: Eureka Mignon Silenzio 55, 16CR Chrome
+  origin: null
+  packaging:
+  - price: 469.0
+    weight_g: null
+  page_hash: 7a07e0c8973afdeaac3b83cf4d0a01a30110a153f5cc5ddec6c84d903471852d
+  process: null
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/eureka-mignon-silenzio-cr-chrome/
+- last_seen: '2026-07-05'
+  page_hash: 1945e7fcbebbd8a2997fb8746e6d467aff7d1baab9d0c32b54454bd1fb4f57d5
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/moka-kavovary/
+- last_seen: '2026-07-05'
+  page_hash: f82e6ee6ad034084f7faa420621df209222470134f5f7b99c919a88886a228ad
+  status: not_a_product
+  url: https://casadelcaffe.sk/shop/
+- last_seen: '2026-07-05'
+  page_hash: 49d13abb1b059a35cc14e581587ff91aa3b3d79dc1d0d2e3a01c34092ddb9e9d
+  status: not_a_product
+  url: https://casadelcaffe.sk/pre-firmy/
+- last_seen: '2026-07-05'
+  page_hash: a5bde766b35281e55b96c44fe3227404b668b741f149f481ec1e6394de5d2f6f
+  status: not_a_product
+  url: https://casadelcaffe.sk/moj-ucet/
+- last_seen: '2026-07-05'
+  name: Brazília Santos
+  origin: null
+  packaging:
+  - price: 9.9
+    weight_g: null
+  - price: 34.9
+    weight_g: null
+  page_hash: 0e6d35466301d54c5765e0ca4daf559ff779f7bcbe598a5ce42b960d54960c6d
+  process: Stredne silným telom, takmer nulovou aciditou a veľmi elegantnou, jemnou
+    horkosťou. V šálke vás privíta plné, vyvážené telo s podmanivou arómou. Dominantné
+    sú chute horkej čokolády a kvalitného kakaa, ktoré sa spájajú s tónmi pražených
+    orechov. Vyniká len veľmi jemnou, ušľachtilou horkosťou a takmer nulovou aciditou.
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/brazilia-santos/
+- last_seen: '2026-07-05'
+  page_hash: 2f873bc05ce93bd721dab87cf95531f0da01a2ba1e19e8ed489380a049fe713d
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/bazar/
+- last_seen: '2026-07-05'
+  name: Santo Domingo Barahona
+  origin: null
+  packaging:
+  - price: 12.9
+    weight_g: null
+  - price: 43.9
+    weight_g: null
+  page_hash: 9d236ba9ad4422ec98ae366c13706bb81484e92add76aad99ff2ca6a42955c55
+  process: 100% Arabica s označením AAA pre vysokú kvalitu kávy. Káva s výraznou chuťou
+    čokolády, kakaa a orechov. Káva sa pestuje v Dominikánskej republike na tienistých
+    plážach ostrova Hispaniola. Plantáže z tejto oblasti patria k najstarším Nového
+    sveta.
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/santo-domingo-barahona-aaa/
+- last_seen: '2026-07-05'
+  page_hash: c8832215b6fc0caf92a4d8af7f037bfdc49c3c7f33514fb5498425316dfddd84
+  status: not_a_product
+  url: https://casadelcaffe.sk/?add-to-cart=26245
+- last_seen: '2026-07-05'
+  page_hash: 5aaeb365cc976436f65adc1e09e752bf82f28fb11e4a34a8420ae55245b03f18
+  status: not_a_product
+  url: https://casadelcaffe.sk/nakup-na-splatky/
+- last_seen: '2026-07-05'
+  name: Degustačný balíček, Spoznaj krajinu kávy
+  origin: null
+  packaging:
+  - price: 32.9
+    weight_g: null
+  page_hash: 08cf34957fc34a23f032db2fbedb8d31e3783951c497301825cefe1c94b978a5
+  process: Selected beans from organic farming in Latin America
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/degustacny-balicek-spoznaj-krajinu-kavy/
+- last_seen: '2026-07-05'
+  page_hash: a5d45e8ca3d4e65357d6652f846cfc35622b650358f5b895c7db284d170d5d57
+  status: not_a_product
+  url: https://casadelcaffe.sk/?post_type=product&p=1254
+- last_seen: '2026-07-05'
+  page_hash: ea6f64a1e18a060ab6a6f6ea61c6411c439efc5ea59262fda7dc6b090ceced8d
+  status: not_a_product
+  url: https://casadelcaffe.sk/servis-kavovarov/
+- last_seen: '2026-07-05'
+  name: Brazilia RED IAPAR Demeter
+  origin: null
+  packaging:
+  - price: 12.9
+    weight_g: 250
+  - price: 12.9
+    weight_g: 1000
+  page_hash: 58f532a376ee09c9898cf35e7c9203f80e8227dbd643b375dc782cc92d111d47
+  process: 100% Arabica v kvalite Bio + Demeter
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/brazilia-red-iapar-bio-demeter/
+- last_seen: '2026-07-05'
+  page_hash: 5038567c9c0122c2f7c7127050471a8d6a160b190787705cb0f796217ee62af3
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/porcelan/
+- last_seen: '2026-07-05'
+  page_hash: 0fe1928296d3b49f97387ead1573cef386cea558ee1db5861c5d8ab48d8eee95
+  status: not_a_product
+  url: https://casadelcaffe.sk/kava-pre-gastro/
+- last_seen: '2026-07-05'
+  page_hash: 77aee1ed1485d860c08a0a203dd147f1d25623209d09261e283fa6b8324a388a
+  status: not_a_product
+  url: https://casadelcaffe.sk/obchod/wiedemann-elegant-naked-portafilter-olive/
+- last_seen: '2026-07-05'
+  page_hash: f03cf97e49b5325881c50c54661ea27b0e4dd819d0b29093abd772c47b60847d
+  status: not_a_product
+  url: https://casadelcaffe.sk/?add-to-cart=16907
+- last_seen: '2026-07-05'
+  page_hash: 390802daa53a6ddff1c9f367f70f0eea7a95d5eaa25a434a7211fdffa2a2bffc
+  status: not_a_product
+  url: https://casadelcaffe.sk/
+- last_seen: '2026-07-05'
+  name: Bezzera Sole TOP PID MN
+  origin: null
+  packaging:
+  - price: 2159.0
+    weight_g: null
+  page_hash: c41d66abec29d8ff1178f0f50d511fc07b90b88e8618f77c66599f56fc6e25ee
+  process: null
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/bezzera-sole/
+- last_seen: '2026-07-05'
+  name: Rocket Appartamento TCA BLACK/COPER
+  origin: null
+  packaging:
+  - price: 1599.0
+    weight_g: null
+  page_hash: 32e71fc851b9380716c4bf2d0721b308e0c3a9477f5e79f0f1a752d076b1ca00
+  process: null
+  roast_type: null
+  status: ok
+  url: https://casadelcaffe.sk/obchod/rocket-appartamento-tca/
+- last_seen: '2026-07-05'
+  page_hash: d8f61fdd323e6360b20d2c5c4fb1634397eb2dacdc8ec3a39ba0b30ff6c9713e
+  status: not_a_product
+  url: https://casadelcaffe.sk/kategoria-produktu/kava/?orderby=popularity&paged=1
+coffeein:
+- last_seen: '2026-07-05'
+  page_hash: 43769e5de9cebb4d60f226f91663a7614928eb1916d79934e9e3f4501e4722b4
+  status: not_a_product
+  url: https://www.coffeein.sk/info/3/preco-nakupovat-u-nas/
+- last_seen: '2026-07-05'
+  page_hash: 5024afb974889372c8887f5bbdbe00d5e0955846881b5b5cdc1f9ce32ab7677e
+  status: not_a_product
+  url: https://www.coffeein.sk/info/30/garancia-vratenia-penazi/
+- last_seen: '2026-07-05'
+  page_hash: cbdcfa3429ba5e66a98e5c7bed6dd941b5837f15ae2a512d4441acceda7d05d8
+  status: not_a_product
+  url: https://www.coffeein.sk/info/34/dorucenie-do-ceskej-republiky/
+- last_seen: '2026-07-05'
+  page_hash: 999732d03b94480de63a97d87121c2cccc2c3c86da6f6786fa08a48819d0f668
+  status: not_a_product
+  url: https://www.coffeein.sk/odber-noviniek/
+- last_seen: '2026-07-05'
+  page_hash: 7063a0c7e3968d7254af7c29a915d4183357257bcd8c5b26b6af9d539154d6df
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/89/den-otcov-s-coffeein/1/
+- last_seen: '2026-07-05'
+  name: COFFEEIN Elite - espresso zmes (200 g, zrnková káva)
+  origin: null
+  packaging:
+  - price: 7.89
+    weight_g: 200
+  page_hash: bead66312573ca658a1a367a74a6f7597b457da9c8b0d7d81fff8771c226c5bb
+  process: espresso
+  roast_type: null
+  status: ok
+  url: https://www.coffeein.sk/detail/115/coffeein-elite-espresso-zmes-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 9513931398854adf8f6a5ff912ae7c2298eabacdc6c29853be7f59473a676fc6
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/55/specialty-coffee-vyberova-kava/1/
+- last_seen: '2026-07-05'
+  page_hash: 54eb892075e1d14c1dff12c2d49264abf74df82b0ca019a4389b4b869f0858ed
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/82/great-taste-a-top-kavy/1/
+- last_seen: '2026-07-05'
+  page_hash: 720001d8234b48ba2d955c43d92948df9d804622673978c3b8cd36f1d556f4f1
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/78/degustacne-balenia-kav/1/
+- last_seen: '2026-07-05'
+  name: Káva pre super ocka (200 g, zrnková káva)
+  origin: null
+  packaging:
+  - price: 7.99
+    weight_g: 200
+  page_hash: d45596727e41595bb0ac38c179a14d97279231f96bb0291656fc23704f30d6a3
+  process: Full City - tmavé praženie
+  roast_type: espresso
+  status: ok
+  url: https://www.coffeein.sk/detail/832/kava-pre-super-ocka-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 3588d6fcf6021cd23e78801fefad5286b67b3dd69307128e38b0f30d0f67d0af
+  status: not_a_product
+  url: https://www.coffeein.sk/info/26/vseobecne-pravidla-sutaze-na-socialnych-sietach/
+- last_seen: '2026-07-05'
+  page_hash: 6c8586a5c02483d8ecf7a0c6250099ff75c0ff91382930fff76d3edf1ee11864
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/68/kniha-o-kave/1/
+- last_seen: '2026-07-05'
+  page_hash: 979141ddb35d03b949f9c70e75645398ea3abcf4f236cd6d3d6ec8c2eb36fcb2
+  status: not_a_product
+  url: https://www.coffeein.sk/info/21/spolupraca-pre-obchody/
+- last_seen: '2026-07-05'
+  name: Ethiopia Adorsi - stredné praženie (200 g, zrnková káva)
+  origin: null
+  packaging:
+  - price: 10.5
+    weight_g: 200
+  page_hash: 15fb43d4b320fb63b0e6f5d31867a0b21643141c4b4cd1799f111210f85d03c0
+  process: Natural - suché
+  roast_type: null
+  status: ok
+  url: https://www.coffeein.sk/detail/879/ethiopia-adorsi-stredne-prazenie-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: c762fdd4d9888b138a43589dc29299cb1a52605deeb72ea55c6e69657a9eeb7e
+  status: not_a_product
+  url: https://www.coffeein.sk/info/15/coffeein-obchod-nitra/
+- last_seen: '2026-07-05'
+  page_hash: fa3791ddd546c178d66120056d83770a73a2058b8a5afad6cb70adaebb932c3a
+  status: not_a_product
+  url: https://www.coffeein.sk/uzivatel/reklamacia/?odstupenie=1
+- last_seen: '2026-07-05'
+  name: POPEACHY káva - SVETLÉ praženie (200 g, zrnková káva)
+  origin: null
+  packaging:
+  - price: 15.0
+    weight_g: 200
+  page_hash: 19d1146a4570b8ce3d1a1d60464c706800e4cca37352241f7c67cd45810e278a
+  process: City
+  roast_type: filter
+  status: ok
+  url: https://www.coffeein.sk/detail/767/popeachy-kava-svetle-prazenie-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  name: Costa Rica Canet BACH – stredné praženie (200 g, zrnková káva)
+  origin: null
+  packaging:
+  - price: 15.0
+    weight_g: 200
+  page_hash: 09544d1adaaa473ac1cadd1a8a1f6358186273c7f83118650f0e03579d39a690
+  process: raisin honey
+  roast_type: null
+  status: ok
+  url: https://www.coffeein.sk/detail/829/costa-rica-canet-bach-stredne-prazenie-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: a0c0b819497cfe558e0d077bd4b96deb2407c5b1b80842b6f9c7fe93b6e4f323
+  status: not_a_product
+  url: https://www.coffeein.sk/info/32/statut-sutaze-vitazny-vianocny-zreb/
+- last_seen: '2026-07-05'
+  page_hash: 398e256cb5daa53711e456e76f66b00768cdd4f21b5adac285663bfb418f9123
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/92/bezkofeinova-kava/1/
+- last_seen: '2026-07-05'
+  page_hash: 5ce2349d41f8bab356bd66bb931edd43b63811ce4424028775104cfc8afc051f
+  status: not_a_product
+  url: https://www.coffeein.sk/info/22/
+- last_seen: '2026-07-05'
+  page_hash: 6cd99b7029659aead4aebc8b675eaabaf2349482d4c086643aef62c7163a6f36
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/86/cajky/1/
+- last_seen: '2026-07-05'
+  page_hash: 385066f50e9d5d12353bd7ded8ad711f4dc63bd483d652ebcf0fc84d7b97a073
+  status: not_a_product
+  url: https://www.coffeein.sk/detail/251/chemex-6-salkovy-200-g-zrnkovej-kavy-ako-darcek/
+- last_seen: '2026-07-05'
+  page_hash: 0a70a4291f2751a3b764caf15664ad1fb463ea04c98820057359cfd96610df1c
+  status: not_a_product
+  url: https://www.coffeein.sk/info/13/kde-najdete-nasu-kavu/
+- last_seen: '2026-07-05'
+  page_hash: 3961c789f880009bbe7a18e3396c90ccd200761e3b79a2a2bac8f02a55453595
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/79/kava-na-espresso/1/
+- last_seen: '2026-07-05'
+  page_hash: 0f1df6ebd4b64e968feae3e159d6531206e9d543ede2dd452f12e1cbaf1012e2
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/48/espresso-zmesi/1/
+- last_seen: '2026-07-05'
+  page_hash: 9dbf263d72d10f56228f6638f322cf0630365a76f98f984e939f52a6817ec477
+  status: not_a_product
+  url: https://www.coffeein.sk/special/akcie/1/
+- last_seen: '2026-07-05'
+  page_hash: 3d0450aa4bec8494a6a59bd029b28aa7f8abeb9567626987a374977431bad86c
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/2/kavy-z-nasej-praziarne/1/
+- last_seen: '2026-07-05'
+  name: POPEACHY káva - stredné praženie (200 g, zrnková káva)
+  origin: null
+  packaging:
+  - price: 15.0
+    weight_g: 200
+  page_hash: df0ecca10622a1ac69190caa6575228bbca2313087b3ab5fbe6b682e50607a76
+  process: City +
+  roast_type: filter
+  status: ok
+  url: https://www.coffeein.sk/detail/768/popeachy-kava-stredne-prazenie-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 120aa8d309154e88f4efae5327b32cbc7c48ada823740a893571d1a4556d292a
+  status: not_a_product
+  url: https://www.coffeein.sk/special/recommended/1/
+- last_seen: '2026-07-05'
+  page_hash: 5ce2349d41f8bab356bd66bb931edd43b63811ce4424028775104cfc8afc051f
+  status: not_a_product
+  url: https://www.coffeein.sk/info/22/ako-si-vybrat-kavu/
+- last_seen: '2026-07-05'
+  page_hash: 2fdda38b2434143658ebbd1178482ba9c04455149b5a67e77e81bbaeaab6d5a1
+  status: not_a_product
+  url: https://www.coffeein.sk/detail/175/alternativny-kavovar-hario-v60-set/
+- last_seen: '2026-07-05'
+  page_hash: 9dce281438d3e5b1a32a568c91d94bc5e6b096b1dc3ffe6753e759cb8a68d6fa
+  status: not_a_product
+  url: https://www.coffeein.sk/info/31/statut-sutaze-o-kavovar-delonghi/
+- last_seen: '2026-07-05'
+  page_hash: 74ab80e7bf160f5dd2410c3d0eb5177e741ecae9ce85887c7d498c0c9114b897
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/85/kava-ako-darcek/1/
+- last_seen: '2026-07-05'
+  page_hash: 25e77ae584738545b785bc74692fbd7cd07c75f7149d5ffbc8e8b80584b4d99f
+  status: not_a_product
+  url: https://www.coffeein.sk/detail/203/predplatne-zrnkovej-kavy-coffeein-medi/
+- last_seen: '2026-07-05'
+  name: El Salvador Santa Ana (200 g, zrnková káva)
+  origin: null
+  packaging:
+  - price: 7.99
+    weight_g: 200
+  page_hash: 227b53f6f53a08dac7be99da5fddfee4d9a8e7f351eca28e676e60d8b9da02f0
+  process: mokrou metódou, následne sušené na slnku
+  roast_type: null
+  status: ok
+  url: https://www.coffeein.sk/detail/161/el-salvador-santa-ana-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 458ce312bcc7bf2b0cb4f9bca64eddac69fb63f64d4bf427c7f8e5aad3c0c4b5
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/75/hario/1/
+- last_seen: '2026-07-05'
+  page_hash: 277f4d0da82066aa1efe16f7258070f4cf023a2c5ba5bf2c605b25c3918c5152
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/21/darcekove-sety-a-salky/1/
+- last_seen: '2026-07-05'
+  name: COFFEEIN Nový Standard - espresso zmes
+  origin: null
+  packaging:
+  - price: 7.89
+    weight_g: 200
+  page_hash: dabab106b3e070b8d66aeaab21efdc08d1b95ffcdd7f7ab9fd6ecaaff82f958b
+  process: 'null'
+  roast_type: null
+  status: ok
+  url: https://www.coffeein.sk/detail/244/coffeein-novy-standard-espresso-zmes-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 4accf8f0728cfaf9a974d8a2a1f9d072194890bd962e0eda752d67f7127eb48f
+  status: not_a_product
+  url: https://www.coffeein.sk/detail/943/colombia-penas-blancas-stredne-prazenie-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 68b0e84fa5398af33a09edc460b39815553f69028bdd326741e5f34177192ca7
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/69/baristicke-pomocky/1/
+- last_seen: '2026-07-05'
+  page_hash: 3d1fbbd44fa84cbdea907f9216d3f6d3c3c796695bd5994f674c52dec0e1b913
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/1/kavovary/1/
+- last_seen: '2026-07-05'
+  page_hash: b59a011c476bd116f1a8f450d8beb6bc5de1a031f8be18b1fb7d37b1b8e1dfc5
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/77/kavovary-na-pripravu-studenej-kavy/1/
+- last_seen: '2026-07-05'
+  name: UGANDA Mubuku - SVETLÉ praženie (200 g, zrnková káva)
+  origin: null
+  packaging:
+  - price: 12.5
+    weight_g: 200
+  page_hash: 456e7d6fb194ce80bfaf20eadf8a2c38e637db840c9f5fd743a2c4a6eb9f18ff
+  process: Honey
+  roast_type: null
+  status: ok
+  url: https://www.coffeein.sk/detail/1066/uganda-mubuku-svetle-prazenie-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 2d92d24e43f6fc2f4e881516e1354acfd1edfd7c87f8166ba14df0c4aa275ac8
+  status: not_a_product
+  url: https://www.coffeein.sk/info/38/kavovy-catering/
+- last_seen: '2026-07-05'
+  page_hash: c76f0d9b50628c333fb1cc39ff868cd733923d28a7d983f724f54bc68a6b46da
+  status: not_a_product
+  url: https://www.coffeein.sk/info/28/dobry-anjel/
+- last_seen: '2026-07-05'
+  page_hash: fb43759fc4c40f643af261b38bc0bce3624472553380d5a3ee383f1740b9a22b
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/81/maskrty/1/
+- last_seen: '2026-07-05'
+  page_hash: 9e6a73ba137f7f55ff2b025f0829b41681fe51ce607db4ea0b947d1473a24b6c
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/80/kava-na-filter/1/
+- last_seen: '2026-07-05'
+  page_hash: 79e4b6e32bed500abd03615d9689d0182c3abaee83e6492e440121aaebb84508
+  status: not_a_product
+  url: https://www.coffeein.sk/info/10/klub-zakaznikov-coffeein/
+- last_seen: '2026-07-05'
+  page_hash: b02a98511082c751752e083e01caa3ceb1479cd6c3efd2fc88e075c85f23b396
+  status: not_a_product
+  url: https://www.coffeein.sk/special/novinky/1/
+- last_seen: '2026-07-05'
+  page_hash: a2cdc48f11b6563605c5257b7ffadb31c5e90d7bc0125f7832b6562de8753a0d
+  status: not_a_product
+  url: https://www.coffeein.sk/uzivatel/reklamacia/
+- last_seen: '2026-07-05'
+  page_hash: 789005914ed673280d74ef6825b2da22bd3ecba73096fd6462228e00b01f8060
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/56/moka-kavovary/1/
+- last_seen: '2026-07-05'
+  page_hash: 6ed1e28140a0e6380b561445a26683b92155f910518b545903e7814af972321e
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/59/coffeein-merch/1/
+- last_seen: '2026-07-05'
+  name: BURUNDI Kibingo NATURAL - stredné praženie (200 g, zrnková káva)
+  origin: null
+  packaging:
+  - price: 12.5
+    weight_g: 200
+  page_hash: cdb3d209823694a631ddbf517821d591f51156222c16e6cca06eaccc98b5a085
+  process: Natural - suché
+  roast_type: null
+  status: ok
+  url: https://www.coffeein.sk/detail/640/burundi-kibingo-natural-stredne-prazenie-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 42f673e8f84311fe6bb3709901a8b27864a01214bc2452a9f2234255252259ef
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/47/100-arabica/1/
+- last_seen: '2026-07-05'
+  page_hash: 028e630f5a33a4a71c256b1900b11a1b72cfef09f785c5473d94538161c0d84c
+  status: not_a_product
+  url: https://www.coffeein.sk/info/7/dorucenie-a-platba/
+- last_seen: '2026-07-05'
+  name: Káva pre mamičku (200 g, zrnková káva)
+  origin: Blend tvorí 50% sladkej Brazílie a 50% Kolumbie. 100% arabika
+  packaging:
+  - price: 7.99
+    weight_g: 200
+  - price: 7.99
+    weight_g: 1000
+  page_hash: 5cab0dd29dc8759e6e099b4c1573f81a6ed71453d2567fd031e8aa36f309ca83
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.coffeein.sk/detail/730/kava-pre-mamicku-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  name: BURUNDI Kibingo WASHED - SVETLÉ praženie (200 g, zrnková káva)
+  origin: null
+  packaging:
+  - price: 12.5
+    weight_g: 200
+  page_hash: bcc67b33be520e1126960ea98fa49c6c1dca3c4ae2fa88a5b73344425718ca3a
+  process: Washed
+  roast_type: null
+  status: ok
+  url: https://www.coffeein.sk/detail/573/burundi-kibingo-washed-svetle-prazenie-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: b52a643b238d515b83e71400714fc676b39d27785add7979b48bdb693b1c7ae4
+  status: not_a_product
+  url: https://www.coffeein.sk/info/36/ferove-ocenenie-farmarov/
+- last_seen: '2026-07-05'
+  page_hash: 0b673fcc61c14abd5361375b26da58a4600ac5357d17ca7f9b3ec168ef810f18
+  status: not_a_product
+  url: https://www.coffeein.sk/info/11/kava-do-kaviarne/
+- last_seen: '2026-07-05'
+  name: Colombia Peñas Blancas - SVETLÉ praženie (200 g, zrnková káva)
+  origin: null
+  packaging:
+  - price: 15.0
+    weight_g: 200
+  page_hash: 6ce960e8d875573aaeaefad82e28a45328a3d99cd6199639a7dbc6fceeaa4c01
+  process: Extended natural
+  roast_type: null
+  status: ok
+  url: https://www.coffeein.sk/detail/941/colombia-penas-blancas-svetle-prazenie-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: ba75870f08a6374da677e5a29ec4b65b5c0b9fe549c900db736507cc7a627dde
+  status: not_a_product
+  url: https://www.coffeein.sk/
+- last_seen: '2026-07-05'
+  page_hash: 3d0450aa4bec8494a6a59bd029b28aa7f8abeb9567626987a374977431bad86c
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/2/cerstvo-prazena-zrnkova-kava/1/
+- last_seen: '2026-07-05'
+  page_hash: 638e6409b179940026d655ebfd2f65eb2925fb87dbf5cb092cb131d23ecf9b92
+  status: not_a_product
+  url: https://www.coffeein.sk/kavovar-do-firmy/
+- last_seen: '2026-07-05'
+  page_hash: 8ab651cd46a6afd5e7da109cb8d8197dfc071bc5f33aee5a72c4c81f791f566d
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/84/kava-do-automatickeho-kavovaru/1/
+- last_seen: '2026-07-05'
+  page_hash: 42d2c05ff566ac9c3692983deea18a6e019afa8a3c9b7fc60065ecfac5bc0c59
+  status: not_a_product
+  url: https://www.coffeein.sk/special/top/1/
+- last_seen: '2026-07-05'
+  page_hash: ff79c1f1a8b98f14244435b4b955ac60b28fad8e030b6ca04bf6431e60712f08
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/83/kavove-kapsule-pre-nespresso/1/
+- last_seen: '2026-07-05'
+  page_hash: 1f06f3f2387a175aea2fe3a2cc1401faf8bc9b862e4f1033f6dfa8862d6c8bd6
+  status: not_a_product
+  url: https://www.coffeein.sk/info/6/kava-do-firmy/
+- last_seen: '2026-07-05'
+  name: Brasil Cerrado Diamond (200 g, zrnková káva)
+  origin: null
+  packaging:
+  - price: 7.99
+    weight_g: 200
+  - price: 7.99
+    weight_g: 1000
+  page_hash: d8d592e20ea678532f002d31bc3f41b9ccfe627454d728b88266182071b1c24f
+  process: null
+  roast_type: espresso
+  status: ok
+  url: https://www.coffeein.sk/detail/123/brasil-cerrado-diamond-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  name: COFFEEIN Italy - espresso zmes (200 g, zrnková káva)
+  origin: null
+  packaging:
+  - price: 7.89
+    weight_g: 200
+  page_hash: cff910ace45eeaa4068e50ab81b1a2ce9dfa6b46f630d389b461c37bc4429c76
+  process: Tmavé praženie
+  roast_type: espresso
+  status: ok
+  url: https://www.coffeein.sk/detail/456/coffeein-italy-espresso-zmes-200-g-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 5026064aea2d8ac991034bd81fa3da39d4304c51e88aa53427d4863d67afc868
+  status: not_a_product
+  url: https://www.coffeein.sk/info/35/statut-sutaze-200g-lasky/
+- last_seen: '2026-07-05'
+  page_hash: 9e99fdc4134bd1f8fa3548a91f94d6ca088cde7d3436170699223e045691003a
+  status: not_a_product
+  url: https://www.coffeein.sk/kategoria/76/kilove-balenia/1/
+- last_seen: '2026-07-05'
+  name: Mexico Chiapas (200 g, zrnková káva)
+  origin: null
+  packaging:
+  - price: 7.99
+    weight_g: 200
+  page_hash: 4e9c968bd3108f6565590e211e15032879b9c3029c9c70a9415bb932541eb220
+  process: Vulkanická pôda a ideálna nadmorská výška 1 200 – 1 600 metrov
+  roast_type: null
+  status: ok
+  url: https://www.coffeein.sk/detail/36/mexico-chiapas-200-g-zrnkova-kava/
+diamonds-roastery:
+- last_seen: '2026-07-05'
+  page_hash: 8a2509becf974aed6fa64ef17a6bdf69f8a3c28777b76c9e7e5f047651d8e25d
+  status: not_a_product
+  url: https://diroastery.sk/kategoria-produktu/kava
+- last_seen: '2026-07-05'
+  page_hash: a176e1e0c329808955fc9e28c5f715afd0c337cf1a768d8b06a0c53116904c82
+  status: not_a_product
+  url: https://diroastery.sk/produkt/guatemala-el-mirador/
+- last_seen: '2026-07-05'
+  name: Timemore Chestnut C3S Max
+  origin: null
+  packaging:
+  - price: 99.0
+    weight_g: null
+  page_hash: 14e9b5aa3fafca2d1774e10dee60cff7a9c1bad66d693e1d396efec28f56cc1b
+  process: null
+  roast_type: null
+  status: ok
+  url: https://diroastery.sk/produkt/timemore-chestnut-c3s-max/
+- last_seen: '2026-07-05'
+  name: Timemore Black Mirror Mini Espresso čierna váha
+  origin: null
+  packaging:
+  - price: 59.0
+    weight_g: null
+  page_hash: bf3637c04834af8908e1d652c313a824dcb46d42307954b85526db27f57963a1
+  process: null
+  roast_type: null
+  status: ok
+  url: https://diroastery.sk/produkt/timemore-black-mirror-mini-espresso-cierna-vaha/
+- last_seen: '2026-07-05'
+  name: Prskaná kolekcia (bez uška)
+  origin: null
+  packaging:
+  - price: 25.0
+    weight_g: null
+  page_hash: f9b24a2f53e07490fdeeb08bc52fada73bed8b753417fbe53824cc4fe7f7829c
+  process: null
+  roast_type: null
+  status: ok
+  url: https://diroastery.sk/produkt/prskana-kolekcia-bez-uska/
+- last_seen: '2026-07-05'
+  page_hash: 102118f989a883429d11a2b74a1cfa6ad3009778bf68445484c2c6f05fca8056
+  status: not_a_product
+  url: https://diroastery.sk/?product_cat=prislusenstvo
+- last_seen: '2026-07-05'
+  name: Modrá & Ružová kolekcia (s uškom)
+  origin: null
+  packaging:
+  - price: 30.0
+    weight_g: null
+  page_hash: 2d56574ad93ef5b7128ed4e92e095cf92e6c1eb3dcf497c4eb18cd67e4445b8c
+  process: null
+  roast_type: null
+  status: ok
+  url: https://diroastery.sk/produkt/modra-ruzova-kolekcia-s-uskom/
+- last_seen: '2026-07-05'
+  page_hash: 4040edee888d6b9c53391c3c4d46da58fecf9801fc4cf52cc22f6d1ad8a64e6d
+  status: not_a_product
+  url: https://diroastery.sk/kategoria-produktu/prislusenstvo/priprava-kavy-prislusenstvo/
+- last_seen: '2026-07-05'
+  page_hash: 0ce7dd25a9741714b12d9e69de0f12f53f1ae2defbfe720fe7951d88570f3b6d
+  status: not_a_product
+  url: https://diroastery.sk/produkt/kolumbia-yenifer-rojas-trujillo/
+- last_seen: '2026-07-05'
+  page_hash: 65e65c369f7dc96f2494e6a502fc735850ab726d907874c0f0d5978aeb200efb
+  status: not_a_product
+  url: https://diroastery.sk/ochrana-sukromia/
+- last_seen: '2026-07-05'
+  page_hash: 6527cb4768132af3885b2ac2360b74f687a9843b7e2fc4625133ebc3eb989068
+  status: not_a_product
+  url: https://diroastery.sk/kategoria-produktu/kava/filter/
+- last_seen: '2026-07-05'
+  page_hash: b8774331c578458ba031e263009b77812822e14e838604cc426900e67de45754
+  status: not_a_product
+  url: https://diroastery.sk/kde-nas-ochutnate/
+- last_seen: '2026-07-05'
+  page_hash: ddf790fe2bb11154bd543a3d108849ae831a2d60eb10590e27923048bff96b49
+  status: not_a_product
+  url: https://diroastery.sk/
+- last_seen: '2026-07-05'
+  page_hash: d5c74c456138c5d03585635b6a6fdbbf7c240a1c3d7500c057e3d58c157b4652
+  status: not_a_product
+  url: https://diroastery.sk/kategoria-produktu/kava/automat-kava/
+- last_seen: '2026-07-05'
+  page_hash: 6830725b46c927f1c6184e41abcb030131d3e20d5bada634056d6afcefa8c7ff
+  status: not_a_product
+  url: https://diroastery.sk/kategoria-produktu/prislusenstvo/doplnky/
+- last_seen: '2026-07-05'
+  page_hash: 172bf1aa87ed436a6539ad71e690acda277b788f2dd6c9b2633c4dc8ef345773
+  status: not_a_product
+  url: https://diroastery.sk/my-account/
+- last_seen: '2026-07-05'
+  page_hash: c3b0085548832667dea7d2067f9c768f12c7c4ed63cba567b7fdd5e5a0019bfc
+  status: not_a_product
+  url: https://diroastery.sk/kategoria-produktu/kava/espresso-kava/
+- last_seen: '2026-07-05'
+  name: Vínovo-červená kolekcia (s uškom / bez uška)
+  origin: null
+  packaging:
+  - price: 25.0
+    weight_g: null
+  page_hash: 264bbf357a33cef81c5721666cb87038cac3da8aa933e8ba9b2b00d1d69298b9
+  process: null
+  roast_type: null
+  status: ok
+  url: https://diroastery.sk/produkt/vinovo-cervena-kolekcia-s-uskom-bez-uska/
+- last_seen: '2026-07-05'
+  page_hash: c924c2b3d6bba1f724acd5c875f57c20fcc2d79f712cb251caccb5cd1e34dca1
+  status: not_a_product
+  url: https://diroastery.sk/najcastejsie-otazky/
+- last_seen: '2026-07-05'
+  page_hash: 6f2de2ec4dd2de4bbd80f2c935f02eff600ed664b99bb5763febf4c5b1c32380
+  status: not_a_product
+  url: https://diroastery.sk/preco-nakupit-v-diamonds-roastery-slovenska-rodinna-praziaren/
+- last_seen: '2026-07-05'
+  page_hash: 0e7bb406497528ed7f9425e3fb7aeff562d6a8eeaa9234e5fca94bdc3e802a55
+  status: not_a_product
+  url: https://diroastery.sk/preco-nakupit-v-diamonds-roastery-kava-a-cokolada-ktore-maju-pribeh/
+- last_seen: '2026-07-05'
+  name: Kolumbia Kumanday Reserve
+  origin: null
+  packaging:
+  - price: 11.0
+    weight_g: 250
+  - price: 250.0
+    weight_g: null
+  - price: 500.0
+    weight_g: null
+  - price: 1000.0
+    weight_g: null
+  page_hash: dc4b900ae3740c98733bdd41f273bf66ea2a4ae836695f9f2037c8bf4b3310ee
+  process: null
+  roast_type: null
+  status: ok
+  url: https://diroastery.sk/produkt/kolumbia-kumanday-reserve/
+- last_seen: '2026-07-05'
+  name: Kostarika Mirazu Catajo – zrnková káva
+  origin: null
+  packaging:
+  - price: 19.0
+    weight_g: 250
+  - price: 19.0
+    weight_g: 250
+  - price: 35.0
+    weight_g: 500
+  - price: 64.0
+    weight_g: 1000
+  page_hash: f171e95bde05710af3095b622464581d4651a1c9118fed867bd604322f3c81df
+  process: null
+  roast_type: filter
+  status: ok
+  url: https://diroastery.sk/produkt/kostarika-mirazu-catajo-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 8408f7d3233fcf7fd1d1ee5158c78d1bab791e0e406c6d275a4218a3deae65eb
+  status: not_a_product
+  url: https://diroastery.sk/produkt/prskana-kolekcia-s-uskom/
+- last_seen: '2026-07-05'
+  page_hash: 102118f989a883429d11a2b74a1cfa6ad3009778bf68445484c2c6f05fca8056
+  status: not_a_product
+  url: https://diroastery.sk/kategoria-produktu/prislusenstvo/
+- last_seen: '2026-07-05'
+  page_hash: 7d20cd66265d78add35c5026259007beb199b6c6439a4ef888f79c13a12d8c4e
+  status: not_a_product
+  url: https://diroastery.sk/produkt/kena-mugaya-ab-zrnkova-kava/
+- last_seen: '2026-07-05'
+  name: Uganda Nyabirongo Natural – zrnková káva
+  origin: null
+  packaging:
+  - price: 15.0
+    weight_g: 250
+  - price: 250.0
+    weight_g: null
+  - price: 500.0
+    weight_g: null
+  - price: 1000.0
+    weight_g: null
+  page_hash: 1159b0f82a9d9cca88ef0b278e30930281aad829c4c72b2d357c21141b6bc06e
+  process: Suché
+  roast_type: filter
+  status: ok
+  url: https://diroastery.sk/produkt/uganda-nyabirongo-natural/
+- last_seen: '2026-07-05'
+  page_hash: 5df06c9d0a8121423a1537a8de61b48a93ae62ca095307047d4644e95a952531
+  status: not_a_product
+  url: https://diroastery.sk/kategoria-produktu/bean-to-bar-cokolada/
+- last_seen: '2026-07-05'
+  name: Kongo Kisunga – zrnková káva
+  origin: null
+  packaging:
+  - price: 15.0
+    weight_g: 250
+  - price: 250.0
+    weight_g: null
+  - price: 500.0
+    weight_g: null
+  - price: 1000.0
+    weight_g: null
+  page_hash: dd1a065fdf3bd045bb6341f1bd818e9283ecd9222abefa42472e2c2cdd005438
+  process: Honey
+  roast_type: filter
+  status: ok
+  url: https://diroastery.sk/produkt/kongo-kisunga-zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 986b4bcc564addbb29890640439fee6b1138408a04cc98005636dc8727943c47
+  status: not_a_product
+  url: https://diroastery.sk/?product_cat=kava
+- last_seen: '2026-07-05'
+  name: Kolumbia El Buho Decaf – bezkofeínová káva
+  origin: null
+  packaging:
+  - price: 14.0
+    weight_g: 250
+  - price: 14.0
+    weight_g: 250
+  - price: 26.0
+    weight_g: 500
+  - price: 48.0
+    weight_g: 1000
+  page_hash: 653648d4e35ff3f81dafa9f2b4b801dd4df4f59968c1f7f38b34233d62de1b76
+  process: Metóda sugar cane
+  roast_type: filter
+  status: ok
+  url: https://diroastery.sk/produkt/kolumbia-el-buho-decaf-bezkofeinova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 4b70fb8fb5c59d1bea9f9f315b1062b008d753856654f2ae94e28dfbf8f14d39
+  status: not_a_product
+  url: https://diroastery.sk/preco-nakupit-v-diamonds-roastery-kava-s-usmevom/
+- last_seen: '2026-07-05'
+  page_hash: 8dcee57483960f77bef9a8c8b5dc6ced0bdd3c4bd9f06c972a06df8508ed9ec5
+  status: not_a_product
+  url: https://diroastery.sk/preco-nakupit-v-diamonds-roastery-rocne-ochutname-800-kav/
+- last_seen: '2026-07-05'
+  name: Kolumbia Efren Echeverri – zrnková káva
+  origin: null
+  packaging:
+  - price: 17.0
+    weight_g: 250
+  - price: 250.0
+    weight_g: null
+  - price: 500.0
+    weight_g: null
+  - price: 1000.0
+    weight_g: null
+  page_hash: 3ede7c42bd2621e75c198bf65b86b82a9aa1ac38accf939a90c9c9d2aa3af448
+  process: null
+  roast_type: filter
+  status: ok
+  url: https://diroastery.sk/produkt/kolumbia-efren-echeverri/
+- last_seen: '2026-07-05'
+  page_hash: 33151234082403345886e5fd315839e6f28a34bc318dc29a1bb31f5f5725dfca
+  status: not_a_product
+  url: https://diroastery.sk/moj-ucet/orders/
+dobra-kava:
+- last_seen: '2026-07-05'
+  page_hash: 503bbf47ecb033cd588fe7532af4d39f7dd0997b079d203b6dd762681566258b
+  status: not_a_product
+  url: https://www.dobrakava.eu/doprava-platba
+- last_seen: '2026-07-05'
+  page_hash: d372ec67c8de42cd9e5aac805aa19e15e5628111b8c49d2893e85690833750a4
+  status: not_a_product
+  url: https://www.dobrakava.eu/search?search=kavolada&items_per_page=12
+- last_seen: '2026-07-05'
+  page_hash: 946eff2103c7eaf56f372a63d63da0d7ac54c47c8608041121e100fc87c0b30d
+  status: not_a_product
+  url: https://www.dobrakava.eu/akciove-produkty
+- last_seen: '2026-07-05'
+  page_hash: bccc3fce44777e9d9f687de4e0cfc45d88c65daf24068630312f2dd7689bdc0d
+  status: not_a_product
+  url: https://www.dobrakava.eu/napoje/cervene-vino-s-kavou-075l
+- last_seen: '2026-07-05'
+  page_hash: 049e575647bcea9e3ebc79d7847c0c703de10c272892b9eca73c187d1d01aea4
+  status: not_a_product
+  url: https://www.dobrakava.eu/potraviny/strukoviny
+- last_seen: '2026-07-05'
+  name: Kávoláda GENTLEMAN 50g
+  origin: null
+  packaging:
+  - price: 5.4
+    weight_g: 50
+  page_hash: 9caf5f48bf55fe8e37253ebcc315a6c012d2e110403125251fe1a648bf690bf8
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.dobrakava.eu/snacky/kavolada-gentleman-50g
+- last_seen: '2026-07-05'
+  page_hash: ceac390f3a8da9240a86439e2b2db63b0e2e03fda0f13cbb993eea39c57dc82a
+  status: not_a_product
+  url: https://www.dobrakava.eu/chut/rastlinna
+- last_seen: '2026-07-05'
+  page_hash: cfdbf743ff246920f2304fa9ce3065ae38fa05b3183da4e78f91ee2b0ef881d5
+  status: not_a_product
+  url: https://www.dobrakava.eu/napoje/biele-vino-s-kavovymi-listami-075l
+- last_seen: '2026-07-05'
+  page_hash: ce0585fa20141a62b1ecf9b8312bfd3db72856764d89e74539a0f1806ceef193
+  status: not_a_product
+  url: https://www.dobrakava.eu/user/register
+- last_seen: '2026-07-05'
+  name: Ethiopia
+  origin: null
+  packaging:
+  - price: 11.7
+    weight_g: 300
+  - price: 37.05
+    weight_g: 1000
+  page_hash: fabc466aecca0aa0ca051a91843e19e637b3521f3d22220967eba9d542f260fe
+  process: natural
+  roast_type: filter
+  status: ok
+  url: https://www.dobrakava.eu/prazena/ethiopia
+- last_seen: '2026-07-05'
+  page_hash: 7c8ae7873b199ac9eef0c4153ee09435987d2cd9669a91a425c40cf888a71dfd
+  status: not_a_product
+  url: https://www.dobrakava.eu/potraviny/cestoviny
+- last_seen: '2026-07-05'
+  page_hash: 6c0134583a617bbe12b98c2fa53e5821d9d254060df025f3751b514896ab18ec
+  status: not_a_product
+  url: https://www.dobrakava.eu/
+- last_seen: '2026-07-05'
+  page_hash: 069f3f5c2bcb4941dfcaed5d636f942a2b05fe2da4fffdaac74e830c522a461b
+  status: not_a_product
+  url: https://www.dobrakava.eu/prislusenstvo/priprava-servirovanie
+- last_seen: '2026-07-05'
+  page_hash: f68dbfd022a2d70a7acb537f7141b393670e14d4d83f289a9928ea845e245226
+  status: not_a_product
+  url: https://www.dobrakava.eu/potraviny/koreniny-ochucovadla
+- last_seen: '2026-07-05'
+  page_hash: cfda3c5a268a3ece95da32449ecb7da41de3bc179b4dac28b807fecf70da0644
+  status: not_a_product
+  url: https://www.dobrakava.eu/potraviny/olivy-pesta-pochutiny
+- last_seen: '2026-07-05'
+  page_hash: c76766b5fa3dc31c696501cf1616bfa86922625e1d7d289b59c3614d40c8f4ae
+  status: not_a_product
+  url: https://www.dobrakava.eu/chut/cukrova
+- last_seen: '2026-07-05'
+  page_hash: 628f081bb43c3b01e851f48454155ec72632a3965678e56f5191e91c34983d7e
+  status: not_a_product
+  url: https://www.dobrakava.eu/kava/zelena
+- last_seen: '2026-07-05'
+  page_hash: e8ac01abae009bdf14bb69f72f50f3fbf83209144408537ec45571b5878ac50e
+  status: not_a_product
+  url: https://www.dobrakava.eu/chut/alkoholova
+- last_seen: '2026-07-05'
+  page_hash: d3539dc0de5c25d6f54984f2f4742e47781c7a0f67803f8b42882e31b64470b6
+  status: not_a_product
+  url: https://www.dobrakava.eu/prislusenstvo/filtracia-vody
+- last_seen: '2026-07-05'
+  page_hash: 6822ec2679c049d6a892fcbb5f837058b533c2213ab72d54c297bfccf1c21f99
+  status: not_a_product
+  url: https://www.dobrakava.eu/potraviny/superpotraviny
+- last_seen: '2026-07-05'
+  page_hash: fff401d690d2743cdde0530e84f1e09ca6c1ae802bf3799763efe603caa1bef9
+  status: not_a_product
+  url: https://www.dobrakava.eu/chut/korenista
+- last_seen: '2026-07-05'
+  page_hash: ec97ed49db5bb74182886b15a84949dcf8c66bb09c85f9130e3a20b483a65842
+  status: not_a_product
+  url: https://www.dobrakava.eu/kavovary
+- last_seen: '2026-07-05'
+  page_hash: 9472004957d182cefe293e55b5754c051ed0be2d0747b75a395ba0aeee6ba004
+  status: not_a_product
+  url: https://www.dobrakava.eu/kava/prazena
+- last_seen: '2026-07-05'
+  page_hash: 80695a3d28c24fcdb5cc1bf48722cff9839abb2e9e035b2c191141b3b1d579e8
+  status: not_a_product
+  url: https://www.dobrakava.eu/kava/prisady-do-kavy
+- last_seen: '2026-07-05'
+  page_hash: 89f24e37252af6a6b9b4cdb7e8430a96aa072e4ec9b0e36d3da5b551d8635774
+  status: not_a_product
+  url: https://www.dobrakava.eu/prislusenstvo
+- last_seen: '2026-07-05'
+  page_hash: d4f9809a86c41686729a533d74ac760178df1dcb5fe08670ee553793762d146e
+  status: not_a_product
+  url: https://www.dobrakava.eu/prazenie
+- last_seen: '2026-07-05'
+  page_hash: 467b79a2d386450a4a03c1b631b9e08fa4dcd8a0261847e3c9b2c90bd59b46e0
+  status: not_a_product
+  url: https://www.dobrakava.eu/potraviny/bulgur-ryza
+- last_seen: '2026-07-05'
+  page_hash: 3bc81e4e317b0f354764c7cc01892d0fefa55c24ccb12708157febbdbb29e858
+  status: not_a_product
+  url: https://www.dobrakava.eu/potraviny/snacky
+- last_seen: '2026-07-05'
+  page_hash: 19943b7f2ca3c69586c57bb496c248149cc1017e0125543ba0af7941a3cf7374
+  status: not_a_product
+  url: https://www.dobrakava.eu/rady-tipy-k-priprave-kavy
+- last_seen: '2026-07-05'
+  page_hash: fefd21b25f8f7be61c3b9e7a46f9962b4c725fbcb410548c09f717bd4273ad75
+  status: not_a_product
+  url: https://www.dobrakava.eu/potraviny/hotove-jedla
+- last_seen: '2026-07-05'
+  name: Brazil Santos No.01
+  origin: null
+  packaging:
+  - price: 6.72
+    weight_g: 300
+  - price: 21.28
+    weight_g: 1000
+  page_hash: 3f531124fa51e3408f6f58a8176685b948c8cf0471608b010a1b45e7e22e430f
+  process: natural
+  roast_type: espresso
+  status: ok
+  url: https://www.dobrakava.eu/prazena/brazil-santos-no01
+- last_seen: '2026-07-05'
+  page_hash: 8a7f747f5ebf5a3c12b3a2f58ac8f7b2e60281d907706d18805ddd08dac19a3c
+  status: not_a_product
+  url: https://www.dobrakava.eu/chut/orieskova
+- last_seen: '2026-07-05'
+  page_hash: 95557a1bb003ec3bc756790223dc422b31210bf26a864e3690b0bbca80ac0ccc
+  status: not_a_product
+  url: https://www.dobrakava.eu/chut/kvetinova
+- last_seen: '2026-07-05'
+  page_hash: be8405efa793c5cf2715af7b046b3df7c1d3782b4b0e6d43bc8be8551ef80253
+  status: not_a_product
+  url: https://www.dobrakava.eu/chut/cokoladova
+- last_seen: '2026-07-05'
+  page_hash: 268279c1bbd28cfa4f8701f0760442159302c497176b3d46281c7d29596fc853
+  status: not_a_product
+  url: https://www.dobrakava.eu/kavovary/manualne
+- last_seen: '2026-07-05'
+  page_hash: 9d91ceac7ee64f21e3d8275c27547b4c433772767fc63e0c94393f99d301e2be
+  status: not_a_product
+  url: https://www.dobrakava.eu/caj-instantne-napoje/milenka-kakaovy-napoj-700g
+- last_seen: '2026-07-05'
+  page_hash: 15e981b5e9cdb573623ef635332bb238389d601e2abed4c2c900dc60136ac31a
+  status: not_a_product
+  url: https://www.dobrakava.eu/kavovary/elektricke
+- last_seen: '2026-07-05'
+  page_hash: 86d26e2c4698c44b8b4283b6467eda62bb8de08f08bca674f5a63de4efcb28a8
+  status: not_a_product
+  url: https://www.dobrakava.eu/pre-firmy
+- last_seen: '2026-07-05'
+  page_hash: 83cd3de51b591ec1c7813c8218143aa32543ccedd31961039b218edb4b94c143
+  status: not_a_product
+  url: https://www.dobrakava.eu/kava-vo-flasi
+- last_seen: '2026-07-05'
+  name: Burundi Kibingo washed
+  origin: null
+  packaging:
+  - price: 13.2
+    weight_g: 300
+  - price: 41.8
+    weight_g: 1000
+  page_hash: b2d517f5e37ad01439bf24bf8a69c6b195e8db86ca403ef139527f773a75e1b9
+  process: Mokrá metóda (washed)
+  roast_type: filter
+  status: ok
+  url: https://www.dobrakava.eu/prazena/burundi-kibingo-washed
+- last_seen: '2026-07-05'
+  page_hash: 1b20cb977bb03fe90dd72cfbe21a7c1b909c3472cbe330139b9074a4bcfe864a
+  status: not_a_product
+  url: https://www.dobrakava.eu/chut/ovocna
+- last_seen: '2026-07-05'
+  page_hash: 883bed6c4c87df6080e76d4b056dcc218a2259c6a4c70706e11032c036497e0a
+  status: not_a_product
+  url: https://www.dobrakava.eu/potraviny/cukor-sladidla
+- last_seen: '2026-07-05'
+  page_hash: 71c2cc76e909aabb06180f28518e22918fbf09df1e379aa70a1d9e5eb00c8db8
+  status: not_a_product
+  url: https://www.dobrakava.eu/kava/instantna
+- last_seen: '2026-07-05'
+  page_hash: b80625fd9bb0d3badbb168cc165046ed1734032b5bd61bcd4ae8062e4e5a9bd3
+  status: not_a_product
+  url: https://www.dobrakava.eu/darceky
+- last_seen: '2026-07-05'
+  page_hash: 14c0a388beb86330f73910b8bc83a36e9cca82d2c2401c7252b92f31164c997b
+  status: not_a_product
+  url: https://www.dobrakava.eu/potraviny/sterilizovane
+- last_seen: '2026-07-05'
+  page_hash: 2dcc1187163dab405f3dc9fd2b8a3c1a5230d49d0dc837638487bafaadda5ecc
+  status: not_a_product
+  url: https://www.dobrakava.eu/nase-predajne
+- last_seen: '2026-07-05'
+  name: Uganda Mubuku honey
+  origin: null
+  packaging:
+  - price: 11.7
+    weight_g: 300
+  - price: 37.05
+    weight_g: 1000
+  page_hash: 03da95218251ee877807adfe9557a787a4387016fcebd9413a3e77e483721dc2
+  process: honey
+  roast_type: filter
+  status: ok
+  url: https://www.dobrakava.eu/prazena/uganda-mubuku-honey
+- last_seen: '2026-07-05'
+  page_hash: 5d9efb03050fafd75ae31aea1bcae83a9a7c3514ec05848959d8cdbd41dbc892
+  status: not_a_product
+  url: https://www.dobrakava.eu/potraviny/napoje
+- last_seen: '2026-07-05'
+  page_hash: 68cd986a215b5bacf3bd9f0de205a5a7603866c7d750fe0d0b70d058c4cbf8d2
+  status: not_a_product
+  url: https://www.dobrakava.eu/prislusenstvo/cistiace-potreby
+- last_seen: '2026-07-05'
+  page_hash: 85d0886f4ad4ca0d69ba088f1641cd3ae74cb678f016c4fde80834c18f841e39
+  status: not_a_product
+  url: https://www.dobrakava.eu/odroda-spracovanie-povod
+- last_seen: '2026-07-05'
+  page_hash: a2e79c679ed7c883d6cb84b61bef04e17d60bbfa5f8280814320744f2c2cc518
+  status: not_a_product
+  url: https://www.dobrakava.eu/prislusenstvo/skladovanie-obaly
+- last_seen: '2026-07-05'
+  page_hash: c796505f2db065f39d6c15d891d6e68ff96bc43b9e68afe10cd0357005a21c86
+  status: not_a_product
+  url: https://www.dobrakava.eu/kava
+- last_seen: '2026-07-05'
+  page_hash: 8659020e4dd8c58dc4cde0ee1979f6e433612f36f8d671caa8f5f86622aba0c3
+  status: not_a_product
+  url: https://www.dobrakava.eu/potraviny
+- last_seen: '2026-07-05'
+  page_hash: 237c9ead82d2f174f8e0d708656f9a427e1e75c12657fbfed6a768b0e6794363
+  status: not_a_product
+  url: https://www.dobrakava.eu/darceky/ruzove-vino-s-cascarou-075l
+- last_seen: '2026-07-05'
+  page_hash: 7956f10684dddf2f92429faf4a3173bbf2ec7f4fe6c1c6fcede6ccdbd399aef7
+  status: not_a_product
+  url: https://www.dobrakava.eu/prislusenstvo/filtre-doplnky
+- last_seen: '2026-07-05'
+  page_hash: 562e8c860ccf596f25e0505aae9e5ea743646dced76d4ddc091933d7ad8518c0
+  status: not_a_product
+  url: https://www.dobrakava.eu/user/password
+- last_seen: '2026-07-05'
+  page_hash: 019d5936d1fb5c0aa71fba8aef637472f1d38b1003b2d72e5d17f54a53a9d696
+  status: not_a_product
+  url: https://www.dobrakava.eu/caj-instantne-napoje
+good-times-coffee-roasters:
+- last_seen: '2026-07-05'
+  page_hash: dd1bae2d557ced90f7c383d895c9794b7acda4f29012077e8a9794355c188ffd
+  status: not_a_product
+  url: https://goodtimes.coffee/contact/
+- last_seen: '2026-07-05'
+  name: Brazil Doce Diamantina
+  origin: null
+  packaging:
+  - price: 9.0
+    weight_g: 200
+  - price: 35.0
+    weight_g: 1000
+  page_hash: c97f22753bfe503ab4f1a86c689048822c9c7f0dc0c0a389c8e62eb5c0ec8cda
+  process: Suché (natural)
+  roast_type: espresso
+  status: ok
+  url: https://goodtimes.coffee/produkt/brazil-doce-diamantina/
+- last_seen: '2026-07-05'
+  name: Daily Espresso Seasonal Blend
+  origin: null
+  packaging:
+  - price: 8.5
+    weight_g: 200
+  - price: 32.0
+    weight_g: 1000
+  page_hash: b170902b80da2180ef0daf701a61efa9595eb4280a313bc62749afcd75ed4528
+  process: Mix
+  roast_type: null
+  status: ok
+  url: https://goodtimes.coffee/produkt/daily-espresso-seasonal-blend/
+- last_seen: '2026-07-05'
+  page_hash: 4874cdc6686c972bd428db7a25458ee94be675755f71a7fef90a53cd28593154
+  status: not_a_product
+  url: https://goodtimes.coffee/kavieran/
+- last_seen: '2026-07-05'
+  page_hash: 5b870293283838016e6fb9fa18c8cb6cf02ca2eea56cd4950edfc51f651c5c71
+  status: not_a_product
+  url: https://goodtimes.coffee/
+- last_seen: '2026-07-05'
+  page_hash: 4a214dbe61628560bc4ff9a08b43cdb8bb4bc3d3fdad8e62711c37dd7b7897ec
+  status: not_a_product
+  url: https://goodtimes.coffee/kategoria-produktu/specialty/
+- last_seen: '2026-07-05'
+  page_hash: 43b66f65ed851775c91da95452e2d9f53eabe625f22dc182540b071c01f386eb
+  status: not_a_product
+  url: https://goodtimes.coffee/my-account/
+- last_seen: '2026-07-05'
+  page_hash: 067904df6faaa33ab83195f28281438e08a02dab59dbf7c25ac9037a596db64e
+  status: not_a_product
+  url: https://goodtimes.coffee/obchod/
+- last_seen: '2026-07-05'
+  page_hash: d2c2e2b837c02d71d0886924fda363bd14bdc67dfe966c9e5fc6a9a0dba00377
+  status: not_a_product
+  url: https://goodtimes.coffee/ochrana-sukromia/
+- last_seen: '2026-07-05'
+  page_hash: 05ed51ea404a7eebe29f9c079fc9fa60db6f966fee0a1ade67d1231e90a92a6e
+  status: not_a_product
+  url: https://goodtimes.coffee/produkt/honduras-comsa-co-operative/
+goriffee:
+- last_seen: '2026-07-05'
+  page_hash: 5055d9d521a0e2a7ae46d26ee6a7f434d984c1cfc1f6f52fdb0dc6634100dff6
+  status: not_a_product
+  url: https://www.goriffee.com/moj-ucet/
+- last_seen: '2026-07-05'
+  page_hash: b1debabc16d197cb0cf3ee36f54563a814bfa8675210a5a14139650e674bd7d5
+  status: not_a_product
+  url: https://www.goriffee.com/zasady-spracuvania-cookies/
+- last_seen: '2026-07-05'
+  page_hash: 6ae76a618b5e058f2587c733698a0207c2333cbd60eb068d63faaa09be305935
+  status: not_a_product
+  url: https://www.goriffee.com/produkty/kurzy/baristicky-kurz-basic-make-it-better/
+- last_seen: '2026-07-05'
+  name: Colombia Tumbaga decaf na filter
+  origin: null
+  packaging:
+  - price: 13.0
+    weight_g: 250
+  - price: 50.0
+    weight_g: 1000
+  page_hash: 13c8b8f4e373fd2a209b188dd1555c9deddec821e874d531b23743e9f56c8671
+  process: Sugarcane EA - prírodná a ekofriendly metóda na decaf
+  roast_type: filter
+  status: ok
+  url: https://www.goriffee.com/shop/kava/bezkofeinova-kava/colombia-tumbaga-decaf-na-filter/
+- last_seen: '2026-07-05'
+  page_hash: df6693a34343ff50395b3d879318debb40be9706d35db5c707db07eda42aa448
+  status: not_a_product
+  url: https://www.goriffee.com/reklamacny-poriadok/
+- last_seen: '2026-07-05'
+  page_hash: e05d091939e183af32411a0acedae0f25d30dc020b2e2dd98e8753af0a458a30
+  status: not_a_product
+  url: https://www.goriffee.com/
+- last_seen: '2026-07-05'
+  page_hash: c706a373b7409f1a1c662ba124b42d05f0cc7fe8253cbf8346f3ce1c5985f4e8
+  status: not_a_product
+  url: https://www.goriffee.com/kategorie-produktov/kava/bezkofeinova-kava/
+- last_seen: '2026-07-05'
+  name: Colombia Popayan Reserve Washed
+  origin: null
+  packaging:
+  - price: 11.0
+    weight_g: 250
+  - price: 42.0
+    weight_g: 1000
+  page_hash: 91fe9687e90cf966dd9a60a283c999ffb380e0b7e0f9393b613c1e4d142ea1b6
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/colombia-popayan-reserve-washed/
+- last_seen: '2026-07-05'
+  name: Brazil Caramelo natural
+  origin: null
+  packaging:
+  - price: 11.0
+    weight_g: 250
+  - price: 42.0
+    weight_g: 1000
+  page_hash: b47eba1b7a5e1d016b7422688a5c00f0dc1ffdcd2b5c76862a78b360c999ecab
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/brazil-caramelo-natural/
+- last_seen: '2026-07-05'
+  page_hash: ef8a14d8d22d353d9ccc6e69a8b5413e8bbbafe5df6fa3e52ffb007a6b6971eb
+  status: not_a_product
+  url: https://www.goriffee.com/odstupenie-od-zmluvy/
+- last_seen: '2026-07-05'
+  name: Colombia Tumbaga Decaf – kávové kapsule
+  origin: null
+  packaging:
+  - price: 15.0
+    weight_g: null
+  - price: 57.0
+    weight_g: null
+  page_hash: e6e00613e3a1f4e8261b937b462a0e60254709b8c6c569b6c70f43a08166c38f
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.goriffee.com/shop/kava/bezkofeinova-kava/colombia-tumbaga-decaf-kavove-kapsule/
+- last_seen: '2026-07-05'
+  name: 'Výhodný balík: 3x Ovocné hviezdy'
+  origin: null
+  packaging:
+  - price: 51.3
+    weight_g: 250
+  - price: 51.3
+    weight_g: 250
+  - price: 51.3
+    weight_g: 250
+  page_hash: ed29579c62fe9bf1cf8211ecb81446ed09c23588ddeda254e226d13b90836120
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.goriffee.com/shop/kava/vyhodne-baliky/vyhodny-balik-3x-ovocne-hviezdy/
+- last_seen: '2026-07-05'
+  name: Ecuador Fundo Chamba Anaerobic
+  origin: null
+  packaging:
+  - price: 17.0
+    weight_g: 1000
+  - price: 17.0
+    weight_g: 250
+  page_hash: 128c1283d2fb69bb67526824dd5201ed9d11b5d233334714920ce634525dc1eb
+  process: Anaeróbna fermentácia
+  roast_type: filter
+  status: ok
+  url: https://www.goriffee.com/shop/kava/vyberova-kava-na-filter/ecuador-fundo-chamba-anaerobic/
+- last_seen: '2026-07-05'
+  page_hash: ff3fde190d1dfab415d8fee2bbe6d52825c53638c1a850c3ab76637115045fd8
+  status: not_a_product
+  url: https://www.goriffee.com/velkoobchod-kava-do-firiem/
+- last_seen: '2026-07-05'
+  page_hash: 58a3ca3ac79310751d6d36ab04ae01b1e4020632d2c2ca75bcb1ab7ffb061812
+  status: not_a_product
+  url: https://www.goriffee.com/kategorie-produktov/kava/kavove-kapsule/
+- last_seen: '2026-07-05'
+  page_hash: ee9e248093eb57454bc79c518820af6a381e408543a7cc711e71e22e5d4df2e3
+  status: not_a_product
+  url: https://www.goriffee.com/kategorie-produktov/doplnky/
+- last_seen: '2026-07-05'
+  page_hash: 2b62fa8bbe6a76aefa79646269c9f8b118a511471f534f567cf1ec05a6a9c39d
+  status: not_a_product
+  url: https://www.goriffee.com/kategorie-produktov/kava/
+- last_seen: '2026-07-05'
+  page_hash: da5f1c3d5d860bdc90253de8b6e55fbf3a40fe19d2aa98c800b0b1db847b21e0
+  status: not_a_product
+  url: https://www.goriffee.com/produkty/
+- last_seen: '2026-07-05'
+  page_hash: 09673621519e0044b56f1c749f2a0d7a39b0a12680234b2d2dc1db5fef4f2e02
+  status: not_a_product
+  url: https://www.goriffee.com/nase-kaviarne/
+- last_seen: '2026-07-05'
+  page_hash: 79004e12d59edaf68713b6ed81cb8a65182d23337e3816456d1d9e35198c4ad7
+  status: not_a_product
+  url: https://www.goriffee.com/doprava-a-platba/
+- last_seen: '2026-07-05'
+  name: Peach Please Brew Bags
+  origin: null
+  packaging:
+  - price: 16.0
+    weight_g: null
+  page_hash: c0095f0db993f5a9238645b451ef2c4894cc7866a4ae585919c07caeb812c05f
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.goriffee.com/shop/kava/peach-please-brew-bags/
+- last_seen: '2026-07-05'
+  page_hash: 869d9adae59399700aa31ccc87b21ead38efac4b5ab8607b24f26ec7a68bff44
+  status: not_a_product
+  url: https://www.goriffee.com/kavovy-catering-goriffee/
+- last_seen: '2026-07-05'
+  page_hash: f01c1eaf736db782c7d2bba26ce44ea3e425d721517ee183831e2256465e9ce6
+  status: not_a_product
+  url: https://www.goriffee.com/ochrana-sukromia/
+- last_seen: '2026-07-05'
+  name: Colombia Tumbaga decaf na espresso
+  origin: null
+  packaging:
+  - price: 13.0
+    weight_g: 1000
+  - price: 13.0
+    weight_g: 250
+  page_hash: f443982dc80865929e0018f4f61308775511f7a5ee1c33cb0b85d277e31a6744
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.goriffee.com/shop/kava/bezkofeinova-kava/colombia-tumbaga-decaf-na-espresso/
+- last_seen: '2026-07-05'
+  name: Peru La Cima Washed
+  origin: Peru
+  packaging:
+  - price: 14.0
+    weight_g: 250
+  - price: 58.0
+    weight_g: 1000
+  page_hash: abdd51adc389908e07feba5b1884eb987f9bfeafb19a87bb8192d48b4fa8c24d
+  process: Washed - Premyté spracovanie
+  roast_type: filter
+  status: ok
+  url: https://www.goriffee.com/shop/kava/peru-la-cima-washed/
+- last_seen: '2026-07-05'
+  name: 'Výhodný balík: 3x Kávové kapsule pre Nespresso'
+  origin: null
+  packaging:
+  - price: 45.0
+    weight_g: 250
+  - price: 40.5
+    weight_g: 250
+  page_hash: c94c4bff587d2b0331afa60ae6c01096a369c10de7803697f9913935b02229ad
+  process: natural
+  roast_type: espresso
+  status: ok
+  url: https://www.goriffee.com/shop/kava/kavove-kapsule/vyhodny-balik-3x-kavove-kapsule-pre-nespresso/
+- last_seen: '2026-07-05'
+  name: Highlander espresso blend
+  origin: null
+  packaging:
+  - price: 11.0
+    weight_g: 1000
+  - price: 11.0
+    weight_g: 250
+  - price: 42.0
+    weight_g: null
+  page_hash: 97304c85539073e034b5bd95f20ef72246ce39906030714a9eca86c95c621f2f
+  process: null
+  roast_type: filter
+  status: ok
+  url: https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/highlander-espresso-blend/
+- last_seen: '2026-07-05'
+  page_hash: 43f5ca1ca4d3136be460b869bb683055256e0a799f7e209ed53a681f808e3087
+  status: not_a_product
+  url: https://www.goriffee.com/kontrola-objednavky/
+- last_seen: '2026-07-05'
+  name: Brazil Rodomunho Natural
+  origin: null
+  packaging:
+  - price: 15.0
+    weight_g: 250
+  - price: 58.0
+    weight_g: 1000
+  page_hash: ed2f112d9ea9d18ae8a469f902246313f7000f63493bfb2e6dadba2c78df54af
+  process: null
+  roast_type: filter
+  status: ok
+  url: https://www.goriffee.com/shop/kava/brazil-rodomunho-natural/
+- last_seen: '2026-07-05'
+  name: Brazil Morada da Prata Natural
+  origin: null
+  packaging:
+  - price: 14.0
+    weight_g: 250
+  - price: 54.0
+    weight_g: 1000
+  page_hash: 5af7235970459eeb6278c24784fda3413b65de200bd62722c425aa7ef32c9112
+  process: Natural
+  roast_type: filter
+  status: ok
+  url: https://www.goriffee.com/shop/kava/brazil-morada-da-prata-natural/
+- last_seen: '2026-07-05'
+  name: Milkyway espresso blend
+  origin: null
+  packaging:
+  - price: 11.0
+    weight_g: 250
+  - price: 42.0
+    weight_g: 1000
+  page_hash: 9687b0596af72f88681cf1441715fe1fa4005e46feff435daa1057ebd6d2b21e
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/milkyway-espresso-blend/
+- last_seen: '2026-07-05'
+  name: 'Výhodný balík: 3x Klasické Espresso'
+  origin: null
+  packaging:
+  - price: 33.0
+    weight_g: 250
+  - price: 29.7
+    weight_g: 250
+  page_hash: 8e5766b718a1c9c92eca1c57c3eb7c282777a4d6661254aa45a46608e11c6937
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.goriffee.com/shop/kava/vyhodne-baliky/vyhodny-balik-3x-klasicke-espresso/
+jager-kaffee:
+- last_seen: '2026-07-05'
+  page_hash: 1511cb98ff4b633ebe00eb5cf50b783400a8ee25b95ccf9cd8db5178e933ab82
+  status: not_a_product
+  url: https://jagerkaffee.com/produkty
+- last_seen: '2026-07-05'
+  name: Purple coffee
+  origin: null
+  packaging:
+  - price: 8.5
+    weight_g: 250
+  - price: 32.9
+    weight_g: 1000
+  page_hash: e02e6c7dead985ce1b0f4825499d543c70438214a4434fceca8d9d7283bf5ead
+  process: null
+  roast_type: null
+  status: ok
+  url: https://jagerkaffee.com/produkt/purple-coffee/
+- last_seen: '2026-07-05'
+  page_hash: 88ee69bdfab2e3f6b6589297c54da550b7cc30eaaef7005369cfa8e45a97e251
+  status: not_a_product
+  url: https://jagerkaffee.com/
+- last_seen: '2026-07-05'
+  name: Gold coffee
+  origin: null
+  packaging:
+  - price: 8.5
+    weight_g: 250
+  - price: 33.9
+    weight_g: 1000
+  page_hash: b434eff4a70a87d730bbf0e880c5f48aeef06b654d27505a56e60172e9fe3101
+  process: null
+  roast_type: null
+  status: ok
+  url: https://jagerkaffee.com/produkt/golf-coffee/
+- last_seen: '2026-07-05'
+  page_hash: 8cff866678d6bd23681e72d3c90c25d465a9d291364b54e2e3f3edb32c928353
+  status: not_a_product
+  url: https://jagerkaffee.com/reklamacny-poriadok
+- last_seen: '2026-07-05'
+  page_hash: d2be527eb339f3e282b464ed8a068276d35163ba27cf21b5fc330450340e609c
+  status: not_a_product
+  url: https://jagerkaffee.com/my-account/
+- last_seen: '2026-07-05'
+  name: Edícia Marilyn
+  origin: null
+  packaging:
+  - price: 9.5
+    weight_g: 250
+  page_hash: 628b9d97def9fffc484e385f342b323b90367ad7d89cdaa360a89b7c69fd6579
+  process: null
+  roast_type: null
+  status: ok
+  url: https://jagerkaffee.com/produkt/edicia-marilyn/
+jungle-roastery:
+- last_seen: '2026-07-05'
+  page_hash: 80534f75785c168ffdf424830f4ad1a3cf38efb5b4a60191dd99a2c3156f672d
+  status: not_a_product
+  url: https://www.jungleroastery.sk/kava/
+- last_seen: '2026-07-05'
   name: HONDURAS - Café Organico
   origin: Honduras, Marcala
   packaging:
@@ -38,7 +2440,24 @@ jungle-roastery:
   roast_type: espresso
   status: ok
   url: https://www.jungleroastery.sk/honduras/
-- last_seen: '2026-07-04'
+- last_seen: '2026-07-05'
+  name: VENEZUELA - Rivero
+  origin: Venezuela
+  packaging:
+  - price: 48.0
+    weight_g: 1000
+  - price: 13.5
+    weight_g: 250
+  page_hash: 94f76d6ea6d4481ca62ca76883b3724f33e07022807f248b0b808f5a2664d3df
+  process: washed
+  roast_type: espresso
+  status: ok
+  url: https://www.jungleroastery.sk/venezuela/
+- last_seen: '2026-07-05'
+  page_hash: b5b11008bf96da6172bcf0823a0a22d92d0af5a14d95a9701e087de9f2586c86
+  status: not_a_product
+  url: https://www.jungleroastery.sk/doplnky/
+- last_seen: '2026-07-05'
   name: COLOMBIA Supremo
   origin: Tolima, Colombia
   packaging:
@@ -51,37 +2470,227 @@ jungle-roastery:
   roast_type: espresso
   status: ok
   url: https://www.jungleroastery.sk/colombia-supremo/
-- last_seen: '2026-07-04'
-  page_hash: placeholder-category-page-hash-changes-often
-  status: not_a_product
-  url: https://www.jungleroastery.sk/kava/
-- last_seen: '2026-07-04'
-  page_hash: placeholder-category-page-hash-changes-often
-  status: not_a_product
-  url: https://www.jungleroastery.sk/doplnky/
-kavoholik:
 - last_seen: '2026-07-05'
-  page_hash: 6e786976a1dd12f62d3ff90f2323e2fea540664e4b072e6b18ac353d97e6b3d2
+  page_hash: e522c4809b6182aa500446de628c335d1c8b1646d7a74b40430f63198322f49b
   status: not_a_product
-  url: https://kavoholik.sk/zlavove-kupony
+  url: https://www.jungleroastery.sk/
+- last_seen: '2026-07-05'
+  name: RWANDA - Kigali
+  origin: Rwanda
+  packaging:
+  - price: 44.0
+    weight_g: 1000
+  - price: 12.5
+    weight_g: 250
+  page_hash: 4e5a8f3841902af82b9fe5f5395e54f2c10db8c7c5d8ee0fbbb3e7bdb352d1de
+  process: washed
+  roast_type: filter
+  status: ok
+  url: https://www.jungleroastery.sk/rwanda/
+kaffa-roastery:
+- last_seen: '2026-07-05'
+  page_hash: be9a03632d81147280149edd30b7a836e2d12d107d6b7e3108a2a96fb54dabf6
+  status: not_a_product
+  url: https://kaffaroastery.sk/produkt/only-good-kaffa-tricko-biele/
+- last_seen: '2026-07-05'
+  name: GEISHA NINETY PLUS STELLAR ORIGIN
+  origin: null
+  packaging:
+  - price: 21.42
+    weight_g: 150
+  page_hash: 8ecbcbda90c41978ddc1bf9e06cc65fe91b43bbf40d5ac9c0cec0e14f57dafac
+  process: Anaerobic Natural
+  roast_type: filter
+  status: ok
+  url: https://kaffaroastery.sk/produkt/stellar-origin/
+- last_seen: '2026-07-05'
+  page_hash: 4a00bdc660418715f1ee31893f27acc48dfd1cb47ce595b4effb1654a448b330
+  status: not_a_product
+  url: https://kaffaroastery.sk/produkt/only-good-kaffa-vak/
+- last_seen: '2026-07-05'
+  page_hash: cd17771a5006b109b472ea9fb34ae3da2d8cc9e1c4eecacd7ce8acdf11488334
+  status: not_a_product
+  url: https://kaffaroastery.sk/velkoobchod/
+- last_seen: '2026-07-05'
+  page_hash: 4f273916bd5f95618cf92a1935a32c6d1c87f0b6ad228954e42c89707d929fd7
+  status: not_a_product
+  url: https://kaffaroastery.sk/reklamacny-poriadok/
+- last_seen: '2026-07-05'
+  page_hash: 9f0353a88fd42b21fdbbc069eaa6c15cd4fdd1dd310a3335bf77cfce29920132
+  status: not_a_product
+  url: https://kaffaroastery.sk/merch/
+- last_seen: '2026-07-05'
+  page_hash: 96ecbcfa451c84c6ecbe711dfffb20f3bc0a5573f90f687cadd0fb834b04f55a
+  status: not_a_product
+  url: https://kaffaroastery.sk/produkt/only-good-kaffa-5-panelova-siltovka-terracotta-tehlova/
+- last_seen: '2026-07-05'
+  page_hash: 7485e067829ad72a4ccfbc4a738806bc595b0d6fe9a9cf238052e1659e54b667
+  status: not_a_product
+  url: https://kaffaroastery.sk/produkt/only-good-kaffa-5-panelova-siltovka-black-cierna/
+- last_seen: '2026-07-05'
+  name: Ethiopia Shantawene Ayla
+  origin: null
+  packaging:
+  - price: 13.69
+    weight_g: 250
+  page_hash: d4fe7ed7422c93d47da7c0c507731ebd302605868d54820933d32bc852866d41
+  process: Natural
+  roast_type: espresso
+  status: ok
+  url: https://kaffaroastery.sk/produkt/ethiopia-shantawene-ayla/
+- last_seen: '2026-07-05'
+  page_hash: 52652a2685b12646359dcbfbf3df0e2c14d8f83b0214ed2f9d3d776ddabd370f
+  status: not_a_product
+  url: https://kaffaroastery.sk/kava-na-filter/
+- last_seen: '2026-07-05'
+  page_hash: 1b3c05264705e4b51a72ce1a9c0d12be7229fe6755a5482317b18d9bcd4d5fba
+  status: not_a_product
+  url: https://kaffaroastery.sk/moderne-espresso/
+- last_seen: '2026-07-05'
+  page_hash: 790687aa29c12fb295a80890fbe33874a5a3fdc50ba4d9f2018371f90aab714a
+  status: not_a_product
+  url: https://kaffaroastery.sk/moj-ucet/
+- last_seen: '2026-07-05'
+  name: Colombia Melone Candy
+  origin: null
+  packaging:
+  - price: 16.42
+    weight_g: 200
+  page_hash: 793a5de2927ccd3ddc853117c3f128291d1d4f521e4a939d9d3fcec0c2369c4a
+  process: Honey & Co- fermented with fruits
+  roast_type: filter
+  status: ok
+  url: https://kaffaroastery.sk/produkt/colombia-melone-candy/
+- last_seen: '2026-07-05'
+  name: Colombia Juicy Maracuja
+  origin: null
+  packaging:
+  - price: 16.42
+    weight_g: 200
+  page_hash: 2260472196621a7c8b4ee65cf43f73adc3da73ee7361626949d6b6c2dc93189d
+  process: Co- fermented with fruits
+  roast_type: filter
+  status: ok
+  url: https://kaffaroastery.sk/produkt/colombia-juicy-maracuja/
+- last_seen: '2026-07-05'
+  name: Costa Rica Hacienda Sonora
+  origin: null
+  packaging:
+  - price: 13.69
+    weight_g: 250
+  page_hash: d3b773349dfc255ea0076b3e108af6db41b2624cb6bebbfee645eb1d4ed32a00
+  process: Natural
+  roast_type: espresso
+  status: ok
+  url: https://kaffaroastery.sk/produkt/costa-rica-hacienda-sonora/
+- last_seen: '2026-07-05'
+  page_hash: 9d4c9272bf5ba67ded4a3ebcc5b171f75a0380497493bb95334f0fb9991dffa4
+  status: not_a_product
+  url: https://kaffaroastery.sk/shop/
+- last_seen: '2026-07-05'
+  page_hash: d0b8b22b54f7289f1ead87322f933e07cb2bfc2641ae57acdcbf5da57c72c3a5
+  status: not_a_product
+  url: https://kaffaroastery.sk/kariera/
+- last_seen: '2026-07-05'
+  page_hash: 82b244b4117824dc8121b57d972e59e3b732ad4f4e4c58e86fd748046448a50e
+  status: not_a_product
+  url: https://kaffaroastery.sk/tradicne-espresso/
+- last_seen: '2026-07-05'
+  page_hash: de9c1edd6065ff7d5a1c90db2df780b43b1c05883e85b6344148ed457268cbf0
+  status: not_a_product
+  url: https://kaffaroastery.sk/
+kavala: []
+kavoholik:
 - last_seen: '2026-07-05'
   page_hash: 25aaed28b6860aca81c8053c3ab6762b92b91dd6b3acedbd3595f8cd03559875
   status: not_a_product
   url: https://kavoholik.sk/mapa-stranky
 - last_seen: '2026-07-05'
-  page_hash: 58f9f9ade6b22b4f79d79443445224a1dcf698319df3577ffbd34a6b805b64b8
+  page_hash: f7ff8691755e855d2d7a7d25aea351f966f0c6d9d9feaf62cfca1ab8ed22c857
+  status: not_a_product
+  url: https://kavoholik.sk/zoznam-adries
+- last_seen: '2026-07-05'
+  page_hash: 638b32ce08c2bbfedc29bd0e72cb141817d6bff603eab4a0c2e09818b484042d
+  status: not_a_product
+  url: https://kavoholik.sk/782-ocenene-kavy
+- last_seen: '2026-07-05'
+  page_hash: fd4e1f2e9405068376e2aa66083b33b26fe92bd965b9e5424a9ba9f80a84cdbe
+  status: not_a_product
+  url: https://kavoholik.sk/brand/45-la-marzocco
+- last_seen: '2026-07-05'
+  page_hash: 18f0242eb0f687ae43f6cb66fac6415273d9fee94c4c939adecadca80b4e8523
+  status: not_a_product
+  url: https://kavoholik.sk/module/tvcmsproductcompare/productcomparelist
+- last_seen: '2026-07-05'
+  page_hash: 9da33f1e6c9c8c05ff707f6e5c8fde6418233d6026afffcb2ff642b5052a0b9b
+  status: not_a_product
+  url: https://kavoholik.sk/content/19-statuty-sutazi
+- last_seen: '2026-07-05'
+  page_hash: 1fc511cf9a0ed8f605ced9214b300e8c50e3172b72ed95139686a9b76ef09a61
+  status: not_a_product
+  url: https://kavoholik.sk/module/tvcmswishlist/mywishlist
+- last_seen: '2026-07-05'
+  page_hash: eb91d6d983a450ea0c79cad48c3c5e8963f9170afcb19d82ba9c0c717b316291
+  status: not_a_product
+  url: https://kavoholik.sk/akciove-produkty
+- last_seen: '2026-07-05'
+  page_hash: dfac7663b9d77d17676e0044c79fd94d560e04fb8e7b00c99a9c3c24b5a5c94a
+  status: not_a_product
+  url: https://kavoholik.sk/12-e-shop
+- last_seen: '2026-07-05'
+  page_hash: d07286a78c8ea0e596654aaa9fff4ea94106071c2404cc9a75deb7574a8bc4b2
+  status: not_a_product
+  url: https://kavoholik.sk/content/9-vsetko-o-cookies
+- last_seen: '2026-07-05'
+  page_hash: d1e2d9ea20bb18aca19bb953343688f1fc03b7a76467a466f7479cf0751d7d3c
   status: not_a_product
   url: https://kavoholik.sk/755-sposob-pripravy
 - last_seen: '2026-07-05'
-  page_hash: ac5a0e9090927343287eb4404b5d9d770ff61fb4c970e173b7c46b796d202bcd
+  page_hash: 692c756bdc4ec06c6f0d618b36f8552d43e58bd1b6e0e7089694b05a4e975bce
   status: not_a_product
-  url: https://kavoholik.sk/content/17-platobna-brana-gopay
+  url: https://kavoholik.sk/
 - last_seen: '2026-07-05'
   page_hash: e40eed2c683186f2a01be45bc4b765a564fbcdc1082b2bda6ae1499826f4ae97
   status: not_a_product
   url: https://kavoholik.sk/osobne-udaje
 - last_seen: '2026-07-05'
-  page_hash: ad8a30d632211f7c0ff530420e409d81d2c203e0af2f9df80492fb3714657cd8
+  page_hash: 8e7283d80229c9251f8be2a4a0da487b5abb9145ad9670a6a8bacc1f59d37a9d
+  status: not_a_product
+  url: https://kavoholik.sk/historia-objednavok
+- last_seen: '2026-07-05'
+  page_hash: 69bf717cb8ff2a858ea30a9eedc140def8647cdd4392de7541323ec46894d2d2
+  status: not_a_product
+  url: https://kavoholik.sk/764-to-najlepsie-na-filter
+- last_seen: '2026-07-05'
+  page_hash: 0c60052aa1c569abb57d89f4951793c903ac2f2b3aaca17a7390a85fe421bb60
+  status: not_a_product
+  url: https://kavoholik.sk/content/1-servis
+- last_seen: '2026-07-05'
+  page_hash: a38f019aae5e3856d05d944ff190a17cfb57010f99dd6b70a89a21abb357e2ea
+  status: not_a_product
+  url: https://kavoholik.sk/content/3-obchodne-a-dodacie-podmienky
+- last_seen: '2026-07-05'
+  page_hash: 4b2715bc83ea4bda164b3a721b9baffb6f82b7ccf8f681a22c91247c9ad81b45
+  status: not_a_product
+  url: https://kavoholik.sk/module/ps_emailalerts/account
+- last_seen: '2026-07-05'
+  page_hash: 6064428c18a1e8c74615f37b098e7d62aef30649ed04aafd5fb4fc05a934b4e8
+  status: not_a_product
+  url: https://kavoholik.sk/brand/30-mahlkonig
+- last_seen: '2026-07-05'
+  page_hash: a2729a10f0d7f56a33e91787e59b93dc2b1402064d4094b4be59fa53ef01e17d
+  status: not_a_product
+  url: https://kavoholik.sk/nase-obchody
+- last_seen: '2026-07-05'
+  page_hash: 6e786976a1dd12f62d3ff90f2323e2fea540664e4b072e6b18ac353d97e6b3d2
+  status: not_a_product
+  url: https://kavoholik.sk/zlavove-kupony
+- last_seen: '2026-07-05'
+  page_hash: 7da113eb12b4bc0cfbfdd93dcff48386f7d60740e5aca6bd1bc8680cfe64ba08
+  status: not_a_product
+  url: https://kavoholik.sk/moj-ucet
+- last_seen: '2026-07-05'
+  page_hash: 39f5d32a8dfc374cb3e4e778760ec0141e93e17b8358872ce28b2eced7c36741
   status: not_a_product
   url: https://kavoholik.sk/751-espresso
 - last_seen: '2026-07-05'
@@ -89,74 +2698,2165 @@ kavoholik:
   status: not_a_product
   url: https://kavoholik.sk/dobropisy
 - last_seen: '2026-07-05'
-  page_hash: a2729a10f0d7f56a33e91787e59b93dc2b1402064d4094b4be59fa53ef01e17d
+  page_hash: ac5a0e9090927343287eb4404b5d9d770ff61fb4c970e173b7c46b796d202bcd
   status: not_a_product
-  url: https://kavoholik.sk/nase-obchody
+  url: https://kavoholik.sk/content/17-platobna-brana-gopay
+kofisfera: []
+petimera: []
+ready-after:
 - last_seen: '2026-07-05'
-  page_hash: d07286a78c8ea0e596654aaa9fff4ea94106071c2404cc9a75deb7574a8bc4b2
+  page_hash: 927cbd2b7e7997cac7928f3e1a75846fbc6cf86c4734ae67dbc8ec1f485d2707
   status: not_a_product
-  url: https://kavoholik.sk/content/9-vsetko-o-cookies
+  url: https://www.readyafter.sk/orechove-natierky-a-kremy/
 - last_seen: '2026-07-05'
-  page_hash: 6064428c18a1e8c74615f37b098e7d62aef30649ed04aafd5fb4fc05a934b4e8
+  page_hash: de1445643f9cbc2ad1dfacbba10a1c4e516dcf1329e06b2bf5abfc8ce749c39d
   status: not_a_product
-  url: https://kavoholik.sk/brand/30-mahlkonig
+  url: https://www.readyafter.sk/salky-na-espresso/
 - last_seen: '2026-07-05'
-  page_hash: 0c60052aa1c569abb57d89f4951793c903ac2f2b3aaca17a7390a85fe421bb60
+  page_hash: 74efd9addc0f18a26512c291c464936889d6ed9816cee9f0cd211c77f1271f80
   status: not_a_product
-  url: https://kavoholik.sk/content/1-servis
+  url: https://www.readyafter.sk/kavove-filter-kava/
 - last_seen: '2026-07-05'
-  page_hash: 02c43729422d45e787002c2c246ab94cef5e05832df830c7c8925a458fdb3379
+  page_hash: 7a2ccee3d8493ad6ec01ee565155a2e53b70bc77c1a63b0af86cf3a0751e6406
   status: not_a_product
-  url: https://kavoholik.sk/764-to-najlepsie-na-filter
+  url: https://www.readyafter.sk/nerezove-kanvicky-na-mlieko/
 - last_seen: '2026-07-05'
-  page_hash: 4b2715bc83ea4bda164b3a721b9baffb6f82b7ccf8f681a22c91247c9ad81b45
+  page_hash: 9e4465dc91ca4954a000f1d266f27b58c4922fee3be8d5716c5801bfb55b5085
   status: not_a_product
-  url: https://kavoholik.sk/module/ps_emailalerts/account
+  url: https://www.readyafter.sk/zrnkova-kava-100-arabica/
 - last_seen: '2026-07-05'
-  page_hash: 1fc511cf9a0ed8f605ced9214b300e8c50e3172b72ed95139686a9b76ef09a61
+  page_hash: b21ac5c2af8b73f67f13e254c67667396afac3d6ad824e627157a5d0baf7a59a
   status: not_a_product
-  url: https://kavoholik.sk/module/tvcmswishlist/mywishlist
+  url: https://www.readyafter.sk/timemore-c3-esp-pro-rucny-mlyncek-cierny/
 - last_seen: '2026-07-05'
-  page_hash: f7ff8691755e855d2d7a7d25aea351f966f0c6d9d9feaf62cfca1ab8ed22c857
+  page_hash: 496da4899a289e7725d4e5a771bd067082c1de6af088033fe35b7648c9c37ca3
   status: not_a_product
-  url: https://kavoholik.sk/zoznam-adries
+  url: https://www.readyafter.sk/zrnkova-bezkofeinova-kava/
 - last_seen: '2026-07-05'
-  page_hash: a38f019aae5e3856d05d944ff190a17cfb57010f99dd6b70a89a21abb357e2ea
+  page_hash: 47095166651cbc60beba0f456fd20f5ce82fddb8743f10072501f4d4f888b40d
   status: not_a_product
-  url: https://kavoholik.sk/content/3-obchodne-a-dodacie-podmienky
+  url: https://www.readyafter.sk/turn-n-seal-vakuova-doza-600-ml/
 - last_seen: '2026-07-05'
-  page_hash: 692c756bdc4ec06c6f0d618b36f8552d43e58bd1b6e0e7089694b05a4e975bce
+  page_hash: c1f757c912753ca3f016bbdcefb7087dc39421fd1d083c70e5ab017b0a9a09ec
   status: not_a_product
-  url: https://kavoholik.sk/
+  url: https://www.readyafter.sk/pre-deti/
 - last_seen: '2026-07-05'
-  page_hash: 638b32ce08c2bbfedc29bd0e72cb141817d6bff603eab4a0c2e09818b484042d
+  page_hash: 706e7b927ed7a4cc187da57f21260979b9061cbef91b7b561de1b13c3a232cee
   status: not_a_product
-  url: https://kavoholik.sk/782-ocenene-kavy
+  url: https://www.readyafter.sk/sypane-caje/
 - last_seen: '2026-07-05'
-  page_hash: 8e7283d80229c9251f8be2a4a0da487b5abb9145ad9670a6a8bacc1f59d37a9d
+  page_hash: fbf6f5de94fa516f555c020db87be52e0001466a5e95b773b2dd94a208853181
   status: not_a_product
-  url: https://kavoholik.sk/historia-objednavok
+  url: https://www.readyafter.sk/cistiaca-chemia/
 - last_seen: '2026-07-05'
-  page_hash: 18f0242eb0f687ae43f6cb66fac6415273d9fee94c4c939adecadca80b4e8523
-  status: not_a_product
-  url: https://kavoholik.sk/module/tvcmsproductcompare/productcomparelist
+  name: Guatemala Huehuetenango SHB EP - káva 100% Arabica
+  origin: null
+  packaging:
+  - price: 9.5
+    weight_g: null
+  page_hash: de39be0193b29a4c61627b70356ccf455e793d2f5e2c3af21dfbea4910cd2258
+  process: pranou (wash) metódou
+  roast_type: null
+  status: ok
+  url: https://www.readyafter.sk/guatemalska-kava/
 - last_seen: '2026-07-05'
-  page_hash: fd4e1f2e9405068376e2aa66083b33b26fe92bd965b9e5424a9ba9f80a84cdbe
+  page_hash: 2accc71443ffda366591b034645731e29eb5ab96eff4f79a6cb2574dfece15ed
   status: not_a_product
-  url: https://kavoholik.sk/brand/45-la-marzocco
+  url: https://www.readyafter.sk/ako-prazime-kavu/
 - last_seen: '2026-07-05'
-  page_hash: 7da113eb12b4bc0cfbfdd93dcff48386f7d60740e5aca6bd1bc8680cfe64ba08
+  page_hash: a5184787fba20706068cc4906f179c4cfd2c24a6480c0c75c963e3081a668571
   status: not_a_product
-  url: https://kavoholik.sk/moj-ucet
+  url: https://www.readyafter.sk/pochutiny/
 - last_seen: '2026-07-05'
-  page_hash: 9da33f1e6c9c8c05ff707f6e5c8fde6418233d6026afffcb2ff642b5052a0b9b
+  page_hash: d97b060d0b1757856acdc1e917a1eef2d581e74c3852379d950817cf83b69300
   status: not_a_product
-  url: https://kavoholik.sk/content/19-statuty-sutazi
+  url: https://www.readyafter.sk/svetlo-prazena-kava/
 - last_seen: '2026-07-05'
-  page_hash: dfac7663b9d77d17676e0044c79fd94d560e04fb8e7b00c99a9c3c24b5a5c94a
+  page_hash: 1216b00ece4f8de73bddac043ea57b9ab934f76997814c6665a593e9a2787b5f
   status: not_a_product
-  url: https://kavoholik.sk/12-e-shop
+  url: https://www.readyafter.sk/povod-kavy/
 - last_seen: '2026-07-05'
-  page_hash: eb91d6d983a450ea0c79cad48c3c5e8963f9170afcb19d82ba9c0c717b316291
+  page_hash: 17f3dce87c0c03a3a846e553c7d9a78b06da5665baf4f71619138804a34454c2
   status: not_a_product
-  url: https://kavoholik.sk/akciove-produkty
+  url: https://www.readyafter.sk/sladka-kava/
+- last_seen: '2026-07-05'
+  name: Colombia Supremo Medelin Wash - káva 100% Arabica
+  origin: null
+  packaging:
+  - price: 29.9
+    weight_g: 1000
+  - price: 7.9
+    weight_g: 200
+  - price: 17.5
+    weight_g: 500
+  page_hash: 5d824ca821a6cd7451840d1cc3a2f82c8b3b38f1bbe3d74fdacd2367633a0a23
+  process: Mokré
+  roast_type: null
+  status: ok
+  url: https://www.readyafter.sk/colombia-supremo-medelin-wash/
+- last_seen: '2026-07-05'
+  page_hash: cffffdf2a7d85e16118966e4f329d8da2a21bea2e3c792643b01e2f6310f6156
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-na-espresso/
+- last_seen: '2026-07-05'
+  name: Burundi Rumanda Muraho Natural Anaerobic
+  origin: null
+  packaging:
+  - price: 59.9
+    weight_g: 1000
+  - price: 13.9
+    weight_g: 200
+  - price: 31.0
+    weight_g: 500
+  page_hash: 9b39c85bbb2eeb6436d500fde881ae8cff7e749e75a1d835bbd75855c012e474
+  process: Natural Anaerobic
+  roast_type: filter
+  status: ok
+  url: https://www.readyafter.sk/burundi-rumanda-muraho-natural-anaerobic/
+- last_seen: '2026-07-05'
+  page_hash: 8ca99aba579d83cc4da1fab86a5917b82fcaedf1ff560654fe9128ec0a647148
+  status: not_a_product
+  url: https://www.readyafter.sk/matcha/
+- last_seen: '2026-07-05'
+  page_hash: 23737af3e91a35aa152de36528c4e0b8f1e3a071986786a26dfdd6ab59bb6c09
+  status: not_a_product
+  url: https://www.readyafter.sk/vietnam-lang-biang-anaerobic/
+- last_seen: '2026-07-05'
+  page_hash: fa6096eba3649bb7a73124da72f6c2fa2f2c5bcf28cbfb0e910cc73bd2ba585e
+  status: not_a_product
+  url: https://www.readyafter.sk/dripper/
+- last_seen: '2026-07-05'
+  page_hash: a49347303ccdf088fd38dc3df40b8e21ede57b1c18a2b8dfcf6e759662e7aa44
+  status: not_a_product
+  url: https://www.readyafter.sk/salky-na-cappuccino/
+- last_seen: '2026-07-05'
+  name: Ethiopia Sookoo Coffee - Guji Okoluu G1 organic
+  origin: null
+  packaging:
+  - price: 53.0
+    weight_g: 1000
+  - price: 12.5
+    weight_g: 200
+  - price: 28.0
+    weight_g: 500
+  page_hash: a155e8c4f6ee116980b01fea87f9326f4c7b4de8283c39918a6bdbe934c6ea02
+  process: Natural
+  roast_type: filter
+  status: ok
+  url: https://www.readyafter.sk/ethiopia-sookoo-coffee-guji-okoluu-g1-organic/
+- last_seen: '2026-07-05'
+  page_hash: b11eb3c976866b06325798deeccbb0218634b31b0d19a3b2aff26554c7467d81
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-ako-darcek/
+- last_seen: '2026-07-05'
+  page_hash: 90b6a5e11c2b01cc5c6b196f39b84862afcf3764e992b53c5362a7a54326db4f
+  status: not_a_product
+  url: https://www.readyafter.sk/horka-kava/
+- last_seen: '2026-07-05'
+  name: VŠETKO NAJLEPŠIE - káva 100% arabica
+  origin: null
+  packaging:
+  - price: 8.9
+    weight_g: 200
+  - price: 18.9
+    weight_g: 500
+  page_hash: eff47cb79e1d0328a4a01d88f9d6c656bad18644d068ac5fab789b18448bd6a5
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.readyafter.sk/vsetko-najlepsie-kava/
+- last_seen: '2026-07-05'
+  page_hash: 17dfbf55e47e856048713e67a06825599cfd96cfa64e2e6f2b710fa35c0b9754
+  status: not_a_product
+  url: https://www.readyafter.sk/darcekove-balenia/
+- last_seen: '2026-07-05'
+  page_hash: 04079218d96ae876356dc4ccb09a8c2c21e85e009c0c21fcb320adeba5fb55b1
+  status: not_a_product
+  url: https://www.readyafter.sk/robusta-kava/
+- last_seen: '2026-07-05'
+  page_hash: 77034787404dba7cab0e9cede17d5026f5f4b1033c13e830062de67485e6aa45
+  status: not_a_product
+  url: https://www.readyafter.sk/
+- last_seen: '2026-07-05'
+  page_hash: 3702749e6490eed05ba198ab309875755305ffdbc4a5313a03d70e6e7b80b3a3
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-podla-krajiny/
+- last_seen: '2026-07-05'
+  page_hash: eb8cfb1c3bcce7117c60c4f0f949204490b53dfa784c789b2facd1ef5cbb80fc
+  status: not_a_product
+  url: https://www.readyafter.sk/vyberova-kava-speciality-coffee/
+- last_seen: '2026-07-05'
+  page_hash: 6b25b62494e78688e048e360979d9b92e94e2a72172360317e4eb07c4f6af344
+  status: not_a_product
+  url: https://www.readyafter.sk/jemna-kava/
+- last_seen: '2026-07-05'
+  page_hash: 941786ff326b57063123a860f8542c962e3f8697e86a0133f778e8d28540c471
+  status: not_a_product
+  url: https://www.readyafter.sk/onas/
+- last_seen: '2026-07-05'
+  page_hash: 28489206970d2eac30a684f98aa6f1b4f79ddbdeb3f7f24d52dd3e656b4f10db
+  status: not_a_product
+  url: https://www.readyafter.sk/vietnamska-kava/
+- last_seen: '2026-07-05'
+  page_hash: 1adeddddacf07bdb0cac3ac53de6cd061b833004fa68b981667cfca827f61823
+  status: not_a_product
+  url: https://www.readyafter.sk/ako-vybrat-kavu/
+- last_seen: '2026-07-05'
+  page_hash: 420534e7fed046b411b5a48d242f1dfd19e80ac0589bf57549f6b24fece04413
+  status: not_a_product
+  url: https://www.readyafter.sk/jemne-kysla-kava/
+- last_seen: '2026-07-05'
+  page_hash: 51b978ad8ec2274c2d902c2f8d50270c98301e20527471877d72dab88e89ec43
+  status: not_a_product
+  url: https://www.readyafter.sk/kombucha/
+- last_seen: '2026-07-05'
+  page_hash: 0fb70e2b8ad73e67ccc11cdc61eac90ac5e7da40751a3c429d3a1afb0d934f32
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-do-kancelarie/
+- last_seen: '2026-07-05'
+  page_hash: 2a918430e5d94bfa7ee650a2d79a156b4d5909c50d34c7d4cea259b729a323e9
+  status: not_a_product
+  url: https://www.readyafter.sk/zelene-sypane-caje/
+- last_seen: '2026-07-05'
+  page_hash: d06ad3ebb579985fe6ba7b8a79771c101afda1432ef8ceeeefafa24bfe35f1c3
+  status: not_a_product
+  url: https://www.readyafter.sk/kava/
+- last_seen: '2026-07-05'
+  page_hash: 89826843b4c3c0d98e662ababda2a4ba919a1c3772f303fbce2710a49b9ca51c
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-pre-histaminikov-histaminova-intolerancia/
+- last_seen: '2026-07-05'
+  page_hash: 245b5d02ff9b8bf786639f6d2c550ab95139be4df8bae8d2a2b30bf053dff588
+  status: not_a_product
+  url: https://www.readyafter.sk/salky-na-kavu/
+- last_seen: '2026-07-05'
+  page_hash: 1edabf1f0bafe32d5b9ccdd51b3d12b9d83594eb0440c1d6eba8fd393799140c
+  status: not_a_product
+  url: https://www.readyafter.sk/vlcie-kombucha-malina-330ml/
+- last_seen: '2026-07-05'
+  name: Guatemala Huehuetenango SHB EP - káva 100% Arabica
+  origin: null
+  packaging:
+  - price: 40.0
+    weight_g: 1000
+  - price: 9.5
+    weight_g: 200
+  - price: 22.0
+    weight_g: 500
+  page_hash: 0a7c5c1c9c945f455b449f85c45374dec91cdd60fddaebbb12a19d68a9d8c1c9
+  process: Washed
+  roast_type: null
+  status: ok
+  url: https://www.readyafter.sk/guatemala-huehuetenango-shb-ep/
+- last_seen: '2026-07-05'
+  page_hash: 2532a9989d02674150ac86cc66cb634ec64fac1f48de53fc600096e9198a2029
+  status: not_a_product
+  url: https://www.readyafter.sk/cold-brew/
+- last_seen: '2026-07-05'
+  page_hash: 775e30b0ad9e21a04bf12740670b01f8e30607a537cad9db82bef0b27b0ba419
+  status: not_a_product
+  url: https://www.readyafter.sk/100-arabica/
+- last_seen: '2026-07-05'
+  page_hash: 127f0fe0f906b5575af86a00dac1eceb4545767ef3af229a618eaeaa4c37bf32
+  status: not_a_product
+  url: https://www.readyafter.sk/z-praziarne-priamo-na-plantaz-dennik-z-vietnamskeho-da-latu/
+- last_seen: '2026-07-05'
+  name: UNIQUE blend - výberová kávová zmes 60% Arabica 40% Robusta
+  origin: null
+  packaging:
+  - price: 29.0
+    weight_g: 1000
+  - price: 7.9
+    weight_g: 200
+  - price: 17.0
+    weight_g: 500
+  page_hash: 408167412bb5a20b1ed5a2146ed353c5e0055d906aa7e71a3f55e4819fcab8df
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.readyafter.sk/unique-blend-vyberova-kavova-zmes/
+- last_seen: '2026-07-05'
+  page_hash: 3a3ca8efdc1af840b82cf62dbf4debb583b4c452efc2f19fe6c505297d0c9831
+  status: not_a_product
+  url: https://www.readyafter.sk/cokolada/
+- last_seen: '2026-07-05'
+  page_hash: 1b0ab331f4b07530d975ecc2f54e73495cd6456a06e953aae003bfeabc88e796
+  status: not_a_product
+  url: https://www.readyafter.sk/bylinne-sypane-caje/
+- last_seen: '2026-07-05'
+  page_hash: 0cf5305b9b448ea4c8070df81681c91bcefdc218b43067b71318ce43dd7e7530
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-s-logom-firmy/
+- last_seen: '2026-07-05'
+  page_hash: 263a1eae1479a64f9bb2db8569d6315622631a4204557a82585ee3be4838f286
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-so-skoricou-maly-trik-ktory-zmeni-vas-den/
+- last_seen: '2026-07-05'
+  page_hash: fc10c9c3aef9266a57d7501a54856eecaf1b30d6aaddb1d158f5bc1d7dd2458d
+  status: not_a_product
+  url: https://www.readyafter.sk/pohare-na-kavu-so-sebou/
+- last_seen: '2026-07-05'
+  page_hash: 262ba9724f3514ed82fe2e85a0b9d9e2af7073aaf31bf11e54fc43373327067a
+  status: not_a_product
+  url: https://www.readyafter.sk/mlynceky-na-kavu/
+- last_seen: '2026-07-05'
+  page_hash: 8b304888d124e7b278ea252aaafd1859dff52371a63a4feb503318911f08ed99
+  status: not_a_product
+  url: https://www.readyafter.sk/brazilska-kava/
+- last_seen: '2026-07-05'
+  page_hash: f70d09de125aec1f51180f5d3bca943354244f415d92f980f0dfa2b33fc54016
+  status: not_a_product
+  url: https://www.readyafter.sk/ostatne-prislusenstvo/
+- last_seen: '2026-07-05'
+  page_hash: dd537f2eecd3b8eb954626e871136701e1034f01de681e4eaace7aadde536387
+  status: not_a_product
+  url: https://www.readyafter.sk/kanvicky-na-mlieko/
+- last_seen: '2026-07-05'
+  page_hash: c3fd405f663b2da096b1e5285f1038c5a58ae175ffdd35984b9f240493a42fa5
+  status: not_a_product
+  url: https://www.readyafter.sk/kanvice-do-prekvapkavaca/
+- last_seen: '2026-07-05'
+  page_hash: 419a43bda927b3f8a65c9097b919b3f799e8734b37ff0d16248022754be07422
+  status: not_a_product
+  url: https://www.readyafter.sk/teflonove-kanvicky-na-mlieko/
+- last_seen: '2026-07-05'
+  page_hash: 2de1ab632ecc14bcc847c8b8ef1a16ed71c38dbe68c65332cf6320d3345af0e2
+  status: not_a_product
+  url: https://www.readyafter.sk/slowlandia/
+- last_seen: '2026-07-05'
+  page_hash: 77034787404dba7cab0e9cede17d5026f5f4b1033c13e830062de67485e6aa45
+  status: not_a_product
+  url: https://www.readyafter.sk/sirupy/
+- last_seen: '2026-07-05'
+  page_hash: dc090618d784a25dd6e9c6b22f3251b3ac982ef437e2a2e6ff775058e2ea2c09
+  status: not_a_product
+  url: https://www.readyafter.sk/odvapnovace-a-cistice-kavovarov/
+- last_seen: '2026-07-05'
+  page_hash: 9b551c247c4d3cb159a2c02a75aa0807b281cb7080578812d8b2c4fa63aef259
+  status: not_a_product
+  url: https://www.readyafter.sk/ovocne-sypane-caje/
+- last_seen: '2026-07-05'
+  name: SUMMERTIME Coffee - káva 100% Arabica
+  origin: null
+  packaging:
+  - price: 57.9
+    weight_g: null
+  - price: 12.9
+    weight_g: null
+  - price: 29.5
+    weight_g: null
+  page_hash: 96acceb1a364798468749d0a3b5b20f14bcc093c97f227b4277815901bdbfcb1
+  process: Natural Anaerobic
+  roast_type: null
+  status: ok
+  url: https://www.readyafter.sk/summertime-coffee/
+- last_seen: '2026-07-05'
+  page_hash: 0d14a76aa315624309abd8fd373946ca817b0807a861c3586e38a66c23cf3a9f
+  status: not_a_product
+  url: https://www.readyafter.sk/kde-kupim-kavu/
+- last_seen: '2026-07-05'
+  page_hash: 9e3765b379a37b02bbf97a2bc9703e5b67a3ee94da1f9c7e0fe0980a78b01989
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-pre-tehotne/
+- last_seen: '2026-07-05'
+  page_hash: 0085fd567b99c31f0d898a7dd2eb5903e779008bba2a4f17eb08aa1597163369
+  status: not_a_product
+  url: https://www.readyafter.sk/brix/
+- last_seen: '2026-07-05'
+  page_hash: 4731a7d4463db3eca954664d6ed36f6f7285d65f517b1be5656c7ad1a33d69cb
+  status: not_a_product
+  url: https://www.readyafter.sk/bezkofeinova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 02c27af76eff98cbb9be437b077a036da8eacdd9deb2458e9de75b19e7e53d6f
+  status: not_a_product
+  url: https://www.readyafter.sk/espresso-zmesi/
+- last_seen: '2026-07-05'
+  page_hash: dd847e8e072fcfced5d3df437f96d3c94bbea121d72a37a3883bc9b19e86b937
+  status: not_a_product
+  url: https://www.readyafter.sk/kysla-kava/
+- last_seen: '2026-07-05'
+  page_hash: 30786e30d338e4df4e29deb01b24d46052745e0c801c95c4634fe1f5f7197e88
+  status: not_a_product
+  url: https://www.readyafter.sk/vahy-na-kavu/
+- last_seen: '2026-07-05'
+  page_hash: ede9b490743cc8817feec90d0de42ec17059cbfaffc714b3ca19e637cf2523cf
+  status: not_a_product
+  url: https://www.readyafter.sk/bio-kava/
+- last_seen: '2026-07-05'
+  page_hash: 0c3df6c1e04cbd6b8205038a04bf60e6c495d8f43d42aa707a841e92653c4935
+  status: not_a_product
+  url: https://www.readyafter.sk/blendy/
+- last_seen: '2026-07-05'
+  name: MEXIK.O. Esmeralda HG EP
+  origin: Mexico
+  packaging:
+  - price: 34.9
+    weight_g: null
+  page_hash: 15f8b338442c3b5cb28ccd700e653deae111086f20b25bcb29fe8f77e21e5666
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.readyafter.sk/mexicka-kava/
+- last_seen: '2026-07-05'
+  page_hash: dd5777a9db5ba796c68c30dde2a0f29bdf475cd124d7487840791da054127d8b
+  status: not_a_product
+  url: https://www.readyafter.sk/kakawco/
+- last_seen: '2026-07-05'
+  page_hash: 3dc9f6206dc6a3178196b92f5d03eb0eec0ebea9179c77f789e7b6a6a268595e
+  status: not_a_product
+  url: https://www.readyafter.sk/lyofilizovane-ovocie/
+- last_seen: '2026-07-05'
+  page_hash: c2525928f8344940dc643bc7f24eb84b250d456a7fd1ed2e8816209dae21a82f
+  status: not_a_product
+  url: https://www.readyafter.sk/kakaove-boby/
+- last_seen: '2026-07-05'
+  page_hash: 0b2ecf20d69c0c8329c5158793fa372a81d683387f22807714318f58280bceac
+  status: not_a_product
+  url: https://www.readyafter.sk/kavove-prislusenstvo/
+- last_seen: '2026-07-05'
+  page_hash: 4a85d74ba5495d9ef2c50a2dead4d6b253d373b1857b607223ee061a2d6b506b
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-pre-firmy/
+- last_seen: '2026-07-05'
+  page_hash: d7af3c827c175111b86deb1fa5085f5a27690caf26e855ac6435330449509042
+  status: not_a_product
+  url: https://www.readyafter.sk/cascara-kavove-ovocie/
+- last_seen: '2026-07-05'
+  page_hash: e1ffc3824760ae4e194647f92e5697d2cd691a09e4c19de423a6b5fd4f37e19d
+  status: not_a_product
+  url: https://www.readyafter.sk/moka-konvicky-kotogo/
+- last_seen: '2026-07-05'
+  name: Bezkofeinová káva Colombia Supremo 17/18 Sugar Cane Decaf - 100% Arabica
+  origin: null
+  packaging:
+  - price: 36.0
+    weight_g: 1000
+  - price: 9.5
+    weight_g: 200
+  - price: 19.0
+    weight_g: 500
+  page_hash: 0224a5b6812e4d90f5a4e0e644c9df14ae7cdda464857600f95eb6288de6b96b
+  process: Sugar Cane decaf
+  roast_type: null
+  status: ok
+  url: https://www.readyafter.sk/bezkofeinova-kava-colombia-sugar-cane-decaf/
+- last_seen: '2026-07-05'
+  page_hash: 65e9672014857d9b09a6ce359e1f3d1d3e0eb61227f059dcde8f3befdfcd2b72
+  status: not_a_product
+  url: https://www.readyafter.sk/kolumbijska-kava/
+- last_seen: '2026-07-05'
+  page_hash: 67662b5559f425d14b495770398424a9d74825997ac1194991127d3982e74976
+  status: not_a_product
+  url: https://www.readyafter.sk/filtre-do-kavovaru/
+- last_seen: '2026-07-05'
+  page_hash: d6124e843080346b69fd1990af709e43fb059fef9f10bc7de5b26e1036a8077e
+  status: not_a_product
+  url: https://www.readyafter.sk/cierne-sypane-caje/
+- last_seen: '2026-07-05'
+  page_hash: 02937aff7251154bd07e775c91e842414758fa01cc6064b3ff54e8a5a9e0f889
+  status: not_a_product
+  url: https://www.readyafter.sk/rso/
+- last_seen: '2026-07-05'
+  page_hash: c5d47175db66991f8bc2245d9f8db53920b0f1a5568189887d4f565802f17281
+  status: not_a_product
+  url: https://www.readyafter.sk/cistiace-a-odvapnovacie-tablety-do-kavovarov/
+- last_seen: '2026-07-05'
+  page_hash: a1e567fd143ab3f5ba88b52543db8fcd0280aec8c4076176bc841c23064c5b5c
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-do-kavovaru/
+- last_seen: '2026-07-05'
+  page_hash: 887a98d966c9f1681e295cafecec18d3a32e6c4f988809a056ef7ceb9f075862
+  status: not_a_product
+  url: https://www.readyafter.sk/popichi-orechy-ready-after/
+- last_seen: '2026-07-05'
+  page_hash: 399faba2729b3d828d1602c370a7e35f065f9aa0a3ad88112f08405ddc719e9f
+  status: not_a_product
+  url: https://www.readyafter.sk/nase-ocenenia/
+- last_seen: '2026-07-05'
+  page_hash: aafa301654b6cfc4a3b7d0f17176b9fa3a23e5df69eca133aed331cb8809d9ce
+  status: not_a_product
+  url: https://www.readyafter.sk/turn-n-seal-vakuova-doza-1000-ml/
+- last_seen: '2026-07-05'
+  page_hash: 083460ec193923e8303fc3978402df85ae7fb7c69aa2b869115ba2bb2d17b393
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-podla-sposobu-pripravy/
+- last_seen: '2026-07-05'
+  page_hash: de8acc5328b0857b7090111ce35d66dc0d45db85fffa6ec607d4ae4c4f4aa3cf
+  status: not_a_product
+  url: https://www.readyafter.sk/keepcup/
+- last_seen: '2026-07-05'
+  name: Ethiopia Halo Beriti Yirgacheffe Gr.1 Natural
+  origin: null
+  packaging:
+  - price: 12.9
+    weight_g: 200
+  - price: 29.0
+    weight_g: 500
+  - price: 54.0
+    weight_g: 1000
+  page_hash: 36a32039db7dcf52812b16ab6b278f283abf5ef69c82d4b37a06e1d5fb36be78
+  process: Natural
+  roast_type: null
+  status: ok
+  url: https://www.readyafter.sk/ethiopia-halo-beriti-yirgacheffe-natural/
+- last_seen: '2026-07-05'
+  page_hash: 6d91e397872cc8fa2efdcc0c42b6d735f44fdbbac0546484b081c545b0c18fca
+  status: not_a_product
+  url: https://www.readyafter.sk/lyra/
+- last_seen: '2026-07-05'
+  page_hash: 55e8b6f165c27469e0b84a9a1e4dad709d1725308a558e72705efe7b912131e2
+  status: not_a_product
+  url: https://www.readyafter.sk/filtre-na-kavu/
+- last_seen: '2026-07-05'
+  name: Rwanda Gicumbi Fully washed LOT 01 - káva 100% Arabica
+  origin: null
+  packaging:
+  - price: 43.0
+    weight_g: 1000
+  - price: 10.9
+    weight_g: 200
+  - price: 23.0
+    weight_g: 500
+  page_hash: 485f59fdcf1292ac8a300b8a421f5c7104006105708c15c4505be6bd98a31546
+  process: Fully washed
+  roast_type: filter
+  status: ok
+  url: https://www.readyafter.sk/rwanda-gicumbi-fully-washed-lot-01/
+- last_seen: '2026-07-05'
+  page_hash: 4d74ab93dfa7370fca6d21129912c69a5da07638a975aca66b13247f2b4268e2
+  status: not_a_product
+  url: https://www.readyafter.sk/vlcie-kombucha-baza-330ml/
+- last_seen: '2026-07-05'
+  page_hash: 86952e5ae0516eeeb27c96e33caed35b2347f2e207f871934be0879ea6667f5d
+  status: not_a_product
+  url: https://www.readyafter.sk/french-press-kavovary/
+- last_seen: '2026-07-05'
+  name: PRE NAJ mamu - káva 100% arabica
+  origin: null
+  packaging:
+  - price: 8.9
+    weight_g: 200
+  - price: 18.9
+    weight_g: 500
+  page_hash: 2e2668e779db954e400ce47e23a6447f114a2e4ced4f16d95f4fc9f47e3c12b9
+  process: Full City roast
+  roast_type: espresso
+  status: ok
+  url: https://www.readyafter.sk/pre-naj-mamu-kava/
+- last_seen: '2026-07-05'
+  page_hash: 0b2ecf20d69c0c8329c5158793fa372a81d683387f22807714318f58280bceac
+  status: not_a_product
+  url: https://www.readyafter.sk/prislusenstvo/
+- last_seen: '2026-07-05'
+  page_hash: 551d319916442c02593aecc8cf647e70b9d2ded182c3faf30bd716c6fd97d811
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-do-moka-konvicky/
+- last_seen: '2026-07-05'
+  page_hash: 0dd378f5ed5edbb632fef92c8cab2bdf421067a4393eda10d729b3f5acee579d
+  status: not_a_product
+  url: https://www.readyafter.sk/zlavnene-produkty/
+- last_seen: '2026-07-05'
+  page_hash: 08516b958eb1ddf0eb2fdfc315fbc9bdf24c62bcd27191e6317348a5b986d0a6
+  status: not_a_product
+  url: https://www.readyafter.sk/zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 77eed0e7baa19328229e003d1fe7465e50617a6d88eab826f1bc52440fb6af35
+  status: not_a_product
+  url: https://www.readyafter.sk/etiopska-kava/
+- last_seen: '2026-07-05'
+  page_hash: ea070f936e433c6791ffd675056cd500a77e7eb80bac6ad1e226da35549226bf
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-filter/
+- last_seen: '2026-07-05'
+  name: Cuba Serrano Lavado Wash
+  origin: null
+  packaging:
+  - price: 44.9
+    weight_g: 1000
+  - price: 10.9
+    weight_g: 200
+  - price: 24.0
+    weight_g: 500
+  page_hash: 00d2fe9c19cb188f9e681c1d66b7b17a5f166876529c1f19ae6a06205e23e6c2
+  process: Mokré
+  roast_type: null
+  status: ok
+  url: https://www.readyafter.sk/cuba-serrano-lavado-wash/
+- last_seen: '2026-07-05'
+  page_hash: 1786b62fa0bd1884dc33540c7d07196c982f83b199c299321a170bccfdc531ba
+  status: not_a_product
+  url: https://www.readyafter.sk/kakao-a-kakaovy-prasok/
+- last_seen: '2026-07-05'
+  page_hash: e953d1ce0341831f4085a83eb85dd83bfe9ef1fa7c6116ae057b5911096b696d
+  status: not_a_product
+  url: https://www.readyafter.sk/kavovy-slovnik/
+- last_seen: '2026-07-05'
+  page_hash: 727073c61aaf7daf45016e05ea0236ab4598eac848b8af6780317d52ad052fdf
+  status: not_a_product
+  url: https://www.readyafter.sk/kavovy-catering/
+- last_seen: '2026-07-05'
+  page_hash: 360221bd5bb43646da2101b70c0c5beaeda2c61fba70d9a4653ca57e5cc6dbd7
+  status: not_a_product
+  url: https://www.readyafter.sk/doprava-a-platba/
+- last_seen: '2026-07-05'
+  page_hash: 1ff4574055ec66956aa1bd9902bbcdf57687678ac961e0264b52168836caa1cc
+  status: not_a_product
+  url: https://www.readyafter.sk/moja-objednavka/
+- last_seen: '2026-07-05'
+  page_hash: 8ed37628693993d7adc68b03635456f63ee378820f52a76165c18eba9af2898b
+  status: not_a_product
+  url: https://www.readyafter.sk/susene-ovocie/
+- last_seen: '2026-07-05'
+  page_hash: c41f3187ac41b2b89493a19e028bb87680dee033b108ca866f15d9a94aaa2f5b
+  status: not_a_product
+  url: https://www.readyafter.sk/ovocna-kava/
+- last_seen: '2026-07-05'
+  page_hash: 568c6d1e16566976b925933c9678368ae3a167192b2981c496e1800c4143b2be
+  status: not_a_product
+  url: https://www.readyafter.sk/velkoobchod/
+- last_seen: '2026-07-05'
+  page_hash: eeb436c7eb39ff4fdb57a9b71b2ddf885081db564d63425696644d985d93c788
+  status: not_a_product
+  url: https://www.readyafter.sk/bentianna/
+- last_seen: '2026-07-05'
+  page_hash: 68898ee01dd7bf69711c5cef438a3694717e66628aeeeb75861823bd6a6c2a89
+  status: not_a_product
+  url: https://www.readyafter.sk/zrnkova-kava-do-kavovaru/
+- last_seen: '2026-07-05'
+  page_hash: 33db32a1c841ea7fcdfe7616a88c0e7e8cf6739bc127d4b01d8a21358c0ec1ad
+  status: not_a_product
+  url: https://www.readyafter.sk/hario/
+- last_seen: '2026-07-05'
+  page_hash: 440cb34b1815661bd8cd78d580c3e7fd441e2070377b01360574137db66f968a
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-podla-kyslosti/
+- last_seen: '2026-07-05'
+  page_hash: 9aafcaa468edc5bcdb7ee71a4af1b96ffc3629873f9934b99b917991db5ed5d7
+  status: not_a_product
+  url: https://www.readyafter.sk/hario-range-server-pre-dripper-v60-02-microvawe-600-ml/
+- last_seen: '2026-07-05'
+  page_hash: 97e474a74ba600cf71102f40a5d855a31939576ce3bc95c689edd3638b81c534
+  status: not_a_product
+  url: https://www.readyafter.sk/ostatne/
+- last_seen: '2026-07-05'
+  page_hash: dec40a0db875fa6f076389390f2f5b63ea108de7dfe112b568fa21c4dec1326b
+  status: not_a_product
+  url: https://www.readyafter.sk/kubanska-kava/
+- last_seen: '2026-07-05'
+  page_hash: 6203c40e14532311f1cd7ba45f5605fd3bb5e317fc5fa11d6672f6b2011fd3b5
+  status: not_a_product
+  url: https://www.readyafter.sk/dozy-na-kavu/
+- last_seen: '2026-07-05'
+  page_hash: 7160b0b7d124e125ecf7713a86ac98024a59cc4f45ba629eb0c9e448b4ed385f
+  status: not_a_product
+  url: https://www.readyafter.sk/denna-davka-kofeinu-kolko-kavy-si-mozete-dopriat-bez-obav/
+- last_seen: '2026-07-05'
+  page_hash: 62cc36db6aa0db596d26fa7162585aca3bdcd453a8b01213e6a10ebfcf90217d
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-do-kaviarne/
+- last_seen: '2026-07-05'
+  page_hash: f917f1bb877f8a2128ae4905e6a2665853a92f044b9c94dc93341e935c880720
+  status: not_a_product
+  url: https://www.readyafter.sk/kava-bez-kyslosti/
+- last_seen: '2026-07-05'
+  page_hash: e0e1c20ea6f39b043952cfc60d5b76c6eb4bf7b16e396e7abf5eefb49eebc30e
+  status: not_a_product
+  url: https://www.readyafter.sk/udrzatelnost/
+samay-coffee:
+- last_seen: '2026-07-05'
+  page_hash: 6701a852bc1c221d372f34f89d285e53db2ed5b76ba1c0e9366011565b4a91de
+  status: not_a_product
+  url: https://samay.sk/
+simple-coffee:
+- last_seen: '2026-07-05'
+  name: Espresso Blend Brazil / India 80/20
+  origin: Brazília / India
+  packaging:
+  - price: 8.9
+    weight_g: 250
+  - price: 31.9
+    weight_g: 1000
+  page_hash: f2bb9472c950df6cb7c639957acb1571792e5ed8c981f1307ddfa56f6473f8fb
+  process: null
+  roast_type: espresso
+  status: ok
+  url: https://simplecoffee.sk/produkt/zrnkova-kava-espresso-blend-brazil-indie/
+- last_seen: '2026-07-05'
+  page_hash: 8b7a88713d9647dd65b54c404c36ecdce8c2add3bda13e9a7a646dfa47791f2b
+  status: not_a_product
+  url: https://simplecoffee.sk/?add-to-cart=21487
+- last_seen: '2026-07-05'
+  name: Oro Nero – silná zrnková káva s vysokým obsahom kofeínu
+  origin: null
+  packaging:
+  - price: 8.9
+    weight_g: 250
+  - price: 8.9
+    weight_g: 1000
+  page_hash: 478c4cb673f7f428acb5e77d125e67ffbad1034fd96c78f4e1321ee591387a00
+  process: Full city – Stredne intenzívne
+  roast_type: filter
+  status: ok
+  url: https://simplecoffee.sk/produkt/zrnkova-kava-oro-nero/
+- last_seen: '2026-07-05'
+  name: Simple New Wave Espresso Blend
+  origin: null
+  packaging:
+  - price: 7.9
+    weight_g: 200
+  page_hash: 2ba56d4965628ad6c557d58a0c511400a778452376b3500834dfbc289d345152
+  process: null
+  roast_type: null
+  status: ok
+  url: https://simplecoffee.sk/produkt/simple-new-wave-espresso-blend/
+- last_seen: '2026-07-05'
+  page_hash: ab9b29e84736d0d924e89b244ede9ab0b5d4eb456c93c1c003783f8dab132e1b
+  status: not_a_product
+  url: https://simplecoffee.sk/odstupenie-od-zmluvy/
+- last_seen: '2026-07-05'
+  name: Láskavá káva od Simple
+  origin: null
+  packaging:
+  - price: 9.9
+    weight_g: 250
+  - price: 9.9
+    weight_g: 1000
+  page_hash: 52972069888d365f686b1303ca2f5f12f12698f39d8aba83593313ce16c4b361
+  process: null
+  roast_type: filter
+  status: ok
+  url: https://simplecoffee.sk/produkt/laskava-kava/
+- last_seen: '2026-07-05'
+  page_hash: 7e48cdf7ad995b6e10ee3d2a0a6bc32ec9885a4ba1ee211fba11b6774e6b7b6a
+  status: not_a_product
+  url: https://simplecoffee.sk/kategorie/zrnkova-kava/kava-na-filter/
+- last_seen: '2026-07-05'
+  name: Brazil Cerrado Santos
+  origin: Brazília, Cerrado Santos
+  packaging:
+  - price: 9.9
+    weight_g: 250
+  - price: 9.9
+    weight_g: 1000
+  page_hash: efc2247d23a3af17e4797b59a7a925b59ac1dd9064d8523b19a37197d6917007
+  process: Full city – Stredne intenzívne
+  roast_type: filter
+  status: ok
+  url: https://simplecoffee.sk/produkt/zrnkova-kava-z-brazilie-brazil-cerrado-santos/
+- last_seen: '2026-07-05'
+  name: Zrnková káva Mexiko – jemná s čokoládou a orieškami
+  origin: Mexiko
+  packaging:
+  - price: 9.9
+    weight_g: 250
+  - price: 35.9
+    weight_g: 1000
+  page_hash: 0204fcb8c4ca10ac0911eb7bf6f0b162784306b55a59d58f221fcc9fa8c491a3
+  process: null
+  roast_type: null
+  status: ok
+  url: https://simplecoffee.sk/produkt/zrnkova-kava-z-mexika/
+- last_seen: '2026-07-05'
+  page_hash: 6fb6a26d2861d48bef0a9d72cd4878fc573e650003a4ea13f39d2d3277ca0ddd
+  status: not_a_product
+  url: https://simplecoffee.sk/ucet/
+- last_seen: '2026-07-05'
+  page_hash: 80da8e8cbd201b323abe720a88c455cd3261f42246502cd2382dff587e469a0f
+  status: not_a_product
+  url: https://simplecoffee.sk/kava-do-firmy-a-kancelarie/
+- last_seen: '2026-07-05'
+  page_hash: 6852c1377cc9ccdec4c0c6c54fc2a839ed0ae05ab4d88305ba966dd8c6814493
+  status: not_a_product
+  url: https://simplecoffee.sk/produkt/coffee-ride/
+- last_seen: '2026-07-05'
+  name: Espresso Blend Kostarika / India – živé espresso s cremou
+  origin: null
+  packaging:
+  - price: 8.9
+    weight_g: 250
+  - price: 8.9
+    weight_g: 1000
+  page_hash: b6a4fe436589603e146502bd8c87d3cd2bc5c4c6e2950c11b7da6d861c4f6bbe
+  process: null
+  roast_type: filter
+  status: ok
+  url: https://simplecoffee.sk/produkt/zrnkova-kava-espresso-blend-kostarika-indie/
+- last_seen: '2026-07-05'
+  page_hash: 74e1554be3069646827f0f92898a7c7ea87f0ba2435fa8dbee1d364526acee17
+  status: not_a_product
+  url: https://simplecoffee.sk/
+- last_seen: '2026-07-05'
+  name: RUNNING HIGH – svieža ovocná káva na filter
+  origin: null
+  packaging:
+  - price: 9.9
+    weight_g: 250
+  - price: 35.9
+    weight_g: 1000
+  page_hash: eaaa57f23550ca1641eacec12c4826796a0239c20d4907c5085d71aabf87b39b
+  process: null
+  roast_type: filter
+  status: ok
+  url: https://simplecoffee.sk/produkt/running-high-svieza-ovocna-kava-na-filter/
+- last_seen: '2026-07-05'
+  page_hash: 41c7a15d669e5740e12c09165d1cf046486b75bfa7ce1e8e9526afbf75da86bc
+  status: not_a_product
+  url: https://simplecoffee.sk/kategorie/simple-veci/
+- last_seen: '2026-07-05'
+  name: Tá pravá káva
+  origin: Brazil, Honduras
+  packaging:
+  - price: 9.9
+    weight_g: 250
+  - price: 35.9
+    weight_g: 1000
+  page_hash: 3025f3898217406db9279164c0537cafc96d666d417906a0cce7be9e034e4120
+  process: null
+  roast_type: filter
+  status: ok
+  url: https://simplecoffee.sk/produkt/ta-prava-kava/
+- last_seen: '2026-07-05'
+  name: Costa Rica La Pastora Tarrazú – medová arabica z Kostariky
+  origin: null
+  packaging:
+  - price: 9.9
+    weight_g: 250
+  - price: 35.9
+    weight_g: 1000
+  page_hash: 74bfb4da8ce23ccc3067b61f1b55cf30b5775f286bbecf516c2dbb9a44ba20dc
+  process: medová sladkosť s príchuťou sliviek, jemný citrus, mliečna čokoláda a hladké
+    telo. Pochádza z Tarrazú, najznámejšej kávovej oblasti Kostariky, kde vyššia nadmorská
+    výška, chladnejšie noci a pomalšie dozrievanie dávajú zrnám prirodzenú sladkosť
+    a čistotu. V šálke nepôsobí ťažko ani ostro. Je uhladená, sladká a vyvážená. Káva
+    pre človeka, ktorý nechce chuťový extrém, ale chce cítiť rozdiel medzi obyčajnou
+    kávou a dobre spracovanou arabikou.
+  roast_type: null
+  status: ok
+  url: https://simplecoffee.sk/produkt/zrnkova-kava-z-kostariky/
+- last_seen: '2026-07-05'
+  page_hash: df9ffe42efe48c94ef68f29d26cb8f682976d6155ef4c7a4280d206f96fa5205
+  status: not_a_product
+  url: https://simplecoffee.sk/kategorie/kavove-zrna-v-cokolade/
+- last_seen: '2026-07-05'
+  page_hash: 773183c9981fc7794623bbf32f3cad0323d5c5222100457098bd52d9cf5b734d
+  status: not_a_product
+  url: https://simplecoffee.sk/kategorie/zrnkova-kava/espresso-zmesi/
+- last_seen: '2026-07-05'
+  name: Zrnková káva z Dominikánskej republiky – karibská 100 % arabica
+  origin: null
+  packaging:
+  - price: 9.9
+    weight_g: 250
+  - price: 9.9
+    weight_g: 1000
+  page_hash: 5ffc385ad21ffb9a2a00f99bd41d7a8d4696b45185be5e30fa4a14b5a536d700
+  process: null
+  roast_type: null
+  status: ok
+  url: https://simplecoffee.sk/produkt/zrnkova-kava-z-dominikanske-republiky/
+- last_seen: '2026-07-05'
+  page_hash: 0d92b09250e2ae400e35f80f6744187fc1398fda4cbf6a560eefd6c37895f17b
+  status: not_a_product
+  url: https://simplecoffee.sk/kategorie/kavovary/
+- last_seen: '2026-07-05'
+  name: Zrnková bezkofeínová káva Peru Decaf – Swiss Water
+  origin: Peru
+  packaging:
+  - price: 10.5
+    weight_g: 250
+  - price: 38.9
+    weight_g: 1000
+  page_hash: a4acdec3248c5acc1e1cd4da1f15f13e6a31d5c317996c8bda8c1791ebe82471
+  process: Swiss Water Process
+  roast_type: null
+  status: ok
+  url: https://simplecoffee.sk/produkt/zrnkova-bezkofeinova-kava-decaf/
+- last_seen: '2026-07-05'
+  page_hash: 31e9f429a8412bfa4ca56261a599a28968269cdeba42b70c7a01e0d5fa51e162
+  status: not_a_product
+  url: https://simplecoffee.sk/pravidla-spotrebitelskej-sutaze/
+- last_seen: '2026-07-05'
+  page_hash: 42dd0bf855ab6fc5db5b9a7d03bb348440c3018d9ed6cad87c9a67c5e7383ec1
+  status: not_a_product
+  url: https://simplecoffee.sk/ranna-kava/
+- last_seen: '2026-07-05'
+  page_hash: 1a1065a1810696efa0e917b82b3f92e5f78223b83ee4fd19558bf7252253da9b
+  status: not_a_product
+  url: https://simplecoffee.sk/kategorie/degustacne-balicky-kavy/
+- last_seen: '2026-07-05'
+  page_hash: 951f6f60b1312cc9f68b20332217a7bb1d5d50d779d92239f770946161b6c22d
+  status: not_a_product
+  url: https://simplecoffee.sk/kava-po-obede/
+- last_seen: '2026-07-05'
+  page_hash: 3fa42b78eae2ca1243f29a1d5ee6f679b75ec40369d987209daa72b3848e66c8
+  status: not_a_product
+  url: https://simplecoffee.sk/kava-na-kazdy-den/
+- last_seen: '2026-07-05'
+  page_hash: 8fb3a0ea4cc9af48f95757ee4adfcd99725ed2f947f0dbd7e49cf5150025f925
+  status: not_a_product
+  url: https://simplecoffee.sk/kategorie/espresso-zmesi/
+- last_seen: '2026-07-05'
+  page_hash: 3cc8cb3a5ac47088477cfa00eac94ea64b6c31b7a6c5606d027947c2130a8db1
+  status: not_a_product
+  url: https://simplecoffee.sk/kategorie/spotrebny-material/
+- last_seen: '2026-07-05'
+  page_hash: 57760220aed522ea6a629254edd36b739a904fefad1c821d1673bdd2b5a23fa7
+  status: not_a_product
+  url: https://simplecoffee.sk/kava-pre-sportovcov/
+- last_seen: '2026-07-05'
+  name: Kolumbia – Columbia Excelso EP Organic
+  origin: null
+  packaging:
+  - price: 9.9
+    weight_g: 250
+  - price: 9.9
+    weight_g: 1000
+  page_hash: e4aa259ae0e40bb10353501f74348e0f000e1b3aa8f1ae429d53068a3ad0323d
+  process: null
+  roast_type: null
+  status: ok
+  url: https://simplecoffee.sk/produkt/zrnkova-kava-z-kolumbie/
+- last_seen: '2026-07-05'
+  page_hash: 3072f49137a6ffd40b28ae219e1d7211633b33be8f139b2775e0d69394afeb43
+  status: not_a_product
+  url: https://simplecoffee.sk/kategorie/zrnkova-kava/
+- last_seen: '2026-07-05'
+  page_hash: da310953b03c6a62b003888ea0aba72640029dfa3f3b7ca13d6a2a45dce748d3
+  status: not_a_product
+  url: https://simplecoffee.sk/kategorie/arabika/
+- last_seen: '2026-07-05'
+  page_hash: 64ef39536689c23982b1c2a6b0340044895f158fb07a9fcd6701b87dc070df8d
+  status: not_a_product
+  url: https://simplecoffee.sk/kategorie/zrnkova-kava/arabika/
+- last_seen: '2026-07-05'
+  page_hash: 04f796fa51fb3f8e066c57eef7d115f9ec070be5236deddde261aff5c6709498
+  status: not_a_product
+  url: https://simplecoffee.sk/kategorie/zrnkova-kava/zrnkova-kava-do-kavovaru/
+- last_seen: '2026-07-05'
+  page_hash: 206c504e08af4e2bd150918e488c289c108654e50a0f6c31251e1d80a08cb7bf
+  status: not_a_product
+  url: https://simplecoffee.sk/produkt/zrnkova-kava-z-burundi/
+- last_seen: '2026-07-05'
+  page_hash: 11e2e755bb8a9d8a979bd062421d4705df6ad092150010ffa44038d370f4ce28
+  status: not_a_product
+  url: https://simplecoffee.sk/reklamacia/
+- last_seen: '2026-07-05'
+  page_hash: 0488fcf68bf290b35043df73ac28b0e42072cdefb6319e04d391958b07344699
+  status: not_a_product
+  url: https://simplecoffee.sk/ochrana-soukromia/
+- last_seen: '2026-07-05'
+  page_hash: 4b20b2614f4b5b4ef6e21a42839e7b23e7cafb9e2eaf2531152626bf380f5b5f
+  status: not_a_product
+  url: http://simplecoffee.sk/kategorie/simple-veci/
+- last_seen: '2026-07-05'
+  page_hash: 22313e5a870109935d519d3690cbaf520d7ed8d68b82c53ff0916aba16c2c083
+  status: not_a_product
+  url: https://simplecoffee.sk/kava-ako-darcek/
+- last_seen: '2026-07-05'
+  name: Zrnková káva Guatemala – 100 % arabica s čokoládou a citrusom
+  origin: Guatemala El Quiché
+  packaging:
+  - price: 9.9
+    weight_g: 250
+  - price: 35.9
+    weight_g: 1000
+  page_hash: d695151f611e326747160c62c773d179132c21f8068ef00822d26570ee340866
+  process: null
+  roast_type: null
+  status: ok
+  url: https://simplecoffee.sk/produkt/zrnkova-kava-z-guatemala-guatemala-el-quiche/
+suca-roastery:
+- last_seen: '2026-07-05'
+  name: Colombia Hacienda La Claudina washed
+  origin: null
+  packaging:
+  - price: 8.9
+    weight_g: 250
+  - price: 12.9
+    weight_g: 500
+  - price: 21.9
+    weight_g: 1000
+  page_hash: ace46c2f365e4bf8669d89ca30eed71f413decefc18a076987dacfdc0cf6208a
+  process: washed
+  roast_type: espresso
+  status: ok
+  url: https://www.sucaroastery.sk/p/colombia-hacienda-la-claudina-washed
+- last_seen: '2026-07-05'
+  page_hash: 88e41b55cc9c4f251f5d335d87bdc3ac9777f107fc60168be1480da1d702acbb
+  status: not_a_product
+  url: https://www.sucaroastery.sk/feed-rss.xml
+- last_seen: '2026-07-05'
+  page_hash: e6c15b717fedf7de03e6654e356edf42a080ab82ae74ffe825d9e9ec17c9b438
+  status: not_a_product
+  url: https://www.sucaroastery.sk/p/nicaragua-finca-el-cipres
+- last_seen: '2026-07-05'
+  page_hash: d42b346f2c7039d0661bc09ec4f8be88987bcd73963d3544ad9965c7662df796
+  status: not_a_product
+  url: https://www.sucaroastery.sk/news/nova-recenzia-na-coatarica-las-hermanas
+- last_seen: '2026-07-05'
+  name: El Salvador Finca El Cerro Pacas
+  origin: null
+  packaging:
+  - price: 12.9
+    weight_g: 250
+  - price: 23.9
+    weight_g: 1000
+  page_hash: 3a7d3d9d9ca873f21d7017a17224f5a489276a894d08e305f5656f2e8e3f5340
+  process: Táto káva prechádza suchým fermentačným procesom, pri ktorom sa čerešne
+    sušia v nádrži v tieni počas prvých 48 hodín a potom sa umiestnia na slnko na
+    ďalšie sušenie. Finca El Cerro je dedičstvom 5 generácií salvádorských výrobcov
+    kávy, pestovanie kávy je v ich rodine už viac ako 150 rokov. Farma sa nachádza
+    v pohorí Apaneca Llamatepec a má ideálnu nadmorskú výšku na výrobu špeciálnej
+    kávy (1400-1500 m). V roku 2016 sa rozhodli spracovať vlastnú kávu, vlastnia malý
+    ekologický mlyn na kávu, kde si môžu robiť vlastné mokré mletie. Vo Finca El Cerro
+    je káva vášňou, nie len jej pestovanie, ale aj jej spracovanie, ochutnávanie a
+    varenie.
+  roast_type: null
+  status: ok
+  url: https://www.sucaroastery.sk/news/el-salvador-finca-el-cerro-pacas
+- last_seen: '2026-07-05'
+  name: Ethiopia Abebe Hilu Yirgacheffe
+  origin: null
+  packaging:
+  - price: 9.3
+    weight_g: 250
+  - price: 10.9
+    weight_g: 500
+  page_hash: 139a2d010bd740471fbd4272f91ecc309be756ac1a468a0ea686bebb7a54c5f8
+  process: null
+  roast_type: espresso
+  status: ok
+  url: https://www.sucaroastery.sk/p/ethiopia-abebe-hilu-yirgacheffe
+- last_seen: '2026-07-05'
+  name: Kenya Endebess natural
+  origin: null
+  packaging:
+  - price: 11.5
+    weight_g: 250
+  - price: 9.8
+    weight_g: 250
+  - price: 11.5
+    weight_g: 500
+  - price: 9.8
+    weight_g: 500
+  page_hash: 94592b691fd5bc68d0606e4da962e1cde52183024676941414337b06e0901d3c
+  process: natural
+  roast_type: espresso
+  status: ok
+  url: https://www.sucaroastery.sk/p/kenya-endebess-natural
+- last_seen: '2026-07-05'
+  page_hash: 58d957a1c9c844789de76e3ecf45c8d5d7667d3c65c10f33a163e98e5eafec28
+  status: not_a_product
+  url: https://www.sucaroastery.sk/customer/find-order/
+- last_seen: '2026-07-05'
+  page_hash: babf185f7e472f5188c505200a8b9f8d591cd55cc444cfcba83d537d726ae0c5
+  status: not_a_product
+  url: https://www.sucaroastery.sk/
+- last_seen: '2026-07-05'
+  page_hash: 61adb4956a61a133fd7defd6949e2270915527a72a8fdbeaa05f9def838c29c0
+  status: not_a_product
+  url: https://www.sucaroastery.sk/customer/registration/
+- last_seen: '2026-07-05'
+  page_hash: 8f2988a45ff3cb139b48bb44da8732b9b8342690e15f6647bbd522548a490859
+  status: not_a_product
+  url: https://www.sucaroastery.sk/kava
+- last_seen: '2026-07-05'
+  page_hash: 98b3bab1484fc43a814f9951abc3db0e4410b57c1b82377ccf7125cb724831c1
+  status: not_a_product
+  url: https://www.sucaroastery.sk/bezkofeinova-kava
+- last_seen: '2026-07-05'
+  page_hash: c91a6c7ac2987457a2b2d8e8ac776054e94364966e7fee9d4fabc7c7916eee1a
+  status: not_a_product
+  url: https://www.sucaroastery.sk/zrnkova-kava-na-filter
+- last_seen: '2026-07-05'
+  page_hash: 812d06bb66d71d89583fad230a3a90c6acf4c1df132e13a48add5db202db1e50
+  status: not_a_product
+  url: https://www.sucaroastery.sk/p/costarica-palmichal-los-vindas
+- last_seen: '2026-07-05'
+  page_hash: 3f14822ab23efbd5ac23ee33f39b5ddf058e0bd0b6e3e7f8a82e3f80cf59e6e7
+  status: not_a_product
+  url: https://www.sucaroastery.sk/ako-nakupit
+- last_seen: '2026-07-05'
+  page_hash: f95b68fa327ba3135080ed9c3190fb1afdf7b2fb09d8b2231241c0b91df38d19
+  status: not_a_product
+  url: https://www.sucaroastery.sk/vyberova-kava
+- last_seen: '2026-07-05'
+  name: Colombia Monteblanco
+  origin: null
+  packaging:
+  - price: 18.9
+    weight_g: 250
+  page_hash: ab36d828959eb134cada203263e0439f981e681f378fe9fba9ef512d6054df7a
+  process: extended cold fermentation fully washed
+  roast_type: espresso
+  status: ok
+  url: https://www.sucaroastery.sk/p/colombia-monteblanco
+- last_seen: '2026-07-05'
+  page_hash: 7352296554b1f9ed79f1d77d26353cb045c4e6cfd97ba51dd94219396ea07e5b
+  status: not_a_product
+  url: https://www.sucaroastery.sk/doprava-a-platba
+- last_seen: '2026-07-05'
+  name: Vietnam Langbiang double washed
+  origin: Dalat, Lang Biang
+  packaging:
+  - price: 11.3
+    weight_g: 250
+  - price: 11.3
+    weight_g: 250
+  page_hash: f4fc9a1a77332922b6addcc3dff6af39fcbb4731cb5559ef976d3f4ec2a39584
+  process: double washed
+  roast_type: null
+  status: ok
+  url: https://www.sucaroastery.sk/p/vietnam-langbiang-double-washed
+- last_seen: '2026-07-05'
+  page_hash: 1574b92da301e3cc02f1d15f7a6e7133931e63633553cad2b677231b12620407
+  status: not_a_product
+  url: https://www.sucaroastery.sk/vsetko-o-nakupe
+- last_seen: '2026-07-05'
+  name: Rwanda Gisheke
+  origin: null
+  packaging:
+  - price: 10.9
+    weight_g: 250
+  - price: 10.9
+    weight_g: 250
+  - price: 16.9
+    weight_g: 500
+  - price: 16.9
+    weight_g: 500
+  page_hash: fd50a9089ec8d334442eb94c64575c3e03263e98b3daf722f9cb5136e6902abe
+  process: natural
+  roast_type: espresso
+  status: ok
+  url: https://www.sucaroastery.sk/p/rwanda-gisheke-natural
+- last_seen: '2026-07-05'
+  name: Colombia Jesus Barahona Buenavista
+  origin: null
+  packaging:
+  - price: 12.9
+    weight_g: 250
+  - price: 11.0
+    weight_g: null
+  - price: 23.8
+    weight_g: 500
+  - price: 21.0
+    weight_g: null
+  page_hash: cce54117e80d5dee73de8930779e5f4ee98bb246dc3ec21198ae40bbc9c1955d
+  process: natural
+  roast_type: filter
+  status: ok
+  url: https://www.sucaroastery.sk/p/colombia-jesus-barahona-buenavista
+- last_seen: '2026-07-05'
+  name: Guatemala La Bella natural
+  origin: null
+  packaging:
+  - price: 9.8
+    weight_g: 250
+  - price: 10.9
+    weight_g: 250
+  - price: 9.8
+    weight_g: 500
+  - price: 10.9
+    weight_g: 500
+  page_hash: 1537829877dce3a5cc913476d500566777ea3bed17c7a2bc4832ec0faa0238db
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.sucaroastery.sk/p/guatemala-la-bella-natural
+- last_seen: '2026-07-05'
+  page_hash: 8df83dc40a5b6414d7ef0a3e515c3b60edee8aecabf651547fe4eb6138473031
+  status: not_a_product
+  url: https://www.sucaroastery.sk/p/test
+- last_seen: '2026-07-05'
+  page_hash: bd554a2cee80cc4d8e05906432f084209773a7f168c163bf1f6dba5f1f732c5b
+  status: not_a_product
+  url: https://www.sucaroastery.sk/sitemap
+- last_seen: '2026-07-05'
+  page_hash: 9d3de56ace47608c7b6b3d43cb1d7f8f82a613a87a03375e599676b0c574aace
+  status: not_a_product
+  url: https://www.sucaroastery.sk/p/colombia-finca-la-rosa
+- last_seen: '2026-07-05'
+  page_hash: 50eae2e36d067303fc06688d5c98cd2847405b77f99aa18ef145737d86bf0e2e
+  status: not_a_product
+  url: https://www.sucaroastery.sk/reklamacny-poriadok
+- last_seen: '2026-07-05'
+  name: El Salvador Finca El Cerro anacafe
+  origin: null
+  packaging:
+  - price: 10.9
+    weight_g: 250
+  - price: 10.9
+    weight_g: 250
+  - price: 17.9
+    weight_g: 500
+  - price: 17.9
+    weight_g: 500
+  page_hash: 6344a08e4e8a66f608cc36624a9a9b26f9a763cc2f28644235a3b8a41caa48f3
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.sucaroastery.sk/p/el-salvador-finca-el-cerro-anacafe
+- last_seen: '2026-07-05'
+  page_hash: 81fe4caadab431a022fc2a1c2d301a2318cf85482650ae26f7ec681b79ae8142
+  status: not_a_product
+  url: https://www.sucaroastery.sk/kilove-balenia-1
+- last_seen: '2026-07-05'
+  page_hash: 54f0d6a97ac050e53d333d2d730268b29b8098b2c8a61d70273301fe2c04f480
+  status: not_a_product
+  url: https://www.sucaroastery.sk/compare
+- last_seen: '2026-07-05'
+  page_hash: 9596fafc4fe0d006748d161037d769c5cec76f4f71a02fd44573eed2baf39276
+  status: not_a_product
+  url: https://www.sucaroastery.sk/newsletter
+- last_seen: '2026-07-05'
+  page_hash: ee88d071868bf444ffdd26183ece4f3fbfd3d9b8326c3fecbfe54e787fbf8412
+  status: not_a_product
+  url: https://www.sucaroastery.sk/p/colombia-ombligon-sugarcane-decaf
+- last_seen: '2026-07-05'
+  page_hash: f8674afad5e29da48034cd6238be828ba5521e5837611d5b89db4279d5f35ced
+  status: not_a_product
+  url: https://www.sucaroastery.sk/velkoobchod
+- last_seen: '2026-07-05'
+  name: Guatemala Finca Pampojila
+  origin: Siera Lake Atitlán, Sololá
+  packaging:
+  - price: 12.9
+    weight_g: 250
+  - price: 12.9
+    weight_g: 250
+  - price: 12.9
+    weight_g: 500
+  - price: 12.9
+    weight_g: 500
+  page_hash: a0fd2fbe4e4397925cefb66e671e6742201b859391439417ceee23a2c0deccd4
+  process: anaerobic honey
+  roast_type: espresso
+  status: ok
+  url: https://www.sucaroastery.sk/p/guatemala-finca-pampojila
+- last_seen: '2026-07-05'
+  name: Brazil Fazenda das Almas
+  origin: null
+  packaging:
+  - price: 10.5
+    weight_g: 250
+  - price: 10.5
+    weight_g: 500
+  page_hash: 38c6818af894f2aa2c9931cef18d009eb29f20003c0de06f7b0ccee6b6ae89f5
+  process: natural anaerobic
+  roast_type: espresso
+  status: ok
+  url: https://www.sucaroastery.sk/p/brazil-fazenda-das-almas
+- last_seen: '2026-07-05'
+  page_hash: a8dd1b06d45a223c5c9dc3972f2dd97d7c35ad60d652036b16cab76738e1d8b8
+  status: not_a_product
+  url: https://www.sucaroastery.sk/zrnkova-kava-na-espresso
+sweet-beans-coffee:
+- last_seen: '2026-07-05'
+  page_hash: ed3de566ca0e94593439f23c4a4edbbf2e8cf8f3001ad1808b96adf0bd9b7fd8
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/contact/
+- last_seen: '2026-07-05'
+  page_hash: d80385ce8de2074222cd57f7b6f219ba1a4a42666eb4bd466e2e70c05fb66f24
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/kategoria-produktu/coffee-beans/new-coffee/
+- last_seen: '2026-07-05'
+  name: Colombia Jairo Arcila | wine yeast x passion fruit
+  origin: null
+  packaging:
+  - price: 24.0
+    weight_g: 200
+  - price: 49.0
+    weight_g: 500
+  page_hash: 98652d129e6b5e8d9f39fbd38a5255cb3fea8b5397ef93e9205cd7c2856ecfb4
+  process: This coffee underwent a 48-hour dry anaerobic fermentation , during which
+    dehydrated blackberries and wine yeast were added to the environment. Afterwards,
+    it was dried on raised beds under 35°C until reaching ideal moisture.
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/colombia-jairo-arcila-wine-yeast-x-passion/
+- last_seen: '2026-07-05'
+  page_hash: b5b6e200eebe410a359a9105204c30e3d7c89b6744dddca8abd3d51bca5f82f6
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/kategoria-produktu/sweet-merch/
+- last_seen: '2026-07-05'
+  page_hash: b91ccdc7e15beaaebecf91ef4226a8f0155f412c4adf9376b6ad1225cd95bea3
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/shop/
+- last_seen: '2026-07-05'
+  page_hash: 73160912ee5adeaf1afd5cba33090322167185d3c6137c67c892950c85634988
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/?add-to-cart=11494
+- last_seen: '2026-07-05'
+  page_hash: 5c7cb902e813c0b02555ad3e49a4d60e8a1e9164739b4d62929cf730a655fb38
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/what-is-specialty-coffee/
+- last_seen: '2026-07-05'
+  name: Palm Beach Espresso | coconut fermentation
+  origin: null
+  packaging:
+  - price: 39.0
+    weight_g: 500
+  - price: 69.0
+    weight_g: 1000
+  page_hash: 5c69f630b1c5d2e716a636e9b2d1fb953dc25fd4e415d9677c1d41a57fe387dc
+  process: Coconut Co-fermentation / Honey (Anaerobic fermentation with coconut pulp
+    for 72–180 hours) x Anaerobic Ethiopian fermentation
+  roast_type: espresso
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/palm-beach-espresso-coconut-fermentation/
+- last_seen: '2026-07-05'
+  name: Colombia Villa Betulia | washed pacamara
+  origin: null
+  packaging:
+  - price: 20.0
+    weight_g: 200
+  - price: 89.0
+    weight_g: 1000
+  page_hash: a879dec755d8c45866ba585c117be987dc4713d7ea5706218c85a1e26ab96e8f
+  process: Washed
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/colombia-villa-betulia-washed-pacamara/
+- last_seen: '2026-07-05'
+  page_hash: 704dec6a2263e4b463e5054c52c078705b7ca7273107854484bc2ce13da605d3
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/my-account/
+- last_seen: '2026-07-05'
+  name: Peru San Ignacio Espresso
+  origin: null
+  packaging:
+  - price: 29.0
+    weight_g: 500
+  - price: 39.0
+    weight_g: 1000
+  page_hash: 1a8cc58c2233865483d87bd4dc7ebb607319271f9eefe22f2856240bc5f2887f
+  process: washed
+  roast_type: espresso
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/peru-san-ignacio-espresso/
+- last_seen: '2026-07-05'
+  name: Spring Filter Blend
+  origin: null
+  packaging:
+  - price: 18.0
+    weight_g: 200
+  - price: 59.0
+    weight_g: 1000
+  - price: 59.0
+    weight_g: 500
+  page_hash: c2961780f4c7859a01b2303d94cc80e383d1cb4cd3ff4a8c37f093813bef25f1
+  process: "This special filter blend brings together two expressive origins for a\
+    \ bright, elegant, and memorable brew this Spring  \nColombia Jairo Arcila – Passion\
+    \ fruit Fermentation delivers lush sweetness and playful notes of exotic fruits,\
+    \ red candy, and a silky mouthfeel.  \nPaired with Ethiopia Lalesa x anaerobic\
+    \ , known for its vibrant acidity and juicy blackcurrant character, the result\
+    \ is a beautifully balanced cup with sparkle, depth, and charm.\nExpect a cup\
+    \ that’s:\n  * \U0001F353 Sweet and fruit-forward\n  * \U0001F352 Juicy with a\
+    \ lively acidity\n  * \U0001F490 Clean, elegant, and aromatic\n\nPerfect for slow\
+    \ mornings and shared brews."
+  roast_type: filter
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/spring-filter-blend/
+- last_seen: '2026-07-05'
+  page_hash: 80bf1daa7c26f26d48e75fc7f01b975c69e5d9c10e92b8a4f0642df40ee31832
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/account/
+- last_seen: '2026-07-05'
+  page_hash: 6ce4c3cf69cb88ac4339eab83a0b757c3fdb88039f6ecc80631f486e5c8145d5
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/kategoria-produktu/coffee-beans/for-espresso/
+- last_seen: '2026-07-05'
+  page_hash: 99dc0d9270a2c27de8ba912c875c86fc06e8b8f6e97423430b94d638dcc72481
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/
+- last_seen: '2026-07-05'
+  name: Colombia Jairo Arcila | wine yeast x peach
+  origin: null
+  packaging:
+  - price: 24.0
+    weight_g: 200
+  - price: 49.0
+    weight_g: 500
+  page_hash: 2462c880688442d66816e29c86a54b3d754df68a3bdce004abc61eb5b629abd8
+  process: This coffee underwent a 48-hour dry anaerobic fermentation , during which
+    dehydrated blackberries and wine yeast were added to the environment. Afterwards,
+    it was dried on raised beds under 35°C until reaching ideal moisture.
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/colombia-jairo-arcila-wine-yeast-x-peach/
+- last_seen: '2026-07-05'
+  page_hash: 313cba81ce154e00f76fe63207fd54ecbc8d0b899bbd58c934d98312a09935b1
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/kategoria-produktu/equipment/
+- last_seen: '2026-07-05'
+  page_hash: 86fa9cbeff54febb37ab62302faa8683834046bc060f1604e8599fcd0ff0deae
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/?add-to-cart=1402
+- last_seen: '2026-07-05'
+  page_hash: ea43fb73f3ed8c9525969edd21f3a8887000696b87e304d9ab707e2c31e450d0
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/spracovanie-vyberovej-kavy-rozlisenie-medzi-roznymi-typmi-fermentacie/
+- last_seen: '2026-07-05'
+  page_hash: 1c67fd4c6cf088d2524dd4fac0cdb2ed3c65ad68709dffb1bf5cdf5ee1309b43
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/loyalty-program/
+- last_seen: '2026-07-05'
+  name: Colombia Attia | washed
+  origin: null
+  packaging:
+  - price: 14.0
+    weight_g: 200
+  - price: 49.0
+    weight_g: 1000
+  page_hash: fe2f7ad52aa1006a893551dd9962311a5bb55fd093b72c823659aa08f8a412bc
+  process: Washed
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/colombia-attia-washed/
+- last_seen: '2026-07-05'
+  name: Espresso cup 60ml – Speckled
+  origin: null
+  packaging:
+  - price: 16.0
+    weight_g: null
+  page_hash: a01e5b0a0d2b430375bcd3afc4d73a3d3c70f08f5b4bfb41c61157f91880c90c
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/espresso-cup-60ml-speckled/
+- last_seen: '2026-07-05'
+  name: Rwanda Rugamba | honey
+  origin: null
+  packaging:
+  - price: 14.0
+    weight_g: 200
+  - price: 49.0
+    weight_g: 500
+  - price: 1000.0
+    weight_g: null
+  page_hash: b6070e6789792f3a8e23769327ecf73593a9177ed6071bca1606e15ddba43419
+  process: Honey
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/colombia-attia-washed-kopia/
+- last_seen: '2026-07-05'
+  name: SweetDrip x Kenya
+  origin: null
+  packaging:
+  - price: 9.99
+    weight_g: null
+  page_hash: dd581bb59d5844ceec610aa0e98fe373d2e51b0894489cb0acf5dc04a01defad
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/?add-to-cart=1403
+- last_seen: '2026-07-05'
+  page_hash: 7755b9f0289ddc275789b9df4ec206613203289729f435085f499cbd378af6d7
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/kategoria-produktu/coffee-beans/unique-beans/
+- last_seen: '2026-07-05'
+  name: Costa Rica Higueronal F1 | anaerobic natural
+  origin: null
+  packaging:
+  - price: 20.0
+    weight_g: 200
+  - price: 20.0
+    weight_g: 500
+  - price: 20.0
+    weight_g: 1000
+  page_hash: d8118f82220a99a52fcca614ef2d8342e85fc871ba6e35650a19796439c5c4c1
+  process: anaerobic natural
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/costa-rica-higueronal-f1-anaerobic-natural/
+- last_seen: '2026-07-05'
+  name: Bio Coffee Pods | Funky Paradise
+  origin: null
+  packaging:
+  - price: 9.0
+    weight_g: null
+  page_hash: 399e469b9151ddb1dce8ff2c9a69b49304dd134ac38516e4b5e84ef7083ae98d
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/bio-coffee-pods-funky-paradise/
+- last_seen: '2026-07-05'
+  page_hash: 9cfdb1e8d8bdda61f94a0e7f06259f7e4ad2714d51b42b7e22f18ddd31a18394
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/?add-to-cart=10100
+- last_seen: '2026-07-05'
+  page_hash: b8cb016735fc71c8d4e4a3feb8b039aaa4522fa109dbd9df398d43ac2904a430
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/wholesale/
+- last_seen: '2026-07-05'
+  name: Sweeter Blend | espresso
+  origin: null
+  packaging:
+  - price: 29.0
+    weight_g: 500
+  - price: 39.0
+    weight_g: 1000
+  page_hash: fc0c27fb9112a9e0080787ecb2b6ff73295c13669b564a90495246b9741c108e
+  process: natural x natural
+  roast_type: espresso
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/sweeter-blend-espresso/
+- last_seen: '2026-07-05'
+  name: Espresso cup 60ml – Grey
+  origin: null
+  packaging:
+  - price: 16.0
+    weight_g: null
+  page_hash: 47e62897db04fe377a155196e28a3ad4aedd0b615345da53586aa16b93fba328
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/espress-cup-60ml-grey/
+- last_seen: '2026-07-05'
+  name: SweetDrip x Kenya
+  origin: null
+  packaging:
+  - price: 9.99
+    weight_g: null
+  page_hash: 5e635d57a1ff95091c6a807354b79e74ddff253bad9a12e532013d56e05c8522
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/sweetdrip-x-kenya/
+- last_seen: '2026-07-05'
+  page_hash: 81bdffdc4ef608bc51a5db0cadee5e10570508fc9ef7fc472409a61011cebde5
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/?add-to-cart=11491
+- last_seen: '2026-07-05'
+  page_hash: f36d06c0e5c0dda141e77e9d8ffa36e974cc6a654520a86ab153ca082b9ab7fd
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/kategoria-produktu/coffee-beans/specialty-beans/
+- last_seen: '2026-07-05'
+  page_hash: e2be9635098a530a292d33bd75894277f1049f4d2943a88b820223888b458442
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/kategoria-produktu/coffee-beans/
+- last_seen: '2026-07-05'
+  page_hash: b3536ddaf754a369a4b806451f640cb48a32774c2c0a53665e26b18f3c42b497
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/objavte-tajomstva-afriky-v-kazdej-salke-kava-z-keni-burundi-rwandy-a-etiopie/
+- last_seen: '2026-07-05'
+  name: Colombia Luz Helena Salazar | natural caturra
+  origin: null
+  packaging:
+  - price: 20.0
+    weight_g: 200
+  - price: 20.0
+    weight_g: 500
+  - price: 20.0
+    weight_g: 1000
+  page_hash: 2a308107ad3c296e1429ef6cd2855f0caedf608d34ccb0c8e2e01bc9758af77d
+  process: anaerobic natural
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/colombia-luz-helena-salazar-natural-caturra/
+- last_seen: '2026-07-05'
+  page_hash: e09ed961625536a323b952365a41e47dfc4047336f2f292e7ed43bf869d77aee
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/reklamacny-poriadok/
+- last_seen: '2026-07-05'
+  page_hash: b44f81330a2284c810a9687dee1d65c73fef545c1e56486ca7aab5133b09d3a1
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/ochrana-sukromia/
+- last_seen: '2026-07-05'
+  name: Tesla Blend | espresso
+  origin: null
+  packaging:
+  - price: 14.0
+    weight_g: 200
+  - price: 49.0
+    weight_g: 1000
+  page_hash: 6a5d0b75120447d31a89ad4bdb289769e71fc22253b1ab4213e0b6b556a7295e
+  process: washed x natural
+  roast_type: espresso
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/tesla-blend-espresso/
+- last_seen: '2026-07-05'
+  page_hash: 2f1e0c790454f40c6bb1d221e468d8255d83a81677d7fc2d4376824d425d21e6
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/cookie-policy-eu/
+- last_seen: '2026-07-05'
+  page_hash: fd152a2d7454135f94f33912aaaa258bae8824e6295527e85f7b0aa54d0d2209
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/kategoria-produktu/spring-sale/
+- last_seen: '2026-07-05'
+  name: Bio Coffee Pods | Ethiopia Mundayo
+  origin: null
+  packaging:
+  - price: 9.0
+    weight_g: null
+  page_hash: 2ea8e9158a162541915c7361184b6f870f9d9bbbf5f67cdc15903ae5305d64bc
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/bio-coffee-pods-ethiopia-beshasha/
+- last_seen: '2026-07-05'
+  page_hash: 2838dbdb4a51f93099e7692591b4c37550fa15cf933ad6a9d9101f342b7c78ec
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/kategoria-produktu/drip-coffee/
+- last_seen: '2026-07-05'
+  name: Colombia El Vergel | sugarcane decaf
+  origin: null
+  packaging:
+  - price: 14.0
+    weight_g: 200
+  page_hash: b20a90079df325a580d37fa63b59f6de811f67f0825da49bd1f49c20b0d21cce
+  process: 'This decaffeination process is unique, the caffeine is extracted from
+    the bean using sugar cane and water which enhances sweetness, while maintaining
+    coffee attributes.
+
+    The green coffee is received, sorted and prepared for processing. The coffee is
+    then steamed for 30 minutes, prior to decaffeination. A low pressure steaming
+    process has opened the pores of the coffee, allowing for caffeine extraction.
+    Then, the coffee is placed in a solution of water and Ethyl Acetate, which is
+    a naturally occurring compound and solvent derived through the fermentation of
+    sugar cane. During this process, the solvent naturally bonds to the salts of chlorogenic
+    acids within the coffee, allowing for the extraction of caffeine – this continues
+    for about eight hours.
+
+    After the last of the caffeine has been extracted, the coffee is removed from
+    the solution and prepared for another steaming. The final low-pressure steaming
+    removes the remaining traces of Ethyl Acetate. Decaffeinated coffee is then dried,
+    physically polished to ensure cleanliness, and packaged to export.'
+  roast_type: filter
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/colombia-el-vergel-sugarcane-decaf/
+- last_seen: '2026-07-05'
+  name: SweetDrip x Ethiopia
+  origin: null
+  packaging:
+  - price: 9.99
+    weight_g: null
+  page_hash: 50103c5c72f1bf638114565b5c43ed3978564e06d95b95b42a0a1d2b6ce224f1
+  process: NATURAL
+  roast_type: filter
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/sweetdrip-x-ethiopia/
+- last_seen: '2026-07-05'
+  name: Costa Rica Las Lajas – Black Diamond | anaerobic honey
+  origin: null
+  packaging:
+  - price: 20.0
+    weight_g: 200
+  - price: 69.0
+    weight_g: 1000
+  - price: 20.0
+    weight_g: 200
+  - price: 69.0
+    weight_g: 1000
+  page_hash: f8e794051706dd6210da3f8b02418e389d07b88fece05f7594fd1a4581078d14
+  process: Anaerobic honey
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/ethiopia-lalesa-anaerobic-natural-kopia/
+- last_seen: '2026-07-05'
+  page_hash: 6880c3dd0404a3a936a2ee412672886acf60c34834d1894dd622822d645b31cc
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/kategoria-produktu/coffee-cups/
+- last_seen: '2026-07-05'
+  name: Rwanda Kigoma | natural
+  origin: null
+  packaging:
+  - price: 14.0
+    weight_g: 200
+  - price: 49.0
+    weight_g: 1000
+  - price: 49.0
+    weight_g: 500
+  page_hash: 9f4c00cd0e2062533502e29f5e8fbda3891fc731f98c6e17729bb78d39db296a
+  process: Natural
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/rwanda-kigoma-natural/
+- last_seen: '2026-07-05'
+  page_hash: 585433109e8acce12580db0ecbd28fa4a0819e66fad7e46c27276618d0fb862c
+  status: not_a_product
+  url: https://www.sweetbeans.coffee/kategoria-produktu/nespresso/
+- last_seen: '2026-07-05'
+  name: SweetDrip x Colombia
+  origin: null
+  packaging:
+  - price: 12.0
+    weight_g: 12
+  page_hash: cbcfa84bb4ed19d2b991ae1f551719b71352b1d18fda49f26642aa90d63ae89d
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/sweetdrip-x-bolivia/
+- last_seen: '2026-07-05'
+  name: Colombia Jairo Arcila | wine yeast x mango
+  origin: null
+  packaging:
+  - price: 24.0
+    weight_g: 200
+  - price: 49.0
+    weight_g: 500
+  page_hash: 357ee53c1f4353da203981329c9d1e0784312fa35125fbbfb754454f842187a2
+  process: This coffee underwent a 48-hour dry anaerobic fermentation , during which
+    dehydrated mango and wine yeast were added to the environment. Afterwards, it
+    was dried on raised beds under 35°C until reaching ideal moisture.
+  roast_type: null
+  status: ok
+  url: https://www.sweetbeans.coffee/produkt/colombia-jairo-arcila-wine-yeast-x-mango/
+trip-roasters:
+- last_seen: '2026-07-05'
+  page_hash: aef32eaa9e10f3bffdcb67737b347ed8e6e8d8a5e22deac3f24b3d5c0b9b8740
+  status: not_a_product
+  url: https://triproasters.sk/reklamacny-poriadok/
+- last_seen: '2026-07-05'
+  page_hash: bc62c170cbebed935c168226e85ed33906bceb904321e0b3e3372f29e73bfb38
+  status: not_a_product
+  url: https://triproasters.sk/salky-na-kavu/
+- last_seen: '2026-07-05'
+  page_hash: bc5e10fbdb0f08906d94516bb679f2bdeb359fae760918715b50a8725711150c
+  status: not_a_product
+  url: https://triproasters.sk/ako-sa-pestuje-kava/
+- last_seen: '2026-07-05'
+  page_hash: 14a6101dc125250c719c89886e6060494d9fc52556971cb3b0a5f0584a96cfc4
+  status: not_a_product
+  url: https://triproasters.sk/moj-ucet/lost-password/
+- last_seen: '2026-07-05'
+  page_hash: db6ae8de4f1e532a33ce85f2ea8d96a90d553be4a994bb5aeb4b8c5e92c5aa35
+  status: not_a_product
+  url: https://triproasters.sk/espresso/
+- last_seen: '2026-07-05'
+  page_hash: 8997132dc0115234005d99105deba414317486dfb91c76125335a60105a9dc5d
+  status: not_a_product
+  url: https://triproasters.sk/obchod/
+- last_seen: '2026-07-05'
+  page_hash: 8d54495491c228d3a38b7549def6a96d6dc9d126aacbb4d4984290ca09322772
+  status: not_a_product
+  url: https://triproasters.sk/krok-dva-ako-prebieha-prazenie-kavy/
+- last_seen: '2026-07-05'
+  page_hash: f75488a91253979a1dcccf0eadbd266712114869227531c74581de14302f9653
+  status: not_a_product
+  url: https://triproasters.sk/moj-ucet/?action=register
+- last_seen: '2026-07-05'
+  page_hash: c53308b5252d55f087c2d2575ab0318dc5bd8fb6b31d93e62d0d1bf6fe0f0ec7
+  status: not_a_product
+  url: https://triproasters.sk/co-je-vyberova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 3999e3f00a364a91b41edd83e50b67ac846e136fd17f0ac77675f96453badd42
+  status: not_a_product
+  url: https://triproasters.sk/sluzby/
+- last_seen: '2026-07-05'
+  page_hash: 5160fbcd3d5fff4766f46c884dbc74503af8a48a9fc2c7dc2e231c7886534abc
+  status: not_a_product
+  url: https://triproasters.sk/prislusenstvo-ku-kave/
+- last_seen: '2026-07-05'
+  page_hash: e2124b70563083cc9a7d03d57bee17efe8afe1f06aadfd8243cd7ac35d168625
+  status: not_a_product
+  url: https://triproasters.sk/doprava-a-platby/
+- last_seen: '2026-07-05'
+  page_hash: 5ddda8ac63b61b698d912b2b8494bc762feec60fdfdd250fe7fc3935159ba2aa
+  status: not_a_product
+  url: https://triproasters.sk/manualne-kavovary/
+- last_seen: '2026-07-05'
+  page_hash: 54f9a8ccef08a98025c6edeac194576176975c388b1d9518e0cc22cd3ae0cb46
+  status: not_a_product
+  url: https://triproasters.sk/odstupenie-od-zmluvy/
+- last_seen: '2026-07-05'
+  name: SUMMER ROAST
+  origin: null
+  packaging:
+  - price: 12.0
+    weight_g: 250
+  - price: 12.0
+    weight_g: 1000
+  page_hash: 467acfb8ab209f0f04d33aa945e8985516250f84495191662558911aa3228ba7
+  process: Mokré
+  roast_type: espresso
+  status: ok
+  url: https://triproasters.sk/summer-roast/
+- last_seen: '2026-07-05'
+  page_hash: 8230d62f8fd4b45b2ffc0c0819e1d87ee02ef5bcffdb4703c9b623c7eac41ffa
+  status: not_a_product
+  url: https://triproasters.sk/moj-ucet/
+- last_seen: '2026-07-05'
+  page_hash: c111653f9f195bc8fbf8256821b1be5af62f6b860ac8af31bcb6cd8f7828143d
+  status: not_a_product
+  url: https://triproasters.sk/reklamacny-formular/
+- last_seen: '2026-07-05'
+  page_hash: a213d8b13d493650e1e1a1fdd3d53514f73eb594f8312f92b4936a2194bba56d
+  status: not_a_product
+  url: https://triproasters.sk/pokladna/
+- last_seen: '2026-07-05'
+  page_hash: 96496e44cb74c9c7fa6a4043fb302ac7031991289ab1a25f2813741f0a87b386
+  status: not_a_product
+  url: https://triproasters.sk/velkoobchod/
+- last_seen: '2026-07-05'
+  page_hash: c5e966c30b0f4bc21e8602605199f089f19dbcfcd7d7382cff2d1e2297e17ad5
+  status: not_a_product
+  url: https://triproasters.sk/
+- last_seen: '2026-07-05'
+  page_hash: 24baf5fef6ce1a7ea0b11bcf9a32badea752b23b63903afb30d904e25912dde0
+  status: not_a_product
+  url: https://triproasters.sk/cerstvost-kavy/
+- last_seen: '2026-07-05'
+  page_hash: cbe483ed4d641fbba757c6cba34bb0b2a46bb8b160ec47829bd5b281e08e6086
+  status: not_a_product
+  url: https://triproasters.sk/filtre-do-kavovaru/
+- last_seen: '2026-07-05'
+  page_hash: 66b41c4586a68a2687f05b8a78a98c2740eb9586cef60d318b4a187104f20165
+  status: not_a_product
+  url: https://triproasters.sk/kavovy-slovnik/
+- last_seen: '2026-07-05'
+  page_hash: 3bfef63a7553623e49a8e3b13365d0fe4973735914856682628168dd3c80bfb4
+  status: not_a_product
+  url: https://triproasters.sk/darcekove-poukazky/
+- last_seen: '2026-07-05'
+  page_hash: 410e57fb9aaed437dc15a893280169862110c2b20a1c035e43e72d51d32942b2
+  status: not_a_product
+  url: https://triproasters.sk/darcekovy-set/
+- last_seen: '2026-07-05'
+  page_hash: f3e835bd7063c6408b18449223d65e795a3b8ee6f7239f312f23c54e71d814f2
+  status: not_a_product
+  url: https://triproasters.sk/cistiace-tablety/
+- last_seen: '2026-07-05'
+  page_hash: da1e30779c7114b06156171c0bd7a6d8528a3be1ab63daf2eb36760876001ca0
+  status: not_a_product
+  url: https://triproasters.sk/vyberova-kava/
+- last_seen: '2026-07-05'
+  page_hash: b82121ba59c2ec2a60dc6589899f3f82f334fc22d2e0b26c9e8c5c97716be516
+  status: not_a_product
+  url: https://triproasters.sk/bezkofeinova-kava/
+- last_seen: '2026-07-05'
+  page_hash: 907ef08bc8e24a98ec8d10c80a8787a14deb26a1b7f7586cbc83d8bd485f2919
+  status: not_a_product
+  url: https://triproasters.sk/filter/
+triple-five-coffee:
+- last_seen: '2026-07-05'
+  page_hash: fa88744468842e4bb2f0afacb56506b43e9fc4c17891fe9d8225d63f4c59869b
+  status: not_a_product
+  url: https://triplefivecoffee.com/my-account/
+- last_seen: '2026-07-05'
+  page_hash: 914b73b699ea739e0750adc4ff237575918362b73a1a7a2dcba727089f2df27d
+  status: not_a_product
+  url: https://triplefivecoffee.com/prenajom-priestorov/
+- last_seen: '2026-07-05'
+  name: Colombia Pink Bourbon (omni)
+  origin: null
+  packaging:
+  - price: 21.0
+    weight_g: 250
+  - price: 39.0
+    weight_g: 500
+  page_hash: dc1641d2b34a319cbc1579344ab12bd215f082f65f6798e27b0da6b6708b2fcd
+  process: washed
+  roast_type: null
+  status: ok
+  url: https://triplefivecoffee.com/product/colombia-pink-bourbon-omni/
+- last_seen: '2026-07-05'
+  page_hash: 29f6bd0e8ad1b32f582ca92bc65f32441016ccd956bf65302eb69512a9adb6ec
+  status: not_a_product
+  url: https://triplefivecoffee.com/doplnky/
+- last_seen: '2026-07-05'
+  page_hash: 4e9f142dab38addda8cc77a56c3583dcff246bf37d329a04c53fdd4c366cb336
+  status: not_a_product
+  url: https://triplefivecoffee.com/kaviarne/
+- last_seen: '2026-07-05'
+  name: Kenya Orange Crush (filter)
+  origin: null
+  packaging:
+  - price: 20.0
+    weight_g: 250
+  page_hash: 7628a3b8b15f7a929ec0c37df72e5297af0d39db594de093d1f8b025673555db
+  process: Natural
+  roast_type: filter
+  status: ok
+  url: https://triplefivecoffee.com/product/kenya-orange-crush-filter/
+- last_seen: '2026-07-05'
+  page_hash: 19f693f632d48f625f9db47291e12ff3ee1de151d3593c685b82b0bb887b149e
+  status: not_a_product
+  url: https://triplefivecoffee.com/
+- last_seen: '2026-07-05'
+  page_hash: cb507ffa5495ebfb1f44f50d46bb5b891c217fc550c191117236de26daca5280
+  status: not_a_product
+  url: https://triplefivecoffee.com/odstupenie-od-zmluvy/
+- last_seen: '2026-07-05'
+  page_hash: cb067376dba7ce44888abd42a3c579ebb4be7aa1ed0db1f938a9cbdf57531aa8
+  status: not_a_product
+  url: https://triplefivecoffee.com/ponuka-prace/
+- last_seen: '2026-07-05'
+  page_hash: a69cc2177535b1d681cc1cbd9bd1028d0aca87828226930a22d2c8b1fb08368d
+  status: not_a_product
+  url: https://triplefivecoffee.com/moj-pribeh/
+- last_seen: '2026-07-05'
+  page_hash: 10f2739d3b16a6c2d1b5fa230c656ff3cccff49687d1e2466e70809e17054374
+  status: not_a_product
+  url: https://triplefivecoffee.com/?add-to-cart=5677795
+- last_seen: '2026-07-05'
+  name: Rwanda Natural (filter)
+  origin: Rwanda
+  packaging:
+  - price: 15.0
+    weight_g: 250
+  - price: 28.0
+    weight_g: 500
+  page_hash: 934f52754d2c2b09257ea9c88f3f797367682bb57b7f292ceb3139a0821f7a23
+  process: natural
+  roast_type: filter
+  status: ok
+  url: https://triplefivecoffee.com/product/rwanda-natural-filter/
+- last_seen: '2026-07-05'
+  page_hash: 865b6899d13b2292c268e4533a9cc93430cfe7ed780845ef467e41b5e4fec182
+  status: not_a_product
+  url: https://triplefivecoffee.com/obchod/
+- last_seen: '2026-07-05'
+  name: Tanzania Acacia Hills (filter)
+  origin: null
+  packaging:
+  - price: 15.0
+    weight_g: null
+  page_hash: 041a186ca409e45307605480b130082722b8b42aa7455f8e594b8617e3519273
+  process: Natural AA
+  roast_type: filter
+  status: ok
+  url: https://triplefivecoffee.com/product/tanzania-acacia-hills-filter/
+- last_seen: '2026-07-05'
+  page_hash: b21277279a774a38da5807aa9729b9430d1e6811c659c6b5602a93064f58cd61
+  status: not_a_product
+  url: https://triplefivecoffee.com/baristicke-kurzy/
+- last_seen: '2026-07-05'
+  name: Tanzania Geisha (filter)
+  origin: null
+  packaging:
+  - price: 23.0
+    weight_g: 180
+  page_hash: cb2e0e6e4a34a771740c92a8744c9f83e61943e9fef154e4bb659186002c9ed1
+  process: Fully Washed AB/PB
+  roast_type: filter
+  status: ok
+  url: https://triplefivecoffee.com/product/tanzania-geisha-filter/
+- last_seen: '2026-07-05'
+  name: Tanzania Tembo Tembo (omni)
+  origin: null
+  packaging:
+  - price: 15.0
+    weight_g: 250
+  - price: 40.0
+    weight_g: 1000
+  page_hash: 67845720315486129007f5b4f9cda89bf2b017db0880a43006ef934c3f338a95
+  process: null
+  roast_type: null
+  status: ok
+  url: https://triplefivecoffee.com/product/tanzania-tembo-tembo-espresso/
+- last_seen: '2026-07-05'
+  name: Brazil Mogiana (espresso)
+  origin: null
+  packaging:
+  - price: 13.0
+    weight_g: 250
+  - price: 31.0
+    weight_g: 1000
+  page_hash: a868250edbc48ba91d74d20470ac85de421c6d3bfc9b5264827caa723d2bd093
+  process: Natural
+  roast_type: espresso
+  status: ok
+  url: https://triplefivecoffee.com/product/brazil-mogiana-espresso/
+- last_seen: '2026-07-05'
+  name: Colombia Tumbaga Sugarcane Decaf
+  origin: null
+  packaging:
+  - price: 17.0
+    weight_g: 250
+  - price: 26.0
+    weight_g: 500
+  page_hash: c3e2d3e60f0261d6e9294ec7775dcdbde6fc038edee7062999d3e2b98bbf6d1a
+  process: Fully washed
+  roast_type: espresso
+  status: ok
+  url: https://triplefivecoffee.com/product/sevilla-sugarcane-decaf/
+- last_seen: '2026-07-05'
+  page_hash: a038d9e21a7aa7d362c881e484cd9a4b1d371bb5da7393a4c48d8325d7a5bd0b
+  status: not_a_product
+  url: https://triplefivecoffee.com/product-category/kava/novinka/
+- last_seen: '2026-07-05'
+  page_hash: 1f0667fa48096778840274abc1cd4040a8fbb2f559b333ba9556785061db0aa4
+  status: not_a_product
+  url: https://triplefivecoffee.com/product-category/kava/
+- last_seen: '2026-07-05'
+  page_hash: 59b80791a613eca622c72e0f3de278988e2bcfe12f014258c5bad737a4cd05fb
+  status: not_a_product
+  url: https://triplefivecoffee.com/velkoobchod/
+- last_seen: '2026-07-05'
+  page_hash: 1f0a2e2f9b9c3c0768c2f70ba87ff5c32189ba6215b252bcb2d308e1623fa9b2
+  status: not_a_product
+  url: https://triplefivecoffee.com/en/welcome/
+- last_seen: '2026-07-05'
+  page_hash: 850e6d1975d8b8100c39c534016f2d0663d5aa95cf7f01efcb02e3c68bdc4eb0
+  status: not_a_product
+  url: https://triplefivecoffee.com/kamerovy-system/
+- last_seen: '2026-07-05'
+  page_hash: dc4637d1e9cd6148569cfaf7c5a35dfa5d8556ba4b1868e3a1b185ef96e0b762
+  status: not_a_product
+  url: https://triplefivecoffee.com/kava/
+- last_seen: '2026-07-05'
+  page_hash: d67b171702d08edb44d9457cc80ef89f79f13efc824ac333e75a00eded8b83ec
+  status: not_a_product
+  url: https://triplefivecoffee.com/merch/
+- last_seen: '2026-07-05'
+  page_hash: 8c1ed0a02ae3f93bee2b47fdc4fbacd8ab35952b3ce5ad013ea0b278b34189ee
+  status: not_a_product
+  url: https://triplefivecoffee.com/reklamacny-poriadok/
+urban-coffee:
+- last_seen: '2026-07-05'
+  page_hash: 0093162201b78f4213508904188eaf4b4a95ae8a4415b565431eec7f0e06f193
+  status: not_a_product
+  url: https://www.urbancoffee.sk/informacie-o-pouzivani
+- last_seen: '2026-07-05'
+  name: Honduras Guara Verde - Pražená káva 100% Arabica
+  origin: El Paraiso, Santa Barbara, Lempira, Copan, Ocotepeque
+  packaging:
+  - price: 10.0
+    weight_g: 250
+  - price: 18.0
+    weight_g: 500
+  - price: 31.0
+    weight_g: 1000
+  page_hash: de414cc171e93bbe239a76f3c1a8f79082b560f994e6319db0e8071bc09b8cf1
+  process: null
+  roast_type: null
+  status: ok
+  url: https://www.urbancoffee.sk/honduras-guara-verde/
+- last_seen: '2026-07-05'
+  page_hash: 3496b00dd0053984ec5e839c99f8ad20b09890258bc559e9dbbc0d36a8385ffe
+  status: not_a_product
+  url: https://www.urbancoffee.sk/galeria/
+- last_seen: '2026-07-05'
+  name: Peru Mestiza Cajamarca
+  origin: null
+  packaging:
+  - price: 9.0
+    weight_g: 250
+  - price: 15.5
+    weight_g: 500
+  - price: 26.5
+    weight_g: 1000
+  page_hash: 70b58b4f8b3b76d3d6cdbf44fff6ec58bf27297302606be049726005779aecd9
+  process: Washed
+  roast_type: null
+  status: ok
+  url: https://www.urbancoffee.sk/peru-mestiza-cajamarca/
+- last_seen: '2026-07-05'
+  page_hash: 692ddb0d007046656bdd3e88b293bcca22e0e8142c797078dd945df5fd89a891
+  status: not_a_product
+  url: https://www.urbancoffee.sk/ethiopia-sidamo-gr--1-prazena-vyberova-kava/
+- last_seen: '2026-07-05'
+  name: El Salvador Pacamara
+  origin: null
+  packaging:
+  - price: 9.0
+    weight_g: 250
+  - price: 15.5
+    weight_g: 500
+  - price: 26.5
+    weight_g: 1000
+  page_hash: 6cd966d80c3703886d881eda446e3378b7739913da77f8b9e92c43a126bf631c
+  process: Washed
+  roast_type: null
+  status: ok
+  url: https://www.urbancoffee.sk/el-salvador-pacamara/
+- last_seen: '2026-07-05'
+  name: India Monsooned Malabar - Pražená káva 100% Arabica
+  origin: Karnataka
+  packaging:
+  - price: 12.0
+    weight_g: 250
+  - price: 19.8
+    weight_g: 500
+  - price: 35.5
+    weight_g: 1000
+  page_hash: 072605e1d42d6e02224c0243bd0ddb283426536401633962f8dd4d6e025f7a17
+  process: Monsooned
+  roast_type: null
+  status: ok
+  url: https://www.urbancoffee.sk/india-monsooned-malabar-prazena-kava-100--arabica/
+- last_seen: '2026-07-05'
+  name: Guatemala Los Volcanes
+  origin: La Antigua, Los Volcanes
+  packaging:
+  - price: 12.0
+    weight_g: 250
+  - price: 19.8
+    weight_g: 500
+  - price: 35.5
+    weight_g: 1000
+  page_hash: 22519702097f031e46f72f6eb5347add71aa9ba096e03d6de9d4f99bd5e40583
+  process: Washed
+  roast_type: null
+  status: ok
+  url: https://www.urbancoffee.sk/guatemala-los-volcanes/
+- last_seen: '2026-07-05'
+  page_hash: db0f63b7224f86dc610cc914720e1dee55c8deb0cf177ba77d88c60ec32e39cf
+  status: not_a_product
+  url: https://www.urbancoffee.sk/costa-rica-tres-nubes-prazena-vyberova-kava-100--arabica/
+- last_seen: '2026-07-05'
+  page_hash: d8e6d3dae4db778e0a9c1c686d893256b33d878fa04637f46ee3e59768fcfbce
+  status: not_a_product
+  url: https://www.urbancoffee.sk/odstupenie-od-zmluvy
+- last_seen: '2026-07-05'
+  page_hash: 75ad254738784da51def9b25fed89aff76ed14717f1b70604a66d55e002b4de1
+  status: not_a_product
+  url: https://www.urbancoffee.sk/kaviaren/
+- last_seen: '2026-07-05'
+  name: Kenya AB Rungeto Kiangoi
+  origin: null
+  packaging:
+  - price: 12.0
+    weight_g: 250
+  - price: 18.9
+    weight_g: 500
+  - price: 34.0
+    weight_g: 1000
+  page_hash: 5b562041f01d27dcb2dfed2d2b587af2be9c15ccd1d915647909acec8a84b0f3
+  process: Washed
+  roast_type: null
+  status: ok
+  url: https://www.urbancoffee.sk/kenya-ab-rungeto-kiangoi/
+- last_seen: '2026-07-05'
+  page_hash: 962149217fb011ef811f9b13d40007f6459a6538b99501a2b8eb5dccc8d2063a
+  status: not_a_product
+  url: https://www.urbancoffee.sk/e-shop/
+- last_seen: '2026-07-05'
+  page_hash: 962149217fb011ef811f9b13d40007f6459a6538b99501a2b8eb5dccc8d2063a
+  status: not_a_product
+  url: https://www.urbancoffee.sk/e-shop
+- last_seen: '2026-07-05'
+  name: Brasil Santos Mogiana SS FC 17/18 - Pražená výberová káva 100% Arabica
+  origin: Alta Mogiana
+  packaging:
+  - price: 10.0
+    weight_g: 250
+  - price: 17.5
+    weight_g: 500
+  - price: 29.9
+    weight_g: 1000
+  page_hash: f4cf05fc426c48823d2e88c7aa1f81795bb502a7a23bf1f2d9131a7fa1d7420d
+  process: Pulped natural
+  roast_type: null
+  status: ok
+  url: https://www.urbancoffee.sk/brasil-santos-mogiana-ss-fc-17-18-prazena-vyberova-kava-100--arabica/
+- last_seen: '2026-07-05'
+  name: Mexico Topacio - Pražená výberová káva 100% Arabica
+  origin: null
+  packaging:
+  - price: 12.0
+    weight_g: 250
+  - price: 18.9
+    weight_g: 500
+  - price: 33.5
+    weight_g: 1000
+  page_hash: 27063b03f6ced701a636f61e798630fab05d02dc0bb53e689a082100192c136d
+  process: Washed
+  roast_type: null
+  status: ok
+  url: https://www.urbancoffee.sk/mexico-topacio-prazena-vyberova-kava-100--arabica/
+- last_seen: '2026-07-05'
+  page_hash: 31f20dc169b6ca217fe71b413c4a55cba011761c9ad881e479a6c8cb0d050eaf
+  status: not_a_product
+  url: https://www.urbancoffee.sk/

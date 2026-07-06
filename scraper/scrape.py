@@ -664,7 +664,19 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
             continue
 
         page_hash = hashlib.sha256(markdown.encode("utf-8")).hexdigest()
-        if prior and prior.get("page_hash") == page_hash and prior.get("status") in ("ok", "not_a_product"):
+        prior_status = prior.get("status") if prior else None
+        # An unchanged page skips re-extraction — unless the prior entry
+        # predates the current normalization rules (schema_version stale),
+        # in which case it's reprocessed once even though nothing on the
+        # page itself changed. not_a_product entries carry no schema_version
+        # and are unaffected by normalization changes, so they always gate.
+        hash_gate_ok = (
+            prior
+            and prior.get("page_hash") == page_hash
+            and prior_status in ("ok", "incomplete", "not_a_product")
+            and (prior_status == "not_a_product" or prior.get("schema_version") == SCHEMA_VERSION)
+        )
+        if hash_gate_ok:
             prior["last_seen"] = today
             kept.append(prior)
             continue
@@ -672,26 +684,27 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
         raw = extract_product(client, url, markdown)
         normalized = normalize_product(raw, url, today)
         if normalized is None:
-            if prior and prior.get("status") == "ok":
-                # A previously-good product declining extraction is more likely
-                # a transient hiccup than a real delisting-in-place — keep the
-                # known-good data rather than downgrading it.
+            if prior and prior.get("status") in ("ok", "incomplete"):
+                # A previously-good(-ish) product declining extraction is more
+                # likely a transient hiccup than a real delisting-in-place —
+                # keep the known data rather than downgrading it.
                 kept.append(prior)
             else:
                 # Genuinely not a product (nav/category link that slipped past
                 # discovery's filter, or a first-time unparseable page). Cache
                 # the hash so this URL isn't re-fetched and re-sent to Claude
                 # every single run until the page actually changes.
-                kept.append(
-                    {
-                        "url": url,
-                        "status": "not_a_product",
-                        "last_seen": today,
-                        "page_hash": page_hash,
-                    }
-                )
+                not_a_product_entry = {
+                    "url": url,
+                    "status": "not_a_product",
+                    "last_seen": today,
+                    "page_hash": page_hash,
+                }
+                validate_entry(not_a_product_entry)
+                kept.append(not_a_product_entry)
             continue
         normalized["page_hash"] = page_hash
+        validate_entry(normalized)
         kept.append(normalized)
 
     return kept, "ok"

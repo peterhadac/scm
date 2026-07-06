@@ -536,12 +536,56 @@ async def test_process_roaster_skips_claude_when_hash_unchanged():
             "last_seen": "2026-07-01",
             "page_hash": page_hash,
             "packaging": [{"weight_g": 250, "price": 12.5}],
+            "schema_version": scrape.SCHEMA_VERSION,
         }
     ]
     entries, status = await scrape.process_roaster(crawler, client, ROASTER, existing, "2026-07-04")
     assert status == "ok"
     client.chat.completions.create.assert_not_called()
     assert entries[0]["last_seen"] == "2026-07-04"  # bumped even though unchanged
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_forces_reextraction_when_schema_version_stale():
+    markdown_text = LONG_TEXT + " 12,50 €"
+    import hashlib
+
+    page_hash = hashlib.sha256(markdown_text.encode("utf-8")).hexdigest()
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(markdown_text)),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [
+            fake_tool_call(
+                "extract_product",
+                {
+                    "name": "Rwanda",
+                    "origin": "Rwanda",
+                    "roast_type": "Filter",
+                    "packaging": [{"price": "12,50 €", "weight": "250 g"}],
+                },
+            )
+        ]
+    )
+    existing = [
+        {
+            "name": "Rwanda",
+            "url": "https://x.sk/rwanda/",
+            "status": "ok",
+            "last_seen": "2026-07-01",
+            "page_hash": page_hash,  # page content unchanged
+            "packaging": [{"weight_g": 250, "price": 12.5}],
+            # no schema_version key — a legacy entry predating this migration
+        }
+    ]
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, existing, "2026-07-04")
+    assert status == "ok"
+    client.chat.completions.create.assert_called_once()  # re-extracted despite unchanged hash
+    assert entries[0]["schema_version"] == scrape.SCHEMA_VERSION
 
 
 @pytest.mark.asyncio

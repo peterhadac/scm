@@ -16,7 +16,7 @@ scraper/
 data/
   products.yaml        ← per-product intermediate: fields, page_hash, status, packaging (see Architecture.md)
 _data/
-  coffees.json         ← flattened scraper output; imported by the Astro page (plain import, no magic)
+  coffees.sample.json  ← hand-maintained dev fixture (import.meta.env.DEV only)
 src/
   content/docs/index.mdx   ← Starlight page embedding the table component
   components/CoffeeTable.astro  ← filterable/sortable table (imports ../../_data/coffees.json)
@@ -30,29 +30,39 @@ package.json           ← astro, @astrojs/starlight, starlight-theme-md3 (npm)
 
 ## Data Schema
 
-Each entry in `_data/coffees.json`:
+`data/products.yaml` (mapping of roaster `slug` → array of product entries)
+is the sole scraped artifact — see [`Architecture.md`](./Architecture.md) for
+the full pipeline and [`data/products.schema.yaml`](./data/products.schema.yaml)
+for the validated shape. Each entry is one of:
 
-```json
-{
-  "name": "Ethiopia Yirgacheffe",
-  "roaster": "Kaffa Roastery",
-  "origin": "Ethiopia",
-  "process": "Washed",
-  "roast_type": "filter",
-  "price": 12.90,
-  "weight_g": 250,
-  "url": "https://kaffaroastery.sk/...",
-  "last_seen": "2026-06-30"
-}
-```
+- **`status: ok`** — `name`, `url`, `origin`, `roast_type`, and every
+  `packaging` tier's `weight_g`/`price` are all non-null. `process` may
+  still be `null` (many roasters don't publish it).
+- **`status: incomplete`** — a genuine coffee product, but missing one of
+  `origin`/`roast_type`/`weight_g`/`price` (listed in `missing_fields`).
+  Excluded from the site until fixed; kept in `products.yaml` so hash-gating
+  still applies.
+- **`status: not_a_product`** — the discovered URL wasn't a single coffee
+  product page.
 
-- **Required**: `name`, `roaster`, `price`, `url`. Drop any extracted entry missing these.
-- **Optional / nullable**: `origin`, `process`, `weight_g`, `roast_type` — set `null` when the page doesn't state them. Don't guess.
-- `roast_type` is `"filter"` | `"espresso"` | `null`, normalized from free text (see `normalize_roast_type` in `scrape.py`). Drives the Filter/Espresso submenu pages (`src/content/docs/coffees/filter.mdx`, `espresso.mdx`) — a coffee with `roast_type: null` shows only on the "All" page.
-- `price` is **EUR**, stored as a JSON number with a `.` decimal. Slovak sites display `12,90 €` — normalize comma→dot and strip the currency symbol during extraction.
-- `last_seen` = date of the last **successful** scrape that included this item (`YYYY-MM-DD`). It stops advancing while the roaster is `failed`/`needs_js`, so a stale `last_seen` flags a roaster that's been unreachable.
+Controlled vocabularies (translated to English at scrape time regardless of
+source language):
+- `process`: `washed` | `natural` | `honey` | `wet-hulled` | `anaerobic` |
+  `carbonic-maceration` | `other` | `null`
+- `roast_type`: `filter` | `espresso` (never `null` on an `ok` entry)
+- `origin`: an English country name, matched against
+  [`data/coffee_origins.yaml`](./data/coffee_origins.yaml) — falls back to
+  scanning the product name for a country mention when the site doesn't
+  state one (e.g. `"brazil • doce citrus"` → `Brazil`).
 
-Out-of-stock items are **deleted** on the next successful run for that roaster (see Scraper step 4). Git history is the changelog.
+`price` is **EUR** as a JSON number with a `.` decimal. `last_seen` is the
+date of the last successful scrape that included this item; it stops
+advancing while the roaster is `failed`/`needs_js`.
+
+The Astro build reads `data/products.yaml` + `roasters.yaml` directly at
+build time (see `src/components/CoffeeTable.astro`) and flattens each
+`ok`-status product's packaging tiers into one row per weight — there is no
+separate generated JSON file for the site to import.
 
 ## Roaster Config (`roasters.yaml`)
 
@@ -113,7 +123,7 @@ permissions:
 Steps: checkout → install deps → `crawl4ai-setup` (installs Playwright/Patchright browsers crawl4ai needs) → run scraper → commit `_data/coffees.json` + `data/products.yaml` → push.
 
 - Guard the commit so a no-change run doesn't fail the job:
-  `git diff --quiet -- _data/coffees.json data/products.yaml || (git add _data/coffees.json data/products.yaml && git commit -m "data: $(date -u +%F)" && git push)`
+  `git diff --quiet -- data/products.yaml || (git add data/products.yaml && git commit -m "data: $(date -u +%F)" && git push)`
 - **The push to `main` does NOT trigger `pages.yml`** — a push made with the default `GITHUB_TOKEN` (which `actions/checkout` uses here) doesn't fire other workflows' `on: push`, to prevent recursive runs. `pages.yml` instead listens for `scrape.yml`'s completion via `workflow_run` (see below). Ordinary human pushes to `main` are unaffected and still trigger `pages.yml` normally.
 
 ### `pages.yml` — build & deploy (Astro is **not** auto-built by Pages)
@@ -155,7 +165,7 @@ Steps: checkout → setup-node → `npm ci` → `npm run build` → `actions/upl
   })
   ```
   Brand palette (also applied as MD3 token overrides in `src/styles/custom.css`, light + dark): Morning Snow `#F5F4ED`, Amazon Mist `#ECECDC`, Black Kite `#351E1C`, Aqua Mist `#A0C9CB`, Toxic Orange `#FF6037`, Garnet `#733635`.
-- **Data source**: plain `import coffees from '../../_data/coffees.json'` inside `CoffeeTable.astro`. No `site.data` magic — JSON is bundled at build time, so a new scrape requires a rebuild (handled by `pages.yml`).
+- **Data source**: `CoffeeTable.astro`'s frontmatter reads `data/products.yaml` + `roasters.yaml` directly at build time (via `js-yaml`) and flattens them into table rows — no separate generated JSON file. `import.meta.env.DEV` still uses the hand-maintained `_data/coffees.sample.json` fixture for local dev. A new scrape requires a rebuild (handled by `pages.yml`).
 - **`astro.config.mjs`**: set `site: 'https://<user>.github.io'` and `base: '/scm'` for a project Pages site, or links 404.
 - **UI**: filterable/sortable table
   - Dropdowns: roaster, origin, process

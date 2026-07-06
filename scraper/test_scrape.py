@@ -337,6 +337,71 @@ def test_normalize_product_none_when_claude_declined():
     assert scrape.normalize_product(None, "https://x.sk/kava/", "2026-07-04") is None
 
 
+# --- normalize_product: incomplete status ------------------------------------
+
+
+def test_normalize_product_incomplete_when_roast_type_unknown():
+    raw = {
+        "name": "House Blend",
+        "origin": "Brazil",
+        "packaging": [{"weight": "250 g", "price": "12,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/house-blend/", "2026-07-04")
+    assert result["status"] == "incomplete"
+    assert result["missing_fields"] == ["roast_type"]
+    assert result["schema_version"] == scrape.SCHEMA_VERSION
+
+
+def test_normalize_product_incomplete_on_same_price_different_weights():
+    raw = {
+        "name": "brazil • doce citrus",
+        "origin": "Brazil",
+        "roast_type": "espresso",
+        "packaging": [
+            {"weight": "200 g", "price": "10,50 €"},
+            {"weight": "500 g", "price": "10,50 €"},
+            {"weight": "1000 g", "price": "10,50 €"},
+        ],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/brazil/", "2026-07-04")
+    assert result["status"] == "incomplete"
+    assert "price" in result["missing_fields"]
+    # tiers are kept (not silently dropped) so the bad data is visible for debugging
+    assert len(result["packaging"]) == 3
+
+
+def test_normalize_product_incomplete_when_multi_tier_weight_not_per_tier():
+    # Multi-tier product where the second tier states no weight of its own —
+    # must NOT fall back to a name-parsed weight for it (that would silently
+    # give every tier the same weight).
+    raw = {
+        "name": "Kenya AA",
+        "origin": "Kenya",
+        "roast_type": "filter",
+        "packaging": [
+            {"weight": "250 g", "price": "12,00 €"},
+            {"weight": None, "price": "20,00 €"},
+        ],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/kenya/", "2026-07-04")
+    assert result["status"] == "incomplete"
+    assert "weight_g" in result["missing_fields"]
+    assert result["packaging"][1]["weight_g"] is None
+
+
+def test_normalize_product_ok_when_all_required_fields_present():
+    raw = {
+        "name": "Rwanda Kigali",
+        "origin": "Rwanda",
+        "roast_type": "Filter",
+        "packaging": [{"weight": "250 g", "price": "12,50 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/rwanda/", "2026-07-04")
+    assert result["status"] == "ok"
+    assert "missing_fields" not in result
+    assert result["schema_version"] == scrape.SCHEMA_VERSION
+
+
 # --- extract_product (mocked OpenRouter/OpenAI client) -----------------------
 
 

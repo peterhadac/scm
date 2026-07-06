@@ -555,9 +555,18 @@ def extract_product(client, url, markdown):
 
 
 def normalize_product(raw, url, today):
-    """Turn a raw Claude extraction into a products.yaml entry, or None if unusable."""
+    """Turn a raw Claude extraction into a products.yaml entry, or None if unusable.
+
+    Returns None only when there's no coffee here at all (Claude declined, or
+    the name reads as non-coffee/equipment) — same as before. Anything that
+    IS a coffee but is missing a required field (origin, roast_type, or a
+    tier's weight/price) is still returned, just as `status: incomplete` with
+    `missing_fields` listing what's missing, rather than being dropped.
+    """
     if not raw or not isinstance(raw, dict) or not raw.get("name") or not is_coffee(raw["name"]):
         return None
+
+    name = raw["name"]
     packaging = []
     for tier in raw.get("packaging") or []:
         if not isinstance(tier, dict):
@@ -565,21 +574,56 @@ def normalize_product(raw, url, today):
         price = normalize_price(tier.get("price", ""))
         if price is None:
             continue
-        weight_g = parse_weight(tier.get("weight") or "") or parse_weight(raw["name"])
+        weight_g = parse_weight(tier.get("weight") or "")
         packaging.append({"weight_g": weight_g, "price": price})
+
+    # A single-tier product often states its weight in the name rather than
+    # next to that one price ("Colombia Huila 200 g") — safe to fall back to
+    # the name there. A multi-tier product's weight must come from its own
+    # tier text; falling back to the name for every tier would silently give
+    # every tier the same weight.
+    if len(packaging) == 1 and packaging[0]["weight_g"] is None:
+        packaging[0]["weight_g"] = parse_weight(name)
+
     if not packaging:
         return None
-    return {
-        "name": raw["name"],
+
+    process = normalize_process(raw.get("process"))
+    roast_type = normalize_roast_type(raw.get("roast_type"), raw.get("process"), name)
+    origin = normalize_origin(raw.get("origin"), name)
+
+    weighted_tiers = [t for t in packaging if t["weight_g"] is not None]
+    distinct_weights = {t["weight_g"] for t in weighted_tiers}
+    distinct_prices = {t["price"] for t in weighted_tiers}
+    price_collision = len(distinct_weights) >= 2 and len(distinct_prices) == 1
+
+    missing_fields = []
+    if origin is None:
+        missing_fields.append("origin")
+    if roast_type is None:
+        missing_fields.append("roast_type")
+    if any(t["weight_g"] is None for t in packaging):
+        missing_fields.append("weight_g")
+    if price_collision:
+        missing_fields.append("price")
+
+    entry = {
+        "name": name,
         "url": url,
-        "origin": raw.get("origin") or None,
-        "process": raw.get("process") or None,
-        "roast_type": normalize_roast_type(raw.get("roast_type")),
-        "status": "ok",
+        "origin": origin,
+        "process": process,
+        "roast_type": roast_type,
         "last_seen": today,
         "page_hash": None,  # filled in by the caller once the page hash is known
         "packaging": packaging,
+        "schema_version": SCHEMA_VERSION,
     }
+    if missing_fields:
+        entry["status"] = "incomplete"
+        entry["missing_fields"] = missing_fields
+    else:
+        entry["status"] = "ok"
+    return entry
 
 
 async def process_roaster(crawler, client, roaster, existing_entries, today):

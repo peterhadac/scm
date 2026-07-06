@@ -674,3 +674,28 @@ def test_validate_entry_rejects_bad_roast_type():
     }
     with pytest.raises(Exception):
         scrape.validate_entry(entry)
+
+
+# --- normalize_process ---------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "raw,expected",
+    [
+        ("Washed", "washed"),
+        ("Umytá", "washed"),
+        ("Natural", "natural"),
+        ("Prírodná", "natural"),
+        ("Honey", "honey"),
+        ("Pulped natural, 900-1050 masl", "honey"),
+        ("Semi-washed", "honey"),
+        ("Anaerobic fermentation", "anaerobic"),
+        ("Carbonic maceration", "carbonic-maceration"),
+        ("Giling Basah", "wet-hulled"),
+        ("Some experimental co-ferment", "other"),
+        (None, None),
+        ("", None),
+    ],
+)
+def test_normalize_process(raw, expected):
+    assert scrape.normalize_process(raw) == expected

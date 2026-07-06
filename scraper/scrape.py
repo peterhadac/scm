@@ -440,6 +440,36 @@ def normalize_price(raw):
         return None
 
 
+# Checked in this order — most specific first. "pulped natural" must hit the
+# honey bucket (mucilage left on during drying) before the plain "natural"
+# keyword would otherwise match it; "semi-washed" must hit honey before the
+# "washed" keyword matches it.
+PROCESS_KEYWORDS = (
+    ("anaerobic", ("anaerobic", "anaeróbn", "anaerobn")),
+    ("carbonic-maceration", ("carbonic maceration", "karbonick")),
+    ("wet-hulled", ("wet-hull", "wet hull", "giling basah")),
+    ("honey", ("honey", "medov", "pulped natural", "semi-washed", "semi washed")),
+    ("washed", ("washed", "umyt", "mokr")),
+    ("natural", ("natural", "prírodn", "prirodn", "suchá", "sucha", "dry process")),
+)
+
+
+def normalize_process(raw):
+    """Bucket free-text processing method into a controlled English vocabulary.
+
+    Returns 'other' for a stated-but-unrecognized method, and None only when
+    the site states nothing at all — process is the one field still allowed
+    to be null, since many roasters simply don't publish it.
+    """
+    if not raw:
+        return None
+    lowered = raw.strip().lower()
+    for canonical, keywords in PROCESS_KEYWORDS:
+        if any(keyword in lowered for keyword in keywords):
+            return canonical
+    return "other"
+
+
 def normalize_roast_type(raw):
     """Bucket free-text roast info into 'filter' / 'espresso' / None.
 

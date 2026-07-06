@@ -11,7 +11,7 @@ Daily-updated catalogue of coffees available on the Slovak market, scraped from 
 ```
 roasters.yaml          ← seed list of roasters + per-site scraper overrides + slug/metadata
 scraper/
-  scrape.py            ← main entrypoint: crawl4ai discover → hash-gate → AI extract → flatten → JSON
+  scrape.py            ← main entrypoint: crawl4ai discover → hash-gate → AI extract → normalize/validate → products.yaml
   requirements.txt
 data/
   products.yaml        ← per-product intermediate: fields, page_hash, status, packaging (see Architecture.md)

@@ -114,12 +114,12 @@ No per-domain rate limiting/delay exists yet — roasters are still processed se
 ## Adding a Roaster
 
 1. Add an entry to `roasters.yaml`: `name`, `slug` (lowercase-kebab of the name), `url`, optional `scraper: playwright`, optional `metadata`.
-2. Run the scraper locally — it discovers product URLs and fetches detail into `data/products.yaml`, then regenerates `_data/coffees.json`.
+2. Run the scraper locally — it discovers product URLs and fetches detail into `data/products.yaml`; the Astro build reads that directly, no separate regeneration step needed.
 3. If discovery finds nothing, add `scraper: playwright` and re-test.
 4. Commit `roasters.yaml` — the next cron run picks it up.
 
 ## Open follow-up work
 
 - **No per-domain rate limiting/jitter** for the product-detail loop within a roaster.
-- **Only Jungle Roastery has been run against the new pipeline** so far (verified: discovery, hash-gate skip, removal-via-diff, listing-failure preservation, and the mixed HTTP/Playwright crawler path all confirmed live). The other 22 roasters' `_data/coffees.json` entries still come from the old single-phase pipeline until a full production run happens — `git diff` per-roaster counts before/after that run to confirm no unexpected drops.
+- **Only Jungle Roastery has been run against the new pipeline** so far (verified: discovery, hash-gate skip, removal-via-diff, listing-failure preservation, and the mixed HTTP/Playwright crawler path all confirmed live). The other 22 roasters' `data/products.yaml` entries still come from the old single-phase pipeline until a full production run happens — `git diff` per-roaster counts before/after that run to confirm no unexpected drops.
 - `looks_like_product_link()`'s path-segment blocklist is necessarily incomplete per-site (verified: Jungle's own `/kava/` category page slipped through and had to be caught by the extraction-decline mechanism instead) — this is fine (the decline gets cached), but a roaster with an unusually link-heavy homepage will eat a few extra one-time Claude calls the first run.

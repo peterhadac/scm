@@ -4,7 +4,7 @@ Daily-updated catalogue of coffees available on the Slovak market, scraped from 
 
 > ponytail: Starlight is a docs framework; for one filterable table, plain Astro (no Starlight) is lighter. Keeping Starlight as requested for theme/chrome — drop it for `@astrojs` base if the docs sidebar/search become noise.
 
-> See [`Architecture.md`](./Architecture.md) for the full scraping pipeline: crawl4ai-based per-product discovery + hash-gated extraction, the `data/products.yaml` intermediate artifact, and the flatten step that builds `_data/coffees.json` below.
+> See [`Architecture.md`](./Architecture.md) for the full scraping pipeline: crawl4ai-based per-product discovery, hash-gated extraction, and normalization into the `data/products.yaml` artifact below.
 
 ## Architecture
 
@@ -19,11 +19,11 @@ _data/
   coffees.sample.json  ← hand-maintained dev fixture (import.meta.env.DEV only)
 src/
   content/docs/index.mdx   ← Starlight page embedding the table component
-  components/CoffeeTable.astro  ← filterable/sortable table (imports ../../_data/coffees.json)
+  components/CoffeeTable.astro  ← filterable/sortable table (reads ../../data/products.yaml + roasters.yaml directly at build time)
 astro.config.mjs       ← Astro + Starlight config (site + base for project Pages)
 package.json           ← astro, @astrojs/starlight, starlight-theme-md3 (npm)
 .github/workflows/
-  scrape.yml           ← daily cron, commits coffees.json + products.yaml (its push does NOT trigger pages.yml — see below)
+  scrape.yml           ← daily cron, commits products.yaml (its push does NOT trigger pages.yml — see below)
   pages.yml            ← build Astro + deploy to Pages on push to main / scrape.yml completion / manual
 .gitignore             ← dist/, node_modules/, .astro/, __pycache__/, .venv/
 ```
@@ -95,8 +95,7 @@ Full design in [`Architecture.md`](./Architecture.md). Summary:
 2. Per roaster, **discover** product URLs from the listing page(s) via crawl4ai's `prefetch=True` mode (cheap — no LLM call), following pagination by hand.
 3. Per discovered URL, fetch via crawl4ai (markdown output), hash it, and **skip the LLM call** if the hash matches what's already stored for that URL in `data/products.yaml`. Otherwise call the model (tool call left optional, not forced, so it can decline non-product pages) to extract `name`/`origin`/`process`/`roast_type`/`packaging` (multi-weight).
 4. Diff this run's discovered URLs against `data/products.yaml`'s existing entries for that roaster — anything missing is genuinely delisted and gets dropped; anything new gets fetched.
-5. **Flatten** `data/products.yaml`'s packaging tiers into flat rows and write `_data/coffees.json`.
-6. Write a `scrape_status` summary (logged to stdout; not stored in either file).
+5. Write a `scrape_status` summary (logged to stdout; not stored in either file).
 
 ### Scrape status values (per product, in `data/products.yaml`)
 - `ok` — extracted a name and ≥1 valid price/weight tier
@@ -120,7 +119,7 @@ permissions:
   contents: write           # default GITHUB_TOKEN is read-only; needed to push
 ```
 
-Steps: checkout → install deps → `crawl4ai-setup` (installs Playwright/Patchright browsers crawl4ai needs) → run scraper → commit `_data/coffees.json` + `data/products.yaml` → push.
+Steps: checkout → install deps → `crawl4ai-setup` (installs Playwright/Patchright browsers crawl4ai needs) → run scraper → commit `data/products.yaml` → push.
 
 - Guard the commit so a no-change run doesn't fail the job:
   `git diff --quiet -- data/products.yaml || (git add data/products.yaml && git commit -m "data: $(date -u +%F)" && git push)`

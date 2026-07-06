@@ -244,6 +244,21 @@ def test_normalize_roast_type_none_when_unstated():
     assert scrape.normalize_roast_type("") is None
 
 
+# --- normalize_roast_type fallback chain --------------------------------------
+
+
+def test_normalize_roast_type_falls_back_to_process_text():
+    assert scrape.normalize_roast_type(None, "filter roast", "Some Blend") == "filter"
+
+
+def test_normalize_roast_type_falls_back_to_name():
+    assert scrape.normalize_roast_type(None, None, "Espresso Blend") == "espresso"
+
+
+def test_normalize_roast_type_raw_wins_over_process_and_name():
+    assert scrape.normalize_roast_type("Espresso", "filter roast", "Filter Blend") == "espresso"
+
+
 # --- normalize_origin ---------------------------------------------------------
 
 

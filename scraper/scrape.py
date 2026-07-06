@@ -470,20 +470,22 @@ def normalize_process(raw):
     return "other"
 
 
-def normalize_roast_type(raw):
+def normalize_roast_type(raw, process_raw=None, name=None):
     """Bucket free-text roast info into 'filter' / 'espresso' / None.
 
-    Mirrors normalize_price/parse_weight: the model's tool schema isn't
-    strict, so raw text (Slovak or English) needs coercing into the two
-    values the filter/espresso submenu pages compare against.
+    Tries `raw` (the model's own roast_type field) first, then falls back to
+    the raw `process` text, then the product name — e.g. `process: "filter
+    roast"` already implies roast_type even when the model left roast_type
+    itself blank.
     """
-    if not raw:
-        return None
-    lowered = raw.strip().lower()
-    if "espresso" in lowered:
-        return "espresso"
-    if "filter" in lowered or "prekvapk" in lowered or "filtrovan" in lowered:
-        return "filter"
+    for text in (raw, process_raw, name):
+        if not text:
+            continue
+        lowered = text.strip().lower()
+        if "espresso" in lowered:
+            return "espresso"
+        if "filter" in lowered or "prekvapk" in lowered or "filtrovan" in lowered:
+            return "filter"
     return None
 
 

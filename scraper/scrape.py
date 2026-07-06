@@ -28,7 +28,6 @@ ROASTERS_PATH = ROOT / "roasters.yaml"
 PRODUCTS_PATH = ROOT / "data" / "products.yaml"
 SCHEMA_PATH = ROOT / "data" / "products.schema.yaml"
 COUNTRIES_PATH = ROOT / "data" / "coffee_origins.yaml"
-COFFEES_PATH = ROOT / "_data" / "coffees.json"
 
 # Bump whenever normalize_product's rules change in a way that would alter
 # the output for already-scraped pages — this forces process_roaster's
@@ -710,39 +709,7 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
     return kept, "ok"
 
 
-def flatten_to_coffees(products, roasters):
-    """Explode every product's packaging tiers into flat coffees.json rows."""
-    roaster_by_slug = {r["slug"]: r for r in roasters}
-    seen = set()
-    rows = []
-    for slug, entries in products.items():
-        roaster = roaster_by_slug.get(slug)
-        roaster_name = roaster["name"] if roaster else slug
-        for product in entries:
-            # "not_a_product" markers (declined nav/category links, cached so
-            # they aren't re-fetched every run) carry no packaging — skip them.
-            for tier in product.get("packaging") or []:
-                key = (product["url"], tier.get("weight_g"))
-                if key in seen:
-                    continue
-                seen.add(key)
-                rows.append(
-                    {
-                        "name": product["name"],
-                        "roaster": roaster_name,
-                        "origin": product.get("origin"),
-                        "process": product.get("process"),
-                        "roast_type": product.get("roast_type"),
-                        "price": tier["price"],
-                        "weight_g": tier.get("weight_g"),
-                        "url": product["url"],
-                        "last_seen": product["last_seen"],
-                    }
-                )
-    return rows
-
-
-async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PATH, coffees_path=COFFEES_PATH):
+async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PATH):
     client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=os.environ["OPENROUTER_API_KEY"])
     all_roasters = load_roasters(roasters_path)
     roasters = all_roasters
@@ -777,9 +744,6 @@ async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PAT
             statuses[roaster["name"]] = status
 
     save_products(products, products_path)
-    rows = flatten_to_coffees(products, all_roasters)
-    coffees_path.parent.mkdir(parents=True, exist_ok=True)
-    coffees_path.write_text(json.dumps(rows, indent=2, ensure_ascii=False) + "\n")
 
     print("scrape_status:")
     for name, status in statuses.items():

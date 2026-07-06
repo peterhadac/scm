@@ -688,55 +688,6 @@ async def test_process_roaster_zero_discovered_with_existing_is_needs_js_not_wip
     assert entries == existing
 
 
-# --- flatten_to_coffees -------------------------------------------------------
-
-
-def test_flatten_to_coffees_explodes_packaging_and_joins_roaster_name():
-    products = {
-        "jungle-roastery": [
-            {
-                "name": "RWANDA - Kigali",
-                "url": "https://x.sk/rwanda/",
-                "origin": "Rwanda",
-                "process": "washed",
-                "roast_type": "filter",
-                "last_seen": "2026-07-04",
-                "packaging": [
-                    {"weight_g": 1000, "price": 44.0},
-                    {"weight_g": 250, "price": 12.5},
-                ],
-            },
-            {
-                # a cached "not a product" marker must be skipped, not crash
-                "url": "https://x.sk/kava/",
-                "status": "not_a_product",
-                "last_seen": "2026-07-04",
-            },
-        ]
-    }
-    roasters = [{"name": "Jungle Roastery", "slug": "jungle-roastery"}]
-    rows = scrape.flatten_to_coffees(products, roasters)
-    assert len(rows) == 2
-    assert {r["weight_g"] for r in rows} == {1000, 250}
-    assert all(r["roaster"] == "Jungle Roastery" for r in rows)
-
-
-def test_flatten_to_coffees_dedupes_same_url_and_weight():
-    products = {
-        "jungle-roastery": [
-            {
-                "name": "Rwanda",
-                "url": "https://x.sk/rwanda/",
-                "last_seen": "2026-07-04",
-                "packaging": [{"weight_g": 250, "price": 12.5}, {"weight_g": 250, "price": 12.5}],
-            }
-        ]
-    }
-    roasters = [{"name": "Jungle Roastery", "slug": "jungle-roastery"}]
-    rows = scrape.flatten_to_coffees(products, roasters)
-    assert len(rows) == 1
-
-
 # --- validate_entry -------------------------------------------------------------
 
 

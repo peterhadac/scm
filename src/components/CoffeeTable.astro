@@ -224,6 +224,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
           <th>Roaster</th>
           <th>Origin</th>
           <th>Process</th>
+          <th class="ct-num">Weight</th>
           <th class="ct-num" aria-sort="none">
             <button type="button" class="ct-sort-th ct-sort-th--num" data-sort="price">
               Price <span class="ct-sort-ind" aria-hidden="true"></span>
@@ -268,10 +269,11 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               <td class="ct-muted">{c.origin ?? '—'}</td>
               <td>
                 {c.process
-                  ? <span class={`ct-badge ct-badge--${PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other'}`}>{c.process}</span>
+                  ? <span class={`ct-badge ct-badge--${PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other'}`} title={c.process}>{c.process}</span>
                   : <span class="ct-muted">—</span>
                 }
               </td>
+              <td class="ct-num ct-muted">{c.weight_g ? `${c.weight_g} g` : '—'}</td>
               <td class="ct-num ct-price">{fmtEur(c.price)}</td>
               <td class="ct-num ct-muted">
                 {per100g}
@@ -463,7 +465,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--md-sys-shape-corner-large);
     overflow: hidden;
-    border-top: 3px solid var(--md-sys-color-primary);
   }
 
   .ct-stat {
@@ -619,6 +620,10 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     color: var(--md-sys-color-on-surface);
     font-size: var(--md-sys-typescale-body-medium-size);
     min-width: 9rem;
+    max-width: 12rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     cursor: pointer;
     transition:
       border-color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard),
@@ -841,6 +846,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   .ct-badge {
     display: inline-flex;
     align-items: center;
+    max-width: 14rem;
     padding: 0.18em 0.65em;
     border-radius: var(--md-sys-shape-corner-full);
     font-family: var(--font-sans);
@@ -848,6 +854,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     font-weight: 500;
     letter-spacing: 0;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     border: 1px solid transparent;
   }
 
@@ -917,9 +925,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   /* ── Responsive ───────────────────────────────────────────── */
   @media (max-width: 640px) {
-    .ct-stats {
-      border-top-width: 3px;
-    }
     .ct-stat {
       flex: 1 1 45%;
       border-bottom: 1px solid var(--md-sys-color-outline-variant);
@@ -943,9 +948,11 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
       margin-left: 0;
       justify-content: space-between;
     }
-    /* Hide per-100g column on mobile */
-    .ct-table td:nth-child(6),
-    .ct-table th:nth-child(6) { display: none; }
+    /* Hide weight and per-100g columns on mobile */
+    .ct-table td:nth-child(5),
+    .ct-table th:nth-child(5),
+    .ct-table td:nth-child(7),
+    .ct-table th:nth-child(7) { display: none; }
   }
 
   @media (max-width: 440px) {

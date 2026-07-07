@@ -4201,15 +4201,7 @@ suca-roastery:
   - price: 23.9
     weight_g: 1000
   page_hash: 3a7d3d9d9ca873f21d7017a17224f5a489276a894d08e305f5656f2e8e3f5340
-  process: Táto káva prechádza suchým fermentačným procesom, pri ktorom sa čerešne
-    sušia v nádrži v tieni počas prvých 48 hodín a potom sa umiestnia na slnko na
-    ďalšie sušenie. Finca El Cerro je dedičstvom 5 generácií salvádorských výrobcov
-    kávy, pestovanie kávy je v ich rodine už viac ako 150 rokov. Farma sa nachádza
-    v pohorí Apaneca Llamatepec a má ideálnu nadmorskú výšku na výrobu špeciálnej
-    kávy (1400-1500 m). V roku 2016 sa rozhodli spracovať vlastnú kávu, vlastnia malý
-    ekologický mlyn na kávu, kde si môžu robiť vlastné mokré mletie. Vo Finca El Cerro
-    je káva vášňou, nie len jej pestovanie, ale aj jej spracovanie, ochutnávanie a
-    varenie.
+  process: natural
   roast_type: null
   status: ok
   url: https://www.sucaroastery.sk/news/el-salvador-finca-el-cerro-pacas
@@ -4544,23 +4536,7 @@ sweet-beans-coffee:
   - price: 14.0
     weight_g: 200
   page_hash: b20a90079df325a580d37fa63b59f6de811f67f0825da49bd1f49c20b0d21cce
-  process: 'This decaffeination process is unique, the caffeine is extracted from
-    the bean using sugar cane and water which enhances sweetness, while maintaining
-    coffee attributes.
-
-    The green coffee is received, sorted and prepared for processing. The coffee is
-    then steamed for 30 minutes, prior to decaffeination. A low pressure steaming
-    process has opened the pores of the coffee, allowing for caffeine extraction.
-    Then, the coffee is placed in a solution of water and Ethyl Acetate, which is
-    a naturally occurring compound and solvent derived through the fermentation of
-    sugar cane. During this process, the solvent naturally bonds to the salts of chlorogenic
-    acids within the coffee, allowing for the extraction of caffeine – this continues
-    for about eight hours.
-
-    After the last of the caffeine has been extracted, the coffee is removed from
-    the solution and prepared for another steaming. The final low-pressure steaming
-    removes the remaining traces of Ethyl Acetate. Decaffeinated coffee is then dried,
-    physically polished to ensure cleanliness, and packaged to export.'
+  process: other
   roast_type: filter
   status: ok
   url: https://www.sweetbeans.coffee/produkt/colombia-el-vergel-sugarcane-decaf/

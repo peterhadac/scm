@@ -9,6 +9,20 @@ export default defineConfig({
     starlight({
       title: 'Slovak Coffee Map',
       plugins: [md3Theme({ seed: '#FF6037', variant: 'tonalSpot' })],
+      components: {
+        SiteTitle: './src/components/SiteTitle.astro',
+      },
+      head: [
+        { tag: 'link', attrs: { rel: 'preconnect', href: 'https://fonts.googleapis.com' } },
+        { tag: 'link', attrs: { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true } },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'stylesheet',
+            href: 'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap',
+          },
+        },
+      ],
       sidebar: [
         {
           label: 'Coffees',

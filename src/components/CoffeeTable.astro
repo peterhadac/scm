@@ -469,8 +469,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   .ct-stat {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
-    padding: 0.9rem 1.5rem;
+    gap: 4px;
+    padding: 16px 24px;
     border-right: 1px solid var(--md-sys-color-outline-variant);
   }
 
@@ -479,7 +479,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   .ct-stat-value {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 8px;
     font-family: var(--font-serif);
     font-size: clamp(1.3rem, 2.5vw, 1.6rem);
     font-weight: 700;
@@ -489,8 +489,10 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
 
   .ct-stat-label {
+    font-family: var(--font-sans);
+    font-weight: 300;
     font-size: var(--md-sys-typescale-label-small-size);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--md-sys-color-outline);
   }
@@ -525,26 +527,26 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     position: sticky;
     top: var(--sl-nav-height, 3.5rem);
     z-index: 10;
-    margin: 0 0 0.75rem;
+    margin: 0 0 16px;
     background: color-mix(in srgb, var(--md-sys-color-surface) 92%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--md-sys-color-outline-variant);
-    padding: 0.5rem 0;
+    padding: 8px 0;
   }
 
   .ct-toolbar {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem 0.75rem;
+    gap: 8px 16px;
   }
 
   .ct-search-group {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0.4rem;
+    gap: 8px;
   }
 
   .ct-search-field {
@@ -555,13 +557,13 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   .ct-search-icon {
     position: absolute;
-    left: 0.65rem;
+    left: 8px;
     color: var(--md-sys-color-outline);
     pointer-events: none;
   }
 
   .ct-search {
-    padding: 0.35rem 0.7rem 0.35rem 2rem;
+    padding: 4px 8px 4px 32px;
     border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--md-sys-shape-corner-small);
     background: var(--md-sys-color-surface-container-high);
@@ -589,7 +591,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   .ct-filters {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 16px;
     flex: 1;
   }
 
@@ -597,20 +599,20 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0.4rem;
+    gap: 8px;
   }
 
   .ct-label {
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
+    font-weight: 300;
     font-size: var(--md-sys-typescale-label-small-size);
-    font-weight: var(--md-sys-typescale-label-small-weight);
-    letter-spacing: 0.07em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--md-sys-color-outline);
   }
 
   .ct-select {
-    padding: 0.35rem 0.7rem;
+    padding: 4px 8px;
     border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--md-sys-shape-corner-small);
     background: var(--md-sys-color-surface-container-high);
@@ -637,7 +639,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   .ct-actions {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 16px;
     margin-left: auto;
   }
 
@@ -645,14 +647,15 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   .ct-clear-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.35rem 0.85rem;
+    gap: 4px;
+    padding: 4px 16px;
     border: none;
     border-radius: var(--md-sys-shape-corner-full);
     background: transparent;
     color: var(--md-sys-color-primary);
+    font-family: var(--font-sans);
     font-size: var(--md-sys-typescale-label-large-size);
-    font-weight: var(--md-sys-typescale-label-large-weight);
+    font-weight: 500;
     cursor: pointer;
     transition: background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
     white-space: nowrap;
@@ -666,7 +669,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
 
   .ct-count {
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-size: var(--md-sys-typescale-label-medium-size);
     color: var(--md-sys-color-outline);
     white-space: nowrap;
@@ -695,12 +698,12 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
 
   .ct-table thead th {
-    padding: 0.65rem 1rem;
+    padding: 8px 16px;
     background: var(--md-sys-color-surface-variant);
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-size: var(--md-sys-typescale-label-small-size);
-    font-weight: var(--md-sys-typescale-label-small-weight);
-    letter-spacing: 0.07em;
+    font-weight: 300;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--md-sys-color-outline);
     text-align: left;
@@ -712,7 +715,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   .ct-sort-th {
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 4px;
     padding: 0;
     margin: 0;
     border: none;
@@ -762,7 +765,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
 
   .ct-table tbody td {
-    padding: 0.7rem 1rem;
+    padding: 8px 16px;
     vertical-align: middle;
     color: var(--md-sys-color-on-surface-variant);
   }
@@ -771,7 +774,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     text-align: right;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
-    font-family: var(--font-mono);
     font-size: 0.8125rem;
   }
 
@@ -795,15 +797,15 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   .ct-best {
     display: inline-block;
-    margin-left: 0.4rem;
+    margin-left: 8px;
     padding: 0.05em 0.5em;
     border-radius: var(--md-sys-shape-corner-full);
     background: var(--md-sys-color-primary);
     color: var(--md-sys-color-on-primary);
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-size: var(--md-sys-typescale-label-small-size);
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    font-weight: 500;
+    letter-spacing: 0;
     text-transform: uppercase;
     vertical-align: middle;
   }
@@ -841,10 +843,10 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     align-items: center;
     padding: 0.18em 0.65em;
     border-radius: var(--md-sys-shape-corner-full);
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-size: var(--md-sys-typescale-label-small-size);
-    font-weight: var(--md-sys-typescale-label-small-weight);
-    letter-spacing: 0.02em;
+    font-weight: 500;
+    letter-spacing: 0;
     white-space: nowrap;
     border: 1px solid transparent;
   }
@@ -881,17 +883,17 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.3rem 0.6rem;
+    gap: 4px 8px;
     font-size: var(--md-sys-typescale-label-small-size);
     color: var(--md-sys-color-outline);
   }
 
   .ct-legend-label {
-    font-family: var(--font-mono);
-    font-weight: var(--md-sys-typescale-label-small-weight);
-    letter-spacing: 0.06em;
+    font-family: var(--font-sans);
+    font-weight: 300;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin-right: 0.2rem;
+    margin-right: 4px;
   }
 
   .ct-legend-sep {

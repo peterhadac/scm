@@ -171,6 +171,10 @@ Steps: checkout → setup-node → `npm ci` → `npm run build` → `actions/upl
   - Sort: price (asc/desc)
   - Implementation: vanilla JS in a `<script>` inside the `.astro` component, no framework island.
 
+## Brand & Design System
+
+See [`Design.md`](./Design.md) — logo, colour palette, typography, and spacing rules. All rules there are binding when writing UI code.
+
 ## Environment Variables / Secrets
 
 - `OPENROUTER_API_KEY` — required by scraper (OpenRouter, model `google/gemini-2.5-flash-lite`), stored as GitHub Actions secret

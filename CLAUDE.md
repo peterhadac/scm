@@ -4,86 +4,106 @@ Daily-updated catalogue of coffees available on the Slovak market, scraped from 
 
 > ponytail: Starlight is a docs framework; for one filterable table, plain Astro (no Starlight) is lighter. Keeping Starlight as requested for theme/chrome — drop it for `@astrojs` base if the docs sidebar/search become noise.
 
+> See [`Architecture.md`](./Architecture.md) for the full scraping pipeline: crawl4ai-based per-product discovery, hash-gated extraction, and normalization into the `data/products.yaml` artifact below.
+
 ## Architecture
 
 ```
-roasters.yaml          ← seed list of roasters + per-site scraper overrides
+roasters.yaml          ← seed list of roasters + per-site scraper overrides + slug/metadata
 scraper/
-  scrape.py            ← main entrypoint: fetch → AI extract → write JSON
+  scrape.py            ← main entrypoint: crawl4ai discover → hash-gate → AI extract → normalize/validate → products.yaml
   requirements.txt
+data/
+  products.yaml        ← per-product intermediate: fields, page_hash, status, packaging (see Architecture.md)
 _data/
-  coffees.json         ← scraper output; imported by the Astro page (plain import, no magic)
+  coffees.sample.json  ← hand-maintained dev fixture (import.meta.env.DEV only)
 src/
   content/docs/index.mdx   ← Starlight page embedding the table component
-  components/CoffeeTable.astro  ← filterable/sortable table (imports ../../_data/coffees.json)
+  components/CoffeeTable.astro  ← filterable/sortable table (reads ../../data/products.yaml + roasters.yaml directly at build time)
 astro.config.mjs       ← Astro + Starlight config (site + base for project Pages)
 package.json           ← astro, @astrojs/starlight, starlight-theme-md3 (npm)
 .github/workflows/
-  scrape.yml           ← daily cron, commits coffees.json (its push does NOT trigger pages.yml — see below)
+  scrape.yml           ← daily cron, commits products.yaml (its push does NOT trigger pages.yml — see below)
   pages.yml            ← build Astro + deploy to Pages on push to main / scrape.yml completion / manual
 .gitignore             ← dist/, node_modules/, .astro/, __pycache__/, .venv/
 ```
 
 ## Data Schema
 
-Each entry in `_data/coffees.json`:
+`data/products.yaml` (mapping of roaster `slug` → array of product entries)
+is the sole scraped artifact — see [`Architecture.md`](./Architecture.md) for
+the full pipeline and [`data/products.schema.yaml`](./data/products.schema.yaml)
+for the validated shape. Each entry is one of:
 
-```json
-{
-  "name": "Ethiopia Yirgacheffe",
-  "roaster": "Kaffa Roastery",
-  "origin": "Ethiopia",
-  "process": "Washed",
-  "price": 12.90,
-  "weight_g": 250,
-  "url": "https://kaffaroastery.sk/...",
-  "last_seen": "2026-06-30"
-}
-```
+- **`status: ok`** — `name`, `url`, `origin`, `roast_type`, and every
+  `packaging` tier's `weight_g`/`price` are all non-null. `process` may
+  still be `null` (many roasters don't publish it).
+- **`status: incomplete`** — a genuine coffee product, but missing one of
+  `origin`/`roast_type`/`weight_g`/`price` (listed in `missing_fields`).
+  Excluded from the site until fixed; kept in `products.yaml` so hash-gating
+  still applies.
+- **`status: not_a_product`** — the discovered URL wasn't a single coffee
+  product page.
 
-- **Required**: `name`, `roaster`, `price`, `url`. Drop any extracted entry missing these.
-- **Optional / nullable**: `origin`, `process`, `weight_g` — set `null` when the page doesn't state them. Don't guess.
-- `price` is **EUR**, stored as a JSON number with a `.` decimal. Slovak sites display `12,90 €` — normalize comma→dot and strip the currency symbol during extraction.
-- `last_seen` = date of the last **successful** scrape that included this item (`YYYY-MM-DD`). It stops advancing while the roaster is `failed`/`needs_js`, so a stale `last_seen` flags a roaster that's been unreachable.
+Controlled vocabularies (translated to English at scrape time regardless of
+source language):
+- `process`: `washed` | `natural` | `honey` | `wet-hulled` | `anaerobic` |
+  `carbonic-maceration` | `other` | `null`
+- `roast_type`: `filter` | `espresso` (never `null` on an `ok` entry)
+- `origin`: an English country name, matched against
+  [`data/coffee_origins.yaml`](./data/coffee_origins.yaml) — falls back to
+  scanning the product name for a country mention when the site doesn't
+  state one (e.g. `"brazil • doce citrus"` → `Brazil`).
 
-Out-of-stock items are **deleted** on the next successful run for that roaster (see Scraper step 4). Git history is the changelog.
+`price` is **EUR** as a JSON number with a `.` decimal. `last_seen` is the
+date of the last successful scrape that included this item; it stops
+advancing while the roaster is `failed`/`needs_js`.
+
+The Astro build reads `data/products.yaml` + `roasters.yaml` directly at
+build time (see `src/components/CoffeeTable.astro`) and flattens each
+`ok`-status product's packaging tiers into one row per weight — there is no
+separate generated JSON file for the site to import.
 
 ## Roaster Config (`roasters.yaml`)
 
 ```yaml
 roasters:
   - name: Kavoholik
+    slug: kavoholik
     url: https://kavoholik.sk/
   - name: Ready After
+    slug: ready-after
     url: https://www.readyafter.sk/
-  - name: Kaffa Roastery
-    url: https://kaffaroastery.sk/
-  - name: Suca Roastery
-    url: https://www.sucaroastery.sk/
+  - name: Jungle Roastery
+    slug: jungle-roastery
+    url: https://thisisjungle.sk/
+    metadata:
+      city: Bratislava
   - name: Coffeein
+    slug: coffeein
     url: https://www.coffeein.sk/
     scraper: playwright   # opt-in for JS-heavy sites
 ```
 
-Add `scraper: playwright` to any roaster that requires JavaScript rendering.
+`slug` is the stable key `data/products.yaml` is keyed on (lowercase-kebab of the name). `metadata` is optional, added as roaster details are gathered — not required for the scraper to run. Add `scraper: playwright` to any roaster that requires JavaScript rendering (selects crawl4ai's browser-backed crawler instead of the HTTP one).
 
 ## Scraper (`scraper/scrape.py`)
 
-1. Load `roasters.yaml`
-2. For each roaster: fetch product listing page(s) with `httpx` (or `playwright` if flagged). Send a real browser `User-Agent` (default httpx UA gets blocked/served bot pages), and follow pagination until no new products appear.
-3. Pass raw HTML to Claude API with a JSON schema prompt to extract fields
-4. Merge results into `coffees.json`:
-   - Status `ok` → **replace** that roaster's entries with the fresh set (out-of-stock items vanish).
-   - Status `failed` / `needs_js` → **keep** that roaster's existing entries untouched. A transient outage must never wipe a roaster's data; their `last_seen` simply stops advancing until the next successful run.
-5. Write a `scrape_status` summary (logged to stdout; not stored in `coffees.json`)
+Full design in [`Architecture.md`](./Architecture.md). Summary:
 
-### Scrape status values
-- `ok` — extracted ≥1 product
-- `failed` — HTTP error or no products extracted
-- `needs_js` — page returned empty/suspicious HTML (likely JS-rendered; add `scraper: playwright`)
+1. Load `roasters.yaml`.
+2. Per roaster, **discover** product URLs from the listing page(s) via crawl4ai's `prefetch=True` mode (cheap — no LLM call), following pagination by hand.
+3. Per discovered URL, fetch via crawl4ai (markdown output), hash it, and **skip the LLM call** if the hash matches what's already stored for that URL in `data/products.yaml`. Otherwise call the model (tool call left optional, not forced, so it can decline non-product pages) to extract `name`/`origin`/`process`/`roast_type`/`packaging` (multi-weight).
+4. Diff this run's discovered URLs against `data/products.yaml`'s existing entries for that roaster — anything missing is genuinely delisted and gets dropped; anything new gets fetched.
+5. Write a `scrape_status` summary (logged to stdout; not stored in either file).
 
-### Claude API extraction prompt pattern
-Send the raw product page HTML and ask for a JSON array matching the schema above. Use `claude-haiku-4-5-20251001` for cost efficiency. Schema-validate the response before writing.
+### Scrape status values (per product, in `data/products.yaml`)
+- `ok` — extracted a name and ≥1 valid price/weight tier
+- `not_a_product` — discovered link wasn't actually a single coffee product page (cached so it isn't re-sent to the model every run)
+- A fetch failure or JS-rendered-looking page leaves the existing entry untouched (no status overwrite, `last_seen` doesn't advance)
+
+### LLM extraction (OpenRouter)
+One call per product page's markdown via [OpenRouter](https://openrouter.ai/)'s OpenAI-compatible `/chat/completions` endpoint (`openai` SDK pointed at `base_url="https://openrouter.ai/api/v1"`), model `google/gemini-2.5-flash-lite`. The `extract_product` tool (OpenAI function-calling shape: `{"type": "function", "function": {...}}`) is available but not forced — this lets the model decline (plain text reply, no tool call) when a discovered URL turns out to be a category page, the homepage, or something that isn't coffee, rather than fabricating a product from whatever's on the page.
 
 ## GitHub Actions
 
@@ -99,10 +119,10 @@ permissions:
   contents: write           # default GITHUB_TOKEN is read-only; needed to push
 ```
 
-Steps: checkout → install deps → (`playwright install --with-deps chromium` if any roaster uses playwright) → run scraper → commit `_data/coffees.json` → push.
+Steps: checkout → install deps → `crawl4ai-setup` (installs Playwright/Patchright browsers crawl4ai needs) → run scraper → commit `data/products.yaml` → push.
 
 - Guard the commit so a no-change run doesn't fail the job:
-  `git diff --quiet -- _data/coffees.json || (git add _data/coffees.json && git commit -m "data: $(date -u +%F)" && git push)`
+  `git diff --quiet -- data/products.yaml || (git add data/products.yaml && git commit -m "data: $(date -u +%F)" && git push)`
 - **The push to `main` does NOT trigger `pages.yml`** — a push made with the default `GITHUB_TOKEN` (which `actions/checkout` uses here) doesn't fire other workflows' `on: push`, to prevent recursive runs. `pages.yml` instead listens for `scrape.yml`'s completion via `workflow_run` (see below). Ordinary human pushes to `main` are unaffected and still trigger `pages.yml` normally.
 
 ### `pages.yml` — build & deploy (Astro is **not** auto-built by Pages)
@@ -144,7 +164,7 @@ Steps: checkout → setup-node → `npm ci` → `npm run build` → `actions/upl
   })
   ```
   Brand palette (also applied as MD3 token overrides in `src/styles/custom.css`, light + dark): Morning Snow `#F5F4ED`, Amazon Mist `#ECECDC`, Black Kite `#351E1C`, Aqua Mist `#A0C9CB`, Toxic Orange `#FF6037`, Garnet `#733635`.
-- **Data source**: plain `import coffees from '../../_data/coffees.json'` inside `CoffeeTable.astro`. No `site.data` magic — JSON is bundled at build time, so a new scrape requires a rebuild (handled by `pages.yml`).
+- **Data source**: `CoffeeTable.astro`'s frontmatter reads `data/products.yaml` + `roasters.yaml` directly at build time (via `js-yaml`) and flattens them into table rows — no separate generated JSON file. `import.meta.env.DEV` still uses the hand-maintained `_data/coffees.sample.json` fixture for local dev. A new scrape requires a rebuild (handled by `pages.yml`).
 - **`astro.config.mjs`**: set `site: 'https://<user>.github.io'` and `base: '/scm'` for a project Pages site, or links 404.
 - **UI**: filterable/sortable table
   - Dropdowns: roaster, origin, process
@@ -153,7 +173,7 @@ Steps: checkout → setup-node → `npm ci` → `npm run build` → `actions/upl
 
 ## Environment Variables / Secrets
 
-- `ANTHROPIC_API_KEY` — required by scraper, stored as GitHub Actions secret
+- `OPENROUTER_API_KEY` — required by scraper (OpenRouter, model `google/gemini-2.5-flash-lite`), stored as GitHub Actions secret
 
 ## Development
 
@@ -162,7 +182,7 @@ Steps: checkout → setup-node → `npm ci` → `npm run build` → `actions/upl
 pip install -r scraper/requirements.txt
 
 # Run scraper locally
-ANTHROPIC_API_KEY=... python scraper/scrape.py
+OPENROUTER_API_KEY=... python scraper/scrape.py
 
 # Serve site locally
 npm install
@@ -171,7 +191,7 @@ npm run dev          # astro dev server with live reload
 
 ## Adding a New Roaster
 
-1. Add entry to `roasters.yaml`
+1. Add entry to `roasters.yaml` (`name`, `slug`, `url`)
 2. Run scraper locally to verify extraction works
 3. If output is empty, add `scraper: playwright` and re-test
 4. Commit `roasters.yaml` — next cron run picks it up

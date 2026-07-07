@@ -1,0 +1,125 @@
+# Discovery Pipeline Architecture
+
+A per-product scraping pipeline: crawl4ai **discovers** product URLs on each roaster's listing page, then **fetches detail** for each one individually, skipping unchanged pages via a content hash. Implemented in `scraper/scrape.py`; verified end-to-end against a real roaster site (Jungle Roastery) — see [Open follow-up work](#open-follow-up-work) for what's still outstanding.
+
+## Overview
+
+The scraper used to be single-phase: one Claude call per roaster, fed the whole listing page's HTML. That couldn't tell "a product disappeared" from "the whole roaster failed to load," couldn't skip Claude calls for unchanged pages, and couldn't represent a coffee sold in more than one package size.
+
+The current design discovers product URLs cheaply (no LLM call), then fetches and extracts each product individually, gated by a SHA-256 hash of the page's markdown so a re-run only pays for a Claude call when a page actually changed. Fetching is done via [crawl4ai](https://github.com/unclecode/crawl4ai) rather than raw `httpx`/`playwright`.
+
+## Data Flow
+
+```
+roasters.yaml (human-edited seed: name, slug, url, scraper override, metadata)
+      │
+      ▼
+discover_product_urls()  — crawl4ai prefetch=True fetch of the listing page(s),
+      │                    following pagination; no LLM call, nothing persisted
+      ▼
+data/products.yaml (per-product fields, page_hash, status, missing_fields,
+      │              schema_version, packaging — validated against
+      │              data/products.schema.yaml before being saved; the ONLY
+      │              generated artifact, and also the record of "what did we
+      │              know about last time" for removal detection)
+      ▼
+src/components/CoffeeTable.astro (site UI — reads data/products.yaml +
+      │                            roasters.yaml directly at build time,
+      │                            flattens ok-status packaging into rows)
+```
+
+There is deliberately **no separate `data/index.yaml`**. An earlier design persisted discovered URLs there so a later run could diff against them — but crawl4ai's `prefetch=True` mode makes discovery cheap enough (one plain HTTP fetch per listing page, no markdown generation, no LLM call) to redo fully fresh every run. Removed-product detection instead diffs *this run's* freshly discovered URLs against the URLs already present in `data/products.yaml` (in-memory, no prior index needed).
+
+## Files & Ownership
+
+| File | Owner | Committed |
+|---|---|---|
+| `roasters.yaml` | Human-edited | yes |
+| `data/coffee_origins.yaml` | Human-edited (country list for origin normalization) | yes |
+| `data/products.schema.yaml` | Human-edited (JSON Schema, validated on every scrape) | yes |
+| `data/products.yaml` | Generated, sole scraped artifact | yes — must be committed so the *next* run can diff/hash-gate against it, and so the Astro build can read it directly |
+
+`roasters.yaml` is the sole authority for roaster identity: `name` (display), `slug` (stable key `data/products.yaml` is keyed on), `url` (crawl entry point), optional `scraper: playwright` override, optional `metadata` (e.g. `city`). `data/products.yaml` never defines roaster identity itself.
+
+## Discovery (`discover_product_urls`)
+
+For each roaster, fetch the listing page(s) with `CrawlerRunConfig(prefetch=True, cache_mode=CacheMode.BYPASS)` — crawl4ai skips markdown generation/extraction entirely in this mode, so it's one plain HTTP(S) fetch per page, no LLM call. Pagination is still followed by hand (`find_next_page_url()` — crawl4ai has no built-in Slovak-aware "next page" primitive). Candidate product links come from `result.links["internal"]`, filtered by:
+- same-domain (post-redirect) check,
+- `looks_like_product_link()` — rejects obvious site plumbing (cart, login, legal, nav) by URL path segment,
+- `is_coffee()` — rejects link text naming equipment/gift-cards/subscriptions.
+
+This filter is a cheap first pass, not a guarantee — a nav link that slips through still costs one wasted fetch, but Claude will decline to extract it (see below), and that decision gets cached so it isn't repeated every run.
+
+A crawl that fails outright, or whose listing page looks JS-rendered (visible text under 200 chars), stops for that roaster this run — existing `data/products.yaml` entries are left untouched. A crawl that *succeeds* but discovers zero URLs while the roaster previously had entries is treated the same way (`needs_js`) rather than as "everything was removed" — a broken link filter or page restructure is far more likely than a real wipeout.
+
+## Detail Extraction (`process_roaster`, `extract_product`, `normalize_product`)
+
+For each discovered URL: fetch with `CrawlerRunConfig(cache_mode=CacheMode.BYPASS, markdown_generator=DefaultMarkdownGenerator())` — **no `PruningContentFilter`**. That content filter's density-based pruning was verified (against a real product page) to discard the weight/price selector widget — exactly the data extraction needs — so plain markdown conversion is used instead (still a ~13x size cut vs. raw HTML, just without the filter's data loss).
+
+Hash the resulting markdown (SHA-256) and compare to the product's stored `page_hash`:
+- **Unchanged**, and previous `status` was `ok` or `not_a_product` → skip the Claude call entirely, just bump `last_seen`.
+- **Changed** (or no prior hash) → call Claude (`extract_product`) with the `extract_product` tool **not forced** (`tool_choice` left at the default `"auto"`). Forcing it was tried first and verified broken: Claude fabricated a plausible-looking product from category pages, the homepage, and non-coffee pages that slipped past the discovery filter, because a forced tool call cannot decline. Leaving it optional lets Claude reply in plain text (no `tool_use` block) for anything that isn't a single coffee product's page.
+
+`normalize_product()` turns a raw extraction into a `products.yaml` entry: drops it if the name fails `is_coffee()`, parses each `packaging` tier's price/weight (reusing `normalize_price`/`parse_weight`), and drops tiers with no parseable price. A product with zero valid tiers is treated as "not extractable" — same as an explicit decline.
+
+## Status & Freshness Semantics
+
+Per product:
+- **`ok`** — extracted a name and ≥1 valid packaging tier. Fields, `page_hash`, `last_seen` all update.
+- **`not_a_product`** — Claude declined, or extraction yielded no usable packaging, for a URL with no prior good data. Cached (with `page_hash`, no `packaging`) so an unchanged nav/category link isn't re-fetched and re-sent to Claude every run — it only costs one wasted call the first time, then nothing until the page's content actually changes.
+- **A previously-`ok` product that declines** (page hash changed, but Claude no longer sees a product there) keeps its last known-good entry untouched rather than being downgraded — more likely a transient hiccup than genuine in-place delisting.
+- **Fetch failure / JS-shell page** (text under 200 chars) → keep the existing entry untouched, don't advance `last_seen`. A transient blip must never wipe a product.
+- **Removed products** are detected by diffing: any URL present in the *previous* `data/products.yaml` for a roaster but absent from *this run's* successful discovery is genuinely delisted and dropped. (Guarded against a failed/suspicious-empty discovery — see above.)
+
+## Normalization & Validation
+
+`normalize_product()` translates `origin`/`process`/`roast_type` into the
+controlled English vocabularies documented in `CLAUDE.md`, backed by
+`data/coffee_origins.yaml` for origin. A product missing `origin`,
+`roast_type`, or any tier's `weight_g`/`price` becomes `status: incomplete`
+with a `missing_fields` list, rather than being published with nulls or
+dropped outright — two tiers sharing a price across different weights (a
+sign the extraction didn't actually see distinct per-tier prices) marks the
+whole product incomplete rather than trusting any of its tiers. Every entry
+is validated against `data/products.schema.yaml` (via `validate_entry()`)
+before being kept — a validation failure means a bug in this module, not bad
+website content.
+
+A `SCHEMA_VERSION` constant is stamped on every `ok`/`incomplete` entry.
+`process_roaster`'s hash-gate only skips re-extraction when the prior
+entry's `schema_version` matches the current one — this forces exactly one
+re-extraction of every pre-existing entry after a normalization-rule change
+ships (there's no cached raw LLM output to replay against new rules), after
+which hash-gating resumes as normal.
+
+## Flatten / Build Step
+
+Exploding each `ok`-status product's `packaging` array into one flat row per
+`(product url, weight_g)`, deduped on that pair, and joining in the
+roaster's display `name` from `roasters.yaml` by `slug`, now happens in
+`src/components/CoffeeTable.astro`'s frontmatter at site-build time — there
+is no Python-side flatten step or generated `_data/coffees.json` file
+anymore. `incomplete`/`not_a_product` entries never reach the site.
+
+## Cost & Politeness
+
+Model: `google/gemini-2.5-flash-lite` via [OpenRouter](https://openrouter.ai/) ($0.10/$0.40 per 1M input/output tokens; originally `claude-haiku-4-5-20251001` direct via Anthropic at $1/$5 — switched for lower per-call cost, same tool-call-optional extraction behavior). The old pipeline made ~1 LLM call per roaster (~23/day, whole-listing extraction). Per-product detail fetching means one call per *product*, but the hash gate keeps steady-state cost low — verified live: a second run over unchanged pages made **zero** LLM calls. The one-time cost is the first run over all products per roaster (dozens), plus one wasted call per nav/category link that slips past discovery's filter (also a one-time cost — subsequently cached as `not_a_product`).
+
+No per-domain rate limiting/delay exists yet — roasters are still processed sequentially (one at a time, no concurrency), which limits worst-case request rate against any single domain, but there's no explicit inter-request delay within a roaster's product loop.
+
+## CI / Publishing
+
+`.github/workflows/scrape.yml` installs deps via `crawl4ai-setup` (replaces the old `playwright install --with-deps chromium` — verified to be a strict superset) and commits `data/products.yaml` — this is what makes cross-run removal-detection and hash-gating possible, and it's also what the Astro build reads directly. `pages.yml` needs no changes; its `npm run build` step reads `data/products.yaml` at build time regardless of how that file was produced.
+
+## Adding a Roaster
+
+1. Add an entry to `roasters.yaml`: `name`, `slug` (lowercase-kebab of the name), `url`, optional `scraper: playwright`, optional `metadata`.
+2. Run the scraper locally — it discovers product URLs and fetches detail into `data/products.yaml`; the Astro build reads that directly, no separate regeneration step needed.
+3. If discovery finds nothing, add `scraper: playwright` and re-test.
+4. Commit `roasters.yaml` — the next cron run picks it up.
+
+## Open follow-up work
+
+- **No per-domain rate limiting/jitter** for the product-detail loop within a roaster.
+- **Only Jungle Roastery has been run against the new pipeline** so far (verified: discovery, hash-gate skip, removal-via-diff, listing-failure preservation, and the mixed HTTP/Playwright crawler path all confirmed live). The other 22 roasters' `data/products.yaml` entries still come from the old single-phase pipeline until a full production run happens — `git diff` per-roaster counts before/after that run to confirm no unexpected drops.
+- `looks_like_product_link()`'s path-segment blocklist is necessarily incomplete per-site (verified: Jungle's own `/kava/` category page slipped through and had to be caught by the extraction-decline mechanism instead) — this is fine (the decline gets cached), but a roaster with an unusually link-heavy homepage will eat a few extra one-time Claude calls the first run.

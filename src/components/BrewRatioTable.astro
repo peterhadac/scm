@@ -1,0 +1,85 @@
+---
+interface Ratio {
+  servings: number;
+  coffee_g: number;
+  water_ml: number;
+}
+
+interface Props {
+  rows: Ratio[];
+}
+
+const { rows } = Astro.props;
+---
+
+<div class="brt-table-wrap">
+  <table class="brt-table">
+    <thead>
+      <tr>
+        <th>Servings / Cups</th>
+        <th class="brt-num">Coffee (g)</th>
+        <th class="brt-num">Water (ml)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((r) => (
+        <tr>
+          <td>{r.servings}</td>
+          <td class="brt-num">{r.coffee_g}</td>
+          <td class="brt-num">{r.water_ml}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .brt-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-large);
+    background: var(--md-sys-color-surface-container-lowest);
+    margin-top: 1.5rem;
+  }
+
+  .brt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--md-sys-typescale-body-medium-size);
+  }
+
+  .brt-table thead th {
+    padding: 0.7rem 1rem;
+    background: var(--md-sys-color-surface-container);
+    font-size: var(--md-sys-typescale-label-small-size);
+    font-weight: var(--md-sys-typescale-label-small-weight);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--md-sys-color-outline);
+    text-align: left;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    white-space: nowrap;
+  }
+
+  .brt-table tbody tr {
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  }
+
+  .brt-table tbody tr:last-child { border-bottom: none; }
+
+  .brt-table tbody tr:hover {
+    background: var(--md3-state-on-surface-hover);
+  }
+
+  .brt-table tbody td {
+    padding: 0.6rem 1rem;
+    vertical-align: middle;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .brt-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+</style>

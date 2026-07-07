@@ -244,6 +244,50 @@ def test_normalize_roast_type_none_when_unstated():
     assert scrape.normalize_roast_type("") is None
 
 
+# --- normalize_roast_type fallback chain --------------------------------------
+
+
+def test_normalize_roast_type_falls_back_to_process_text():
+    assert scrape.normalize_roast_type(None, "filter roast", "Some Blend") == "filter"
+
+
+def test_normalize_roast_type_falls_back_to_name():
+    assert scrape.normalize_roast_type(None, None, "Espresso Blend") == "espresso"
+
+
+def test_normalize_roast_type_raw_wins_over_process_and_name():
+    assert scrape.normalize_roast_type("Espresso", "filter roast", "Filter Blend") == "espresso"
+
+
+# --- normalize_origin ---------------------------------------------------------
+
+
+def test_normalize_origin_translates_slovak_text():
+    assert scrape.normalize_origin("Etiópia", "some name") == "Ethiopia"
+
+
+def test_normalize_origin_falls_back_to_name_when_raw_missing():
+    assert scrape.normalize_origin(None, "brazil • doce citrus") == "Brazil"
+
+
+def test_normalize_origin_trusts_raw_over_name_when_both_present():
+    # LLM origin wins as-is — no cross-check against a differing name mention.
+    assert scrape.normalize_origin("Colombia", "brazil • doce citrus") == "Colombia"
+
+
+def test_normalize_origin_keeps_unmatched_raw_text_as_is():
+    assert scrape.normalize_origin("Fantasyland", None) == "Fantasyland"
+
+
+def test_normalize_origin_none_when_nothing_matches():
+    assert scrape.normalize_origin(None, "House Blend") is None
+
+
+def test_normalize_origin_none_for_whitespace_only_raw():
+    # A blank-but-truthy raw origin must not survive as "" (schema requires minLength 1).
+    assert scrape.normalize_origin("   ", "some name") is None
+
+
 # --- normalize_product --------------------------------------------------------
 
 
@@ -296,6 +340,151 @@ def test_normalize_product_none_for_non_coffee_name():
 
 def test_normalize_product_none_when_claude_declined():
     assert scrape.normalize_product(None, "https://x.sk/kava/", "2026-07-04") is None
+
+
+# --- normalize_product: incomplete status ------------------------------------
+
+
+def test_normalize_product_incomplete_when_roast_type_unknown():
+    raw = {
+        "name": "House Blend",
+        "origin": "Brazil",
+        "packaging": [{"weight": "250 g", "price": "12,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/house-blend/", "2026-07-04")
+    assert result["status"] == "incomplete"
+    assert result["missing_fields"] == ["roast_type"]
+    assert result["schema_version"] == scrape.SCHEMA_VERSION
+
+
+def test_normalize_product_incomplete_on_same_price_different_weights():
+    raw = {
+        "name": "brazil • doce citrus",
+        "origin": "Brazil",
+        "roast_type": "espresso",
+        "packaging": [
+            {"weight": "200 g", "price": "10,50 €"},
+            {"weight": "500 g", "price": "10,50 €"},
+            {"weight": "1000 g", "price": "10,50 €"},
+        ],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/brazil/", "2026-07-04")
+    assert result["status"] == "incomplete"
+    assert "price" in result["missing_fields"]
+    # tiers are kept (not silently dropped) so the bad data is visible for debugging
+    assert len(result["packaging"]) == 3
+
+
+def test_normalize_product_incomplete_when_multi_tier_weight_not_per_tier():
+    # Multi-tier product where the second tier states no weight of its own —
+    # must NOT fall back to a name-parsed weight for it (that would silently
+    # give every tier the same weight).
+    raw = {
+        "name": "Kenya AA",
+        "origin": "Kenya",
+        "roast_type": "filter",
+        "packaging": [
+            {"weight": "250 g", "price": "12,00 €"},
+            {"weight": None, "price": "20,00 €"},
+        ],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/kenya/", "2026-07-04")
+    assert result["status"] == "incomplete"
+    assert "weight_g" in result["missing_fields"]
+    assert result["packaging"][1]["weight_g"] is None
+
+
+def test_normalize_product_ok_when_all_required_fields_present():
+    raw = {
+        "name": "Rwanda Kigali",
+        "origin": "Rwanda",
+        "roast_type": "Filter",
+        "packaging": [{"weight": "250 g", "price": "12,50 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/rwanda/", "2026-07-04")
+    assert result["status"] == "ok"
+    assert "missing_fields" not in result
+    assert result["schema_version"] == scrape.SCHEMA_VERSION
+
+
+# --- normalize_product: schema-invalid raw shapes (final-review regressions) --
+
+
+def test_normalize_product_drops_tier_with_zero_price():
+    # "0,00 €" parses to 0.0, not None — must be treated as no price, same as
+    # an unparseable price, or an ok-status 0.0 would fail the schema's
+    # exclusiveMinimum: 0.
+    raw = {"name": "Kenya AA", "packaging": [{"weight": "250 g", "price": "0,00 €"}]}
+    assert scrape.normalize_product(raw, "https://x.sk/kenya/", "2026-07-04") is None
+
+
+def test_normalize_product_nulls_zero_weight_and_marks_incomplete():
+    raw = {
+        "name": "Kenya AA",
+        "origin": "Kenya",
+        "roast_type": "filter",
+        "packaging": [{"weight": "0 g", "price": "12,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/kenya/", "2026-07-04")
+    assert result["packaging"][0]["weight_g"] is None
+    assert result["status"] == "incomplete"
+    assert "weight_g" in result["missing_fields"]
+    result["page_hash"] = "deadbeef"
+    scrape.validate_entry(result)
+
+
+def test_normalize_product_incomplete_when_origin_whitespace_only():
+    raw = {
+        "name": "House Blend",
+        "origin": "   ",
+        "roast_type": "filter",
+        "packaging": [{"weight": "250 g", "price": "12,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/house-blend/", "2026-07-04")
+    assert result["status"] == "incomplete"
+    assert "origin" in result["missing_fields"]
+    assert result["origin"] is None
+    result["page_hash"] = "deadbeef"
+    scrape.validate_entry(result)
+
+
+def test_normalize_product_incomplete_on_weight_read_as_price():
+    # Real bug seen in production data ("Kostarika BACH"): the model read each
+    # tier's weight number as its price. price_collision alone misses this
+    # because the prices ARE distinct across tiers (200.0, 500.0).
+    raw = {
+        "name": "Kostarika BACH",
+        "origin": "Costa Rica",
+        "roast_type": "filter",
+        "packaging": [
+            {"weight": "200 g", "price": "200 €"},
+            {"weight": "500 g", "price": "500 €"},
+        ],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/kostarika-bach/", "2026-07-04")
+    assert result["status"] == "incomplete"
+    assert "price" in result["missing_fields"]
+    assert len(result["packaging"]) == 2
+    result["page_hash"] = "deadbeef"
+    scrape.validate_entry(result)
+
+
+def test_normalize_product_ok_does_not_false_positive_on_weight_as_price():
+    # Legitimate prices that don't equal their own tier's weight must not trip
+    # the new weight_as_price signal.
+    raw = {
+        "name": "Rwanda Kigali",
+        "origin": "Rwanda",
+        "roast_type": "filter",
+        "packaging": [
+            {"weight": "250 g", "price": "12,50 €"},
+            {"weight": "1000 g", "price": "40,00 €"},
+        ],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/rwanda/", "2026-07-04")
+    assert result["status"] == "ok"
+    result["page_hash"] = "deadbeef"
+    scrape.validate_entry(result)
 
 
 # --- extract_product (mocked OpenRouter/OpenAI client) -----------------------
@@ -432,12 +621,56 @@ async def test_process_roaster_skips_claude_when_hash_unchanged():
             "last_seen": "2026-07-01",
             "page_hash": page_hash,
             "packaging": [{"weight_g": 250, "price": 12.5}],
+            "schema_version": scrape.SCHEMA_VERSION,
         }
     ]
     entries, status = await scrape.process_roaster(crawler, client, ROASTER, existing, "2026-07-04")
     assert status == "ok"
     client.chat.completions.create.assert_not_called()
     assert entries[0]["last_seen"] == "2026-07-04"  # bumped even though unchanged
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_forces_reextraction_when_schema_version_stale():
+    markdown_text = LONG_TEXT + " 12,50 €"
+    import hashlib
+
+    page_hash = hashlib.sha256(markdown_text.encode("utf-8")).hexdigest()
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(markdown_text)),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [
+            fake_tool_call(
+                "extract_product",
+                {
+                    "name": "Rwanda",
+                    "origin": "Rwanda",
+                    "roast_type": "Filter",
+                    "packaging": [{"price": "12,50 €", "weight": "250 g"}],
+                },
+            )
+        ]
+    )
+    existing = [
+        {
+            "name": "Rwanda",
+            "url": "https://x.sk/rwanda/",
+            "status": "ok",
+            "last_seen": "2026-07-01",
+            "page_hash": page_hash,  # page content unchanged
+            "packaging": [{"weight_g": 250, "price": 12.5}],
+            # no schema_version key — a legacy entry predating this migration
+        }
+    ]
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, existing, "2026-07-04")
+    assert status == "ok"
+    client.chat.completions.create.assert_called_once()  # re-extracted despite unchanged hash
+    assert entries[0]["schema_version"] == scrape.SCHEMA_VERSION
 
 
 @pytest.mark.asyncio
@@ -540,50 +773,89 @@ async def test_process_roaster_zero_discovered_with_existing_is_needs_js_not_wip
     assert entries == existing
 
 
-# --- flatten_to_coffees -------------------------------------------------------
+# --- validate_entry -------------------------------------------------------------
 
 
-def test_flatten_to_coffees_explodes_packaging_and_joins_roaster_name():
-    products = {
-        "jungle-roastery": [
-            {
-                "name": "RWANDA - Kigali",
-                "url": "https://x.sk/rwanda/",
-                "origin": "Rwanda",
-                "process": "washed",
-                "roast_type": "filter",
-                "last_seen": "2026-07-04",
-                "packaging": [
-                    {"weight_g": 1000, "price": 44.0},
-                    {"weight_g": 250, "price": 12.5},
-                ],
-            },
-            {
-                # a cached "not a product" marker must be skipped, not crash
-                "url": "https://x.sk/kava/",
-                "status": "not_a_product",
-                "last_seen": "2026-07-04",
-            },
-        ]
+def test_validate_entry_accepts_ok_product():
+    entry = {
+        "name": "Rwanda Kigali",
+        "url": "https://x.sk/rwanda/",
+        "origin": "Rwanda",
+        "process": "washed",
+        "roast_type": "filter",
+        "status": "ok",
+        "last_seen": "2026-07-04",
+        "page_hash": "abc123",
+        "packaging": [{"weight_g": 250, "price": 12.5}],
+        "schema_version": scrape.SCHEMA_VERSION,
     }
-    roasters = [{"name": "Jungle Roastery", "slug": "jungle-roastery"}]
-    rows = scrape.flatten_to_coffees(products, roasters)
-    assert len(rows) == 2
-    assert {r["weight_g"] for r in rows} == {1000, 250}
-    assert all(r["roaster"] == "Jungle Roastery" for r in rows)
+    scrape.validate_entry(entry)  # must not raise
 
 
-def test_flatten_to_coffees_dedupes_same_url_and_weight():
-    products = {
-        "jungle-roastery": [
-            {
-                "name": "Rwanda",
-                "url": "https://x.sk/rwanda/",
-                "last_seen": "2026-07-04",
-                "packaging": [{"weight_g": 250, "price": 12.5}, {"weight_g": 250, "price": 12.5}],
-            }
-        ]
+def test_validate_entry_accepts_incomplete_product():
+    entry = {
+        "name": "House Blend",
+        "url": "https://x.sk/house-blend/",
+        "origin": None,
+        "process": None,
+        "roast_type": None,
+        "status": "incomplete",
+        "missing_fields": ["origin", "roast_type"],
+        "last_seen": "2026-07-04",
+        "page_hash": "abc123",
+        "packaging": [{"weight_g": 250, "price": 12.5}],
+        "schema_version": scrape.SCHEMA_VERSION,
     }
-    roasters = [{"name": "Jungle Roastery", "slug": "jungle-roastery"}]
-    rows = scrape.flatten_to_coffees(products, roasters)
-    assert len(rows) == 1
+    scrape.validate_entry(entry)  # must not raise
+
+
+def test_validate_entry_accepts_not_a_product():
+    entry = {
+        "url": "https://x.sk/kosik/",
+        "status": "not_a_product",
+        "last_seen": "2026-07-04",
+        "page_hash": "abc123",
+    }
+    scrape.validate_entry(entry)  # must not raise
+
+
+def test_validate_entry_rejects_bad_roast_type():
+    entry = {
+        "name": "Rwanda Kigali",
+        "url": "https://x.sk/rwanda/",
+        "origin": "Rwanda",
+        "process": "washed",
+        "roast_type": "cappuccino",  # not a valid enum value
+        "status": "ok",
+        "last_seen": "2026-07-04",
+        "page_hash": "abc123",
+        "packaging": [{"weight_g": 250, "price": 12.5}],
+        "schema_version": scrape.SCHEMA_VERSION,
+    }
+    with pytest.raises(Exception):
+        scrape.validate_entry(entry)
+
+
+# --- normalize_process ---------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "raw,expected",
+    [
+        ("Washed", "washed"),
+        ("Umytá", "washed"),
+        ("Natural", "natural"),
+        ("Prírodná", "natural"),
+        ("Honey", "honey"),
+        ("Pulped natural, 900-1050 masl", "honey"),
+        ("Semi-washed", "honey"),
+        ("Anaerobic fermentation", "anaerobic"),
+        ("Carbonic maceration", "carbonic-maceration"),
+        ("Giling Basah", "wet-hulled"),
+        ("Some experimental co-ferment", "other"),
+        (None, None),
+        ("", None),
+    ],
+)
+def test_normalize_process(raw, expected):
+    assert scrape.normalize_process(raw) == expected

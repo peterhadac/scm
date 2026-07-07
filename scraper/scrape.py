@@ -9,6 +9,7 @@ from datetime import date
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
+import jsonschema
 import yaml
 from bs4 import BeautifulSoup
 from openai import OpenAI
@@ -25,7 +26,15 @@ from crawl4ai.async_crawler_strategy import AsyncHTTPCrawlerStrategy
 ROOT = Path(__file__).resolve().parent.parent
 ROASTERS_PATH = ROOT / "roasters.yaml"
 PRODUCTS_PATH = ROOT / "data" / "products.yaml"
-COFFEES_PATH = ROOT / "_data" / "coffees.json"
+SCHEMA_PATH = ROOT / "data" / "products.schema.yaml"
+COUNTRIES_PATH = ROOT / "data" / "coffee_origins.yaml"
+
+# Bump whenever normalize_product's rules change in a way that would alter
+# the output for already-scraped pages — this forces process_roaster's
+# hash-gate to re-extract every existing entry once, even if the page's
+# content hasn't changed, since there's no cached raw LLM output to replay
+# against the new rules.
+SCHEMA_VERSION = 2
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -222,6 +231,61 @@ def save_products(products, path=PRODUCTS_PATH):
     path.write_text(yaml.safe_dump(products, allow_unicode=True, sort_keys=True) or "")
 
 
+def load_country_aliases(path=COUNTRIES_PATH):
+    """Flatten data/coffee_origins.yaml into a {lowercase alias: canonical name} map."""
+    data = yaml.safe_load(path.read_text()) or {}
+    aliases = {}
+    for canonical, alias_list in data.items():
+        for alias in alias_list:
+            aliases[alias.lower()] = canonical
+    return aliases
+
+
+COUNTRY_ALIASES = load_country_aliases()
+
+
+def load_schema(path=SCHEMA_PATH):
+    return yaml.safe_load(path.read_text())
+
+
+PRODUCT_SCHEMA = load_schema()
+
+
+def validate_entry(entry):
+    """Validate one products.yaml entry against data/products.schema.yaml.
+
+    A failure here means normalize_product produced a shape the schema
+    doesn't allow — a bug in this module, not bad website content — so it
+    raises rather than being caught and swallowed.
+    """
+    jsonschema.validate(entry, PRODUCT_SCHEMA)
+
+
+def normalize_origin(raw, name, aliases=None):
+    """Translate a stated origin to its canonical English country name.
+
+    Only falls back to scanning the product name when `raw` is empty —
+    trusts an LLM-stated origin as-is (translating known aliases), it never
+    cross-checks it against the name. Text that matches no known country is
+    kept verbatim rather than discarded (better than losing real data for a
+    producing country not yet in the list).
+    """
+    aliases = COUNTRY_ALIASES if aliases is None else aliases
+    if raw:
+        lowered = raw.lower()
+        for alias, canonical in aliases.items():
+            if alias in lowered:
+                return canonical
+        stripped = raw.strip()
+        return stripped or None
+    if name:
+        lowered = name.lower()
+        for alias, canonical in aliases.items():
+            if alias in lowered:
+                return canonical
+    return None
+
+
 def find_next_page_url(html, current_url):
     """Return the absolute URL of the "next" page of a product listing, or None.
 
@@ -376,20 +440,52 @@ def normalize_price(raw):
         return None
 
 
-def normalize_roast_type(raw):
-    """Bucket free-text roast info into 'filter' / 'espresso' / None.
+# Checked in this order — most specific first. "pulped natural" must hit the
+# honey bucket (mucilage left on during drying) before the plain "natural"
+# keyword would otherwise match it; "semi-washed" must hit honey before the
+# "washed" keyword matches it.
+PROCESS_KEYWORDS = (
+    ("anaerobic", ("anaerobic", "anaeróbn", "anaerobn")),
+    ("carbonic-maceration", ("carbonic maceration", "karbonick")),
+    ("wet-hulled", ("wet-hull", "wet hull", "giling basah")),
+    ("honey", ("honey", "medov", "pulped natural", "semi-washed", "semi washed")),
+    ("washed", ("washed", "umyt", "mokr")),
+    ("natural", ("natural", "prírodn", "prirodn", "suchá", "sucha", "dry process")),
+)
 
-    Mirrors normalize_price/parse_weight: the model's tool schema isn't
-    strict, so raw text (Slovak or English) needs coercing into the two
-    values the filter/espresso submenu pages compare against.
+
+def normalize_process(raw):
+    """Bucket free-text processing method into a controlled English vocabulary.
+
+    Returns 'other' for a stated-but-unrecognized method, and None only when
+    the site states nothing at all — process is the one field still allowed
+    to be null, since many roasters simply don't publish it.
     """
     if not raw:
         return None
     lowered = raw.strip().lower()
-    if "espresso" in lowered:
-        return "espresso"
-    if "filter" in lowered or "prekvapk" in lowered or "filtrovan" in lowered:
-        return "filter"
+    for canonical, keywords in PROCESS_KEYWORDS:
+        if any(keyword in lowered for keyword in keywords):
+            return canonical
+    return "other"
+
+
+def normalize_roast_type(raw, process_raw=None, name=None):
+    """Bucket free-text roast info into 'filter' / 'espresso' / None.
+
+    Tries `raw` (the model's own roast_type field) first, then falls back to
+    the raw `process` text, then the product name — e.g. `process: "filter
+    roast"` already implies roast_type even when the model left roast_type
+    itself blank.
+    """
+    for text in (raw, process_raw, name):
+        if not text:
+            continue
+        lowered = text.strip().lower()
+        if "espresso" in lowered:
+            return "espresso"
+        if "filter" in lowered or "prekvapk" in lowered or "filtrovan" in lowered:
+            return "filter"
     return None
 
 
@@ -459,31 +555,81 @@ def extract_product(client, url, markdown):
 
 
 def normalize_product(raw, url, today):
-    """Turn a raw Claude extraction into a products.yaml entry, or None if unusable."""
+    """Turn a raw Claude extraction into a products.yaml entry, or None if unusable.
+
+    Returns None only when there's no coffee here at all (Claude declined, or
+    the name reads as non-coffee/equipment) — same as before. Anything that
+    IS a coffee but is missing a required field (origin, roast_type, or a
+    tier's weight/price) is still returned, just as `status: incomplete` with
+    `missing_fields` listing what's missing, rather than being dropped.
+    """
     if not raw or not isinstance(raw, dict) or not raw.get("name") or not is_coffee(raw["name"]):
         return None
+
+    name = raw["name"]
     packaging = []
     for tier in raw.get("packaging") or []:
         if not isinstance(tier, dict):
             continue
         price = normalize_price(tier.get("price", ""))
-        if price is None:
+        if price is None or price <= 0:
             continue
-        weight_g = parse_weight(tier.get("weight") or "") or parse_weight(raw["name"])
+        weight_g = parse_weight(tier.get("weight") or "")
+        if weight_g is not None and weight_g <= 0:
+            weight_g = None
         packaging.append({"weight_g": weight_g, "price": price})
+
+    # A single-tier product often states its weight in the name rather than
+    # next to that one price ("Colombia Huila 200 g") — safe to fall back to
+    # the name there. A multi-tier product's weight must come from its own
+    # tier text; falling back to the name for every tier would silently give
+    # every tier the same weight.
+    if len(packaging) == 1 and packaging[0]["weight_g"] is None:
+        packaging[0]["weight_g"] = parse_weight(name)
+
     if not packaging:
         return None
-    return {
-        "name": raw["name"],
+
+    process = normalize_process(raw.get("process"))
+    roast_type = normalize_roast_type(raw.get("roast_type"), raw.get("process"), name)
+    origin = normalize_origin(raw.get("origin"), name)
+
+    weighted_tiers = [t for t in packaging if t["weight_g"] is not None]
+    distinct_weights = {t["weight_g"] for t in weighted_tiers}
+    distinct_prices = {t["price"] for t in weighted_tiers}
+    price_collision = len(distinct_weights) >= 2 and len(distinct_prices) == 1
+    # Separate bug signature: the model read each tier's weight number as its
+    # price (e.g. weight_g: 200, price: 200.0) — prices are distinct across
+    # tiers so price_collision above misses it.
+    weight_as_price = sum(1 for t in weighted_tiers if t["price"] == t["weight_g"]) >= 2
+
+    missing_fields = []
+    if origin is None:
+        missing_fields.append("origin")
+    if roast_type is None:
+        missing_fields.append("roast_type")
+    if any(t["weight_g"] is None for t in packaging):
+        missing_fields.append("weight_g")
+    if price_collision or weight_as_price:
+        missing_fields.append("price")
+
+    entry = {
+        "name": name,
         "url": url,
-        "origin": raw.get("origin") or None,
-        "process": raw.get("process") or None,
-        "roast_type": normalize_roast_type(raw.get("roast_type")),
-        "status": "ok",
+        "origin": origin,
+        "process": process,
+        "roast_type": roast_type,
         "last_seen": today,
         "page_hash": None,  # filled in by the caller once the page hash is known
         "packaging": packaging,
+        "schema_version": SCHEMA_VERSION,
     }
+    if missing_fields:
+        entry["status"] = "incomplete"
+        entry["missing_fields"] = missing_fields
+    else:
+        entry["status"] = "ok"
+    return entry
 
 
 async def process_roaster(crawler, client, roaster, existing_entries, today):
@@ -524,7 +670,19 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
             continue
 
         page_hash = hashlib.sha256(markdown.encode("utf-8")).hexdigest()
-        if prior and prior.get("page_hash") == page_hash and prior.get("status") in ("ok", "not_a_product"):
+        prior_status = prior.get("status") if prior else None
+        # An unchanged page skips re-extraction — unless the prior entry
+        # predates the current normalization rules (schema_version stale),
+        # in which case it's reprocessed once even though nothing on the
+        # page itself changed. not_a_product entries carry no schema_version
+        # and are unaffected by normalization changes, so they always gate.
+        hash_gate_ok = (
+            prior
+            and prior.get("page_hash") == page_hash
+            and prior_status in ("ok", "incomplete", "not_a_product")
+            and (prior_status == "not_a_product" or prior.get("schema_version") == SCHEMA_VERSION)
+        )
+        if hash_gate_ok:
             prior["last_seen"] = today
             kept.append(prior)
             continue
@@ -532,64 +690,33 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
         raw = extract_product(client, url, markdown)
         normalized = normalize_product(raw, url, today)
         if normalized is None:
-            if prior and prior.get("status") == "ok":
-                # A previously-good product declining extraction is more likely
-                # a transient hiccup than a real delisting-in-place — keep the
-                # known-good data rather than downgrading it.
+            if prior and prior.get("status") in ("ok", "incomplete"):
+                # A previously-good(-ish) product declining extraction is more
+                # likely a transient hiccup than a real delisting-in-place —
+                # keep the known data rather than downgrading it.
                 kept.append(prior)
             else:
                 # Genuinely not a product (nav/category link that slipped past
                 # discovery's filter, or a first-time unparseable page). Cache
                 # the hash so this URL isn't re-fetched and re-sent to Claude
                 # every single run until the page actually changes.
-                kept.append(
-                    {
-                        "url": url,
-                        "status": "not_a_product",
-                        "last_seen": today,
-                        "page_hash": page_hash,
-                    }
-                )
+                not_a_product_entry = {
+                    "url": url,
+                    "status": "not_a_product",
+                    "last_seen": today,
+                    "page_hash": page_hash,
+                }
+                validate_entry(not_a_product_entry)
+                kept.append(not_a_product_entry)
             continue
         normalized["page_hash"] = page_hash
+        validate_entry(normalized)
         kept.append(normalized)
 
     return kept, "ok"
 
 
-def flatten_to_coffees(products, roasters):
-    """Explode every product's packaging tiers into flat coffees.json rows."""
-    roaster_by_slug = {r["slug"]: r for r in roasters}
-    seen = set()
-    rows = []
-    for slug, entries in products.items():
-        roaster = roaster_by_slug.get(slug)
-        roaster_name = roaster["name"] if roaster else slug
-        for product in entries:
-            # "not_a_product" markers (declined nav/category links, cached so
-            # they aren't re-fetched every run) carry no packaging — skip them.
-            for tier in product.get("packaging") or []:
-                key = (product["url"], tier.get("weight_g"))
-                if key in seen:
-                    continue
-                seen.add(key)
-                rows.append(
-                    {
-                        "name": product["name"],
-                        "roaster": roaster_name,
-                        "origin": product.get("origin"),
-                        "process": product.get("process"),
-                        "roast_type": product.get("roast_type"),
-                        "price": tier["price"],
-                        "weight_g": tier.get("weight_g"),
-                        "url": product["url"],
-                        "last_seen": product["last_seen"],
-                    }
-                )
-    return rows
-
-
-async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PATH, coffees_path=COFFEES_PATH):
+async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PATH):
     client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=os.environ["OPENROUTER_API_KEY"])
     all_roasters = load_roasters(roasters_path)
     roasters = all_roasters
@@ -624,9 +751,6 @@ async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PAT
             statuses[roaster["name"]] = status
 
     save_products(products, products_path)
-    rows = flatten_to_coffees(products, all_roasters)
-    coffees_path.parent.mkdir(parents=True, exist_ok=True)
-    coffees_path.write_text(json.dumps(rows, indent=2, ensure_ascii=False) + "\n")
 
     print("scrape_status:")
     for name, status in statuses.items():

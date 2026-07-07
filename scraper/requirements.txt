@@ -2,3 +2,4 @@ crawl4ai==0.9.0
 beautifulsoup4
 openai
 pyyaml
+jsonschema

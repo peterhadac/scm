@@ -386,7 +386,16 @@ async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES):
             if not href:
                 continue
             href = href.split("#")[0]
-            if urlparse(href).netloc != page_domain:
+            parsed_href = urlparse(href)
+            # Explicit scheme check, not just relying on the netloc mismatch
+            # below to incidentally reject javascript:/data: URIs — a poisoned
+            # page's link (or a future crawl4ai internal-link change) should
+            # never let a non-http(s) scheme reach `discovered`, since this
+            # URL is stored verbatim in products.yaml and rendered as a
+            # clickable link on the site.
+            if parsed_href.scheme not in ("http", "https"):
+                continue
+            if parsed_href.netloc != page_domain:
                 continue
             if looks_like_product_link(href) and is_coffee(text):
                 discovered.add(href)

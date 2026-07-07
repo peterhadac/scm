@@ -534,6 +534,57 @@ async def test_discover_product_urls_collects_internal_links():
 
 
 @pytest.mark.asyncio
+async def test_discover_product_urls_rejects_dangerous_schemes():
+    # A poisoned page's link (or a future crawl4ai internal-link change)
+    # must never let a javascript:/data: URI reach `discovered` — it's stored
+    # verbatim in products.yaml and rendered as a clickable href on the site.
+    html = "<html><body>listing</body></html>" + "x" * 200
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": fake_result(
+                html=html,
+                links={
+                    "internal": [
+                        {"href": "https://x.sk/rwanda/", "text": "Rwanda"},
+                        {"href": "javascript:alert(1)", "text": "Kenya"},
+                        {"href": "data:text/html,<script>alert(1)</script>", "text": "Guatemala"},
+                    ]
+                },
+                url="https://x.sk/",
+            )
+        }
+    )
+    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/"})
+    assert status == "ok"
+    assert discovered == {"https://x.sk/rwanda/"}
+
+
+@pytest.mark.asyncio
+async def test_discover_product_urls_rejects_offdomain_link():
+    # An off-domain link (e.g. a phishing pivot injected into a poisoned
+    # roaster page) must be dropped even though it otherwise looks like a
+    # plausible product link.
+    html = "<html><body>listing</body></html>" + "x" * 200
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": fake_result(
+                html=html,
+                links={
+                    "internal": [
+                        {"href": "https://x.sk/rwanda/", "text": "Rwanda"},
+                        {"href": "https://evil-phish.example/kenya/", "text": "Kenya"},
+                    ]
+                },
+                url="https://x.sk/",
+            )
+        }
+    )
+    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/"})
+    assert status == "ok"
+    assert discovered == {"https://x.sk/rwanda/"}
+
+
+@pytest.mark.asyncio
 async def test_discover_product_urls_follows_pagination():
     long_text = "x" * 200
     page1 = fake_result(

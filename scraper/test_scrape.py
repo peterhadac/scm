@@ -283,6 +283,11 @@ def test_normalize_origin_none_when_nothing_matches():
     assert scrape.normalize_origin(None, "House Blend") is None
 
 
+def test_normalize_origin_none_for_whitespace_only_raw():
+    # A blank-but-truthy raw origin must not survive as "" (schema requires minLength 1).
+    assert scrape.normalize_origin("   ", "some name") is None
+
+
 # --- normalize_product --------------------------------------------------------
 
 
@@ -400,6 +405,86 @@ def test_normalize_product_ok_when_all_required_fields_present():
     assert result["status"] == "ok"
     assert "missing_fields" not in result
     assert result["schema_version"] == scrape.SCHEMA_VERSION
+
+
+# --- normalize_product: schema-invalid raw shapes (final-review regressions) --
+
+
+def test_normalize_product_drops_tier_with_zero_price():
+    # "0,00 €" parses to 0.0, not None — must be treated as no price, same as
+    # an unparseable price, or an ok-status 0.0 would fail the schema's
+    # exclusiveMinimum: 0.
+    raw = {"name": "Kenya AA", "packaging": [{"weight": "250 g", "price": "0,00 €"}]}
+    assert scrape.normalize_product(raw, "https://x.sk/kenya/", "2026-07-04") is None
+
+
+def test_normalize_product_nulls_zero_weight_and_marks_incomplete():
+    raw = {
+        "name": "Kenya AA",
+        "origin": "Kenya",
+        "roast_type": "filter",
+        "packaging": [{"weight": "0 g", "price": "12,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/kenya/", "2026-07-04")
+    assert result["packaging"][0]["weight_g"] is None
+    assert result["status"] == "incomplete"
+    assert "weight_g" in result["missing_fields"]
+    result["page_hash"] = "deadbeef"
+    scrape.validate_entry(result)
+
+
+def test_normalize_product_incomplete_when_origin_whitespace_only():
+    raw = {
+        "name": "House Blend",
+        "origin": "   ",
+        "roast_type": "filter",
+        "packaging": [{"weight": "250 g", "price": "12,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/house-blend/", "2026-07-04")
+    assert result["status"] == "incomplete"
+    assert "origin" in result["missing_fields"]
+    assert result["origin"] is None
+    result["page_hash"] = "deadbeef"
+    scrape.validate_entry(result)
+
+
+def test_normalize_product_incomplete_on_weight_read_as_price():
+    # Real bug seen in production data ("Kostarika BACH"): the model read each
+    # tier's weight number as its price. price_collision alone misses this
+    # because the prices ARE distinct across tiers (200.0, 500.0).
+    raw = {
+        "name": "Kostarika BACH",
+        "origin": "Costa Rica",
+        "roast_type": "filter",
+        "packaging": [
+            {"weight": "200 g", "price": "200 €"},
+            {"weight": "500 g", "price": "500 €"},
+        ],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/kostarika-bach/", "2026-07-04")
+    assert result["status"] == "incomplete"
+    assert "price" in result["missing_fields"]
+    assert len(result["packaging"]) == 2
+    result["page_hash"] = "deadbeef"
+    scrape.validate_entry(result)
+
+
+def test_normalize_product_ok_does_not_false_positive_on_weight_as_price():
+    # Legitimate prices that don't equal their own tier's weight must not trip
+    # the new weight_as_price signal.
+    raw = {
+        "name": "Rwanda Kigali",
+        "origin": "Rwanda",
+        "roast_type": "filter",
+        "packaging": [
+            {"weight": "250 g", "price": "12,50 €"},
+            {"weight": "1000 g", "price": "40,00 €"},
+        ],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/rwanda/", "2026-07-04")
+    assert result["status"] == "ok"
+    result["page_hash"] = "deadbeef"
+    scrape.validate_entry(result)
 
 
 # --- extract_product (mocked OpenRouter/OpenAI client) -----------------------

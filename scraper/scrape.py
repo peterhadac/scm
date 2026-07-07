@@ -276,7 +276,8 @@ def normalize_origin(raw, name, aliases=None):
         for alias, canonical in aliases.items():
             if alias in lowered:
                 return canonical
-        return raw.strip()
+        stripped = raw.strip()
+        return stripped or None
     if name:
         lowered = name.lower()
         for alias, canonical in aliases.items():
@@ -571,9 +572,11 @@ def normalize_product(raw, url, today):
         if not isinstance(tier, dict):
             continue
         price = normalize_price(tier.get("price", ""))
-        if price is None:
+        if price is None or price <= 0:
             continue
         weight_g = parse_weight(tier.get("weight") or "")
+        if weight_g is not None and weight_g <= 0:
+            weight_g = None
         packaging.append({"weight_g": weight_g, "price": price})
 
     # A single-tier product often states its weight in the name rather than
@@ -595,6 +598,10 @@ def normalize_product(raw, url, today):
     distinct_weights = {t["weight_g"] for t in weighted_tiers}
     distinct_prices = {t["price"] for t in weighted_tiers}
     price_collision = len(distinct_weights) >= 2 and len(distinct_prices) == 1
+    # Separate bug signature: the model read each tier's weight number as its
+    # price (e.g. weight_g: 200, price: 200.0) — prices are distinct across
+    # tiers so price_collision above misses it.
+    weight_as_price = sum(1 for t in weighted_tiers if t["price"] == t["weight_g"]) >= 2
 
     missing_fields = []
     if origin is None:
@@ -603,7 +610,7 @@ def normalize_product(raw, url, today):
         missing_fields.append("roast_type")
     if any(t["weight_g"] is None for t in packaging):
         missing_fields.append("weight_g")
-    if price_collision:
+    if price_collision or weight_as_price:
         missing_fields.append("price")
 
     entry = {

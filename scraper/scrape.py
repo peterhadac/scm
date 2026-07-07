@@ -361,7 +361,7 @@ async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES):
     couldn't be read; ``status`` mirrors the roaster-level statuses this
     pipeline used before it went per-product ("ok" / "failed" / "needs_js").
     """
-    url = roaster["url"]
+    url = roaster["scrape_url"]
     seen_pages = set()
     discovered = set()
     first_result = None

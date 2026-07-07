@@ -528,7 +528,7 @@ async def test_discover_product_urls_collects_internal_links():
             )
         }
     )
-    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/"})
+    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/", "scrape_url": "https://x.sk/"})
     assert status == "ok"
     assert discovered == {"https://x.sk/rwanda/"}  # /kosik/ filtered out
 
@@ -554,7 +554,7 @@ async def test_discover_product_urls_rejects_dangerous_schemes():
             )
         }
     )
-    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/"})
+    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/", "scrape_url": "https://x.sk/"})
     assert status == "ok"
     assert discovered == {"https://x.sk/rwanda/"}
 
@@ -579,7 +579,7 @@ async def test_discover_product_urls_rejects_offdomain_link():
             )
         }
     )
-    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/"})
+    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/", "scrape_url": "https://x.sk/"})
     assert status == "ok"
     assert discovered == {"https://x.sk/rwanda/"}
 
@@ -598,7 +598,7 @@ async def test_discover_product_urls_follows_pagination():
         url="https://x.sk/shop?page=2",
     )
     crawler = FakeCrawler({"https://x.sk/shop": page1, "https://x.sk/shop?page=2": page2})
-    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/shop"})
+    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/shop", "scrape_url": "https://x.sk/shop"})
     assert status == "ok"
     assert discovered == {"https://x.sk/coffee-a/", "https://x.sk/coffee-b/"}
 
@@ -606,7 +606,7 @@ async def test_discover_product_urls_follows_pagination():
 @pytest.mark.asyncio
 async def test_discover_product_urls_failed_when_first_page_unreachable():
     crawler = FakeCrawler({})  # no responses -> fake_result(success=False)
-    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/"})
+    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/", "scrape_url": "https://x.sk/"})
     assert discovered is None
     assert status == "failed"
 
@@ -614,7 +614,7 @@ async def test_discover_product_urls_failed_when_first_page_unreachable():
 @pytest.mark.asyncio
 async def test_discover_product_urls_needs_js_when_text_too_short():
     crawler = FakeCrawler({"https://x.sk/": fake_result(html="<div>hi</div>")})
-    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/"})
+    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/", "scrape_url": "https://x.sk/"})
     assert discovered is None
     assert status == "needs_js"
 
@@ -622,7 +622,7 @@ async def test_discover_product_urls_needs_js_when_text_too_short():
 # --- process_roaster (async, offline via FakeCrawler) ------------------------
 
 
-ROASTER = {"name": "Test Roastery", "slug": "test-roastery", "url": "https://x.sk/"}
+ROASTER = {"name": "Test Roastery", "slug": "test-roastery", "url": "https://x.sk/", "scrape_url": "https://x.sk/"}
 LONG_TEXT = "x" * 200
 
 

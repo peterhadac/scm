@@ -132,6 +132,80 @@ def test_parse_weight(text, expected):
     assert scrape.parse_weight(text) == expected
 
 
+# --- extract_woocommerce_variations -------------------------------------------
+
+
+WOO_VARIATIONS_HTML = (
+    '<form class="variations_form cart" data-product_variations="'
+    "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;1000-g&quot;},"
+    "&quot;display_price&quot;:34,&quot;display_regular_price&quot;:34},"
+    "{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;},"
+    "&quot;display_price&quot;:11,&quot;display_regular_price&quot;:11}]"
+    '"></form>'
+)
+
+
+def test_extract_woocommerce_variations_parses_weight_price_pairs():
+    raw_json, tiers = scrape.extract_woocommerce_variations(WOO_VARIATIONS_HTML)
+    assert raw_json  # non-empty, used for hashing
+    assert tiers == [
+        {"weight_g": 1000, "price": 34.0},
+        {"weight_g": 250, "price": 11.0},
+    ]
+
+
+def test_extract_woocommerce_variations_absent_returns_empty():
+    raw_json, tiers = scrape.extract_woocommerce_variations("<html><body>no form here</body></html>")
+    assert raw_json == ""
+    assert tiers == []
+
+
+def test_extract_woocommerce_variations_malformed_json_returns_raw_and_empty_tiers():
+    html = '<form data-product_variations="not valid json"></form>'
+    raw_json, tiers = scrape.extract_woocommerce_variations(html)
+    assert raw_json == "not valid json"
+    assert tiers == []
+
+
+def test_extract_woocommerce_variations_dedupes_same_weight_first_wins():
+    # Same weight, different non-weight variant axis (e.g. roast type) —
+    # keep only the first-seen price for that weight rather than a duplicate tier.
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;},"
+        "&quot;display_price&quot;:11,&quot;display_regular_price&quot;:11},"
+        "{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;},"
+        "&quot;display_price&quot;:13,&quot;display_regular_price&quot;:13}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == [{"weight_g": 250, "price": 11.0}]
+
+
+def test_extract_woocommerce_variations_skips_unparseable_weight():
+    # No "hmotnost" (weight) attribute key on this variation at all.
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_sposob-prazenia&quot;:&quot;espresso&quot;},"
+        "&quot;display_price&quot;:11}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == []
+
+
+def test_extract_woocommerce_variations_skips_zero_and_missing_price():
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;},"
+        "&quot;display_price&quot;:0},"
+        "{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;1000-g&quot;}}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == []
+
+
 # --- is_coffee (non-coffee filtering) ---------------------------------------
 
 

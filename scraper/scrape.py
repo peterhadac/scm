@@ -353,6 +353,55 @@ def visible_html_text_length(html):
     return len(soup.get_text(strip=True))
 
 
+def extract_woocommerce_variations(html):
+    """Parse a WooCommerce variable-product page's `data-product_variations` JSON.
+
+    WooCommerce embeds every variation's price in the initial page load (an
+    HTML attribute swapped into the visible price by on-page JS when a
+    shopper picks a weight) — no browser rendering needed, crawl4ai's plain
+    HTTP fetch already has it. Markdown conversion drops non-visible
+    attributes though, so this reads the raw HTML directly instead of
+    relying on the LLM to read a rendered price, which only ever shows the
+    currently-selected variant.
+
+    Returns (raw_json, tiers): `raw_json` is the attribute's exact string
+    value (used by the caller to fold into the page hash so a price-only
+    change still busts the cache), "" if this isn't a WooCommerce variable
+    product page. `tiers` is a list of {"weight_g": int, "price": float},
+    deduped by weight_g (first-seen wins — ponytail: a second variant axis,
+    e.g. roast type, sharing a weight would otherwise produce duplicate
+    tiers; revisit if a roaster's variations legitimately need >1 axis).
+    """
+    soup = BeautifulSoup(html or "", "html.parser")
+    form = soup.find(attrs={"data-product_variations": True})
+    if not form:
+        return "", []
+    raw_json = form["data-product_variations"]
+    try:
+        variations = json.loads(raw_json)
+    except (ValueError, TypeError):
+        return raw_json, []
+
+    tiers = []
+    seen_weights = set()
+    for variation in variations:
+        if not isinstance(variation, dict):
+            continue
+        attributes = variation.get("attributes") or {}
+        weight_slug = next(
+            (v for k, v in attributes.items() if "hmotnost" in k.lower()), None
+        )
+        weight_g = parse_weight((weight_slug or "").replace("-", " "))
+        price = variation.get("display_price")
+        if weight_g is None or not isinstance(price, (int, float)) or price <= 0:
+            continue
+        if weight_g in seen_weights:
+            continue
+        seen_weights.add(weight_g)
+        tiers.append({"weight_g": weight_g, "price": float(price)})
+    return raw_json, tiers
+
+
 async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES):
     """Crawl a roaster's listing (following pagination) and return (urls, status).
 

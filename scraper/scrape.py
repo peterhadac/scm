@@ -42,7 +42,7 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
 # against the new rules.
-SCHEMA_VERSION = 13
+SCHEMA_VERSION = 14
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -839,6 +839,32 @@ def extract_woocommerce_roast_type(html):
     return normalize_roast_type(cell.get_text(", "))
 
 
+def extract_woocommerce_weight(html):
+    """Parse a WooCommerce product's built-in core "Weight" shipping field.
+
+    Unlike the origin/roast-type attributes (custom taxonomies, so their
+    slug varies per roaster's setup), WooCommerce's core Weight field
+    always renders with the exact class
+    `woocommerce-product-attributes-item--weight` regardless of roaster —
+    a fixed convention, not a naming choice. Verified against a real page
+    (a "5x12g single serve" product whose own core Weight field reads
+    "0,06 kg" = 60g, matching exactly).
+
+    Only meaningful as a single-tier fallback: a multi-tier variable
+    product doesn't have one overall weight, so the caller should only use
+    this when there's exactly one packaging tier missing its weight.
+    Returns grams, or None if the field is absent or unparseable.
+    """
+    soup = BeautifulSoup(html or "", "html.parser")
+    row = soup.find("tr", class_=re.compile(r"woocommerce-product-attributes-item--weight\b"))
+    if not row:
+        return None
+    cell = row.find("td")
+    if not cell:
+        return None
+    return parse_weight(cell.get_text())
+
+
 def parse_weight(text):
     """Extract a package weight in grams from free text (usually the product name).
 
@@ -912,6 +938,7 @@ def normalize_product(
     roast_type_hint=None,
     origin_hint=None,
     roast_type_attribute_hint=None,
+    weight_hint=None,
 ):
     """Turn a raw Claude extraction into a products.yaml entry, or None if unusable.
 
@@ -940,6 +967,11 @@ def normalize_product(
     reasoning as origin_hint. `roast_type_hint` (the discovery-category
     hint) remains the last resort inside `normalize_roast_type()` for pages
     with neither this attribute nor any stated text.
+
+    `weight_hint`, from `extract_woocommerce_weight()`, is a last-resort
+    fallback used only for a single packaging tier whose weight is still
+    unknown after the name fallback — a multi-tier product's per-tier
+    weights must come from their own tier text, never this one overall value.
     """
     if not raw or not isinstance(raw, dict) or not raw.get("name") or not is_coffee(raw["name"]):
         return None
@@ -966,7 +998,7 @@ def normalize_product(
         # tier text; falling back to the name for every tier would silently give
         # every tier the same weight.
         if len(packaging) == 1 and packaging[0]["weight_g"] is None:
-            packaging[0]["weight_g"] = parse_weight(name)
+            packaging[0]["weight_g"] = parse_weight(name) or weight_hint
 
     if not packaging:
         return None
@@ -1099,6 +1131,7 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
         raw = extract_product(client, url, markdown)
         origin_hint = extract_woocommerce_origin(result.html)
         roast_type_attribute_hint = extract_woocommerce_roast_type(result.html)
+        weight_hint = extract_woocommerce_weight(result.html)
         normalized = normalize_product(
             raw,
             url,
@@ -1107,6 +1140,7 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
             roast_type_hints.get(url),
             origin_hint,
             roast_type_attribute_hint,
+            weight_hint,
         )
         if normalized is None:
             # A bare decline (Claude returned nothing, or no name at all) is

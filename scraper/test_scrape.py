@@ -493,6 +493,30 @@ def test_extract_woocommerce_roast_type_absent_returns_none():
     assert scrape.extract_woocommerce_roast_type("<html><body>nothing here</body></html>") is None
 
 
+# --- extract_woocommerce_weight -------------------------------------------------
+
+
+def test_extract_woocommerce_weight_parses_core_field():
+    html = (
+        '<tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--weight">'
+        "<td>0,06 kg</td></tr>"
+    )
+    assert scrape.extract_woocommerce_weight(html) == 60
+
+
+def test_extract_woocommerce_weight_ignores_custom_attribute_rows():
+    # A custom attribute_pa_* row must not be mistaken for the core field.
+    html = (
+        '<tr class="woocommerce-product-attributes-item--attribute_pa_hmotnost">'
+        "<td>250 g</td></tr>"
+    )
+    assert scrape.extract_woocommerce_weight(html) is None
+
+
+def test_extract_woocommerce_weight_absent_returns_none():
+    assert scrape.extract_woocommerce_weight("<html><body>nothing here</body></html>") is None
+
+
 def test_normalize_roast_type_none_when_unstated():
     assert scrape.normalize_roast_type(None) is None
     assert scrape.normalize_roast_type("") is None
@@ -742,6 +766,33 @@ def test_normalize_product_roast_type_attribute_hint_wins_over_llm_guess():
     )
     assert result["status"] == "ok"
     assert result["roast_type"] == "filter"
+
+
+def test_normalize_product_weight_hint_fills_single_tier_gap():
+    # Neither the tier text nor the name states a weight — the WooCommerce
+    # core Weight field fills it in as a last resort.
+    raw = {
+        "name": "SweetDrip x Kenya",
+        "origin": "Kenya",
+        "roast_type": "Filter",
+        "packaging": [{"price": "9,99 €", "weight": None}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/sweetdrip/", "2026-07-08", weight_hint=60)
+    assert result["status"] == "ok"
+    assert result["packaging"] == [{"weight_g": 60, "price": 9.99}]
+
+
+def test_normalize_product_name_weight_wins_over_weight_hint():
+    # An explicit weight in the name is more specific than the generic
+    # core-field fallback — it must not be overridden.
+    raw = {
+        "name": "Colombia Huila 200 g",
+        "origin": "Colombia",
+        "roast_type": "Filter",
+        "packaging": [{"price": "14,50 €", "weight": None}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/colombia/", "2026-07-08", weight_hint=999)
+    assert result["packaging"] == [{"weight_g": 200, "price": 14.50}]
 
 
 def test_normalize_product_variation_tiers_still_requires_a_name():

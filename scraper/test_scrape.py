@@ -319,6 +319,7 @@ def test_extract_woocommerce_variations_skips_boolean_price():
         "House Espresso Blend",
         "Kenya AA",
         "Kapsule Guatemala",  # capsules ARE coffee — must be kept
+        "Ethiopia Cupping Score 87",  # "cupping" must not collide with "cup"
     ],
 )
 def test_is_coffee_keeps_real_coffees(name):
@@ -340,6 +341,7 @@ def test_is_coffee_keeps_real_coffees(name):
         "Brandované tričko",
         "Degustačný balíček, Spoznaj krajinu kávy",
         "Darčekový balíček pre kávičkárov",
+        "Espresso cup 60ml – Grey",
     ],
 )
 def test_is_coffee_drops_non_coffee(name):

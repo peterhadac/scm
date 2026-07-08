@@ -143,6 +143,7 @@ NON_PRODUCT_PATH_SEGMENTS = (
     "faq",
     "o-nas",
     "about",
+    "sluzby",
 )
 
 DISCOVERY_CONFIG = CrawlerRunConfig(prefetch=True, cache_mode=CacheMode.BYPASS)
@@ -448,7 +449,13 @@ async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES):
             text = link.get("text") or ""
             if not href:
                 continue
-            href = href.split("#")[0]
+            # Strip fragment and query string — WooCommerce's filter widgets,
+            # sort links, and "add to cart" actions all attach query params
+            # to the listing page itself (e.g. "?filter_hmotnost=250-g",
+            # "?add-to-cart=1909"), which would otherwise dedup as distinct
+            # "discovered" URLs and get needlessly re-fetched/re-classified
+            # as not_a_product every single run.
+            href = href.split("#")[0].split("?")[0]
             parsed_href = urlparse(href)
             # Explicit scheme check, not just relying on the netloc mismatch
             # below to incidentally reject javascript:/data: URIs — a poisoned

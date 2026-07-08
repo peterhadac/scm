@@ -300,6 +300,7 @@ def test_is_coffee_drops_non_coffee(name):
         "https://x.sk/kontakt/",
         "https://x.sk/vop/",
         "https://x.sk/b2b/",
+        "https://x.sk/sluzby/",
     ],
 )
 def test_looks_like_product_link_rejects_site_plumbing(href):
@@ -688,6 +689,36 @@ async def test_discover_product_urls_collects_internal_links():
     discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/", "scrape_url": "https://x.sk/"})
     assert status == "ok"
     assert discovered == {"https://x.sk/rwanda/"}  # /kosik/ filtered out
+
+
+@pytest.mark.asyncio
+async def test_discover_product_urls_strips_query_string_before_dedup():
+    # WooCommerce filter-widget/sort/add-to-cart links attach query params to
+    # the listing page itself — without stripping them, each variant would be
+    # discovered as a distinct URL and re-fetched/re-classified every run.
+    html = "<html><body>listing</body></html>" + "x" * 200
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/shop": fake_result(
+                html=html,
+                links={
+                    "internal": [
+                        {"href": "https://x.sk/shop?filter_hmotnost=250-g", "text": "250g"},
+                        {"href": "https://x.sk/shop?add-to-cart=1909", "text": "Add"},
+                        {"href": "https://x.sk/rwanda/?utm_source=x", "text": "Rwanda"},
+                    ]
+                },
+                url="https://x.sk/shop",
+            )
+        }
+    )
+    discovered, status = await scrape.discover_product_urls(
+        crawler, {"url": "https://x.sk/shop", "scrape_url": "https://x.sk/shop"}
+    )
+    assert status == "ok"
+    # Both query-string variants of the listing page collapse to the one bare
+    # URL, and the tracked product link loses its query string too.
+    assert discovered == {"https://x.sk/shop", "https://x.sk/rwanda/"}
 
 
 @pytest.mark.asyncio

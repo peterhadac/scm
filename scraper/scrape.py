@@ -42,7 +42,7 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
 # against the new rules.
-SCHEMA_VERSION = 10
+SCHEMA_VERSION = 11
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -749,6 +749,32 @@ def normalize_roast_type(raw, process_raw=None, name=None, category_hint=None):
     return None
 
 
+# WooCommerce attribute-key substring for a coffee's recommended preparation
+# method ("odporúčaný spôsob prípravy") — deliberately NOT "prazenia" alone,
+# which also matches the unrelated "stupeň praženia" (roast degree: light/
+# medium/dark) attribute.
+ROAST_TYPE_ATTRIBUTE_KEYWORD = "sposob-pripravy"
+
+
+def extract_woocommerce_roast_type(html):
+    """Parse a WooCommerce product's "recommended preparation method" attribute row.
+
+    Same rationale and technique as `extract_woocommerce_origin()`: the LLM
+    prompt hint for a multi-method list ("Espresso, Moka, Pour-over") isn't
+    reliable on every call, so this reads the attribute row directly and
+    reuses `normalize_roast_type()`'s keyword matching on its text. Returns
+    None if no such attribute row is found or it names neither method.
+    """
+    soup = BeautifulSoup(html or "", "html.parser")
+    row = soup.find("tr", class_=re.compile(r"attribute_pa_[a-z-]*" + ROAST_TYPE_ATTRIBUTE_KEYWORD, re.I))
+    if not row:
+        return None
+    cell = row.find("td")
+    if not cell:
+        return None
+    return normalize_roast_type(cell.get_text(", "))
+
+
 def parse_weight(text):
     """Extract a package weight in grams from free text (usually the product name).
 
@@ -814,7 +840,15 @@ def extract_product(client, url, markdown):
     return None
 
 
-def normalize_product(raw, url, today, variation_tiers=None, roast_type_hint=None, origin_hint=None):
+def normalize_product(
+    raw,
+    url,
+    today,
+    variation_tiers=None,
+    roast_type_hint=None,
+    origin_hint=None,
+    roast_type_attribute_hint=None,
+):
     """Turn a raw Claude extraction into a products.yaml entry, or None if unusable.
 
     Returns None only when there's no coffee here at all (Claude declined, or
@@ -836,6 +870,12 @@ def normalize_product(raw, url, today, variation_tiers=None, roast_type_hint=Non
     LLM's own origin guess when present — same reasoning as variation_tiers:
     a WooCommerce attribute row beats an LLM inconsistently resolving a
     multi-country list.
+
+    `roast_type_attribute_hint`, from `extract_woocommerce_roast_type()`, is
+    trusted over the LLM's own roast_type guess when present — same
+    reasoning as origin_hint. `roast_type_hint` (the discovery-category
+    hint) remains the last resort inside `normalize_roast_type()` for pages
+    with neither this attribute nor any stated text.
     """
     if not raw or not isinstance(raw, dict) or not raw.get("name") or not is_coffee(raw["name"]):
         return None
@@ -868,7 +908,7 @@ def normalize_product(raw, url, today, variation_tiers=None, roast_type_hint=Non
         return None
 
     process = normalize_process(raw.get("process"))
-    roast_type = normalize_roast_type(
+    roast_type = roast_type_attribute_hint or normalize_roast_type(
         raw.get("roast_type"), raw.get("process"), name, roast_type_hint
     )
     origin = origin_hint or normalize_origin(raw.get("origin"), name)
@@ -985,8 +1025,15 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
 
         raw = extract_product(client, url, markdown)
         origin_hint = extract_woocommerce_origin(result.html)
+        roast_type_attribute_hint = extract_woocommerce_roast_type(result.html)
         normalized = normalize_product(
-            raw, url, today, variation_tiers, roast_type_hints.get(url), origin_hint
+            raw,
+            url,
+            today,
+            variation_tiers,
+            roast_type_hints.get(url),
+            origin_hint,
+            roast_type_attribute_hint,
         )
         if normalized is None:
             # A bare decline (Claude returned nothing, or no name at all) is

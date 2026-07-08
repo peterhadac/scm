@@ -458,6 +458,40 @@ def test_normalize_roast_type_page_text_wins_over_category_hint():
     assert scrape.normalize_roast_type("Espresso", None, None, category_hint="filter") == "espresso"
 
 
+# --- extract_woocommerce_roast_type --------------------------------------------
+
+
+def test_extract_woocommerce_roast_type_espresso_wins_in_multi_method_list():
+    html = (
+        '<tr class="woocommerce-product-attributes-item--attribute_pa_odporucany-sposob-pripravy">'
+        '<td><span class="wd-term-name">Espresso</span><span class="wd-term-sep">, </span>'
+        '<span class="wd-term-name">Zalievaná</span></td></tr>'
+    )
+    assert scrape.extract_woocommerce_roast_type(html) == "espresso"
+
+
+def test_extract_woocommerce_roast_type_filter_only():
+    html = (
+        '<tr class="woocommerce-product-attributes-item--attribute_pa_odporucany-sposob-pripravy">'
+        '<td><span class="wd-term-name">Zalievaná</span></td></tr>'
+    )
+    assert scrape.extract_woocommerce_roast_type(html) == "filter"
+
+
+def test_extract_woocommerce_roast_type_ignores_unrelated_roast_degree_attribute():
+    # "Stupeň praženia" (roast degree: light/medium/dark) is a DIFFERENT
+    # attribute and must not be mistaken for the prep-method one.
+    html = (
+        '<tr class="woocommerce-product-attributes-item--attribute_pa_stupen-prazenia">'
+        '<td><span class="wd-term-name">Tmavé</span></td></tr>'
+    )
+    assert scrape.extract_woocommerce_roast_type(html) is None
+
+
+def test_extract_woocommerce_roast_type_absent_returns_none():
+    assert scrape.extract_woocommerce_roast_type("<html><body>nothing here</body></html>") is None
+
+
 def test_normalize_roast_type_none_when_unstated():
     assert scrape.normalize_roast_type(None) is None
     assert scrape.normalize_roast_type("") is None
@@ -678,6 +712,21 @@ def test_normalize_product_origin_hint_wins_over_llm_guess():
     )
     assert result["status"] == "ok"
     assert result["origin"] == "Blend"
+
+
+def test_normalize_product_roast_type_attribute_hint_wins_over_llm_guess():
+    # LLM left roast_type null — the deterministic WooCommerce attribute-row
+    # hint fills it in, overriding whatever the LLM would otherwise guess.
+    raw = {
+        "name": "Kolumbia Excelso",
+        "origin": "Colombia",
+        "packaging": [{"weight": "250 g", "price": "10,00 €"}],
+    }
+    result = scrape.normalize_product(
+        raw, "https://x.sk/kolumbia/", "2026-07-08", roast_type_attribute_hint="filter"
+    )
+    assert result["status"] == "ok"
+    assert result["roast_type"] == "filter"
 
 
 def test_normalize_product_variation_tiers_still_requires_a_name():

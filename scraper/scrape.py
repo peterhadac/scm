@@ -29,6 +29,12 @@ PRODUCTS_PATH = ROOT / "data" / "products.yaml"
 SCHEMA_PATH = ROOT / "data" / "products.schema.yaml"
 COUNTRIES_PATH = ROOT / "data" / "coffee_origins.yaml"
 
+# WooCommerce attribute-key substrings roasters use for a coffee's package
+# weight ("hmotnosť" and "váha" are both plain Slovak for "weight" — sites
+# pick either taxonomy name; ponytail: extend if a roaster uses yet another
+# term, e.g. a non-Slovak site).
+WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha")
+
 # Bump whenever normalize_product's rules change in a way that would alter
 # the output for already-scraped pages — this forces process_roaster's
 # hash-gate to re-extract every existing entry once, even if the page's
@@ -421,7 +427,12 @@ def extract_woocommerce_variations(html):
         try:
             attributes = variation.get("attributes") or {}
             weight_slug = next(
-                (v for k, v in attributes.items() if "hmotnost" in k.lower()), None
+                (
+                    v
+                    for k, v in attributes.items()
+                    if any(keyword in k.lower() for keyword in WEIGHT_ATTRIBUTE_KEYWORDS)
+                ),
+                None,
             )
             weight_g = parse_weight((weight_slug or "").replace("-", " "))
             price = variation.get("display_price")

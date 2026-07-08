@@ -154,6 +154,25 @@ def test_extract_woocommerce_variations_parses_weight_price_pairs():
     ]
 
 
+def test_extract_woocommerce_variations_recognizes_vaha_weight_slug():
+    # casa-del-caffe.sk uses "attribute_pa_vaha-balenia" ("package weight")
+    # instead of Trip Coffee Roasters' "attribute_pa_hmotnost" — both mean
+    # "weight" in Slovak, sites pick either taxonomy name.
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_vaha-balenia&quot;:&quot;500g&quot;},"
+        "&quot;display_price&quot;:16.9},"
+        "{&quot;attributes&quot;:{&quot;attribute_pa_vaha-balenia&quot;:&quot;1000g&quot;},"
+        "&quot;display_price&quot;:29.9}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == [
+        {"weight_g": 500, "price": 16.9},
+        {"weight_g": 1000, "price": 29.9},
+    ]
+
+
 def test_extract_woocommerce_variations_absent_returns_empty():
     raw_json, tiers = scrape.extract_woocommerce_variations("<html><body>no form here</body></html>")
     assert raw_json == ""

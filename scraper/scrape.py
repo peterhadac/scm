@@ -626,7 +626,7 @@ def extract_product(client, url, markdown):
     return None
 
 
-def normalize_product(raw, url, today):
+def normalize_product(raw, url, today, variation_tiers=None):
     """Turn a raw Claude extraction into a products.yaml entry, or None if unusable.
 
     Returns None only when there's no coffee here at all (Claude declined, or
@@ -634,30 +634,38 @@ def normalize_product(raw, url, today):
     IS a coffee but is missing a required field (origin, roast_type, or a
     tier's weight/price) is still returned, just as `status: incomplete` with
     `missing_fields` listing what's missing, rather than being dropped.
+
+    `variation_tiers`, when non-empty, comes from
+    `extract_woocommerce_variations()` and is trusted over the LLM's own
+    packaging guess — deterministic data straight from the page beats an LLM
+    reading a price off markdown that only shows the selected variant.
     """
     if not raw or not isinstance(raw, dict) or not raw.get("name") or not is_coffee(raw["name"]):
         return None
 
     name = raw["name"]
-    packaging = []
-    for tier in raw.get("packaging") or []:
-        if not isinstance(tier, dict):
-            continue
-        price = normalize_price(tier.get("price", ""))
-        if price is None or price <= 0:
-            continue
-        weight_g = parse_weight(tier.get("weight") or "")
-        if weight_g is not None and weight_g <= 0:
-            weight_g = None
-        packaging.append({"weight_g": weight_g, "price": price})
+    if variation_tiers:
+        packaging = list(variation_tiers)
+    else:
+        packaging = []
+        for tier in raw.get("packaging") or []:
+            if not isinstance(tier, dict):
+                continue
+            price = normalize_price(tier.get("price", ""))
+            if price is None or price <= 0:
+                continue
+            weight_g = parse_weight(tier.get("weight") or "")
+            if weight_g is not None and weight_g <= 0:
+                weight_g = None
+            packaging.append({"weight_g": weight_g, "price": price})
 
-    # A single-tier product often states its weight in the name rather than
-    # next to that one price ("Colombia Huila 200 g") — safe to fall back to
-    # the name there. A multi-tier product's weight must come from its own
-    # tier text; falling back to the name for every tier would silently give
-    # every tier the same weight.
-    if len(packaging) == 1 and packaging[0]["weight_g"] is None:
-        packaging[0]["weight_g"] = parse_weight(name)
+        # A single-tier product often states its weight in the name rather than
+        # next to that one price ("Colombia Huila 200 g") — safe to fall back to
+        # the name there. A multi-tier product's weight must come from its own
+        # tier text; falling back to the name for every tier would silently give
+        # every tier the same weight.
+        if len(packaging) == 1 and packaging[0]["weight_g"] is None:
+            packaging[0]["weight_g"] = parse_weight(name)
 
     if not packaging:
         return None

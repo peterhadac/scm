@@ -463,6 +463,31 @@ def test_normalize_product_none_when_claude_declined():
     assert scrape.normalize_product(None, "https://x.sk/kava/", "2026-07-04") is None
 
 
+def test_normalize_product_uses_variation_tiers_when_provided():
+    # LLM-guessed packaging is deliberately wrong here — variation_tiers,
+    # sourced from WooCommerce's own JSON, must win.
+    raw = {
+        "name": "Mexico Santa Cruz",
+        "origin": "Mexico",
+        "process": "Washed",
+        "roast_type": "Espresso",
+        "packaging": [{"weight": "1 g", "price": "99,00 €"}],
+    }
+    tiers = [{"weight_g": 1000, "price": 34.0}, {"weight_g": 250, "price": 11.0}]
+    result = scrape.normalize_product(raw, "https://x.sk/mexico/", "2026-07-08", variation_tiers=tiers)
+    assert result["status"] == "ok"
+    assert result["packaging"] == tiers
+
+
+def test_normalize_product_variation_tiers_still_requires_a_name():
+    # variation_tiers alone doesn't make a page a product — Claude declining
+    # (raw=None) or a non-coffee name must still return None.
+    tiers = [{"weight_g": 250, "price": 11.0}]
+    assert scrape.normalize_product(None, "https://x.sk/mexico/", "2026-07-08", variation_tiers=tiers) is None
+    raw = {"name": "Darčeková poukážka", "packaging": []}
+    assert scrape.normalize_product(raw, "https://x.sk/gift/", "2026-07-08", variation_tiers=tiers) is None
+
+
 # --- normalize_product: incomplete status ------------------------------------
 
 

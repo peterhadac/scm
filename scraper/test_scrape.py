@@ -215,6 +215,18 @@ def test_extract_woocommerce_variations_non_list_json_returns_raw_and_empty_tier
     assert tiers == []
 
 
+def test_extract_woocommerce_variations_skips_non_dict_attributes():
+    # A variation whose "attributes" value isn't an object must be skipped,
+    # not raise, when .items() would otherwise be called on it.
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:&quot;x&quot;,&quot;display_price&quot;:11}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == []
+
+
 # --- is_coffee (non-coffee filtering) ---------------------------------------
 
 

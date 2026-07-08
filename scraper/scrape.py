@@ -390,6 +390,8 @@ def extract_woocommerce_variations(html):
         if not isinstance(variation, dict):
             continue
         attributes = variation.get("attributes") or {}
+        if not isinstance(attributes, dict):
+            continue
         weight_slug = next(
             (v for k, v in attributes.items() if "hmotnost" in k.lower()), None
         )

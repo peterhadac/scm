@@ -749,7 +749,12 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
                 kept.append(prior)
             continue
 
-        page_hash = hashlib.sha256(markdown.encode("utf-8")).hexdigest()
+        variations_raw, variation_tiers = extract_woocommerce_variations(result.html)
+        # WooCommerce shows only the default-selected variant's price as
+        # visible text — a price change on another variant wouldn't touch
+        # `markdown` at all, so the raw variations JSON is folded into the
+        # hash too, or such a change would be silently hash-gated away forever.
+        page_hash = hashlib.sha256((markdown + variations_raw).encode("utf-8")).hexdigest()
         prior_status = prior.get("status") if prior else None
         # An unchanged page skips re-extraction — unless the prior entry
         # predates the current normalization rules (schema_version stale),
@@ -768,7 +773,7 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
             continue
 
         raw = extract_product(client, url, markdown)
-        normalized = normalize_product(raw, url, today)
+        normalized = normalize_product(raw, url, today, variation_tiers)
         if normalized is None:
             if prior and prior.get("status") in ("ok", "incomplete"):
                 # A previously-good(-ish) product declining extraction is more

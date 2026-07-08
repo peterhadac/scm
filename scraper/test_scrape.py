@@ -798,6 +798,121 @@ async def test_process_roaster_extracts_new_product():
 
 
 @pytest.mark.asyncio
+async def test_process_roaster_uses_variation_tiers_over_llm_packaging():
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;1000-g&quot;},"
+        "&quot;display_price&quot;:34},"
+        "{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;},"
+        "&quot;display_price&quot;:11}]"
+        '"></form>'
+    )
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/mexico/"]),
+            "https://x.sk/mexico/": fake_result(
+                html=html, markdown=fake_markdown(LONG_TEXT + " 11,00 €")
+            ),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [
+            fake_tool_call(
+                "extract_product",
+                {
+                    "name": "Mexico Santa Cruz",
+                    "origin": "Mexico",
+                    "roast_type": "Espresso",
+                    # Deliberately wrong/incomplete — the page's default
+                    # visible price only, no 1000g tier at all.
+                    "packaging": [{"price": "11,00 €", "weight": "250 g"}],
+                },
+            )
+        ]
+    )
+
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, [], "2026-07-08")
+    assert status == "ok"
+    assert entries[0]["packaging"] == [
+        {"weight_g": 1000, "price": 34.0},
+        {"weight_g": 250, "price": 11.0},
+    ]
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_hash_gate_catches_price_only_variation_change():
+    # Same markdown both runs (visible text only ever shows the default
+    # variant) but the 1000g variation price changes from 34 to 36 — the
+    # hash must still change, or this price update would never be picked up.
+    markdown_text = LONG_TEXT + " 11,00 €"
+    html_v1 = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;1000-g&quot;},"
+        "&quot;display_price&quot;:34}]"
+        '"></form>'
+    )
+    html_v2 = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;1000-g&quot;},"
+        "&quot;display_price&quot;:36}]"
+        '"></form>'
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Mexico Santa Cruz", "packaging": []})]
+    )
+
+    crawler_v1 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/mexico/"]),
+            "https://x.sk/mexico/": fake_result(html=html_v1, markdown=fake_markdown(markdown_text)),
+        }
+    )
+    entries_v1, _ = await scrape.process_roaster(crawler_v1, client, ROASTER, [], "2026-07-08")
+    assert entries_v1[0]["packaging"] == [{"weight_g": 1000, "price": 34.0}]
+
+    crawler_v2 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/mexico/"]),
+            "https://x.sk/mexico/": fake_result(html=html_v2, markdown=fake_markdown(markdown_text)),
+        }
+    )
+    entries_v2, _ = await scrape.process_roaster(crawler_v2, client, ROASTER, entries_v1, "2026-07-09")
+    assert entries_v2[0]["packaging"] == [{"weight_g": 1000, "price": 36.0}]
+    assert client.chat.completions.create.call_count == 2  # re-extracted, not hash-gated away
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_hash_gate_still_skips_when_nothing_changed():
+    # Regression guard: identical markdown AND identical (or absent)
+    # variations JSON across two runs must still hit the hash-gate.
+    markdown_text = LONG_TEXT + " 12,50 €"
+    crawler_v1 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(markdown_text)),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €", "weight": "250 g"}]})]
+    )
+    entries_v1, _ = await scrape.process_roaster(crawler_v1, client, ROASTER, [], "2026-07-08")
+    assert client.chat.completions.create.call_count == 1
+
+    crawler_v2 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(markdown_text)),
+        }
+    )
+    entries_v2, _ = await scrape.process_roaster(crawler_v2, client, ROASTER, entries_v1, "2026-07-09")
+    assert client.chat.completions.create.call_count == 1  # not called again
+    assert entries_v2[0]["last_seen"] == "2026-07-09"
+
+
+@pytest.mark.asyncio
 async def test_process_roaster_skips_claude_when_hash_unchanged():
     markdown_text = LONG_TEXT + " 12,50 €"
     import hashlib

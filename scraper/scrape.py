@@ -42,7 +42,7 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
 # against the new rules.
-SCHEMA_VERSION = 8
+SCHEMA_VERSION = 9
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -212,7 +212,18 @@ EXTRACT_PRODUCT_TOOL = {
             "type": "object",
             "properties": {
                 "name": {"type": "string"},
-                "origin": {"type": ["string", "null"]},
+                "origin": {
+                    "type": ["string", "null"],
+                    "description": (
+                        "The coffee's source country, if stated. If the page's "
+                        "'Krajina pôvodu' (or similar) attribute lists MULTIPLE "
+                        "countries (e.g. 'Brazília, Honduras, India, Nikaragua'), "
+                        "this is a multi-origin blend — reply with the literal "
+                        "string 'Blend' rather than leaving this null or picking "
+                        "just one of the listed countries. Null only if the page "
+                        "states no origin information at all."
+                    ),
+                },
                 "process": {"type": ["string", "null"]},
                 "roast_type": {
                     "type": ["string", "null"],

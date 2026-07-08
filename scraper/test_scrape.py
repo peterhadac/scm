@@ -206,6 +206,15 @@ def test_extract_woocommerce_variations_skips_zero_and_missing_price():
     assert tiers == []
 
 
+def test_extract_woocommerce_variations_non_list_json_returns_raw_and_empty_tiers():
+    # Well-formed JSON that isn't a list (e.g. a bare number) must degrade
+    # gracefully rather than raising when iterated.
+    html = '<form data-product_variations="5"></form>'
+    raw_json, tiers = scrape.extract_woocommerce_variations(html)
+    assert raw_json == "5"
+    assert tiers == []
+
+
 # --- is_coffee (non-coffee filtering) ---------------------------------------
 
 

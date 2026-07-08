@@ -381,6 +381,8 @@ def extract_woocommerce_variations(html):
         variations = json.loads(raw_json)
     except (ValueError, TypeError):
         return raw_json, []
+    if not isinstance(variations, list):
+        return raw_json, []
 
     tiers = []
     seen_weights = set()

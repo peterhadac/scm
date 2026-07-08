@@ -71,21 +71,29 @@ roasters:
   - name: Kavoholik
     slug: kavoholik
     url: https://kavoholik.sk/
+    scrape_url: https://kavoholik.sk/
   - name: Ready After
     slug: ready-after
     url: https://www.readyafter.sk/
+    scrape_url: https://www.readyafter.sk/
   - name: Jungle Roastery
     slug: jungle-roastery
     url: https://thisisjungle.sk/
+    scrape_url: https://thisisjungle.sk/
     metadata:
       city: Bratislava
   - name: Coffeein
     slug: coffeein
     url: https://www.coffeein.sk/
+    scrape_url: https://www.coffeein.sk/
     scraper: playwright   # opt-in for JS-heavy sites
+  - name: Trip Coffee Roasters
+    slug: trip-roasters
+    url: https://triproasters.sk/
+    scrape_url: https://triproasters.sk/vyberova-kava/   # homepage doesn't link every product; the shop listing does
 ```
 
-`slug` is the stable key `data/products.yaml` is keyed on (lowercase-kebab of the name). `metadata` is optional, added as roaster details are gathered — not required for the scraper to run. Add `scraper: playwright` to any roaster that requires JavaScript rendering (selects crawl4ai's browser-backed crawler instead of the HTTP one).
+`slug` is the stable key `data/products.yaml` is keyed on (lowercase-kebab of the name). `url` is the roaster's canonical site link; `scrape_url` is the discovery entry point the scraper crawls for product links — usually the same page, but point it at the actual shop/listing page when the homepage doesn't link to every product. `metadata` is optional, added as roaster details are gathered — not required for the scraper to run. Add `scraper: playwright` to any roaster that requires JavaScript rendering (selects crawl4ai's browser-backed crawler instead of the HTTP one).
 
 ## Scraper (`scraper/scrape.py`)
 

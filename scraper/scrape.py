@@ -353,6 +353,69 @@ def visible_html_text_length(html):
     return len(soup.get_text(strip=True))
 
 
+def extract_woocommerce_variations(html):
+    """Parse a WooCommerce variable-product page's `data-product_variations` JSON.
+
+    WooCommerce embeds every variation's price in the initial page load (an
+    HTML attribute swapped into the visible price by on-page JS when a
+    shopper picks a weight) — no browser rendering needed, crawl4ai's plain
+    HTTP fetch already has it. Markdown conversion drops non-visible
+    attributes though, so this reads the raw HTML directly instead of
+    relying on the LLM to read a rendered price, which only ever shows the
+    currently-selected variant.
+
+    Returns (raw_json, tiers): `raw_json` is the attribute's exact string
+    value (used by the caller to fold into the page hash so a price-only
+    change still busts the cache), "" if this isn't a WooCommerce variable
+    product page. `tiers` is a list of {"weight_g": int, "price": float},
+    deduped by weight_g (first-seen wins — ponytail: a second variant axis,
+    e.g. roast type, sharing a weight would otherwise produce duplicate
+    tiers; revisit if a roaster's variations legitimately need >1 axis).
+    """
+    soup = BeautifulSoup(html or "", "html.parser")
+    form = soup.find(attrs={"data-product_variations": True})
+    if not form:
+        return "", []
+    raw_json = form["data-product_variations"]
+    try:
+        variations = json.loads(raw_json)
+    except (ValueError, TypeError):
+        return raw_json, []
+    if not isinstance(variations, list):
+        return raw_json, []
+
+    tiers = []
+    seen_weights = set()
+    for variation in variations:
+        if not isinstance(variation, dict):
+            continue
+        # Any malformed nested field here (non-dict attributes, a non-string
+        # weight slug, ...) makes this one variation unusable — skip it
+        # rather than adding another narrow isinstance check per field; this
+        # closes the whole class of untyped-nested-JSON crashes at once.
+        try:
+            attributes = variation.get("attributes") or {}
+            weight_slug = next(
+                (v for k, v in attributes.items() if "hmotnost" in k.lower()), None
+            )
+            weight_g = parse_weight((weight_slug or "").replace("-", " "))
+            price = variation.get("display_price")
+        except (AttributeError, TypeError):
+            continue
+        if (
+            weight_g is None
+            or isinstance(price, bool)
+            or not isinstance(price, (int, float))
+            or price <= 0
+        ):
+            continue
+        if weight_g in seen_weights:
+            continue
+        seen_weights.add(weight_g)
+        tiers.append({"weight_g": weight_g, "price": float(price)})
+    return raw_json, tiers
+
+
 async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES):
     """Crawl a roaster's listing (following pagination) and return (urls, status).
 
@@ -361,7 +424,7 @@ async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES):
     couldn't be read; ``status`` mirrors the roaster-level statuses this
     pipeline used before it went per-product ("ok" / "failed" / "needs_js").
     """
-    url = roaster["url"]
+    url = roaster["scrape_url"]
     seen_pages = set()
     discovered = set()
     first_result = None
@@ -563,7 +626,7 @@ def extract_product(client, url, markdown):
     return None
 
 
-def normalize_product(raw, url, today):
+def normalize_product(raw, url, today, variation_tiers=None):
     """Turn a raw Claude extraction into a products.yaml entry, or None if unusable.
 
     Returns None only when there's no coffee here at all (Claude declined, or
@@ -571,30 +634,38 @@ def normalize_product(raw, url, today):
     IS a coffee but is missing a required field (origin, roast_type, or a
     tier's weight/price) is still returned, just as `status: incomplete` with
     `missing_fields` listing what's missing, rather than being dropped.
+
+    `variation_tiers`, when non-empty, comes from
+    `extract_woocommerce_variations()` and is trusted over the LLM's own
+    packaging guess — deterministic data straight from the page beats an LLM
+    reading a price off markdown that only shows the selected variant.
     """
     if not raw or not isinstance(raw, dict) or not raw.get("name") or not is_coffee(raw["name"]):
         return None
 
     name = raw["name"]
-    packaging = []
-    for tier in raw.get("packaging") or []:
-        if not isinstance(tier, dict):
-            continue
-        price = normalize_price(tier.get("price", ""))
-        if price is None or price <= 0:
-            continue
-        weight_g = parse_weight(tier.get("weight") or "")
-        if weight_g is not None and weight_g <= 0:
-            weight_g = None
-        packaging.append({"weight_g": weight_g, "price": price})
+    if variation_tiers:
+        packaging = list(variation_tiers)
+    else:
+        packaging = []
+        for tier in raw.get("packaging") or []:
+            if not isinstance(tier, dict):
+                continue
+            price = normalize_price(tier.get("price", ""))
+            if price is None or price <= 0:
+                continue
+            weight_g = parse_weight(tier.get("weight") or "")
+            if weight_g is not None and weight_g <= 0:
+                weight_g = None
+            packaging.append({"weight_g": weight_g, "price": price})
 
-    # A single-tier product often states its weight in the name rather than
-    # next to that one price ("Colombia Huila 200 g") — safe to fall back to
-    # the name there. A multi-tier product's weight must come from its own
-    # tier text; falling back to the name for every tier would silently give
-    # every tier the same weight.
-    if len(packaging) == 1 and packaging[0]["weight_g"] is None:
-        packaging[0]["weight_g"] = parse_weight(name)
+        # A single-tier product often states its weight in the name rather than
+        # next to that one price ("Colombia Huila 200 g") — safe to fall back to
+        # the name there. A multi-tier product's weight must come from its own
+        # tier text; falling back to the name for every tier would silently give
+        # every tier the same weight.
+        if len(packaging) == 1 and packaging[0]["weight_g"] is None:
+            packaging[0]["weight_g"] = parse_weight(name)
 
     if not packaging:
         return None
@@ -603,14 +674,22 @@ def normalize_product(raw, url, today):
     roast_type = normalize_roast_type(raw.get("roast_type"), raw.get("process"), name)
     origin = normalize_origin(raw.get("origin"), name)
 
-    weighted_tiers = [t for t in packaging if t["weight_g"] is not None]
-    distinct_weights = {t["weight_g"] for t in weighted_tiers}
-    distinct_prices = {t["price"] for t in weighted_tiers}
-    price_collision = len(distinct_weights) >= 2 and len(distinct_prices) == 1
-    # Separate bug signature: the model read each tier's weight number as its
-    # price (e.g. weight_g: 200, price: 200.0) — prices are distinct across
-    # tiers so price_collision above misses it.
-    weight_as_price = sum(1 for t in weighted_tiers if t["price"] == t["weight_g"]) >= 2
+    # These two heuristics catch LLM extraction failures specifically — they
+    # don't apply when packaging came from variation_tiers (WooCommerce's own
+    # structured data), where a real price collision (e.g. a promo, or 250g
+    # whole-bean vs. ground priced the same) is known-correct, not a guess.
+    if variation_tiers:
+        price_collision = False
+        weight_as_price = False
+    else:
+        weighted_tiers = [t for t in packaging if t["weight_g"] is not None]
+        distinct_weights = {t["weight_g"] for t in weighted_tiers}
+        distinct_prices = {t["price"] for t in weighted_tiers}
+        price_collision = len(distinct_weights) >= 2 and len(distinct_prices) == 1
+        # Separate bug signature: the model read each tier's weight number as its
+        # price (e.g. weight_g: 200, price: 200.0) — prices are distinct across
+        # tiers so price_collision above misses it.
+        weight_as_price = sum(1 for t in weighted_tiers if t["price"] == t["weight_g"]) >= 2
 
     missing_fields = []
     if origin is None:
@@ -678,7 +757,12 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
                 kept.append(prior)
             continue
 
-        page_hash = hashlib.sha256(markdown.encode("utf-8")).hexdigest()
+        variations_raw, variation_tiers = extract_woocommerce_variations(result.html)
+        # WooCommerce shows only the default-selected variant's price as
+        # visible text — a price change on another variant wouldn't touch
+        # `markdown` at all, so the raw variations JSON is folded into the
+        # hash too, or such a change would be silently hash-gated away forever.
+        page_hash = hashlib.sha256((markdown + variations_raw).encode("utf-8")).hexdigest()
         prior_status = prior.get("status") if prior else None
         # An unchanged page skips re-extraction — unless the prior entry
         # predates the current normalization rules (schema_version stale),
@@ -697,7 +781,7 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
             continue
 
         raw = extract_product(client, url, markdown)
-        normalized = normalize_product(raw, url, today)
+        normalized = normalize_product(raw, url, today, variation_tiers)
         if normalized is None:
             if prior and prior.get("status") in ("ok", "incomplete"):
                 # A previously-good(-ish) product declining extraction is more

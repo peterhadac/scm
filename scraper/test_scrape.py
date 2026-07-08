@@ -132,6 +132,127 @@ def test_parse_weight(text, expected):
     assert scrape.parse_weight(text) == expected
 
 
+# --- extract_woocommerce_variations -------------------------------------------
+
+
+WOO_VARIATIONS_HTML = (
+    '<form class="variations_form cart" data-product_variations="'
+    "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;1000-g&quot;},"
+    "&quot;display_price&quot;:34,&quot;display_regular_price&quot;:34},"
+    "{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;},"
+    "&quot;display_price&quot;:11,&quot;display_regular_price&quot;:11}]"
+    '"></form>'
+)
+
+
+def test_extract_woocommerce_variations_parses_weight_price_pairs():
+    raw_json, tiers = scrape.extract_woocommerce_variations(WOO_VARIATIONS_HTML)
+    assert raw_json  # non-empty, used for hashing
+    assert tiers == [
+        {"weight_g": 1000, "price": 34.0},
+        {"weight_g": 250, "price": 11.0},
+    ]
+
+
+def test_extract_woocommerce_variations_absent_returns_empty():
+    raw_json, tiers = scrape.extract_woocommerce_variations("<html><body>no form here</body></html>")
+    assert raw_json == ""
+    assert tiers == []
+
+
+def test_extract_woocommerce_variations_malformed_json_returns_raw_and_empty_tiers():
+    html = '<form data-product_variations="not valid json"></form>'
+    raw_json, tiers = scrape.extract_woocommerce_variations(html)
+    assert raw_json == "not valid json"
+    assert tiers == []
+
+
+def test_extract_woocommerce_variations_dedupes_same_weight_first_wins():
+    # Same weight, different non-weight variant axis (e.g. roast type) —
+    # keep only the first-seen price for that weight rather than a duplicate tier.
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;},"
+        "&quot;display_price&quot;:11,&quot;display_regular_price&quot;:11},"
+        "{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;},"
+        "&quot;display_price&quot;:13,&quot;display_regular_price&quot;:13}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == [{"weight_g": 250, "price": 11.0}]
+
+
+def test_extract_woocommerce_variations_skips_unparseable_weight():
+    # No "hmotnost" (weight) attribute key on this variation at all.
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_sposob-prazenia&quot;:&quot;espresso&quot;},"
+        "&quot;display_price&quot;:11}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == []
+
+
+def test_extract_woocommerce_variations_skips_zero_and_missing_price():
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;},"
+        "&quot;display_price&quot;:0},"
+        "{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;1000-g&quot;}}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == []
+
+
+def test_extract_woocommerce_variations_non_list_json_returns_raw_and_empty_tiers():
+    # Well-formed JSON that isn't a list (e.g. a bare number) must degrade
+    # gracefully rather than raising when iterated.
+    html = '<form data-product_variations="5"></form>'
+    raw_json, tiers = scrape.extract_woocommerce_variations(html)
+    assert raw_json == "5"
+    assert tiers == []
+
+
+def test_extract_woocommerce_variations_skips_non_dict_attributes():
+    # A variation whose "attributes" value isn't an object must be skipped,
+    # not raise, when .items() would otherwise be called on it.
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:&quot;x&quot;,&quot;display_price&quot;:11}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == []
+
+
+def test_extract_woocommerce_variations_skips_non_string_weight_slug():
+    # A weight attribute value that isn't a string (e.g. a bare number) must
+    # be skipped, not raise, when .replace() would otherwise be called on it.
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:1000},"
+        "&quot;display_price&quot;:34}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == []
+
+
+def test_extract_woocommerce_variations_skips_boolean_price():
+    # bool is an int subclass in Python — "display_price": true must not be
+    # silently coerced into price 1.0.
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;},"
+        "&quot;display_price&quot;:true}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == []
+
+
 # --- is_coffee (non-coffee filtering) ---------------------------------------
 
 
@@ -342,6 +463,42 @@ def test_normalize_product_none_when_claude_declined():
     assert scrape.normalize_product(None, "https://x.sk/kava/", "2026-07-04") is None
 
 
+def test_normalize_product_uses_variation_tiers_when_provided():
+    # LLM-guessed packaging is deliberately wrong here — variation_tiers,
+    # sourced from WooCommerce's own JSON, must win.
+    raw = {
+        "name": "Mexico Santa Cruz",
+        "origin": "Mexico",
+        "process": "Washed",
+        "roast_type": "Espresso",
+        "packaging": [{"weight": "1 g", "price": "99,00 €"}],
+    }
+    tiers = [{"weight_g": 1000, "price": 34.0}, {"weight_g": 250, "price": 11.0}]
+    result = scrape.normalize_product(raw, "https://x.sk/mexico/", "2026-07-08", variation_tiers=tiers)
+    assert result["status"] == "ok"
+    assert result["packaging"] == tiers
+
+
+def test_normalize_product_variation_tiers_still_requires_a_name():
+    # variation_tiers alone doesn't make a page a product — Claude declining
+    # (raw=None) or a non-coffee name must still return None.
+    tiers = [{"weight_g": 250, "price": 11.0}]
+    assert scrape.normalize_product(None, "https://x.sk/mexico/", "2026-07-08", variation_tiers=tiers) is None
+    raw = {"name": "Darčeková poukážka", "packaging": []}
+    assert scrape.normalize_product(raw, "https://x.sk/gift/", "2026-07-08", variation_tiers=tiers) is None
+
+
+def test_normalize_product_variation_tiers_same_price_is_not_a_collision():
+    # The price_collision heuristic exists to catch the LLM hallucinating the
+    # same price across tiers — it doesn't apply to variation_tiers, where
+    # WooCommerce's own JSON can legitimately price two weights the same.
+    raw = {"name": "Guatemala Huehuetenango", "origin": "Guatemala", "roast_type": "filter"}
+    tiers = [{"weight_g": 250, "price": 12.0}, {"weight_g": 1000, "price": 12.0}]
+    result = scrape.normalize_product(raw, "https://x.sk/guatemala/", "2026-07-08", variation_tiers=tiers)
+    assert result["status"] == "ok"
+    assert result["packaging"] == tiers
+
+
 # --- normalize_product: incomplete status ------------------------------------
 
 
@@ -528,7 +685,7 @@ async def test_discover_product_urls_collects_internal_links():
             )
         }
     )
-    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/"})
+    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/", "scrape_url": "https://x.sk/"})
     assert status == "ok"
     assert discovered == {"https://x.sk/rwanda/"}  # /kosik/ filtered out
 
@@ -554,7 +711,7 @@ async def test_discover_product_urls_rejects_dangerous_schemes():
             )
         }
     )
-    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/"})
+    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/", "scrape_url": "https://x.sk/"})
     assert status == "ok"
     assert discovered == {"https://x.sk/rwanda/"}
 
@@ -579,7 +736,7 @@ async def test_discover_product_urls_rejects_offdomain_link():
             )
         }
     )
-    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/"})
+    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/", "scrape_url": "https://x.sk/"})
     assert status == "ok"
     assert discovered == {"https://x.sk/rwanda/"}
 
@@ -598,7 +755,7 @@ async def test_discover_product_urls_follows_pagination():
         url="https://x.sk/shop?page=2",
     )
     crawler = FakeCrawler({"https://x.sk/shop": page1, "https://x.sk/shop?page=2": page2})
-    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/shop"})
+    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/shop", "scrape_url": "https://x.sk/shop"})
     assert status == "ok"
     assert discovered == {"https://x.sk/coffee-a/", "https://x.sk/coffee-b/"}
 
@@ -606,7 +763,7 @@ async def test_discover_product_urls_follows_pagination():
 @pytest.mark.asyncio
 async def test_discover_product_urls_failed_when_first_page_unreachable():
     crawler = FakeCrawler({})  # no responses -> fake_result(success=False)
-    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/"})
+    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/", "scrape_url": "https://x.sk/"})
     assert discovered is None
     assert status == "failed"
 
@@ -614,7 +771,7 @@ async def test_discover_product_urls_failed_when_first_page_unreachable():
 @pytest.mark.asyncio
 async def test_discover_product_urls_needs_js_when_text_too_short():
     crawler = FakeCrawler({"https://x.sk/": fake_result(html="<div>hi</div>")})
-    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/"})
+    discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/", "scrape_url": "https://x.sk/"})
     assert discovered is None
     assert status == "needs_js"
 
@@ -622,7 +779,7 @@ async def test_discover_product_urls_needs_js_when_text_too_short():
 # --- process_roaster (async, offline via FakeCrawler) ------------------------
 
 
-ROASTER = {"name": "Test Roastery", "slug": "test-roastery", "url": "https://x.sk/"}
+ROASTER = {"name": "Test Roastery", "slug": "test-roastery", "url": "https://x.sk/", "scrape_url": "https://x.sk/"}
 LONG_TEXT = "x" * 200
 
 
@@ -649,6 +806,121 @@ async def test_process_roaster_extracts_new_product():
     assert len(entries) == 1
     assert entries[0]["name"] == "Rwanda"
     assert entries[0]["page_hash"]
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_uses_variation_tiers_over_llm_packaging():
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;1000-g&quot;},"
+        "&quot;display_price&quot;:34},"
+        "{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;},"
+        "&quot;display_price&quot;:11}]"
+        '"></form>'
+    )
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/mexico/"]),
+            "https://x.sk/mexico/": fake_result(
+                html=html, markdown=fake_markdown(LONG_TEXT + " 11,00 €")
+            ),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [
+            fake_tool_call(
+                "extract_product",
+                {
+                    "name": "Mexico Santa Cruz",
+                    "origin": "Mexico",
+                    "roast_type": "Espresso",
+                    # Deliberately wrong/incomplete — the page's default
+                    # visible price only, no 1000g tier at all.
+                    "packaging": [{"price": "11,00 €", "weight": "250 g"}],
+                },
+            )
+        ]
+    )
+
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, [], "2026-07-08")
+    assert status == "ok"
+    assert entries[0]["packaging"] == [
+        {"weight_g": 1000, "price": 34.0},
+        {"weight_g": 250, "price": 11.0},
+    ]
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_hash_gate_catches_price_only_variation_change():
+    # Same markdown both runs (visible text only ever shows the default
+    # variant) but the 1000g variation price changes from 34 to 36 — the
+    # hash must still change, or this price update would never be picked up.
+    markdown_text = LONG_TEXT + " 11,00 €"
+    html_v1 = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;1000-g&quot;},"
+        "&quot;display_price&quot;:34}]"
+        '"></form>'
+    )
+    html_v2 = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;1000-g&quot;},"
+        "&quot;display_price&quot;:36}]"
+        '"></form>'
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Mexico Santa Cruz", "packaging": []})]
+    )
+
+    crawler_v1 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/mexico/"]),
+            "https://x.sk/mexico/": fake_result(html=html_v1, markdown=fake_markdown(markdown_text)),
+        }
+    )
+    entries_v1, _ = await scrape.process_roaster(crawler_v1, client, ROASTER, [], "2026-07-08")
+    assert entries_v1[0]["packaging"] == [{"weight_g": 1000, "price": 34.0}]
+
+    crawler_v2 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/mexico/"]),
+            "https://x.sk/mexico/": fake_result(html=html_v2, markdown=fake_markdown(markdown_text)),
+        }
+    )
+    entries_v2, _ = await scrape.process_roaster(crawler_v2, client, ROASTER, entries_v1, "2026-07-09")
+    assert entries_v2[0]["packaging"] == [{"weight_g": 1000, "price": 36.0}]
+    assert client.chat.completions.create.call_count == 2  # re-extracted, not hash-gated away
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_hash_gate_still_skips_when_nothing_changed():
+    # Regression guard: identical markdown AND identical (or absent)
+    # variations JSON across two runs must still hit the hash-gate.
+    markdown_text = LONG_TEXT + " 12,50 €"
+    crawler_v1 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(markdown_text)),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €", "weight": "250 g"}]})]
+    )
+    entries_v1, _ = await scrape.process_roaster(crawler_v1, client, ROASTER, [], "2026-07-08")
+    assert client.chat.completions.create.call_count == 1
+
+    crawler_v2 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(markdown_text)),
+        }
+    )
+    entries_v2, _ = await scrape.process_roaster(crawler_v2, client, ROASTER, entries_v1, "2026-07-09")
+    assert client.chat.completions.create.call_count == 1  # not called again
+    assert entries_v2[0]["last_seen"] == "2026-07-09"
 
 
 @pytest.mark.asyncio

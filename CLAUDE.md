@@ -53,7 +53,10 @@ source language):
 - `origin`: an English country name, matched against
   [`data/coffee_origins.yaml`](./data/coffee_origins.yaml) — falls back to
   scanning the product name for a country mention when the site doesn't
-  state one (e.g. `"brazil • doce citrus"` → `Brazil`).
+  state one (e.g. `"brazil • doce citrus"` → `Brazil`). A product whose name
+  marks it as a multi-origin blend (`"blend"` / `"zmes"` / `"mix"`) and that
+  matches no single country gets the sentinel `"Blend"` instead of staying
+  `null` — it genuinely has no one source country to report.
 
 `price` is **EUR** as a JSON number with a `.` decimal. `last_seen` is the
 date of the last successful scrape that included this item; it stops

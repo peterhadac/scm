@@ -34,7 +34,7 @@ COUNTRIES_PATH = ROOT / "data" / "coffee_origins.yaml"
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
 # against the new rules.
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -67,6 +67,10 @@ NON_COFFEE_KEYWORDS = (
     "darcekova poukazka",
     "darčekový poukaz",
     "darcekovy poukaz",
+    "degustačný balíček",
+    "degustacny balicek",
+    "darčekový balíček",
+    "darcekovy balicek",
     "poukážka",
     "poukazka",
     "gift card",
@@ -178,9 +182,14 @@ EXTRACT_PRODUCT_TOOL = {
                 "roast_type": {
                     "type": ["string", "null"],
                     "description": (
-                        "How the coffee is roasted for brewing, if the page states it: "
-                        "'Filter' (drip/filter roast) or 'Espresso'. Raw text as shown, "
-                        "null if not stated."
+                        "How the coffee is roasted for brewing: 'Filter' (drip/filter "
+                        "roast) or 'Espresso'. If the page doesn't state this directly, "
+                        "check for a 'recommended preparation method' attribute/tag list "
+                        "(e.g. 'Espresso, Moka, Pour-over') and infer from it: "
+                        "'Espresso' if Espresso or Moka is listed, 'Filter' if only "
+                        "pour-over/drip/V60/Chemex/Aeropress/French press methods are "
+                        "listed. Raw text (or your inference) as a string, null only if "
+                        "truly nothing on the page suggests either."
                     ),
                 },
                 "packaging": {
@@ -262,6 +271,14 @@ def validate_entry(entry):
     jsonschema.validate(entry, PRODUCT_SCHEMA)
 
 
+
+# Name/raw-origin substrings marking a coffee as a multi-origin blend — these
+# genuinely have no single source country, so "Blend" is the honest origin
+# rather than a gap to keep chasing. Slovak "zmes"/"zmesi" (blend/blends),
+# English "blend"/"mix".
+BLEND_KEYWORDS = ("blend", "zmes", "mix")
+
+
 def normalize_origin(raw, name, aliases=None):
     """Translate a stated origin to its canonical English country name.
 
@@ -270,6 +287,11 @@ def normalize_origin(raw, name, aliases=None):
     cross-checks it against the name. Text that matches no known country is
     kept verbatim rather than discarded (better than losing real data for a
     producing country not yet in the list).
+
+    A multi-origin blend (name or raw text names it as such) rarely states
+    one source country at all — falls back to the sentinel "Blend" rather
+    than staying null, since the coffee genuinely has no single origin to
+    report, not a missed extraction.
     """
     aliases = COUNTRY_ALIASES if aliases is None else aliases
     if raw:
@@ -284,6 +306,8 @@ def normalize_origin(raw, name, aliases=None):
         for alias, canonical in aliases.items():
             if alias in lowered:
                 return canonical
+        if any(keyword in lowered for keyword in BLEND_KEYWORDS):
+            return "Blend"
     return None
 
 
@@ -563,7 +587,13 @@ def normalize_roast_type(raw, process_raw=None, name=None):
         lowered = text.strip().lower()
         if "espresso" in lowered:
             return "espresso"
-        if "filter" in lowered or "prekvapk" in lowered or "filtrovan" in lowered:
+        if (
+            "filter" in lowered
+            or "prekvapk" in lowered
+            or "filtrovan" in lowered
+            or "zalievan" in lowered  # pour-over ("zaliať" = to pour)
+            or "kvapkov" in lowered  # drip
+        ):
             return "filter"
     return None
 

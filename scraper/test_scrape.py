@@ -283,6 +283,8 @@ def test_is_coffee_keeps_real_coffees(name):
         "Espresso tamper 58mm",
         "Gift card",
         "Brandované tričko",
+        "Degustačný balíček, Spoznaj krajinu kávy",
+        "Darčekový balíček pre kávičkárov",
     ],
 )
 def test_is_coffee_drops_non_coffee(name):
@@ -361,6 +363,19 @@ def test_normalize_roast_type_filter_slovak_text():
     assert scrape.normalize_roast_type("Prekvapkávaná") == "filter"
 
 
+def test_normalize_roast_type_pour_over_slovak_text():
+    # "Zalievaná" (pour-over) and "kvapkovú" (drip) — common values in a
+    # WooCommerce "recommended preparation method" attribute list.
+    assert scrape.normalize_roast_type("Zalievaná") == "filter"
+    assert scrape.normalize_roast_type("kvapkovú kávu") == "filter"
+
+
+def test_normalize_roast_type_espresso_wins_in_multi_method_list():
+    # "Espresso, Moka, Zalievaná" — a real WooCommerce recommended-method
+    # list — must resolve to espresso, not filter.
+    assert scrape.normalize_roast_type("Espresso, Moka, Zalievaná") == "espresso"
+
+
 def test_normalize_roast_type_none_when_unstated():
     assert scrape.normalize_roast_type(None) is None
     assert scrape.normalize_roast_type("") is None
@@ -402,12 +417,29 @@ def test_normalize_origin_keeps_unmatched_raw_text_as_is():
 
 
 def test_normalize_origin_none_when_nothing_matches():
-    assert scrape.normalize_origin(None, "House Blend") is None
+    assert scrape.normalize_origin(None, "Mystery Coffee") is None
 
 
 def test_normalize_origin_none_for_whitespace_only_raw():
     # A blank-but-truthy raw origin must not survive as "" (schema requires minLength 1).
     assert scrape.normalize_origin("   ", "some name") is None
+
+
+# --- normalize_origin blend fallback ------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "name",
+    ["House Blend", "Espresso zmes", "Ranná zmesi", "Morning Mix"],
+)
+def test_normalize_origin_blend_name_falls_back_to_blend(name):
+    # A multi-origin blend rarely states one source country — "Blend" is the
+    # honest origin here, not a gap to keep chasing.
+    assert scrape.normalize_origin(None, name) == "Blend"
+
+
+def test_normalize_origin_country_alias_wins_over_blend_keyword():
+    assert scrape.normalize_origin(None, "Brazil Espresso Blend") == "Brazil"
 
 
 # --- normalize_product --------------------------------------------------------

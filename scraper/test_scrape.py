@@ -433,6 +433,16 @@ def test_normalize_roast_type_espresso_wins_in_multi_method_list():
     assert scrape.normalize_roast_type("Espresso, Moka, Zalievaná") == "espresso"
 
 
+def test_normalize_roast_type_category_hint_is_last_resort():
+    # Only used when the page itself states nothing at all.
+    assert scrape.normalize_roast_type(None, None, "Some Coffee", category_hint="filter") == "filter"
+
+
+def test_normalize_roast_type_page_text_wins_over_category_hint():
+    # A category hint must not override what the page actually states.
+    assert scrape.normalize_roast_type("Espresso", None, None, category_hint="filter") == "espresso"
+
+
 def test_normalize_roast_type_none_when_unstated():
     assert scrape.normalize_roast_type(None) is None
     assert scrape.normalize_roast_type("") is None
@@ -567,6 +577,21 @@ def test_normalize_product_uses_variation_tiers_when_provided():
     result = scrape.normalize_product(raw, "https://x.sk/mexico/", "2026-07-08", variation_tiers=tiers)
     assert result["status"] == "ok"
     assert result["packaging"] == tiers
+
+
+def test_normalize_product_uses_roast_type_hint_when_page_states_nothing():
+    # Site (e.g. a Shopify collection) never states roast_type on the
+    # product page itself — the discovery-category hint fills it in.
+    raw = {
+        "name": "Some Coffee",
+        "origin": "Brazil",
+        "packaging": [{"weight": "250 g", "price": "12,00 €"}],
+    }
+    result = scrape.normalize_product(
+        raw, "https://x.sk/some-coffee/", "2026-07-08", roast_type_hint="espresso"
+    )
+    assert result["status"] == "ok"
+    assert result["roast_type"] == "espresso"
 
 
 def test_normalize_product_variation_tiers_still_requires_a_name():
@@ -896,6 +921,67 @@ async def test_discover_product_urls_needs_js_when_text_too_short():
     assert status == "needs_js"
 
 
+# --- discover_roast_type_hints (async, offline via FakeCrawler) --------------
+
+
+@pytest.mark.asyncio
+async def test_discover_roast_type_hints_tags_urls_by_category():
+    html_a = "<html><body>listing</body></html>" + "x" * 200
+    html_b = "<html><body>listing</body></html>" + "x" * 200
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/espresso/": fake_result(
+                html=html_a,
+                links={"internal": [{"href": "https://x.sk/rwanda/", "text": "Rwanda"}]},
+                url="https://x.sk/espresso/",
+            ),
+            "https://x.sk/filter/": fake_result(
+                html=html_b,
+                links={"internal": [{"href": "https://x.sk/kenya/", "text": "Kenya"}]},
+                url="https://x.sk/filter/",
+            ),
+        }
+    )
+    roaster = {
+        "url": "https://x.sk/",
+        "scrape_url": "https://x.sk/",
+        "roast_type_urls": {"espresso": "https://x.sk/espresso/", "filter": "https://x.sk/filter/"},
+    }
+    hints = await scrape.discover_roast_type_hints(crawler, roaster)
+    assert hints == {"https://x.sk/rwanda/": "espresso", "https://x.sk/kenya/": "filter"}
+
+
+@pytest.mark.asyncio
+async def test_discover_roast_type_hints_empty_when_not_configured():
+    crawler = FakeCrawler({})
+    hints = await scrape.discover_roast_type_hints(crawler, {"url": "https://x.sk/", "scrape_url": "https://x.sk/"})
+    assert hints == {}
+    assert crawler.calls == []  # no wasted crawl for roasters without the config
+
+
+@pytest.mark.asyncio
+async def test_discover_roast_type_hints_failed_category_contributes_nothing():
+    # A failed/unreachable category page is a missing hint, not a roaster
+    # failure — the other configured category still contributes normally.
+    html = "<html><body>listing</body></html>" + "x" * 200
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/filter/": fake_result(
+                html=html,
+                links={"internal": [{"href": "https://x.sk/kenya/", "text": "Kenya"}]},
+                url="https://x.sk/filter/",
+            ),
+        }
+    )
+    roaster = {
+        "url": "https://x.sk/",
+        "scrape_url": "https://x.sk/",
+        "roast_type_urls": {"espresso": "https://x.sk/unreachable/", "filter": "https://x.sk/filter/"},
+    }
+    hints = await scrape.discover_roast_type_hints(crawler, roaster)
+    assert hints == {"https://x.sk/kenya/": "filter"}
+
+
 # --- process_roaster (async, offline via FakeCrawler) ------------------------
 
 
@@ -926,6 +1012,38 @@ async def test_process_roaster_extracts_new_product():
     assert len(entries) == 1
     assert entries[0]["name"] == "Rwanda"
     assert entries[0]["page_hash"]
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_uses_roast_type_hint_when_page_never_states_it():
+    # Site never states roast_type on the product page itself — only the
+    # discovery category ("espresso/") it's linked from reveals it.
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(LONG_TEXT + " 12,50 €")),
+            "https://x.sk/espresso/": fake_result(
+                html=LONG_TEXT,
+                links={"internal": [{"href": "https://x.sk/rwanda/", "text": "Rwanda"}]},
+                url="https://x.sk/espresso/",
+            ),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [
+            fake_tool_call(
+                "extract_product",
+                {"name": "Rwanda", "origin": "Rwanda", "packaging": [{"price": "12,50 €", "weight": "250 g"}]},
+            )
+        ]
+    )
+    roaster = dict(ROASTER, roast_type_urls={"espresso": "https://x.sk/espresso/"})
+
+    entries, status = await scrape.process_roaster(crawler, client, roaster, [], "2026-07-04")
+    assert status == "ok"
+    assert entries[0]["roast_type"] == "espresso"
+    assert entries[0]["status"] == "ok"
 
 
 @pytest.mark.asyncio

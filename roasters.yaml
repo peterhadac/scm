@@ -7,6 +7,9 @@ roasters:
     slug: ready-after
     url: https://www.readyafter.sk/
     scrape_url: https://www.readyafter.sk/
+    roast_type_urls:
+      espresso: https://www.readyafter.sk/espresso-zmesi/
+      filter: https://www.readyafter.sk/kava-filter/
   - name: Kaffa Roastery
     slug: kaffa-roastery
     url: https://kaffaroastery.sk/

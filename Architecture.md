@@ -52,6 +52,8 @@ This filter is a cheap first pass, not a guarantee — a nav link that slips thr
 
 A crawl that fails outright, or whose listing page looks JS-rendered (visible text under 200 chars), stops for that roaster this run — existing `data/products.yaml` entries are left untouched. A crawl that *succeeds* but discovers zero URLs while the roaster previously had entries is treated the same way (`needs_js`) rather than as "everything was removed" — a broken link filter or page restructure is far more likely than a real wipeout.
 
+`discover_product_urls()` shares its pagination-following crawl loop (`_crawl_listing_links()`) with `discover_roast_type_hints()`, which crawls a roaster's optional `roasters.yaml` `roast_type_urls` category pages (e.g. a Shopify "espresso" collection or a Shoptet "kava-filter" category) and tags each discovered product URL with the category it came from. Some sites never state a roast type on the product page itself — only via which listing links to it — so `process_roaster` passes this per-URL hint into `normalize_product()` as a last-resort `roast_type` fallback, used only when the page's own content states nothing at all.
+
 ## Detail Extraction (`process_roaster`, `extract_product`, `normalize_product`)
 
 For each discovered URL: fetch with `CrawlerRunConfig(cache_mode=CacheMode.BYPASS, markdown_generator=DefaultMarkdownGenerator())` — **no `PruningContentFilter`**. That content filter's density-based pruning was verified (against a real product page) to discard the weight/price selector widget — exactly the data extraction needs — so plain markdown conversion is used instead (still a ~13x size cut vs. raw HTML, just without the filter's data loss).

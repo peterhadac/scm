@@ -41,7 +41,7 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
 # against the new rules.
-SCHEMA_VERSION = 6
+SCHEMA_VERSION = 7
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -454,15 +454,21 @@ def extract_woocommerce_variations(html):
     return raw_json, tiers
 
 
-async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES):
-    """Crawl a roaster's listing (following pagination) and return (urls, status).
+async def _crawl_listing_links(crawler, start_url, max_pages=MAX_PAGES):
+    """Follow pagination from `start_url`, collecting same-domain product-ish links.
 
-    Uses ``prefetch=True`` so this costs one plain HTTP fetch per page — no
-    markdown generation, no LLM call. ``urls`` is None when the listing itself
-    couldn't be read; ``status`` mirrors the roaster-level statuses this
-    pipeline used before it went per-product ("ok" / "failed" / "needs_js").
+    Shared by discover_product_urls (the roaster's main listing) and
+    discover_roast_type_hints (per-category listing pages) — both need the
+    same fetch/filter/paginate loop; only what the caller does with a
+    fetch failure differs (roaster-level "failed"/"needs_js" status vs. a
+    category hint page simply contributing no hints).
+
+    Returns (urls, first_result): `urls` is the set of discovered links
+    (empty if the page had none or was unreachable). `first_result` is the
+    crawl result for the first page fetched (None if unreachable) — callers
+    needing roaster-level status inspect it themselves.
     """
-    url = roaster["scrape_url"]
+    url = start_url
     seen_pages = set()
     discovered = set()
     first_result = None
@@ -513,11 +519,44 @@ async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES):
             break
         url = nxt
 
+    return discovered, first_result
+
+
+async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES):
+    """Crawl a roaster's listing (following pagination) and return (urls, status).
+
+    Uses ``prefetch=True`` so this costs one plain HTTP fetch per page — no
+    markdown generation, no LLM call. ``urls`` is None when the listing itself
+    couldn't be read; ``status`` mirrors the roaster-level statuses this
+    pipeline used before it went per-product ("ok" / "failed" / "needs_js").
+    """
+    discovered, first_result = await _crawl_listing_links(
+        crawler, roaster["scrape_url"], max_pages
+    )
     if first_result is None or not first_result.success:
         return None, "failed"
     if visible_html_text_length(first_result.html) < MIN_TEXT_LENGTH:
         return None, "needs_js"
     return discovered, "ok"
+
+
+async def discover_roast_type_hints(crawler, roaster, max_pages=MAX_PAGES):
+    """Crawl a roaster's optional `roast_type_urls` category pages for roast-type hints.
+
+    Some sites (Shopify collections, Shoptet category pages) only reveal a
+    product's roast type through which category page links to it — the
+    product's own page never states "Filter" or "Espresso" at all. This is
+    a best-effort hint, not authoritative: a fetch failure on one category
+    just means no hints from it, not a roaster-level failure. Returns
+    {url: roast_type}; last-write-wins on the rare case a product genuinely
+    appears under both categories.
+    """
+    hints = {}
+    for roast_type, url in (roaster.get("roast_type_urls") or {}).items():
+        urls, _ = await _crawl_listing_links(crawler, url, max_pages)
+        for discovered_url in urls:
+            hints[discovered_url] = roast_type
+    return hints
 
 
 def normalize_price(raw):
@@ -586,13 +625,17 @@ def normalize_process(raw):
     return "other"
 
 
-def normalize_roast_type(raw, process_raw=None, name=None):
+def normalize_roast_type(raw, process_raw=None, name=None, category_hint=None):
     """Bucket free-text roast info into 'filter' / 'espresso' / None.
 
     Tries `raw` (the model's own roast_type field) first, then falls back to
     the raw `process` text, then the product name — e.g. `process: "filter
     roast"` already implies roast_type even when the model left roast_type
-    itself blank.
+    itself blank. `category_hint` (from discover_roast_type_hints — which
+    category/collection page linked to this product) is the last resort,
+    used only when the page itself states nothing at all: some sites (Shopify
+    collections, Shoptet category pages) never state a roast type on the
+    product page, only via which listing links to it.
     """
     for text in (raw, process_raw, name):
         if not text:
@@ -608,6 +651,8 @@ def normalize_roast_type(raw, process_raw=None, name=None):
             or "kvapkov" in lowered  # drip
         ):
             return "filter"
+    if category_hint in ("filter", "espresso"):
+        return category_hint
     return None
 
 
@@ -676,7 +721,7 @@ def extract_product(client, url, markdown):
     return None
 
 
-def normalize_product(raw, url, today, variation_tiers=None):
+def normalize_product(raw, url, today, variation_tiers=None, roast_type_hint=None):
     """Turn a raw Claude extraction into a products.yaml entry, or None if unusable.
 
     Returns None only when there's no coffee here at all (Claude declined, or
@@ -689,6 +734,10 @@ def normalize_product(raw, url, today, variation_tiers=None):
     `extract_woocommerce_variations()` and is trusted over the LLM's own
     packaging guess — deterministic data straight from the page beats an LLM
     reading a price off markdown that only shows the selected variant.
+
+    `roast_type_hint`, from `discover_roast_type_hints()`, is the last-resort
+    fallback passed to `normalize_roast_type()` for sites that never state a
+    roast type on the product page itself.
     """
     if not raw or not isinstance(raw, dict) or not raw.get("name") or not is_coffee(raw["name"]):
         return None
@@ -721,7 +770,9 @@ def normalize_product(raw, url, today, variation_tiers=None):
         return None
 
     process = normalize_process(raw.get("process"))
-    roast_type = normalize_roast_type(raw.get("roast_type"), raw.get("process"), name)
+    roast_type = normalize_roast_type(
+        raw.get("roast_type"), raw.get("process"), name, roast_type_hint
+    )
     origin = normalize_origin(raw.get("origin"), name)
 
     # These two heuristics catch LLM extraction failures specifically — they
@@ -787,6 +838,10 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
         # treat it like needs_js (keep old data) rather than removing everything.
         return existing_entries, "needs_js"
 
+    # {} immediately when the roaster has no roast_type_urls configured —
+    # no extra crawl for the common case.
+    roast_type_hints = await discover_roast_type_hints(crawler, roaster)
+
     kept = []
     for url in discovered:
         prior = existing_by_url.get(url)
@@ -831,7 +886,9 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
             continue
 
         raw = extract_product(client, url, markdown)
-        normalized = normalize_product(raw, url, today, variation_tiers)
+        normalized = normalize_product(
+            raw, url, today, variation_tiers, roast_type_hints.get(url)
+        )
         if normalized is None:
             # A bare decline (Claude returned nothing, or no name at all) is
             # ambiguous — could be a transient hiccup — and worth protecting

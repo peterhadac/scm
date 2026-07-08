@@ -356,6 +356,7 @@ def test_is_coffee_keeps_real_coffees(name):
         "Kávoláda GENTLEMAN 50g",
         "Červené víno s kávou 0,75l",
         "Alternatívny kávovar Hario V60 - set",
+        "Vianočný punč cascara",
     ],
 )
 def test_is_coffee_drops_non_coffee(name):
@@ -577,6 +578,20 @@ def test_normalize_origin_blend_name_falls_back_to_blend(name):
 
 def test_normalize_origin_country_alias_wins_over_blend_keyword():
     assert scrape.normalize_origin(None, "Brazil Espresso Blend") == "Brazil"
+
+
+@pytest.mark.parametrize(
+    "name",
+    ["Balíček VARIETY 3 x 200g", "Balíček DOBRODRUH 3x200g"],
+)
+def test_normalize_origin_variety_bundle_falls_back_to_blend(name):
+    assert scrape.normalize_origin(None, name) == "Blend"
+
+
+def test_normalize_origin_balicek_alone_without_multiplier_does_not_trigger_blend():
+    # "balíček" alone is too generic (any packaged coffee) - only a
+    # "balíček" + "N x" combination signals a multi-coffee variety pack.
+    assert scrape.normalize_origin(None, "Espresso balíček 250g") is None
 
 
 # --- extract_woocommerce_origin ------------------------------------------------

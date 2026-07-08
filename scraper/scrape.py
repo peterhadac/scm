@@ -42,7 +42,7 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
 # against the new rules.
-SCHEMA_VERSION = 12
+SCHEMA_VERSION = 13
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -127,6 +127,8 @@ NON_COFFEE_KEYWORDS = (
     "kavolada",  # coffee-flavored chocolate, not beans
     "víno s kávou",
     "vino s kavou",  # coffee-infused wine, a bottled drink not beans
+    "punč",
+    "punc",  # coffee/mulled punch, a bottled drink not beans
     "eureka mignon",
     "bezzera",
     "ecm classica",
@@ -336,6 +338,13 @@ def validate_entry(entry):
 # English "blend"/"mix".
 BLEND_KEYWORDS = ("blend", "zmes", "mix")
 
+# "balíček" (package/box) + an explicit "N x" multiplier ("3 x 200g",
+# "3x200g") together mark a variety pack of several distinct coffees — no
+# single origin to report, same as BLEND_KEYWORDS. "balíček" alone is too
+# generic (any packaged coffee could use the word) to treat as a blend
+# signal by itself, hence requiring both.
+BUNDLE_MULTIPLIER_RE = re.compile(r"\d+\s*x\s*\d")
+
 
 def normalize_origin(raw, name, aliases=None):
     """Translate a stated origin to its canonical English country name.
@@ -365,6 +374,8 @@ def normalize_origin(raw, name, aliases=None):
             if alias in lowered:
                 return canonical
         if any(keyword in lowered for keyword in BLEND_KEYWORDS):
+            return "Blend"
+        if "balicek" in lowered and BUNDLE_MULTIPLIER_RE.search(lowered):
             return "Blend"
     return None
 

@@ -40,7 +40,7 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha")
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
 # against the new rules.
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"

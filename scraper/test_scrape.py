@@ -488,6 +488,17 @@ def test_normalize_product_variation_tiers_still_requires_a_name():
     assert scrape.normalize_product(raw, "https://x.sk/gift/", "2026-07-08", variation_tiers=tiers) is None
 
 
+def test_normalize_product_variation_tiers_same_price_is_not_a_collision():
+    # The price_collision heuristic exists to catch the LLM hallucinating the
+    # same price across tiers — it doesn't apply to variation_tiers, where
+    # WooCommerce's own JSON can legitimately price two weights the same.
+    raw = {"name": "Guatemala Huehuetenango", "origin": "Guatemala", "roast_type": "filter"}
+    tiers = [{"weight_g": 250, "price": 12.0}, {"weight_g": 1000, "price": 12.0}]
+    result = scrape.normalize_product(raw, "https://x.sk/guatemala/", "2026-07-08", variation_tiers=tiers)
+    assert result["status"] == "ok"
+    assert result["packaging"] == tiers
+
+
 # --- normalize_product: incomplete status ------------------------------------
 
 

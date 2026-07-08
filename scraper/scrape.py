@@ -674,14 +674,22 @@ def normalize_product(raw, url, today, variation_tiers=None):
     roast_type = normalize_roast_type(raw.get("roast_type"), raw.get("process"), name)
     origin = normalize_origin(raw.get("origin"), name)
 
-    weighted_tiers = [t for t in packaging if t["weight_g"] is not None]
-    distinct_weights = {t["weight_g"] for t in weighted_tiers}
-    distinct_prices = {t["price"] for t in weighted_tiers}
-    price_collision = len(distinct_weights) >= 2 and len(distinct_prices) == 1
-    # Separate bug signature: the model read each tier's weight number as its
-    # price (e.g. weight_g: 200, price: 200.0) — prices are distinct across
-    # tiers so price_collision above misses it.
-    weight_as_price = sum(1 for t in weighted_tiers if t["price"] == t["weight_g"]) >= 2
+    # These two heuristics catch LLM extraction failures specifically — they
+    # don't apply when packaging came from variation_tiers (WooCommerce's own
+    # structured data), where a real price collision (e.g. a promo, or 250g
+    # whole-bean vs. ground priced the same) is known-correct, not a guess.
+    if variation_tiers:
+        price_collision = False
+        weight_as_price = False
+    else:
+        weighted_tiers = [t for t in packaging if t["weight_g"] is not None]
+        distinct_weights = {t["weight_g"] for t in weighted_tiers}
+        distinct_prices = {t["price"] for t in weighted_tiers}
+        price_collision = len(distinct_weights) >= 2 and len(distinct_prices) == 1
+        # Separate bug signature: the model read each tier's weight number as its
+        # price (e.g. weight_g: 200, price: 200.0) — prices are distinct across
+        # tiers so price_collision above misses it.
+        weight_as_price = sum(1 for t in weighted_tiers if t["price"] == t["weight_g"]) >= 2
 
     missing_fields = []
     if origin is None:

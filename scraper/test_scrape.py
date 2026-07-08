@@ -173,6 +173,42 @@ def test_extract_woocommerce_variations_recognizes_vaha_weight_slug():
     ]
 
 
+def test_extract_woocommerce_variations_recognizes_weight_slug():
+    # sweetbeans.coffee uses the untranslated English WooCommerce slug
+    # "attribute_pa_weight", and disambiguation suffixes like "-2" on a
+    # value ("500-gr-2") must not break weight parsing.
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_weight&quot;:&quot;200-gr&quot;},"
+        "&quot;display_price&quot;:14},"
+        "{&quot;attributes&quot;:{&quot;attribute_pa_weight&quot;:&quot;500-gr-2&quot;},"
+        "&quot;display_price&quot;:29}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == [
+        {"weight_g": 200, "price": 14.0},
+        {"weight_g": 500, "price": 29.0},
+    ]
+
+
+def test_extract_woocommerce_variations_recognizes_balenie_weight_slug():
+    # simplecoffee.sk uses "attribute_pa_balenie" ("packaging").
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_balenie&quot;:&quot;250g&quot;},"
+        "&quot;display_price&quot;:9.9},"
+        "{&quot;attributes&quot;:{&quot;attribute_pa_balenie&quot;:&quot;1000g&quot;},"
+        "&quot;display_price&quot;:35.9}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == [
+        {"weight_g": 250, "price": 9.9},
+        {"weight_g": 1000, "price": 35.9},
+    ]
+
+
 def test_extract_woocommerce_variations_absent_returns_empty():
     raw_json, tiers = scrape.extract_woocommerce_variations("<html><body>no form here</body></html>")
     assert raw_json == ""

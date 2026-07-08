@@ -30,17 +30,18 @@ SCHEMA_PATH = ROOT / "data" / "products.schema.yaml"
 COUNTRIES_PATH = ROOT / "data" / "coffee_origins.yaml"
 
 # WooCommerce attribute-key substrings roasters use for a coffee's package
-# weight ("hmotnosť" and "váha" are both plain Slovak for "weight" — sites
-# pick either taxonomy name; ponytail: extend if a roaster uses yet another
-# term, e.g. a non-Slovak site).
-WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha")
+# weight ("hmotnosť"/"váha" are plain Slovak for "weight", "balenie" is
+# Slovak for "packaging"; "weight" covers sites that keep the English
+# WooCommerce taxonomy slug untranslated — sites pick whichever taxonomy
+# name they set up; ponytail: extend if a roaster uses yet another term).
+WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 
 # Bump whenever normalize_product's rules change in a way that would alter
 # the output for already-scraped pages — this forces process_roaster's
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
 # against the new rules.
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"

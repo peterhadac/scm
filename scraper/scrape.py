@@ -42,7 +42,7 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
 # against the new rules.
-SCHEMA_VERSION = 11
+SCHEMA_VERSION = 12
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -652,6 +652,59 @@ async def discover_roast_type_hints(crawler, roaster, max_pages=MAX_PAGES):
     return hints
 
 
+async def extract_shopify_variations(crawler, html, product_url):
+    """Fetch and parse a Shopify product's price/weight tiers via its `.js` endpoint.
+
+    A Shopify product page can hide non-default variant prices from visible
+    markdown the same way WooCommerce's data-product_variations attribute
+    does — but every Shopify storefront exposes the full product JSON
+    (every variant's own price, in cents) at `{product_url}.js`, a stable
+    documented public endpoint, regardless of theme. Only fires this extra
+    fetch when `html` looks like a Shopify storefront (checked on the
+    already-fetched product page — avoids a wasted request on every
+    non-Shopify roaster's every product).
+
+    Returns a list of {"weight_g": int, "price": float} tiers (deduped by
+    weight_g, first-seen wins), or [] if this isn't a Shopify product page
+    or the endpoint didn't return usable data.
+    """
+    if "cdn.shopify.com" not in (html or ""):
+        return []
+    variants_url = product_url.split("?")[0].rstrip("/") + ".js"
+    try:
+        result = await crawler.arun(variants_url, config=DETAIL_CONFIG)
+    except Exception:
+        return []
+    if not result or not result.success:
+        return []
+    try:
+        data = json.loads(result.html or "")
+    except (ValueError, TypeError):
+        return []
+    if not isinstance(data, dict):
+        return []
+
+    tiers = []
+    seen_weights = set()
+    for variant in data.get("variants") or []:
+        if not isinstance(variant, dict):
+            continue
+        weight_g = parse_weight(str(variant.get("title") or ""))
+        price_cents = variant.get("price")
+        if (
+            weight_g is None
+            or isinstance(price_cents, bool)
+            or not isinstance(price_cents, (int, float))
+            or price_cents <= 0
+        ):
+            continue
+        if weight_g in seen_weights:
+            continue
+        seen_weights.add(weight_g)
+        tiers.append({"weight_g": weight_g, "price": round(price_cents / 100, 2)})
+    return tiers
+
+
 def normalize_price(raw):
     """Parse the first EUR amount out of a raw price string into a float.
 
@@ -1022,6 +1075,15 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
             prior["last_seen"] = today
             kept.append(prior)
             continue
+
+        if not variation_tiers:
+            # Shopify's per-variant prices live behind a separate `.js`
+            # fetch (see extract_shopify_variations) — a price-only change
+            # there won't bust this page's hash, so it's only re-checked
+            # when we're already re-extracting for some other reason. Not
+            # gated into page_hash: that would force this extra fetch on
+            # every run regardless of hash-gate, defeating the point of it.
+            variation_tiers = await extract_shopify_variations(crawler, result.html, url)
 
         raw = extract_product(client, url, markdown)
         origin_hint = extract_woocommerce_origin(result.html)

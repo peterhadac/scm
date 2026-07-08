@@ -1117,6 +1117,60 @@ async def test_discover_roast_type_hints_failed_category_contributes_nothing():
     assert hints == {"https://x.sk/kenya/": "filter"}
 
 
+# --- extract_shopify_variations (async, offline via FakeCrawler) -------------
+
+
+SHOPIFY_MARKER_HTML = '<script src="https://cdn.shopify.com/s/files/theme.js"></script>'
+
+
+@pytest.mark.asyncio
+async def test_extract_shopify_variations_parses_variant_prices():
+    variants_json = json.dumps(
+        {
+            "variants": [
+                {"title": "250g", "price": 1150},
+                {"title": "1kg", "price": 3300},
+            ]
+        }
+    )
+    crawler = FakeCrawler({"https://x.sk/products/brazil.js": fake_result(html=variants_json)})
+    tiers = await scrape.extract_shopify_variations(crawler, SHOPIFY_MARKER_HTML, "https://x.sk/products/brazil")
+    assert tiers == [
+        {"weight_g": 250, "price": 11.50},
+        {"weight_g": 1000, "price": 33.0},
+    ]
+
+
+@pytest.mark.asyncio
+async def test_extract_shopify_variations_non_shopify_page_returns_empty_without_fetching():
+    crawler = FakeCrawler({})
+    tiers = await scrape.extract_shopify_variations(crawler, "<html>not shopify</html>", "https://x.sk/products/brazil")
+    assert tiers == []
+    assert crawler.calls == []  # no wasted fetch
+
+
+@pytest.mark.asyncio
+async def test_extract_shopify_variations_strips_query_string_from_endpoint_url():
+    variants_json = json.dumps({"variants": [{"title": "250g", "price": 1150}]})
+    crawler = FakeCrawler({"https://x.sk/products/brazil.js": fake_result(html=variants_json)})
+    await scrape.extract_shopify_variations(crawler, SHOPIFY_MARKER_HTML, "https://x.sk/products/brazil?variant=123")
+    assert crawler.calls == ["https://x.sk/products/brazil.js"]
+
+
+@pytest.mark.asyncio
+async def test_extract_shopify_variations_endpoint_failure_returns_empty():
+    crawler = FakeCrawler({})  # unreachable -> fake_result(success=False)
+    tiers = await scrape.extract_shopify_variations(crawler, SHOPIFY_MARKER_HTML, "https://x.sk/products/brazil")
+    assert tiers == []
+
+
+@pytest.mark.asyncio
+async def test_extract_shopify_variations_malformed_json_returns_empty():
+    crawler = FakeCrawler({"https://x.sk/products/brazil.js": fake_result(html="not json")})
+    tiers = await scrape.extract_shopify_variations(crawler, SHOPIFY_MARKER_HTML, "https://x.sk/products/brazil")
+    assert tiers == []
+
+
 # --- process_roaster (async, offline via FakeCrawler) ------------------------
 
 
@@ -1221,6 +1275,38 @@ async def test_process_roaster_uses_variation_tiers_over_llm_packaging():
     assert entries[0]["packaging"] == [
         {"weight_g": 1000, "price": 34.0},
         {"weight_g": 250, "price": 11.0},
+    ]
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_falls_back_to_shopify_variations_when_no_woocommerce_data():
+    variants_json = json.dumps(
+        {"variants": [{"title": "250g", "price": 1150}, {"title": "1kg", "price": 3300}]}
+    )
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/brazil/"]),
+            "https://x.sk/brazil/": fake_result(
+                html=SHOPIFY_MARKER_HTML, markdown=fake_markdown(LONG_TEXT + " 11,50 €")
+            ),
+            "https://x.sk/brazil.js": fake_result(html=variants_json),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [
+            fake_tool_call(
+                "extract_product",
+                # Deliberately wrong/incomplete — only the visible default price.
+                {"name": "Brazil", "origin": "Brazil", "roast_type": "Filter", "packaging": [{"price": "11,50 €"}]},
+            )
+        ]
+    )
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, [], "2026-07-08")
+    assert status == "ok"
+    assert entries[0]["packaging"] == [
+        {"weight_g": 250, "price": 11.50},
+        {"weight_g": 1000, "price": 33.0},
     ]
 
 

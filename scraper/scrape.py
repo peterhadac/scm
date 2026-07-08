@@ -820,7 +820,18 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
         raw = extract_product(client, url, markdown)
         normalized = normalize_product(raw, url, today, variation_tiers)
         if normalized is None:
-            if prior and prior.get("status") in ("ok", "incomplete"):
+            # A bare decline (Claude returned nothing, or no name at all) is
+            # ambiguous — could be a transient hiccup — and worth protecting
+            # prior data against. A name that Claude DID extract but that our
+            # own is_coffee() rejects is a confident, deterministic
+            # classification (e.g. a NON_COFFEE_KEYWORDS addition correctly
+            # catching a product type that slipped through before) — that
+            # must be allowed to reclassify a stale ok/incomplete entry to
+            # not_a_product, not protect it forever.
+            confidently_not_coffee = (
+                isinstance(raw, dict) and raw.get("name") and not is_coffee(raw["name"])
+            )
+            if prior and prior.get("status") in ("ok", "incomplete") and not confidently_not_coffee:
                 # A previously-good(-ish) product declining extraction is more
                 # likely a transient hiccup than a real delisting-in-place —
                 # keep the known data rather than downgrading it.

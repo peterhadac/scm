@@ -1128,6 +1128,41 @@ async def test_process_roaster_keeps_good_product_when_extraction_declines():
 
 
 @pytest.mark.asyncio
+async def test_process_roaster_reclassifies_stale_incomplete_when_confidently_not_coffee():
+    # Claude DID extract a name this run (unlike a bare decline) — our own
+    # is_coffee() rejects it. That's a confident, deterministic
+    # classification (e.g. a NON_COFFEE_KEYWORDS addition catching a gift
+    # set that slipped through before) and must reclassify the stale
+    # incomplete entry to not_a_product, not protect it forever.
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/tasting-set/"]),
+            "https://x.sk/tasting-set/": fake_result(markdown=fake_markdown(LONG_TEXT + " changed")),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Degustačný balíček", "packaging": [{"price": "32,90 €"}]})]
+    )
+    existing = [
+        {
+            "name": "Degustačný balíček",
+            "url": "https://x.sk/tasting-set/",
+            "status": "incomplete",
+            "missing_fields": ["origin", "roast_type"],
+            "last_seen": "2026-07-01",
+            "page_hash": "old-hash-does-not-match",
+            "packaging": [{"weight_g": None, "price": 32.9}],
+            "schema_version": scrape.SCHEMA_VERSION,
+        }
+    ]
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, existing, "2026-07-04")
+    assert status == "ok"
+    assert entries[0]["status"] == "not_a_product"
+    assert entries[0]["last_seen"] == "2026-07-04"
+
+
+@pytest.mark.asyncio
 async def test_process_roaster_caches_not_a_product_to_avoid_repeat_calls():
     markdown_text = LONG_TEXT + " category page"
     crawler = FakeCrawler(

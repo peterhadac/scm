@@ -37,6 +37,7 @@ export default defineConfig({
           items: [
             { label: 'V60', link: '/brew-methods/v60/' },
             { label: 'French Press', link: '/brew-methods/french-press/' },
+            { label: 'Cold Brew', link: '/brew-methods/cold-brew/' },
           ],
         },
       ],

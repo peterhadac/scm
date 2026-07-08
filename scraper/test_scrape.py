@@ -360,6 +360,7 @@ def test_is_coffee_drops_non_coffee(name):
         "https://x.sk/vop/",
         "https://x.sk/b2b/",
         "https://x.sk/sluzby/",
+        "https://x.sk/news/colombia-el-rubi",
     ],
 )
 def test_looks_like_product_link_rejects_site_plumbing(href):

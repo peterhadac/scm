@@ -152,6 +152,7 @@ NON_PRODUCT_PATH_SEGMENTS = (
     "menu",
     "eventy",
     "blog",
+    "news",
     "faq",
     "o-nas",
     "about",

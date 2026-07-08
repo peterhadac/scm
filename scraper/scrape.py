@@ -389,15 +389,25 @@ def extract_woocommerce_variations(html):
     for variation in variations:
         if not isinstance(variation, dict):
             continue
-        attributes = variation.get("attributes") or {}
-        if not isinstance(attributes, dict):
+        # Any malformed nested field here (non-dict attributes, a non-string
+        # weight slug, ...) makes this one variation unusable — skip it
+        # rather than adding another narrow isinstance check per field; this
+        # closes the whole class of untyped-nested-JSON crashes at once.
+        try:
+            attributes = variation.get("attributes") or {}
+            weight_slug = next(
+                (v for k, v in attributes.items() if "hmotnost" in k.lower()), None
+            )
+            weight_g = parse_weight((weight_slug or "").replace("-", " "))
+            price = variation.get("display_price")
+        except (AttributeError, TypeError):
             continue
-        weight_slug = next(
-            (v for k, v in attributes.items() if "hmotnost" in k.lower()), None
-        )
-        weight_g = parse_weight((weight_slug or "").replace("-", " "))
-        price = variation.get("display_price")
-        if weight_g is None or not isinstance(price, (int, float)) or price <= 0:
+        if (
+            weight_g is None
+            or isinstance(price, bool)
+            or not isinstance(price, (int, float))
+            or price <= 0
+        ):
             continue
         if weight_g in seen_weights:
             continue

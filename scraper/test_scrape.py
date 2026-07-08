@@ -227,6 +227,32 @@ def test_extract_woocommerce_variations_skips_non_dict_attributes():
     assert tiers == []
 
 
+def test_extract_woocommerce_variations_skips_non_string_weight_slug():
+    # A weight attribute value that isn't a string (e.g. a bare number) must
+    # be skipped, not raise, when .replace() would otherwise be called on it.
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:1000},"
+        "&quot;display_price&quot;:34}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == []
+
+
+def test_extract_woocommerce_variations_skips_boolean_price():
+    # bool is an int subclass in Python — "display_price": true must not be
+    # silently coerced into price 1.0.
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;},"
+        "&quot;display_price&quot;:true}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(html)
+    assert tiers == []
+
+
 # --- is_coffee (non-coffee filtering) ---------------------------------------
 
 

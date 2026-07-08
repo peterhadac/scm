@@ -342,6 +342,20 @@ def test_is_coffee_keeps_real_coffees(name):
         "Degustačný balíček, Spoznaj krajinu kávy",
         "Darčekový balíček pre kávičkárov",
         "Espresso cup 60ml – Grey",
+        "ECM Classica PID II",
+        "Bezzera Unica PID",
+        "Rocket Appartamento TCA BLACK/COPER",
+        "Eureka Mignon Silenzio 55, 16CR Chrome",
+        "Timemore Chestnut C3S Max",
+        "Prskaná kolekcia (s uškom)",
+        "Modrá & Ružová kolekcia (bez uška)",
+        "Štipec na kávový balík",
+        "Baristický kurz BASIC",
+        "Turn-N-Seal vakuová dóza 600 ml",
+        "Hario nádoba nahrádna V60-02 600 ml",
+        "Kávoláda GENTLEMAN 50g",
+        "Červené víno s kávou 0,75l",
+        "Alternatívny kávovar Hario V60 - set",
     ],
 )
 def test_is_coffee_drops_non_coffee(name):
@@ -478,6 +492,27 @@ def test_normalize_origin_falls_back_to_name_when_raw_missing():
 def test_normalize_origin_trusts_raw_over_name_when_both_present():
     # LLM origin wins as-is — no cross-check against a differing name mention.
     assert scrape.normalize_origin("Colombia", "brazil • doce citrus") == "Colombia"
+
+
+# --- normalize_origin diacritic-insensitive matching --------------------------
+
+
+def test_strip_diacritics_folds_accents_to_ascii():
+    assert scrape.strip_diacritics("Salvádor") == "Salvador"
+    assert scrape.strip_diacritics("Brazília") == "Brazilia"
+
+
+def test_normalize_origin_matches_alias_despite_stray_accent_in_name():
+    # "Salvádor" (stray accent) must still match the "salvador" alias.
+    assert scrape.normalize_origin(None, "Salvádor El Borbollon") == "El Salvador"
+
+
+def test_normalize_origin_matches_brasil_spelling():
+    assert scrape.normalize_origin(None, "Brasil Santos Mogiana") == "Brazil"
+
+
+def test_normalize_origin_matches_costarica_no_space():
+    assert scrape.normalize_origin(None, "Costarica Palmichal Los Vindas") == "Costa Rica"
 
 
 def test_normalize_origin_keeps_unmatched_raw_text_as_is():

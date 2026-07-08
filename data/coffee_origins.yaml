@@ -3,7 +3,7 @@
 # scan the product name for a country mention. Region names (Yirgacheffe,
 # Huila, etc.) are deliberately NOT included — literal country matches only.
 Ethiopia: [ethiopia, etiópia, etiopia]
-Brazil: [brazil, brazília, brazilia]
+Brazil: [brazil, brazília, brazilia, brasil]
 Colombia: [colombia, kolumbia]
 Kenya: [kenya, keňa, kena]
 Guatemala: [guatemala]
@@ -13,7 +13,7 @@ Honduras: [honduras]
 Peru: [peru]
 Mexico: [mexico, mexiko]
 Nicaragua: [nicaragua, nikaragua]
-Costa Rica: [costa rica, kostarika]
+Costa Rica: [costa rica, kostarika, costarica]
 Panama: [panama, panamá]
 El Salvador: [el salvador, salvador]
 Bolivia: [bolivia]

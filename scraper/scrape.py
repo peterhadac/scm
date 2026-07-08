@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import re
+import unicodedata
 from contextlib import AsyncExitStack
 from datetime import date
 from pathlib import Path
@@ -41,7 +42,7 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
 # against the new rules.
-SCHEMA_VERSION = 7
+SCHEMA_VERSION = 8
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -87,6 +88,8 @@ NON_COFFEE_KEYWORDS = (
     "mlynček",
     "mlyncek",
     "grinder",
+    "kávovar",
+    "kavovar",  # generic "coffee maker/brewer" - catches unbranded machines too
     "french press",
     "aeropress",
     "chemex",
@@ -99,6 +102,7 @@ NON_COFFEE_KEYWORDS = (
     "vahy",
     "kuchynská váha",
     "scale",
+    "timemore",  # scale/grinder brand
     "tamper",
     "tampovacia",
     "hrnček",
@@ -107,6 +111,28 @@ NON_COFFEE_KEYWORDS = (
     "salka",
     " mug",
     "espresso cup",  # not bare "cup" - collides with "cupping score/notes"
+    "s uškom",
+    "s uskom",  # "with a handle" - mug/cup collection descriptor
+    "bez uška",
+    "bez uska",  # "without a handle" - same
+    "štipec",
+    "stipec",  # bag clip
+    "baristický kurz",
+    "baristicky kurz",  # barista course - a service, not a product
+    "vakuová dóza",
+    "vakuova doza",  # vacuum storage container
+    "nádoba nahrádna",
+    "nadoba nahradna",  # replacement storage container
+    "kávoláda",
+    "kavolada",  # coffee-flavored chocolate, not beans
+    "víno s kávou",
+    "vino s kavou",  # coffee-infused wine, a bottled drink not beans
+    "eureka mignon",
+    "bezzera",
+    "ecm classica",
+    "ecm portafilter",
+    "ecm sada",
+    "rocket appartamento",
     # consumables / accessories that aren't coffee
     "filtračné papiere",
     "filtracne papiere",
@@ -250,13 +276,25 @@ def save_products(products, path=PRODUCTS_PATH):
     path.write_text(yaml.safe_dump(products, allow_unicode=True, sort_keys=True) or "")
 
 
+def strip_diacritics(text):
+    """Fold accented characters to their plain ASCII base ("Salvádor" -> "Salvador").
+
+    Product names inconsistently carry stray diacritics (a Slovak site
+    styling a borrowed word, or vice versa) that would otherwise break a
+    plain substring match against the (also inconsistently accented)
+    alias list — comparing both sides post-strip makes matching robust to
+    that noise instead of silently missing a country that IS named.
+    """
+    return "".join(c for c in unicodedata.normalize("NFKD", text) if not unicodedata.combining(c))
+
+
 def load_country_aliases(path=COUNTRIES_PATH):
-    """Flatten data/coffee_origins.yaml into a {lowercase alias: canonical name} map."""
+    """Flatten data/coffee_origins.yaml into a {diacritic-free lowercase alias: canonical name} map."""
     data = yaml.safe_load(path.read_text()) or {}
     aliases = {}
     for canonical, alias_list in data.items():
         for alias in alias_list:
-            aliases[alias.lower()] = canonical
+            aliases[strip_diacritics(alias.lower())] = canonical
     return aliases
 
 
@@ -304,14 +342,14 @@ def normalize_origin(raw, name, aliases=None):
     """
     aliases = COUNTRY_ALIASES if aliases is None else aliases
     if raw:
-        lowered = raw.lower()
+        lowered = strip_diacritics(raw.lower())
         for alias, canonical in aliases.items():
             if alias in lowered:
                 return canonical
         stripped = raw.strip()
         return stripped or None
     if name:
-        lowered = name.lower()
+        lowered = strip_diacritics(name.lower())
         for alias, canonical in aliases.items():
             if alias in lowered:
                 return canonical

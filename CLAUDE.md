@@ -1,6 +1,6 @@
 # Slovak Coffee Map
 
-Daily-updated catalogue of coffees available on the Slovak market, scraped from roaster websites, stored as JSON, and published via GitHub Pages (Astro + [Starlight](https://starlight.astro.build/)).
+Weekly-updated catalogue of coffees available on the Slovak market, scraped from roaster websites, stored as JSON, and published via GitHub Pages (Astro + [Starlight](https://starlight.astro.build/)).
 
 > ponytail: Starlight is a docs framework; for one filterable table, plain Astro (no Starlight) is lighter. Keeping Starlight as requested for theme/chrome — drop it for `@astrojs` base if the docs sidebar/search become noise.
 
@@ -23,7 +23,7 @@ src/
 astro.config.mjs       ← Astro + Starlight config (site + base for project Pages)
 package.json           ← astro, @astrojs/starlight, starlight-theme-md3 (npm)
 .github/workflows/
-  scrape.yml           ← daily cron, commits products.yaml (its push does NOT trigger pages.yml — see below)
+  scrape.yml           ← weekly cron, commits products.yaml (its push does NOT trigger pages.yml — see below)
   pages.yml            ← build Astro + deploy to Pages on push to main / scrape.yml completion / manual
 .gitignore             ← dist/, node_modules/, .astro/, __pycache__/, .venv/
 ```
@@ -125,12 +125,12 @@ One call per product page's markdown via [OpenRouter](https://openrouter.ai/)'s 
 
 ## GitHub Actions
 
-### `scrape.yml` — daily data refresh
+### `scrape.yml` — weekly data refresh
 
 ```yaml
 on:
   schedule:
-    - cron: '0 6 * * *'   # 6am UTC daily
+    - cron: '0 6 * * 1'   # 6am UTC, every Monday
   workflow_dispatch:        # manual trigger for testing
 
 permissions:

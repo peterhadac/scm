@@ -2,7 +2,7 @@ name: Scrape coffee data
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '0 6 * * 1'   # weekly, Monday 6am UTC
   workflow_dispatch:
 
 permissions:

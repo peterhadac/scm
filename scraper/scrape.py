@@ -42,7 +42,7 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
 # against the new rules.
-SCHEMA_VERSION = 9
+SCHEMA_VERSION = 10
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -367,6 +367,49 @@ def normalize_origin(raw, name, aliases=None):
         if any(keyword in lowered for keyword in BLEND_KEYWORDS):
             return "Blend"
     return None
+
+
+# WooCommerce attribute-key substrings for a coffee's source-country
+# attribute ("krajina" + "povod" = Slovak "krajina pôvodu", "country of
+# origin"; "origin" covers an untranslated English slug).
+ORIGIN_ATTRIBUTE_KEYWORDS = ("krajina", "povod", "origin")
+
+
+def extract_woocommerce_origin(html):
+    """Parse a WooCommerce product's "Additional information" origin attribute row.
+
+    WordPress/WooCommerce renders each product attribute as a
+    `<tr class="...attribute_pa_<slug>...">` row regardless of theme — this
+    reads that row's visible text directly rather than relying on the LLM to
+    correctly resolve a possibly-multi-country list (some products list
+    several source countries, e.g. "Brazília, Honduras, India, Nikaragua"
+    for a blend) into one origin, which it does inconsistently.
+
+    Returns a canonical origin (a COUNTRY_ALIASES value, or "Blend" when 2+
+    distinct countries are listed), or None if no origin-like attribute row
+    is found — the caller falls through to the LLM's own origin field.
+    """
+    soup = BeautifulSoup(html or "", "html.parser")
+    row = soup.find("tr", class_=re.compile(r"attribute_pa_(?:%s)" % "|".join(ORIGIN_ATTRIBUTE_KEYWORDS), re.I))
+    if not row:
+        return None
+    cell = row.find("td")
+    if not cell:
+        return None
+    countries = set()
+    for part in cell.get_text(", ").split(","):
+        part = strip_diacritics(part.strip().lower())
+        if not part:
+            continue
+        for alias, canonical in COUNTRY_ALIASES.items():
+            if alias in part:
+                countries.add(canonical)
+                break
+    if not countries:
+        return None
+    if len(countries) == 1:
+        return next(iter(countries))
+    return "Blend"
 
 
 def find_next_page_url(html, current_url):
@@ -771,7 +814,7 @@ def extract_product(client, url, markdown):
     return None
 
 
-def normalize_product(raw, url, today, variation_tiers=None, roast_type_hint=None):
+def normalize_product(raw, url, today, variation_tiers=None, roast_type_hint=None, origin_hint=None):
     """Turn a raw Claude extraction into a products.yaml entry, or None if unusable.
 
     Returns None only when there's no coffee here at all (Claude declined, or
@@ -788,6 +831,11 @@ def normalize_product(raw, url, today, variation_tiers=None, roast_type_hint=Non
     `roast_type_hint`, from `discover_roast_type_hints()`, is the last-resort
     fallback passed to `normalize_roast_type()` for sites that never state a
     roast type on the product page itself.
+
+    `origin_hint`, from `extract_woocommerce_origin()`, is trusted over the
+    LLM's own origin guess when present — same reasoning as variation_tiers:
+    a WooCommerce attribute row beats an LLM inconsistently resolving a
+    multi-country list.
     """
     if not raw or not isinstance(raw, dict) or not raw.get("name") or not is_coffee(raw["name"]):
         return None
@@ -823,7 +871,7 @@ def normalize_product(raw, url, today, variation_tiers=None, roast_type_hint=Non
     roast_type = normalize_roast_type(
         raw.get("roast_type"), raw.get("process"), name, roast_type_hint
     )
-    origin = normalize_origin(raw.get("origin"), name)
+    origin = origin_hint or normalize_origin(raw.get("origin"), name)
 
     # These two heuristics catch LLM extraction failures specifically — they
     # don't apply when packaging came from variation_tiers (WooCommerce's own
@@ -936,8 +984,9 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
             continue
 
         raw = extract_product(client, url, markdown)
+        origin_hint = extract_woocommerce_origin(result.html)
         normalized = normalize_product(
-            raw, url, today, variation_tiers, roast_type_hints.get(url)
+            raw, url, today, variation_tiers, roast_type_hints.get(url), origin_hint
         )
         if normalized is None:
             # A bare decline (Claude returned nothing, or no name at all) is

@@ -545,6 +545,41 @@ def test_normalize_origin_country_alias_wins_over_blend_keyword():
     assert scrape.normalize_origin(None, "Brazil Espresso Blend") == "Brazil"
 
 
+# --- extract_woocommerce_origin ------------------------------------------------
+
+
+WOO_ORIGIN_ROW_HTML = (
+    '<tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--attribute_pa_krajina-povodu">'
+    '<th><span class="wd-attr-name">Krajina pôvodu</span></th>'
+    '<td><span class="wd-term-name">Brazília</span><span class="wd-term-sep">, </span>'
+    '<span class="wd-term-name">Honduras</span></td></tr>'
+)
+
+
+def test_extract_woocommerce_origin_multi_country_is_blend():
+    assert scrape.extract_woocommerce_origin(WOO_ORIGIN_ROW_HTML) == "Blend"
+
+
+def test_extract_woocommerce_origin_single_country():
+    html = (
+        '<tr class="woocommerce-product-attributes-item--attribute_pa_krajina-povodu">'
+        '<td><span class="wd-term-name">Etiópia</span></td></tr>'
+    )
+    assert scrape.extract_woocommerce_origin(html) == "Ethiopia"
+
+
+def test_extract_woocommerce_origin_absent_returns_none():
+    assert scrape.extract_woocommerce_origin("<html><body>no attribute table</body></html>") is None
+
+
+def test_extract_woocommerce_origin_unrecognized_text_returns_none():
+    html = (
+        '<tr class="woocommerce-product-attributes-item--attribute_pa_krajina-povodu">'
+        '<td><span class="wd-term-name">Neznáma planéta</span></td></tr>'
+    )
+    assert scrape.extract_woocommerce_origin(html) is None
+
+
 # --- normalize_product --------------------------------------------------------
 
 
@@ -628,6 +663,21 @@ def test_normalize_product_uses_roast_type_hint_when_page_states_nothing():
     )
     assert result["status"] == "ok"
     assert result["roast_type"] == "espresso"
+
+
+def test_normalize_product_origin_hint_wins_over_llm_guess():
+    # LLM left origin null (multi-country list confused it) — the
+    # deterministic WooCommerce attribute-row hint fills it in.
+    raw = {
+        "name": "BUDÍČEK",
+        "roast_type": "Espresso",
+        "packaging": [{"weight": "250 g", "price": "8,00 €"}],
+    }
+    result = scrape.normalize_product(
+        raw, "https://x.sk/budicek/", "2026-07-08", origin_hint="Blend"
+    )
+    assert result["status"] == "ok"
+    assert result["origin"] == "Blend"
 
 
 def test_normalize_product_variation_tiers_still_requires_a_name():

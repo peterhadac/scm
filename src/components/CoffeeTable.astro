@@ -164,30 +164,28 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
         />
       </div>
     </div>
-    <div class="ct-filters">
-      <div class="ct-filter-group">
-        <label class="ct-label" for="filter-roaster">Roaster</label>
-        <select id="filter-roaster" class="ct-select"><option value="">All</option></select>
-      </div>
-      <div class="ct-filter-group">
-        <label class="ct-label" for="filter-origin">Origin</label>
-        <select id="filter-origin" class="ct-select"><option value="">All</option></select>
-      </div>
-      <div class="ct-filter-group">
-        <label class="ct-label" for="filter-process">Process</label>
-        <select id="filter-process" class="ct-select"><option value="">All</option></select>
-      </div>
-      {!roastType && (
-        <div class="ct-filter-group">
-          <label class="ct-label" for="filter-roast">Roast</label>
-          <select id="filter-roast" class="ct-select">
-            <option value="">All</option>
-            <option value="filter">Filter</option>
-            <option value="espresso">Espresso</option>
-          </select>
-        </div>
-      )}
+    <div class="ct-filter-group">
+      <label class="ct-label" for="filter-roaster">Roaster</label>
+      <select id="filter-roaster" class="ct-select"><option value="">All</option></select>
     </div>
+    <div class="ct-filter-group">
+      <label class="ct-label" for="filter-origin">Origin</label>
+      <select id="filter-origin" class="ct-select"><option value="">All</option></select>
+    </div>
+    <div class="ct-filter-group">
+      <label class="ct-label" for="filter-process">Process</label>
+      <select id="filter-process" class="ct-select"><option value="">All</option></select>
+    </div>
+    {!roastType && (
+      <div class="ct-filter-group">
+        <label class="ct-label" for="filter-roast">Roast</label>
+        <select id="filter-roast" class="ct-select">
+          <option value="">All</option>
+          <option value="filter">Filter</option>
+          <option value="espresso">Espresso</option>
+        </select>
+      </div>
+    )}
     <div class="ct-actions">
       <button id="clear-filters" type="button" class="ct-clear-btn" hidden>
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -587,13 +585,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     outline: none;
     box-shadow: var(--md3-focus-ring);
     border-color: var(--md-sys-color-primary);
-  }
-
-  .ct-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    flex: 1;
   }
 
   .ct-filter-group {

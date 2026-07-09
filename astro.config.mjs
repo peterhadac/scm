@@ -25,12 +25,22 @@ export default defineConfig({
       ],
       sidebar: [
         {
-          label: 'Coffees',
+          label: 'Roasted coffee',
           items: [
             { label: 'All', link: '/coffees/' },
             { label: 'Filter coffees', link: '/coffees/filter/' },
             { label: 'Espresso coffees', link: '/coffees/espresso/' },
           ]
+        },
+        {
+          label: 'Drinks',
+          items: [
+            { label: 'Espresso Cube Tonic', link: '/drinks/espresso-cube-tonic/' },
+            { label: 'Espresso Cube Cappuccino', link: '/drinks/espresso-cube-cappuccino/' },
+            { label: 'Filterccino', link: '/drinks/filterccino/' },
+            { label: 'Filter Ice Cappuccino', link: '/drinks/filter-ice-cappuccino/' },
+            { label: 'FTS - Filter To Survive', link: '/drinks/fts/' },
+          ],
         },
         {
           label: 'Brew Methods',

@@ -130,10 +130,6 @@ html[data-theme="dark"] {
 }
 
 /* ── Splash page hero ─────────────────────────────────────────────────────── */
-.hero {
-  background-color: var(--md-sys-color-surface-container-low);
-}
-
 .hero h1 {
   font-weight: var(--md-sys-typescale-display-small-weight);
   letter-spacing: var(--md-sys-typescale-display-small-tracking);

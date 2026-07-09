@@ -3589,121 +3589,71 @@ simple-coffee:
   status: not_a_product
   url: https://simplecoffee.sk/ochrana-soukromia/
 suca-roastery:
-- last_seen: '2026-07-08'
-  name: Guatemala Finca Pampojila
-  origin: Guatemala
-  packaging:
-  - price: 12.9
-    weight_g: 250
-  - price: 12.9
-    weight_g: 250
-  - price: 21.9
-    weight_g: 500
-  - price: 21.9
-    weight_g: 500
-  page_hash: 22ba7951c85bb5bc92637079771e1e19fc5f1c1fd25e5fb59cd763325dcf8588
-  process: null
-  roast_type: filter
-  schema_version: 14
-  status: ok
-  url: https://www.sucaroastery.sk/p/guatemala-finca-pampojila
-- last_seen: '2026-07-08'
-  page_hash: 92562798cd480de1a4480d9f2f852dab6c6fdaa34947986b958cca7ee88a4b74
-  status: not_a_product
-  url: https://www.sucaroastery.sk/customer/registration/
-- last_seen: '2026-07-08'
-  missing_fields:
-  - origin
-  - roast_type
-  - weight_g
-  name: test
-  origin: null
-  packaging:
-  - price: 10.0
-    weight_g: null
-  page_hash: c08a45d2036ac1e763d71d44868433398839b79412f99bed33ceef146d8e0eb7
-  process: null
-  roast_type: null
-  schema_version: 10
-  status: incomplete
-  url: https://www.sucaroastery.sk/p/test
-- last_seen: '2026-07-08'
+- last_seen: '2026-07-09'
   name: Guatemala La Bella natural
   origin: Guatemala
   packaging:
   - price: 9.8
     weight_g: 250
-  - price: 9.8
-    weight_g: 250
   - price: 10.9
     weight_g: 500
-  - price: 10.9
-    weight_g: 500
-  page_hash: d18add29e768bde7733f179db88cf21e35bf7bd82f6fe9b6c0a6b7341e40b3ec
+  page_hash: 2f0b12a8eb946aa9b86b5bda1fe585f0a789e7d91933d3ee371cd637ca7ada87
   process: null
   roast_type: filter
-  schema_version: 14
+  schema_version: 15
   status: ok
   url: https://www.sucaroastery.sk/p/guatemala-la-bella-natural
-- last_seen: '2026-07-08'
-  missing_fields:
-  - weight_g
-  name: Rwanda Gisheke
-  origin: Rwanda
-  packaging:
-  - price: 10.9
-    weight_g: 250
-  - price: 10.9
-    weight_g: null
-  - price: 20.5
-    weight_g: null
-  - price: 20.5
-    weight_g: null
-  page_hash: bb6c681446ccb412c5721a6ad16858560a327c87fbb00f0fdaf8248c035abaea
-  process: null
-  roast_type: filter
-  schema_version: 13
-  status: incomplete
-  url: https://www.sucaroastery.sk/p/rwanda-gisheke-natural
-- last_seen: '2026-07-08'
-  name: Ethiopia Abebe Hilu Yirgacheffe
-  origin: Yirgacheffe
-  packaging:
-  - price: 9.3
-    weight_g: 250
-  - price: 9.3
-    weight_g: 250
-  - price: 10.9
-    weight_g: 500
-  - price: 10.9
-    weight_g: 500
-  page_hash: ebd6bf1d61418e225113d0aab3542067043c07c0ca8e70ec773bcebb460efa61
-  process: null
-  roast_type: filter
-  schema_version: 14
-  status: ok
-  url: https://www.sucaroastery.sk/p/ethiopia-abebe-hilu-yirgacheffe
-- last_seen: '2026-07-08'
-  page_hash: 64f8cb441e57c777a155c5f28f7f761a94d71685c2aafa9d377a0c56c00bdc5a
+- last_seen: '2026-07-09'
+  page_hash: 00d4a313dc58932a540462b94b524b596bd43b615400752a1e33fb8d13023bc9
   status: not_a_product
   url: https://www.sucaroastery.sk/velkoobchod
-- last_seen: '2026-07-08'
+- last_seen: '2026-07-09'
+  page_hash: db75f1888b99e945ede12c6fb6da2584866b68e1bc79614d5f2ed3188438491c
+  status: not_a_product
+  url: https://www.sucaroastery.sk/vsetko-o-nakupe
+- last_seen: '2026-07-09'
   name: Colombia Hacienda La Claudina washed
   origin: Colombia
   packaging:
   - price: 8.9
     weight_g: 250
-  - price: 14.9
+  - price: 17.8
     weight_g: 500
-  - price: 27.9
+  - price: 23.8
     weight_g: 1000
-  page_hash: 9d184c693dc42a72c6d289568c070eef79e87e7464c8e5d4a255bad084dd4c10
+  page_hash: ed17d54d15d9760b84fdaea22ca5c56dc781037edce4f9f136f6772e4b5d3690
   process: null
   roast_type: espresso
-  schema_version: 14
+  schema_version: 15
   status: ok
   url: https://www.sucaroastery.sk/p/colombia-hacienda-la-claudina-washed
 - last_seen: '2026-07-08'
+  missing_fields:
+  - weight_g
+  name: Kenya Endebess natural
+  origin: Kenya
+  packaging:
+  - price: 9.8
+    weight_g: 250
+  - price: 11.5
+    weight_g: null
+  - price: 11.5
+    weight_g: null
+  page_hash: 14304bb10c3d47899d7385d1171b30393962bd477d5e0557c9bdc9dca75c8943
+  process: null
+  roast_type: filter
+  schema_version: 6
+  status: incomplete
+  url: https://www.sucaroastery.sk/zrnkova-kava-na-filter
+- last_seen: '2026-07-09'
+  page_hash: 88e41b55cc9c4f251f5d335d87bdc3ac9777f107fc60168be1480da1d702acbb
+  status: not_a_product
+  url: https://www.sucaroastery.sk/feed-rss.xml
+- last_seen: '2026-07-09'
+  page_hash: 5c5767dc105027f800e4a20bd729bd500ee86b7230d675e86e03fc6bc89169e5
+  status: not_a_product
+  url: https://www.sucaroastery.sk/reklamacny-poriadok
+- last_seen: '2026-07-09'
   name: Colombia Jesus Barahona Buenavista
   origin: Huila, Algeciras
   packaging:
@@ -3711,44 +3661,78 @@ suca-roastery:
     weight_g: 250
   - price: 11.0
     weight_g: 250
-  - price: 17.0
+  - price: 18.0
     weight_g: 500
-  - price: 17.0
+  - price: 18.0
     weight_g: 500
-  page_hash: 4e9102a748c39267ec4cf1971da8f4627ab2cb6720e569a2db0c92734d4ef1f0
+  page_hash: 87a8da670e67f520cd92bfe0e8870cbef9ff34f7d90febef0b7bdbfbac7df3ed
   process: natural
   roast_type: filter
-  schema_version: 14
+  schema_version: 15
   status: ok
   url: https://www.sucaroastery.sk/p/colombia-jesus-barahona-buenavista
-- last_seen: '2026-07-08'
-  missing_fields:
-  - weight_g
-  name: Brazil Fazenda das Almas
-  origin: Brazil
-  packaging:
-  - price: 10.5
-    weight_g: null
-  - price: 12.9
-    weight_g: null
-  page_hash: 0450d9788da359b1633cdb1b02334df2c864cacd1813be1f6d7efdad00127b3b
-  process: null
-  roast_type: espresso
-  schema_version: 14
-  status: incomplete
-  url: https://www.sucaroastery.sk/p/brazil-fazenda-das-almas
-- last_seen: '2026-07-08'
-  page_hash: 3de38c6f22e95dc26bc0099b874e45d917831b8cd6592181e88c96a14da1bd09
+- last_seen: '2026-07-09'
+  page_hash: 2e1b86fec1a0e5d530616e98e45f9667a81dc209f9f79aaacb38946787a2d653
+  status: not_a_product
+  url: https://www.sucaroastery.sk/https-www-sucaroastery-sk-zrnkova-kava-na-espresso
+- last_seen: '2026-07-09'
+  page_hash: 71a2765dc5dc9d8e47d947e304e123fee324619f442eeaa8ecebd5e0487ac4e3
   status: not_a_product
   url: https://www.sucaroastery.sk/kilove-balenia-1
-- last_seen: '2026-07-08'
-  page_hash: 01f442ebe97279b9ba1a8d151cd5dce78506729c325b3c48e035a0a3c4059e3f
+- last_seen: '2026-07-09'
+  page_hash: 0a52a9b675befadb5dd6329bec5f77061fb4f822f6ed64e71baa48f465f2e561
   status: not_a_product
-  url: https://www.sucaroastery.sk/ako-nakupit
-- last_seen: '2026-07-08'
-  page_hash: fd215071664714f18878c45dd0f67ada581573ebb6bd538d2a886bf0dc8edba8
+  url: https://www.sucaroastery.sk/
+- last_seen: '2026-07-09'
+  name: Colombia Ombligon sugarcane decaf
+  origin: Huila
+  packaging:
+  - price: 15.9
+    weight_g: 250
+  - price: 15.9
+    weight_g: 250
+  - price: 26.9
+    weight_g: 500
+  - price: 26.9
+    weight_g: 500
+  page_hash: d09e0b188eeb5981b688c2d180e9eebe6a1302285822114127085ad805f60783
+  process: natural
+  roast_type: filter
+  schema_version: 15
+  status: ok
+  url: https://www.sucaroastery.sk/p/colombia-ombligon-sugarcane-decaf
+- last_seen: '2026-07-09'
+  page_hash: a3395c503d5f5b08061614b022106fbb0d30e398061223d7ef23cc6f06bcad76
   status: not_a_product
-  url: https://www.sucaroastery.sk/sitemap
+  url: https://www.sucaroastery.sk/bezkofeinova-kava
+- last_seen: '2026-07-09'
+  page_hash: 8410721daa66830a457b7e6a1b56bebec4174b60b220d1808c37ed35f93401e6
+  status: not_a_product
+  url: https://www.sucaroastery.sk/compare
+- last_seen: '2026-07-09'
+  missing_fields:
+  - weight_g
+  name: Nicaragua Finca El Ciprés
+  origin: Nicaragua
+  packaging:
+  - price: 10.9
+    weight_g: null
+  - price: 10.9
+    weight_g: null
+  - price: 10.9
+    weight_g: null
+  - price: 10.9
+    weight_g: null
+  page_hash: 24ebc7ea49e70b0ab5f0a1c49cbe234685d85b57dc92ebc23d1e13d0d3ed6f5e
+  process: null
+  roast_type: filter
+  schema_version: 15
+  status: incomplete
+  url: https://www.sucaroastery.sk/p/nicaragua-finca-el-cipres
+- last_seen: '2026-07-09'
+  page_hash: 1031c71e78b12ed5cc996c969df0dd0e4be41a65a80f06e3bac5270914d9afc7
+  status: not_a_product
+  url: https://www.sucaroastery.sk/customer/find-order/
 - last_seen: '2026-07-08'
   missing_fields:
   - origin
@@ -3789,27 +3773,89 @@ suca-roastery:
   schema_version: 8
   status: incomplete
   url: https://www.sucaroastery.sk/co-fermented
-- last_seen: '2026-07-08'
-  page_hash: 76c163bf33466b73215ddeffe7359e82de2db332821a5843cfc7843b0ab2d8bb
+- last_seen: '2026-07-09'
+  page_hash: 4fbb9366caa93dff8d00ebc043e889d2f7e4b8b0fcf26e645644242f4acc3d9c
   status: not_a_product
-  url: https://www.sucaroastery.sk/vsetko-o-nakupe
-- last_seen: '2026-07-08'
+  url: https://www.sucaroastery.sk/https-www-sucaroastery-sk-kilove-balenia-1
+- last_seen: '2026-07-09'
   missing_fields:
-  - price
-  name: Nicaragua Finca El Ciprés
-  origin: Nicaragua
+  - roast_type
+  name: Colombia Monteblanco
+  origin: Colombia
   packaging:
-  - price: 10.9
+  - price: 18.9
     weight_g: 250
-  - price: 10.9
-    weight_g: 500
-  page_hash: 1350b34337f3697115473e3cc95648a992103b5220f5108c8e0db90e670a40be
+  page_hash: 41b31e173b7e07cb2c82b071492ff51487acbc141c8ffb7c770d6456e1dc1c23
   process: null
-  roast_type: filter
-  schema_version: 14
+  roast_type: null
+  schema_version: 15
   status: incomplete
-  url: https://www.sucaroastery.sk/p/nicaragua-finca-el-cipres
-- last_seen: '2026-07-08'
+  url: https://www.sucaroastery.sk/p/colombia-monteblanco
+- last_seen: '2026-07-09'
+  name: Costarica Palmichal Los Vindas
+  origin: Costa Rica
+  packaging:
+  - price: 8.9
+    weight_g: 250
+  - price: 16.9
+    weight_g: 500
+  page_hash: 0b3f7f20ec8ed9c05ac11f4c5f7c3a7f8e6a8b661fd9fe0ebb7df49b3e7c7bc6
+  process: null
+  roast_type: espresso
+  schema_version: 15
+  status: ok
+  url: https://www.sucaroastery.sk/p/costarica-palmichal-los-vindas
+- last_seen: '2026-07-09'
+  page_hash: 1d3adb025c5ccfc672b603085a98ce89e79e0a553741e95a0b21a5b196cf1ec1
+  status: not_a_product
+  url: https://www.sucaroastery.sk/https-www-sucaroastery-sk-kava
+- last_seen: '2026-07-09'
+  page_hash: ffb0b5d77cc2f962378d5374b44902d3aca73f0c6a7a1f8d69800025872a117a
+  status: not_a_product
+  url: https://www.sucaroastery.sk/customer/registration/
+- last_seen: '2026-07-09'
+  page_hash: 69fa5b17726fd33b4e89d650e789737837800ae9378a274dcc2fff34de374492
+  status: not_a_product
+  url: https://www.sucaroastery.sk/https-www-sucaroastery-sk-vyberova-kava
+- last_seen: '2026-07-09'
+  page_hash: 2d8b2d4c1a67a1e7e18bc48db3a414166089a7ae2a466386563ddbd01941d59a
+  status: not_a_product
+  url: https://www.sucaroastery.sk/https-www-sucaroastery-sk-velkoobchod
+- last_seen: '2026-07-09'
+  page_hash: 5f8c3392b72e7388804038e053c6722d5eb2ba5bd972676d41a4664a37773b2a
+  status: not_a_product
+  url: https://www.sucaroastery.sk/https-www-sucaroastery-sk-co-fermented
+- last_seen: '2026-07-09'
+  page_hash: 4ea6b335871423add4a0153e5f3501e4a5ca9fae5854eb807ed33e773651f20d
+  status: not_a_product
+  url: https://www.sucaroastery.sk/kava
+- last_seen: '2026-07-09'
+  page_hash: 4d5221e217cbdcfe343037b05661406af0a99961eb3343ac7c62d61db0f8b09f
+  status: not_a_product
+  url: https://www.sucaroastery.sk/zrnkova-kava-na-espresso
+- last_seen: '2026-07-09'
+  name: Colombia Finca La Rosa
+  origin: Colombia
+  packaging:
+  - price: 10.4
+    weight_g: 250
+  - price: 10.4
+    weight_g: 250
+  - price: 17.9
+    weight_g: 500
+  - price: 17.9
+    weight_g: 500
+  page_hash: 2dfe72b41ea220115b2bb3d6a33429ef8454514c617231c5060259cb812bf53d
+  process: null
+  roast_type: espresso
+  schema_version: 15
+  status: ok
+  url: https://www.sucaroastery.sk/p/colombia-finca-la-rosa
+- last_seen: '2026-07-09'
+  page_hash: aba0b3dfe4d736ed20ebb4641438dae2cd6a213635c18e7e296bf7ea9d6961aa
+  status: not_a_product
+  url: https://www.sucaroastery.sk/sitemap
+- last_seen: '2026-07-09'
   name: El Salvador Finca El Cerro anacafe
   origin: El Salvador
   packaging:
@@ -3817,152 +3863,59 @@ suca-roastery:
     weight_g: 250
   - price: 10.9
     weight_g: 250
-  - price: 16.9
+  - price: 17.9
     weight_g: 500
-  - price: 16.9
+  - price: 17.9
     weight_g: 500
-  page_hash: c9a855b026a2b60fd5a3088f8cf971c65fcd38e01e0b987fc8efda5fa3073f88
-  process: natural
+  page_hash: 06a9f1a4cc4763df3d792fb3a91b1a8bdad5bf43a3d908d4cd22760abdacb4c0
+  process: null
   roast_type: espresso
-  schema_version: 14
+  schema_version: 15
   status: ok
   url: https://www.sucaroastery.sk/p/el-salvador-finca-el-cerro-anacafe
-- last_seen: '2026-07-08'
-  page_hash: 0dc05bf9a29df2dd15f5c7033b5d67ca1fa013f1b6161dd81cf2b5f106e0a333
-  status: not_a_product
-  url: https://www.sucaroastery.sk/bezkofeinova-kava
-- last_seen: '2026-07-08'
-  missing_fields:
-  - weight_g
+- last_seen: '2026-07-09'
   name: Kenya Endebess natural
   origin: Kenya
   packaging:
   - price: 9.8
     weight_g: 250
   - price: 11.5
-    weight_g: null
-  - price: 11.5
-    weight_g: null
-  page_hash: 14304bb10c3d47899d7385d1171b30393962bd477d5e0557c9bdc9dca75c8943
+    weight_g: 500
+  page_hash: 676fbd444497e2adaf15228fdf6fefd9327120588db3a6c95d70a3dfb86a8be2
   process: null
   roast_type: filter
-  schema_version: 6
-  status: incomplete
-  url: https://www.sucaroastery.sk/zrnkova-kava-na-filter
-- last_seen: '2026-07-08'
-  missing_fields:
-  - weight_g
-  name: Colombia Finca La Rosa
-  origin: Antioquia, Hispania
-  packaging:
-  - price: 10.4
-    weight_g: 250
-  - price: 500.0
-    weight_g: null
-  - price: 11.5
-    weight_g: 250
-  - price: 11.5
-    weight_g: 500
-  page_hash: 08f0aa9191368ae08fc2547d239c6a24f717a990c45b15ab7120d66e5a999d00
-  process: null
-  roast_type: espresso
-  schema_version: 12
-  status: incomplete
-  url: https://www.sucaroastery.sk/p/colombia-finca-la-rosa
-- last_seen: '2026-07-08'
-  page_hash: 88e41b55cc9c4f251f5d335d87bdc3ac9777f107fc60168be1480da1d702acbb
-  status: not_a_product
-  url: https://www.sucaroastery.sk/feed-rss.xml
-- last_seen: '2026-07-08'
-  missing_fields:
-  - roast_type
-  - weight_g
-  name: Colombia Monteblanco
-  origin: Colombia
-  packaging:
-  - price: 18.9
-    weight_g: null
-  page_hash: 490176a0112cf460ed4f53ae5f8d0cb47fcb2309157577eb9a284a190b124c89
-  process: null
-  roast_type: null
-  schema_version: 14
-  status: incomplete
-  url: https://www.sucaroastery.sk/p/colombia-monteblanco
-- last_seen: '2026-07-08'
-  name: Costarica Palmichal Los Vindas
-  origin: Costa Rica
-  packaging:
-  - price: 8.9
-    weight_g: 250
-  - price: 9.9
-    weight_g: 500
-  page_hash: b99cdb2c40c9e79243395b1e0272db0b550a3d68417a3a0438fad32537c4dc53
-  process: null
-  roast_type: espresso
-  schema_version: 14
-  status: ok
-  url: https://www.sucaroastery.sk/p/costarica-palmichal-los-vindas
-- last_seen: '2026-07-08'
-  page_hash: ae0c6a6e66eca782427830465cb61628f516bf78cb23d0ffc488d27021615d22
-  status: not_a_product
-  url: https://www.sucaroastery.sk/kava
-- last_seen: '2026-07-08'
-  page_hash: 6f70505df4e56534bb222e740d48a0fb9c574e649c75bb0c44e57526b9640774
-  status: not_a_product
-  url: https://www.sucaroastery.sk/compare
-- last_seen: '2026-07-08'
-  page_hash: f3a164594e62013bd477f1108a5e657f82f08db551e658d87844a5bd7eb406eb
-  status: not_a_product
-  url: https://www.sucaroastery.sk/vyberova-kava
-- last_seen: '2026-07-08'
-  page_hash: ebd7d689e11fbc2a42a0d78268cb4f279537a5a38f9f34fc9890b0a1b1ff0dc9
-  status: not_a_product
-  url: https://www.sucaroastery.sk/doprava-a-platba
-- last_seen: '2026-07-08'
-  page_hash: 3e4383fbef88f5ed175196bb677733d32d6f8c580271b682df96ab03ea5f1dea
-  status: not_a_product
-  url: https://www.sucaroastery.sk/zrnkova-kava-na-espresso
-- last_seen: '2026-07-08'
-  page_hash: 9fd49c43968fad71f2aca2c671bdb7adba2d25a5081f58d2cd0fb6ca82550a96
-  status: not_a_product
-  url: https://www.sucaroastery.sk/customer/find-order/
-- last_seen: '2026-07-08'
-  name: Kenya Endebess natural
-  origin: Kenya
-  packaging:
-  - price: 9.8
-    weight_g: 250
-  - price: 11.5
-    weight_g: 500
-  page_hash: 5b8b9c7dcd6a875f60d1ea08dc0fac664d528b84b749d71e3e1158162b92c487
-  process: natural
-  roast_type: espresso
-  schema_version: 14
+  schema_version: 15
   status: ok
   url: https://www.sucaroastery.sk/p/kenya-endebess-natural
-- last_seen: '2026-07-08'
-  page_hash: 2bcb1713a72780533cacd45704f5a54dbac9e409cbc521a7064e9e590e45b5d6
-  status: not_a_product
-  url: https://www.sucaroastery.sk/reklamacny-poriadok
-- last_seen: '2026-07-08'
-  page_hash: 6ee66fd6bda211aa74453cad2b4041e30a84052d764a1ee44257c8e285a5dca9
-  status: not_a_product
-  url: https://www.sucaroastery.sk/
-- last_seen: '2026-07-08'
-  name: Colombia Ombligon sugarcane decaf
-  origin: Huila
+- last_seen: '2026-07-09'
+  missing_fields:
+  - price
+  name: Guatemala Finca Pampojila
+  origin: Guatemala
   packaging:
-  - price: 15.9
+  - price: 12.9
     weight_g: 250
-  - price: 8.9
+  - price: 250.0
+    weight_g: 250
+  - price: 500.0
     weight_g: 500
-  page_hash: c8cbc73c5022fe4f3325a9ab01647a82f2f459d2b8f67690a81818eb71b399c5
+  - price: 500.0
+    weight_g: 500
+  page_hash: 01966c362cab6e48a28299390c4c92faf5d584d7101ac30a775e317f2018a9f6
   process: null
   roast_type: filter
-  schema_version: 14
-  status: ok
-  url: https://www.sucaroastery.sk/p/colombia-ombligon-sugarcane-decaf
-- last_seen: '2026-07-08'
+  schema_version: 15
+  status: incomplete
+  url: https://www.sucaroastery.sk/p/guatemala-finca-pampojila
+- last_seen: '2026-07-09'
+  page_hash: 230595a6db2754b641f5f15a3de4d2a4a3ee96ffea6063e3ba9535494bfb7267
+  status: not_a_product
+  url: https://www.sucaroastery.sk/https-www-sucaroastery-sk-zrnkova-kava-na-filter
+- last_seen: '2026-07-09'
+  page_hash: adbdc90b088cd950d1549e5d7d1f5f8d1ccfdc2d03aef12fb63e1db8a2bf5b33
+  status: not_a_product
+  url: https://www.sucaroastery.sk/navigacia
+- last_seen: '2026-07-09'
   name: Vietnam Langbiang double washed
   origin: Vietnam
   packaging:
@@ -3974,12 +3927,98 @@ suca-roastery:
     weight_g: 500
   - price: 12.5
     weight_g: 500
-  page_hash: a06f6c82e884cf62c2eeaaf497d9c53d66a16854c7c9e5cab665c0f19b39ba9a
+  page_hash: 313c189c7624ff8f9c6464144f618620cef53b8edadc50af2c911c39dbdf9406
+  process: null
+  roast_type: filter
+  schema_version: 15
+  status: ok
+  url: https://www.sucaroastery.sk/p/vietnam-langbiang-double-washed
+- last_seen: '2026-07-09'
+  page_hash: 042c36f6d3f2e65186f3221aa5e995d208e196cd3e3c9c908511a6b1a2e7cb1c
+  status: not_a_product
+  url: https://www.sucaroastery.sk/kava-1
+- last_seen: '2026-07-08'
+  name: Ethiopia Abebe Hilu Yirgacheffe
+  origin: Yirgacheffe
+  packaging:
+  - price: 9.3
+    weight_g: 250
+  - price: 9.3
+    weight_g: 250
+  - price: 10.9
+    weight_g: 500
+  - price: 10.9
+    weight_g: 500
+  page_hash: ebd6bf1d61418e225113d0aab3542067043c07c0ca8e70ec773bcebb460efa61
   process: null
   roast_type: filter
   schema_version: 14
   status: ok
-  url: https://www.sucaroastery.sk/p/vietnam-langbiang-double-washed
+  url: https://www.sucaroastery.sk/p/ethiopia-abebe-hilu-yirgacheffe
+- last_seen: '2026-07-09'
+  page_hash: 7e8dca228e6f6dabbe64e65e1a0bedd3899abef69e98898bba81221863906d31
+  status: not_a_product
+  url: https://www.sucaroastery.sk/ako-nakupit
+- last_seen: '2026-07-09'
+  name: Brazil Fazenda das Almas
+  origin: Brazil
+  packaging:
+  - price: 10.5
+    weight_g: 250
+  page_hash: 787b2d461deabeb09314c4144448ef195fc2f43fd85f8f9c66571a9883a467e0
+  process: null
+  roast_type: espresso
+  schema_version: 15
+  status: ok
+  url: https://www.sucaroastery.sk/p/brazil-fazenda-das-almas
+- last_seen: '2026-07-09'
+  missing_fields:
+  - price
+  name: Rwanda Gisheke
+  origin: Rwanda
+  packaging:
+  - price: 10.9
+    weight_g: 250
+  - price: 10.9
+    weight_g: 250
+  - price: 10.9
+    weight_g: 500
+  - price: 10.9
+    weight_g: 500
+  page_hash: 52ce8835a634cac6202ca78393afd6e95f90f58f21eb21293d3b1bc83d2eb76f
+  process: null
+  roast_type: filter
+  schema_version: 15
+  status: incomplete
+  url: https://www.sucaroastery.sk/p/rwanda-gisheke-natural
+- last_seen: '2026-07-08'
+  missing_fields:
+  - origin
+  - roast_type
+  - weight_g
+  name: test
+  origin: null
+  packaging:
+  - price: 10.0
+    weight_g: null
+  page_hash: c08a45d2036ac1e763d71d44868433398839b79412f99bed33ceef146d8e0eb7
+  process: null
+  roast_type: null
+  schema_version: 10
+  status: incomplete
+  url: https://www.sucaroastery.sk/p/test
+- last_seen: '2026-07-09'
+  page_hash: 0ca10624621e1cd855bfa5ac861e671677951aeaebcf957b3286fd03533e614d
+  status: not_a_product
+  url: https://www.sucaroastery.sk/https-www-sucaroastery-sk-bezkofeinova-kava
+- last_seen: '2026-07-09'
+  page_hash: 15694b39ac2ff32aa2c75710c4ed7a17b4cef6a9685efa45c5bdfd347a89cb21
+  status: not_a_product
+  url: https://www.sucaroastery.sk/vyberova-kava
+- last_seen: '2026-07-09'
+  page_hash: 0abe250b25e6660daad956bb9b0aedbf513846775af05d4b160dc850adb84380
+  status: not_a_product
+  url: https://www.sucaroastery.sk/doprava-a-platba
 sweet-beans-coffee:
 - last_seen: '2026-07-08'
   page_hash: 2f1e0c790454f40c6bb1d221e468d8255d83a81677d7fc2d4376824d425d21e6

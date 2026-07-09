@@ -70,7 +70,7 @@ function flattenProducts() {
     for (const product of entries) {
       if (product.status !== 'ok') continue;
       for (const tier of product.packaging ?? []) {
-        const key = `${product.url}|${tier.weight_g}`;
+        const key = `${product.url}|${tier.weight_g}|${product.roast_type}`;
         if (seen.has(key)) continue;
         seen.add(key);
         rows.push({

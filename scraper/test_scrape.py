@@ -1004,6 +1004,136 @@ def test_normalize_product_ok_does_not_false_positive_on_weight_as_price():
     scrape.validate_entry(result)
 
 
+# --- normalize_products (roast-type-axis packaging split) --------------------
+
+
+def test_normalize_products_splits_by_distinct_tier_roast_type():
+    # Suca Roastery (Upgates platform): a page's "Praženie a balenie" widget
+    # crosses roast type with weight as two independent selector axes — the
+    # LLM correctly reports all 4 tiers, tagged per-tier.
+    raw = {
+        "name": "Colombia Jesus Barahona Buenavista",
+        "origin": "Colombia",
+        "process": "natural",
+        "packaging": [
+            {"weight": "250 g", "price": "11 €", "roast_type": "Espresso"},
+            {"weight": "500 g", "price": "18 €", "roast_type": "Espresso"},
+            {"weight": "250 g", "price": "10,50 €", "roast_type": "Filter"},
+            {"weight": "500 g", "price": "17,50 €", "roast_type": "Filter"},
+        ],
+    }
+    result = scrape.normalize_products(raw, "https://x.sk/colombia/", "2026-07-04")
+    assert len(result) == 2
+    by_roast_type = {e["roast_type"]: e for e in result}
+    assert set(by_roast_type) == {"filter", "espresso"}
+    assert by_roast_type["espresso"]["packaging"] == [
+        {"weight_g": 250, "price": 11.0},
+        {"weight_g": 500, "price": 18.0},
+    ]
+    assert by_roast_type["filter"]["packaging"] == [
+        {"weight_g": 250, "price": 10.5},
+        {"weight_g": 500, "price": 17.5},
+    ]
+    assert by_roast_type["espresso"]["status"] == "ok"
+    assert by_roast_type["filter"]["status"] == "ok"
+
+
+def test_normalize_products_no_split_when_all_tiers_share_one_roast_type():
+    raw = {
+        "name": "Kenya Endebess natural",
+        "origin": "Kenya",
+        "packaging": [
+            {"weight": "250 g", "price": "9,80 €", "roast_type": "Filter"},
+            {"weight": "500 g", "price": "11,50 €", "roast_type": "Filter"},
+        ],
+    }
+    result = scrape.normalize_products(raw, "https://x.sk/kenya/", "2026-07-04")
+    assert len(result) == 1
+    assert result[0]["roast_type"] == "filter"
+    assert result[0]["packaging"] == [
+        {"weight_g": 250, "price": 9.80},
+        {"weight_g": 500, "price": 11.50},
+    ]
+
+
+def test_normalize_products_no_split_when_tiers_carry_no_roast_type_tags():
+    # Exact fixture from test_normalize_product_multi_weight_packaging — the
+    # common (no per-tier tagging at all) path must be byte-for-byte
+    # unaffected by normalize_products() existing.
+    raw = {
+        "name": "RWANDA - Kigali",
+        "origin": "Rwanda",
+        "process": "washed",
+        "roast_type": "Filter",
+        "packaging": [
+            {"weight": "1000 g", "price": "44 €"},
+            {"weight": "250 g", "price": "12,50 €"},
+        ],
+    }
+    direct = scrape.normalize_product(raw, "https://x.sk/rwanda/", "2026-07-04")
+    result = scrape.normalize_products(raw, "https://x.sk/rwanda/", "2026-07-04")
+    assert result == [direct]
+
+
+def test_normalize_products_drops_untagged_tier_when_split_triggered():
+    raw = {
+        "name": "Colombia Test",
+        "origin": "Colombia",
+        "packaging": [
+            {"weight": "250 g", "price": "11 €", "roast_type": "Filter"},
+            {"weight": "500 g", "price": "18 €", "roast_type": "Espresso"},
+            {"weight": "1000 g", "price": "30 €"},  # no roast_type tag at all
+        ],
+    }
+    result = scrape.normalize_products(raw, "https://x.sk/colombia/", "2026-07-04")
+    assert len(result) == 2
+    all_weights = {t["weight_g"] for e in result for t in e["packaging"]}
+    assert all_weights == {250, 500}  # the untagged 1000g tier is in neither
+
+
+def test_normalize_products_heuristics_scoped_per_split_group():
+    # Reproduces the live production bug shape: each roast type's own tiers
+    # are internally consistent (price rises with weight), even though the
+    # SAME price repeats across the two roast types at each weight — a
+    # whole-list check (pre-split) would flag this; grouped, neither should.
+    raw = {
+        "name": "Colombia Jesus Barahona Buenavista",
+        "origin": "Colombia",
+        "process": "natural",
+        "packaging": [
+            {"weight": "250 g", "price": "11 €", "roast_type": "Filter"},
+            {"weight": "500 g", "price": "18 €", "roast_type": "Filter"},
+            {"weight": "250 g", "price": "11 €", "roast_type": "Espresso"},
+            {"weight": "500 g", "price": "18 €", "roast_type": "Espresso"},
+        ],
+    }
+    result = scrape.normalize_products(raw, "https://x.sk/colombia/", "2026-07-04")
+    assert len(result) == 2
+    assert all(e["status"] == "ok" for e in result)
+
+
+def test_normalize_products_returns_empty_list_when_claude_declined():
+    assert scrape.normalize_products(None, "https://x.sk/kava/", "2026-07-04") == []
+
+
+def test_normalize_products_variation_tiers_bypasses_split_logic():
+    # variation_tiers (WooCommerce/Shopify structured data) takes precedence
+    # and has no per-tier roast_type concept — splitting stays out of scope
+    # for that path even if the raw LLM packaging looks splittable.
+    raw = {
+        "name": "Colombia Test",
+        "origin": "Colombia",
+        "roast_type": "Filter",
+        "packaging": [
+            {"weight": "250 g", "price": "11 €", "roast_type": "Filter"},
+            {"weight": "250 g", "price": "11 €", "roast_type": "Espresso"},
+        ],
+    }
+    variation_tiers = [{"weight_g": 250, "price": 11.0}]
+    result = scrape.normalize_products(raw, "https://x.sk/colombia/", "2026-07-04", variation_tiers)
+    assert len(result) == 1
+
+
 # --- extract_product (mocked OpenRouter/OpenAI client) -----------------------
 
 
@@ -1418,6 +1548,158 @@ async def test_process_roaster_falls_back_to_shopify_variations_when_no_woocomme
         {"weight_g": 250, "price": 11.50},
         {"weight_g": 1000, "price": 33.0},
     ]
+
+
+def suca_tool_call(price_filter_250=11.0, price_filter_500=18.0, price_espresso_250=11.0, price_espresso_500=18.0):
+    return fake_tool_call(
+        "extract_product",
+        {
+            "name": "Colombia Jesus Barahona Buenavista",
+            "origin": "Colombia",
+            "packaging": [
+                {"weight": "250 g", "price": f"{price_filter_250} €", "roast_type": "Filter"},
+                {"weight": "500 g", "price": f"{price_filter_500} €", "roast_type": "Filter"},
+                {"weight": "250 g", "price": f"{price_espresso_250} €", "roast_type": "Espresso"},
+                {"weight": "500 g", "price": f"{price_espresso_500} €", "roast_type": "Espresso"},
+            ],
+        },
+    )
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_splits_two_roast_types_from_one_url():
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/colombia/"]),
+            "https://x.sk/colombia/": fake_result(markdown=fake_markdown(LONG_TEXT + " 11,00 €")),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion([suca_tool_call()])
+
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, [], "2026-07-08")
+    assert status == "ok"
+    assert len(entries) == 2
+    assert {e["roast_type"] for e in entries} == {"filter", "espresso"}
+    assert all(e["url"] == "https://x.sk/colombia/" for e in entries)
+    assert entries[0]["page_hash"] == entries[1]["page_hash"]
+    for e in entries:
+        assert e["packaging"] == [
+            {"weight_g": 250, "price": 11.0},
+            {"weight_g": 500, "price": 18.0},
+        ]
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_hash_gate_matches_both_split_entries_on_second_run():
+    markdown_text = LONG_TEXT + " 11,00 €"
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion([suca_tool_call()])
+
+    crawler_v1 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/colombia/"]),
+            "https://x.sk/colombia/": fake_result(markdown=fake_markdown(markdown_text)),
+        }
+    )
+    entries_v1, _ = await scrape.process_roaster(crawler_v1, client, ROASTER, [], "2026-07-08")
+    assert len(entries_v1) == 2
+    assert client.chat.completions.create.call_count == 1
+
+    crawler_v2 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/colombia/"]),
+            "https://x.sk/colombia/": fake_result(markdown=fake_markdown(markdown_text)),
+        }
+    )
+    entries_v2, _ = await scrape.process_roaster(crawler_v2, client, ROASTER, entries_v1, "2026-07-09")
+    assert client.chat.completions.create.call_count == 1  # not called again — both entries gated together
+    assert len(entries_v2) == 2
+    assert {e["roast_type"] for e in entries_v2} == {"filter", "espresso"}
+    assert all(e["last_seen"] == "2026-07-09" for e in entries_v2)
+    # No cross-matching: each entry's packaging still belongs to its own roast_type.
+    for e in entries_v2:
+        assert e["packaging"] == [
+            {"weight_g": 250, "price": 11.0},
+            {"weight_g": 500, "price": 18.0},
+        ]
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_reextracts_both_split_entries_when_page_changes():
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion([suca_tool_call()])
+
+    crawler_v1 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/colombia/"]),
+            "https://x.sk/colombia/": fake_result(markdown=fake_markdown(LONG_TEXT + " 11,00 €")),
+        }
+    )
+    entries_v1, _ = await scrape.process_roaster(crawler_v1, client, ROASTER, [], "2026-07-08")
+    assert client.chat.completions.create.call_count == 1
+
+    client.chat.completions.create.return_value = fake_completion(
+        [suca_tool_call(price_filter_500=19.0, price_espresso_500=19.0)]
+    )
+    crawler_v2 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/colombia/"]),
+            "https://x.sk/colombia/": fake_result(markdown=fake_markdown(LONG_TEXT + " changed 11,00 €")),
+        }
+    )
+    entries_v2, _ = await scrape.process_roaster(crawler_v2, client, ROASTER, entries_v1, "2026-07-09")
+    assert client.chat.completions.create.call_count == 2  # re-extracted, not hash-gated away
+    assert len(entries_v2) == 2
+    for e in entries_v2:
+        assert e["packaging"][1] == {"weight_g": 500, "price": 19.0}
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_schema_version_bump_forces_resplit_of_legacy_single_entry():
+    # Mirrors the real production bug shape: one legacy entry, stale/missing
+    # schema_version, packaging with the duplicate-pair signature.
+    markdown_text = LONG_TEXT + " 11,00 €"
+    import hashlib
+
+    page_hash = hashlib.sha256(markdown_text.encode("utf-8")).hexdigest()
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/colombia/"]),
+            "https://x.sk/colombia/": fake_result(markdown=fake_markdown(markdown_text)),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion([suca_tool_call()])
+    existing = [
+        {
+            "name": "Colombia Jesus Barahona Buenavista",
+            "url": "https://x.sk/colombia/",
+            "origin": "Colombia",
+            "roast_type": "filter",
+            "status": "ok",
+            "last_seen": "2026-07-01",
+            "page_hash": page_hash,  # page content unchanged
+            "packaging": [
+                {"weight_g": 250, "price": 11.0},
+                {"weight_g": 250, "price": 11.0},
+                {"weight_g": 500, "price": 18.0},
+                {"weight_g": 500, "price": 18.0},
+            ],
+            # no schema_version key — a legacy entry predating this migration
+        }
+    ]
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, existing, "2026-07-04")
+    assert status == "ok"
+    client.chat.completions.create.assert_called_once()  # re-extracted despite unchanged hash
+    assert len(entries) == 2
+    assert {e["roast_type"] for e in entries} == {"filter", "espresso"}
+    for e in entries:
+        assert e["schema_version"] == scrape.SCHEMA_VERSION
+        assert e["packaging"] == [
+            {"weight_g": 250, "price": 11.0},
+            {"weight_g": 500, "price": 18.0},
+        ]
 
 
 @pytest.mark.asyncio

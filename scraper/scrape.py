@@ -42,7 +42,7 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
 # against the new rules.
-SCHEMA_VERSION = 15
+SCHEMA_VERSION = 16
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -242,7 +242,14 @@ EXTRACT_PRODUCT_TOOL = {
                 },
                 "packaging": {
                     "type": "array",
-                    "description": "Every weight/price option this coffee is sold in.",
+                    "description": (
+                        "Every weight/price option this coffee is sold in. If the "
+                        "page's selector has TWO independent axes — e.g. separate "
+                        "'Espresso' and 'Filter' buttons, each with their own "
+                        "250g/500g choices — list ALL tiers from BOTH axes here "
+                        "(don't collapse to one axis), and set each tier's own "
+                        "roast_type field so they can be told apart."
+                    ),
                     "items": {
                         "type": "object",
                         "properties": {
@@ -253,6 +260,19 @@ EXTRACT_PRODUCT_TOOL = {
                             "price": {
                                 "type": "string",
                                 "description": "Raw price as shown, e.g. '12,90 €'",
+                            },
+                            "roast_type": {
+                                "type": ["string", "null"],
+                                "description": (
+                                    "Only needed when this page sells the SAME "
+                                    "coffee in more than one roast type (e.g. "
+                                    "separate Espresso/Filter buttons alongside "
+                                    "the weight selector) — tag which roast type "
+                                    "THIS tier's price belongs to: 'Filter' or "
+                                    "'Espresso'. Leave null if the page only ever "
+                                    "shows one roast type overall (the top-level "
+                                    "roast_type field covers that case)."
+                                ),
                             },
                         },
                         "required": ["price"],
@@ -1065,13 +1085,117 @@ def normalize_product(
     return entry
 
 
+def normalize_products(
+    raw,
+    url,
+    today,
+    variation_tiers=None,
+    roast_type_hint=None,
+    origin_hint=None,
+    roast_type_attribute_hint=None,
+    weight_hint=None,
+):
+    """Like normalize_product(), but splits into multiple entries when a
+    page's packaging tiers span more than one roast type.
+
+    Some Upgates-platform pages (confirmed live: Suca Roastery) expose a
+    two-axis selector — roast type (Espresso/Filter) crossed with weight
+    (250g/500g) — as 4 tappable buttons. No structured extractor exists for
+    Upgates (unlike WooCommerce/Shopify), so extraction falls through to the
+    plain LLM/markdown path, and the LLM correctly reports all 4 tiers. The
+    existing data model has ONE roast_type per entry, so those 4 tiers
+    can't live in a single entry without either dropping half of them or
+    conflating two roast types' pricing. This groups raw["packaging"] tiers
+    by their own per-tier `roast_type` tag (see EXTRACT_PRODUCT_TOOL) and
+    calls normalize_product() once per distinct group, so each split entry
+    gets its own independently-extracted pricing — never assumed to match
+    across roast types, even though it happens to in the observed case.
+
+    When the tiers carry no roast_type tags at all, or all carry the same
+    one, this is equivalent to a single normalize_product() call — the
+    common case is completely unaffected. A tier with no tag at all,
+    alongside tagged ones once a split is triggered, is ambiguous — dropped
+    rather than guessed into a group.
+
+    variation_tiers (WooCommerce/Shopify structured data) is out of scope
+    for splitting: neither extractor produces a per-tier roast_type today,
+    and no known WooCommerce/Shopify roaster exhibits this two-axis
+    pattern. A single normalize_product() call is used whenever
+    variation_tiers is provided, same as before.
+
+    Returns a list of 0, 1, or 2+ entries (never None).
+    """
+    if variation_tiers or not raw or not isinstance(raw, dict):
+        result = normalize_product(
+            raw,
+            url,
+            today,
+            variation_tiers,
+            roast_type_hint,
+            origin_hint,
+            roast_type_attribute_hint,
+            weight_hint,
+        )
+        return [result] if result else []
+
+    groups = {}  # normalized roast_type ('filter'/'espresso'/None) -> [tier, ...]
+    for tier in raw.get("packaging") or []:
+        if isinstance(tier, dict):
+            groups.setdefault(normalize_roast_type(tier.get("roast_type")), []).append(tier)
+
+    distinct_tagged = {g for g in groups if g is not None}
+    if len(distinct_tagged) < 2:
+        # 0 or 1 distinct tagged roast type present — no split needed, but a
+        # single unanimous tier tag should still win over a missing/weaker
+        # top-level raw["roast_type"] (e.g. every tier tagged "Filter" but
+        # the LLM left the top-level field blank) — pass it through same as
+        # the split branch does, rather than silently dropping that signal.
+        single_raw = raw if not distinct_tagged else dict(raw, roast_type=next(iter(distinct_tagged)))
+        result = normalize_product(
+            single_raw,
+            url,
+            today,
+            variation_tiers,
+            roast_type_hint,
+            origin_hint,
+            roast_type_attribute_hint,
+            weight_hint,
+        )
+        return [result] if result else []
+
+    results = []
+    for roast_type in ("filter", "espresso"):  # stable, deterministic order
+        group_tiers = groups.get(roast_type)
+        if not group_tiers:
+            continue
+        group_raw = dict(raw, packaging=group_tiers, roast_type=roast_type)
+        result = normalize_product(
+            group_raw,
+            url,
+            today,
+            None,
+            roast_type_hint,
+            origin_hint,
+            roast_type_attribute_hint,
+            weight_hint,
+        )
+        if result:
+            results.append(result)
+    return results
+
+
 async def process_roaster(crawler, client, roaster, existing_entries, today):
     """Discover + hash-gate-extract one roaster's products.
 
     Returns the roaster's fresh `products.yaml` entry list (unchanged from
     `existing_entries` if discovery failed) and a status string for reporting.
     """
-    existing_by_url = {e["url"]: e for e in existing_entries}
+    # List-keyed, not single-value: a normalize_products() split means two
+    # entries (one per roast type) can share a url, so the previous run's
+    # data for a url may already hold more than one entry.
+    existing_by_url = {}
+    for e in existing_entries:
+        existing_by_url.setdefault(e["url"], []).append(e)
 
     discovered, status = await discover_product_urls(crawler, roaster)
     if status != "ok":
@@ -1088,22 +1212,20 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
 
     kept = []
     for url in discovered:
-        prior = existing_by_url.get(url)
+        group_priors = existing_by_url.get(url, [])
         try:
             result = await crawler.arun(url, config=DETAIL_CONFIG)
         except Exception:
             result = None
         if not result or not result.success:
-            if prior:
-                kept.append(prior)
+            kept.extend(group_priors)
             continue
 
         markdown = ""
         if result.markdown:
             markdown = result.markdown.fit_markdown or result.markdown.raw_markdown or ""
         if len(markdown.strip()) < MIN_TEXT_LENGTH:
-            if prior:
-                kept.append(prior)
+            kept.extend(group_priors)
             continue
 
         variations_raw, variation_tiers = extract_woocommerce_variations(result.html)
@@ -1112,21 +1234,25 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
         # `markdown` at all, so the raw variations JSON is folded into the
         # hash too, or such a change would be silently hash-gated away forever.
         page_hash = hashlib.sha256((markdown + variations_raw).encode("utf-8")).hexdigest()
-        prior_status = prior.get("status") if prior else None
-        # An unchanged page skips re-extraction — unless the prior entry
-        # predates the current normalization rules (schema_version stale),
-        # in which case it's reprocessed once even though nothing on the
-        # page itself changed. not_a_product entries carry no schema_version
-        # and are unaffected by normalization changes, so they always gate.
-        hash_gate_ok = (
-            prior
-            and prior.get("page_hash") == page_hash
-            and prior_status in ("ok", "incomplete", "not_a_product")
-            and (prior_status == "not_a_product" or prior.get("schema_version") == SCHEMA_VERSION)
+        # A url's entries are gated all-or-nothing: one page fetch backs
+        # however many entries currently exist for it (0, 1, or 2 after a
+        # roast-type split), so there's no way to re-extract "just one" of
+        # them independently. An unchanged page skips re-extraction — unless
+        # any entry predates the current normalization rules (schema_version
+        # stale), in which case the whole url is reprocessed once even
+        # though the page itself didn't change. not_a_product entries carry
+        # no schema_version and are unaffected by normalization changes, so
+        # they always gate.
+        hash_gate_ok = bool(group_priors) and all(
+            p.get("page_hash") == page_hash
+            and p.get("status") in ("ok", "incomplete", "not_a_product")
+            and (p.get("status") == "not_a_product" or p.get("schema_version") == SCHEMA_VERSION)
+            for p in group_priors
         )
         if hash_gate_ok:
-            prior["last_seen"] = today
-            kept.append(prior)
+            for p in group_priors:
+                p["last_seen"] = today
+            kept.extend(group_priors)
             continue
 
         if not variation_tiers:
@@ -1142,7 +1268,7 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
         origin_hint = extract_woocommerce_origin(result.html)
         roast_type_attribute_hint = extract_woocommerce_roast_type(result.html)
         weight_hint = extract_woocommerce_weight(result.html)
-        normalized = normalize_product(
+        normalized_list = normalize_products(
             raw,
             url,
             today,
@@ -1152,7 +1278,7 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
             roast_type_attribute_hint,
             weight_hint,
         )
-        if normalized is None:
+        if not normalized_list:
             # A bare decline (Claude returned nothing, or no name at all) is
             # ambiguous — could be a transient hiccup — and worth protecting
             # prior data against. A name that Claude DID extract but that our
@@ -1164,11 +1290,12 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
             confidently_not_coffee = (
                 isinstance(raw, dict) and raw.get("name") and not is_coffee(raw["name"])
             )
-            if prior and prior.get("status") in ("ok", "incomplete") and not confidently_not_coffee:
+            good_priors = [p for p in group_priors if p.get("status") in ("ok", "incomplete")]
+            if good_priors and not confidently_not_coffee:
                 # A previously-good(-ish) product declining extraction is more
                 # likely a transient hiccup than a real delisting-in-place —
                 # keep the known data rather than downgrading it.
-                kept.append(prior)
+                kept.extend(group_priors)
             else:
                 # Genuinely not a product (nav/category link that slipped past
                 # discovery's filter, or a first-time unparseable page). Cache
@@ -1183,9 +1310,10 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
                 validate_entry(not_a_product_entry)
                 kept.append(not_a_product_entry)
             continue
-        normalized["page_hash"] = page_hash
-        validate_entry(normalized)
-        kept.append(normalized)
+        for normalized in normalized_list:
+            normalized["page_hash"] = page_hash
+            validate_entry(normalized)
+            kept.append(normalized)
 
     return kept, "ok"
 

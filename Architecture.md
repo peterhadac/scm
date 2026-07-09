@@ -66,7 +66,11 @@ Hash the resulting markdown **plus the raw variations JSON string** (SHA-256) an
 
 `normalize_product()` turns a raw extraction into a `products.yaml` entry: drops it if the name fails `is_coffee()`, parses each `packaging` tier's price/weight (reusing `normalize_price`/`parse_weight`), and drops tiers with no parseable price. A product with zero valid tiers is treated as "not extractable" — same as an explicit decline.
 
+Some pages (confirmed live: Suca Roastery, on the Upgates platform — no structured extractor exists for it, unlike WooCommerce/Shopify) sell the same coffee across **two independent selector axes** — roast type (Espresso/Filter) crossed with weight — rather than weight alone. Since `roast_type` is one field per entry, a single entry can't represent both roast types' pricing. `normalize_products()` (plural) wraps `normalize_product()`: the LLM tags each `packaging` tier with its own `roast_type` when a page has this shape (see `EXTRACT_PRODUCT_TOOL`), and if 2+ distinct tagged roast types appear across tiers, it groups them and calls `normalize_product()` once per group — producing multiple entries that share a `url`/`name` but each carry only their own roast type's tiers, never assuming the two roast types share a price. When tiers carry 0 or 1 distinct tag, this is exactly one `normalize_product()` call, identical to before. `variation_tiers` (WooCommerce/Shopify) is out of scope for this splitting — neither extractor produces a per-tier roast_type today.
+
 ## Status & Freshness Semantics
+
+A `url` normally maps to exactly one entry — except after a `normalize_products()` roast-type split (see above), where one `url` maps to two. `process_roaster()` gates re-extraction all-or-nothing per `url`: one page fetch backs however many entries currently exist for it, so a single stale `schema_version` among them is enough to force reprocessing of all of them together.
 
 Per product:
 - **`ok`** — extracted a name and ≥1 valid packaging tier. Fields, `page_hash`, `last_seen` all update.

@@ -203,7 +203,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   <p id="empty-state" hidden class="ct-empty">No coffees match the selected filters.</p>
 
-  <div class="ct-table-wrap">
+  <div id="table-wrap" class="ct-table-wrap">
     <table id="coffee-table" class="ct-table">
       <thead>
         <tr>
@@ -238,7 +238,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
             per100gNum <= bestPer100g + 0.001;
           return (
             <tr
-              style={`--i: ${i}`}
+              style={`--i: ${Math.min(i, 20)}`}
               data-name={c.name}
               data-roaster={c.roaster}
               data-origin={c.origin ?? ''}
@@ -279,11 +279,26 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 </div>
 
 <script>
+  // Slovak names/roasters carry diacritics (ž, á, ň…) that users often skip
+  // when typing, especially on non-Slovak keyboards — fold both sides of the
+  // search so "kava" still matches "Žltá Káva Pražiareň".
+  function foldDiacritics(s: string): string {
+    return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
   const table       = document.getElementById('coffee-table')!;
   const tbody       = table.querySelector('tbody')!;
   const rows        = Array.from(tbody.querySelectorAll<HTMLTableRowElement>('tr'));
   const emptyState  = document.getElementById('empty-state')!;
+  const tableWrap   = document.getElementById('table-wrap')!;
   const resultCount = document.getElementById('result-count')!;
+
+  // Distinguish "filtered down to nothing" (adjustable) from "no coffees were
+  // scraped at all" (a data problem, not a filtering problem) — the fix isn't
+  // the same, so the message shouldn't be either.
+  if (rows.length === 0) {
+    emptyState.textContent = 'No coffees available right now — check back soon.';
+  }
 
   function populateSelect(id: string, attr: 'roaster' | 'origin' | 'process' | 'roast') {
     const select = document.getElementById(id) as HTMLSelectElement | null;
@@ -329,9 +344,10 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     const q = searchTerm;
     let count = 0;
     for (const row of rows) {
-      const haystack =
+      const haystack = foldDiacritics(
         (row.dataset.name || '').toLowerCase() + ' ' +
-        (row.dataset.roaster || '').toLowerCase();
+        (row.dataset.roaster || '').toLowerCase(),
+      );
       const match =
         (!q       || haystack.includes(q))                &&
         (!roaster || row.dataset.roaster === roaster)     &&
@@ -342,6 +358,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
       if (match) count++;
     }
     emptyState.hidden = count > 0;
+    tableWrap.hidden = count === 0;
     resultCount.textContent = `${count} coffee${count !== 1 ? 's' : ''}`;
     clearBtn.hidden = !filtersActive();
 
@@ -417,7 +434,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   searchInput.addEventListener('input', () => {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => {
-      searchTerm = searchInput.value.trim().toLowerCase();
+      searchTerm = foldDiacritics(searchInput.value.trim().toLowerCase());
       applyFilters();
     }, 150);
   });
@@ -567,6 +584,15 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     position: relative;
   }
 
+  /* Starlight's markdown.css styles every <details> inside .sl-markdown-content
+     (which wraps this component in an MDX page) with a themed left border —
+     meant for collapsible content asides, not this filter widget. Undo it;
+     the side-stripe-border look is banned regardless of source. */
+  :global(.ct-filters-toggle) {
+    border-inline-start: none;
+    padding-inline-start: 0;
+  }
+
   .ct-filters-summary {
     display: inline-flex;
     align-items: center;
@@ -615,6 +641,12 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     font-size: 0.7rem;
     font-weight: 600;
     line-height: 1.5;
+  }
+
+  /* The `display` above wins over the UA [hidden]{display:none} rule, so the
+     badge would render even while hidden (e.g. showing "0") without this. */
+  .ct-filters-badge[hidden] {
+    display: none;
   }
 
   .ct-filters-panel {
@@ -701,6 +733,11 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     white-space: nowrap;
   }
 
+  /* Same [hidden]-override issue as .ct-filters-badge above. */
+  .ct-clear-btn[hidden] {
+    display: none;
+  }
+
   .ct-clear-btn:hover { background: var(--md3-state-hover, color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent)); }
 
   .ct-clear-btn:focus-visible {
@@ -722,11 +759,35 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     overflow-x: auto;
     border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--md-sys-shape-corner-large);
-    background: var(--md-sys-color-surface-container-lowest);
+    /* Real product names (e.g. "COFFEEIN Elite - espresso zmes (200 g,
+       zrnková káva)") push the table past 1024px-wide viewports, clipping
+       the Per 100g column with no visible sign there's more to scroll to.
+       Standard edge-shadow trick: two background-attachment:local "cover"
+       gradients hide the shadow whenever the scroll position is already at
+       that edge; the scroll-attached shadows behind them only show through
+       when there's unscrolled content past that side. */
+    background-color: var(--md-sys-color-surface-container-lowest);
+    background-image:
+      linear-gradient(to right, var(--md-sys-color-surface-container-lowest) 30%, transparent),
+      linear-gradient(to left, var(--md-sys-color-surface-container-lowest) 30%, transparent),
+      linear-gradient(to right, rgba(0, 0, 0, 0.15), transparent),
+      linear-gradient(to left, rgba(0, 0, 0, 0.15), transparent);
+    background-repeat: no-repeat;
+    background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+    background-position: left, right, left, right;
+    background-attachment: local, local, scroll, scroll;
   }
 
   .ct-table {
     width: 100%;
+    /* Without a floor, `width: 100%` compresses columns to fit real (long)
+       product names, and the numeric cells' `white-space: nowrap` text then
+       visually overflows past the table's own edge — clipped by the wrap's
+       overflow-x, invisibly, with no scrollbar ever appearing (no genuine
+       box overflow was created, just ink spilling past the border box). A
+       min-width forces real overflow instead, so the scroll-shadow above
+       has something honest to point at. */
+    min-width: 800px;
     border-collapse: collapse;
     font-size: var(--md-sys-typescale-body-medium-size);
   }
@@ -824,11 +885,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   /* ── Best value highlight ─────────────────────────────────── */
   .ct-row--best {
     background: color-mix(in srgb, var(--md-sys-color-secondary-container) 28%, transparent);
-  }
-
-  .ct-row--best td:first-child {
-    border-left: 3px solid var(--md-sys-color-secondary);
-    padding-left: calc(1rem - 2px);
   }
 
   .ct-row--best:hover {
@@ -971,6 +1027,13 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   /* ── Responsive ───────────────────────────────────────────── */
   @media (max-width: 640px) {
+    /* The 800px desktop floor (see .ct-table above) assumes all 7 columns
+       are visible; Weight and Per 100g are hidden below this width, so the
+       remaining columns fit comfortably without it — keep it from forcing
+       an unnecessary horizontal scroll here. */
+    .ct-table {
+      min-width: 0;
+    }
     .ct-toolbar {
       flex-direction: column;
       align-items: stretch;
@@ -992,6 +1055,14 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
       margin-left: 0;
       justify-content: space-between;
     }
+    /* Real (not pseudo-element) padding so the tap target actually reaches
+       ~44px tall — negative-inset hit-area expansion gets clipped by
+       .ct-table-wrap's overflow-x: auto, which forces overflow-y: auto too.
+       Non-sortable header cells just get extra vertical whitespace, since
+       row height is set by the tallest cell either way. */
+    .ct-sort-th {
+      padding-block: 13px;
+    }
     /* Hide weight and per-100g columns on mobile */
     .ct-table td:nth-child(5),
     .ct-table th:nth-child(5),
@@ -1003,5 +1074,14 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     /* Hide origin column on very small screens */
     .ct-table td:nth-child(3),
     .ct-table th:nth-child(3) { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ct-table tbody tr {
+      animation: none;
+    }
+    .ct-fresh-dot {
+      animation: none;
+    }
   }
 </style>

@@ -58,7 +58,7 @@ h1#_top,
   --md-sys-color-on-surface:                #1c1b17 !important;
   --md-sys-color-surface-variant:           #ececdc !important;
   --md-sys-color-on-surface-variant:        #4a4938 !important;
-  --md-sys-color-outline:                   #7a7869 !important;
+  --md-sys-color-outline:                   #5b5a4f !important;
   --md-sys-color-outline-variant:           #cccbb9 !important;
   --md-sys-color-surface-container-lowest:  #ffffff !important;
   --md-sys-color-surface-container-low:     #f0efe8 !important;
@@ -89,7 +89,7 @@ h1#_top,
     --md-sys-color-on-surface:                #ede1dc !important;
     --md-sys-color-surface-variant:           #4d3937 !important;
     --md-sys-color-on-surface-variant:        #d0c4bf !important;
-    --md-sys-color-outline:                   #998f8d !important;
+    --md-sys-color-outline:                   #beb5b3 !important;
     --md-sys-color-outline-variant:           #4d3937 !important;
     --md-sys-color-surface-container-lowest:  #140b0b !important;
     --md-sys-color-surface-container-low:     #241614 !important;
@@ -120,7 +120,7 @@ html[data-theme="dark"] {
   --md-sys-color-on-surface:                #ede1dc !important;
   --md-sys-color-surface-variant:           #4d3937 !important;
   --md-sys-color-on-surface-variant:        #d0c4bf !important;
-  --md-sys-color-outline:                   #998f8d !important;
+  --md-sys-color-outline:                   #beb5b3 !important;
   --md-sys-color-outline-variant:           #4d3937 !important;
   --md-sys-color-surface-container-lowest:  #140b0b !important;
   --md-sys-color-surface-container-low:     #241614 !important;

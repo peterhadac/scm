@@ -118,32 +118,14 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 ---
 
 <div class="ct-wrap">
-  <!-- ── Stats / freshness header ─────────────────────────────── -->
-  <div class="ct-stats" role="group" aria-label="Catalogue summary">
-    <div class="ct-stat">
-      <span class="ct-stat-value">{total}</span>
-      <span class="ct-stat-label">coffees</span>
-    </div>
-    <div class="ct-stat">
-      <span class="ct-stat-value">{roasterCount}</span>
-      <span class="ct-stat-label">roasters</span>
-    </div>
-    {cheapest !== null && (
-      <div class="ct-stat">
-        <span class="ct-stat-value">{fmtEur(cheapest)}</span>
-        <span class="ct-stat-label">cheapest</span>
-      </div>
-    )}
+  <!-- ── Compact summary line ────────────────────────────────── -->
+  <p class="ct-summary">
+    <strong>{total}</strong> coffees · <strong>{roasterCount}</strong> roasters
+    {cheapest !== null && <> · from <strong>{fmtEur(cheapest)}</strong></>}
     {lastUpdated && (
-      <div class="ct-stat ct-stat--fresh">
-        <span class="ct-stat-value">
-          <span class="ct-fresh-dot" aria-hidden="true"></span>
-          <time datetime={lastUpdated}>{lastUpdated}</time>
-        </span>
-        <span class="ct-stat-label">data updated</span>
-      </div>
+      <> · <span class="ct-fresh-dot" aria-hidden="true"></span> updated <time datetime={lastUpdated}>{lastUpdated}</time></>
     )}
-  </div>
+  </p>
 
   <div class="ct-toolbar-wrap">
   <div class="ct-toolbar">
@@ -164,28 +146,39 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
         />
       </div>
     </div>
-    <div class="ct-filter-group">
-      <label class="ct-label" for="filter-roaster">Roaster</label>
-      <select id="filter-roaster" class="ct-select"><option value="">All</option></select>
-    </div>
-    <div class="ct-filter-group">
-      <label class="ct-label" for="filter-origin">Origin</label>
-      <select id="filter-origin" class="ct-select"><option value="">All</option></select>
-    </div>
-    <div class="ct-filter-group">
-      <label class="ct-label" for="filter-process">Process</label>
-      <select id="filter-process" class="ct-select"><option value="">All</option></select>
-    </div>
-    {!roastType && (
-      <div class="ct-filter-group">
-        <label class="ct-label" for="filter-roast">Roast</label>
-        <select id="filter-roast" class="ct-select">
-          <option value="">All</option>
-          <option value="filter">Filter</option>
-          <option value="espresso">Espresso</option>
-        </select>
+    <details class="ct-filters-toggle" id="filters-toggle">
+      <summary class="ct-filters-summary">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 4h10M4 7h6M5.5 10h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Filters
+        <span id="filters-badge" class="ct-filters-badge" hidden></span>
+      </summary>
+      <div class="ct-filters-panel">
+        <div class="ct-filter-group">
+          <label class="ct-label" for="filter-roaster">Roaster</label>
+          <select id="filter-roaster" class="ct-select"><option value="">All</option></select>
+        </div>
+        <div class="ct-filter-group">
+          <label class="ct-label" for="filter-origin">Origin</label>
+          <select id="filter-origin" class="ct-select"><option value="">All</option></select>
+        </div>
+        <div class="ct-filter-group">
+          <label class="ct-label" for="filter-process">Process</label>
+          <select id="filter-process" class="ct-select"><option value="">All</option></select>
+        </div>
+        {!roastType && (
+          <div class="ct-filter-group">
+            <label class="ct-label" for="filter-roast">Roast</label>
+            <select id="filter-roast" class="ct-select">
+              <option value="">All</option>
+              <option value="filter">Filter</option>
+              <option value="espresso">Espresso</option>
+            </select>
+          </div>
+        )}
       </div>
-    )}
+    </details>
     <div class="ct-actions">
       <button id="clear-filters" type="button" class="ct-clear-btn" hidden>
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -316,6 +309,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   const processSel  = document.getElementById('filter-process') as HTMLSelectElement;
   const roastSel    = document.getElementById('filter-roast')   as HTMLSelectElement | null;
   const clearBtn    = document.getElementById('clear-filters')  as HTMLButtonElement;
+  const filtersToggle = document.getElementById('filters-toggle') as HTMLDetailsElement;
+  const filtersBadge  = document.getElementById('filters-badge')  as HTMLSpanElement;
   const sortBtns    = Array.from(
     table.querySelectorAll<HTMLButtonElement>('.ct-sort-th'),
   );
@@ -349,6 +344,10 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     emptyState.hidden = count > 0;
     resultCount.textContent = `${count} coffee${count !== 1 ? 's' : ''}`;
     clearBtn.hidden = !filtersActive();
+
+    const dropdownCount = [roaster, origin, process, roast].filter(Boolean).length;
+    filtersBadge.textContent = String(dropdownCount);
+    filtersBadge.hidden = dropdownCount === 0;
   }
 
   // ── Sorting: click a column header to sort, click again to flip ──
@@ -439,6 +438,13 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     searchInput.focus();
   });
 
+  // Close the filters popover when clicking outside it.
+  document.addEventListener('click', (e) => {
+    if (filtersToggle.open && !filtersToggle.contains(e.target as Node)) {
+      filtersToggle.open = false;
+    }
+  });
+
   // Default sort: cheapest first, matching the previous price-asc behaviour.
   sortState = { key: 'price', dir: 'asc' };
   updateSortUI();
@@ -454,56 +460,21 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     margin-top: 1.5rem;
   }
 
-  /* ── Stats / freshness header ─────────────────────────────── */
-  .ct-stats {
+  /* ── Compact summary line ─────────────────────────────────── */
+  .ct-summary {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0;
-    background: var(--md-sys-color-surface-container-lowest);
-    border: 1px solid var(--md-sys-color-outline-variant);
-    border-radius: var(--md-sys-shape-corner-large);
-    overflow: hidden;
-  }
-
-  .ct-stat {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 16px 24px;
-    border-right: 1px solid var(--md-sys-color-outline-variant);
-  }
-
-  .ct-stat:last-child { border-right: none; }
-
-  .ct-stat-value {
-    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    font-family: var(--font-serif);
-    font-size: clamp(1.3rem, 2.5vw, 1.6rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--md-sys-color-on-surface);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .ct-stat-label {
+    flex-wrap: wrap;
+    gap: 0.3em;
+    margin: 0;
     font-family: var(--font-sans);
-    font-weight: 300;
     font-size: var(--md-sys-typescale-label-small-size);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--md-sys-color-outline);
   }
 
-  .ct-stat--fresh {
-    margin-left: auto;
-    text-align: right;
-  }
-
-  .ct-stat--fresh .ct-stat-value,
-  .ct-stat--fresh .ct-stat-label {
-    justify-content: flex-end;
+  .ct-summary strong {
+    color: var(--md-sys-color-on-surface-variant);
+    font-weight: 600;
   }
 
   @keyframes dot-pulse {
@@ -587,11 +558,86 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     border-color: var(--md-sys-color-primary);
   }
 
+  /* ── Collapsible filters popover ─────────────────────────────
+     A native <details> — no JS state to manage, keyboard/screen-reader
+     support built in. The label sits above each select (rather than
+     beside it) so every field's input aligns on the same left edge
+     regardless of label length. */
+  .ct-filters-toggle {
+    position: relative;
+  }
+
+  .ct-filters-summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-small);
+    background: var(--md-sys-color-surface-container-high);
+    color: var(--md-sys-color-on-surface);
+    font-family: var(--font-sans);
+    font-size: var(--md-sys-typescale-body-medium-size);
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    transition:
+      border-color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard),
+      background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+  }
+
+  :global(.ct-filters-summary::-webkit-details-marker) { display: none !important; }
+  :global(.ct-filters-summary::marker) { content: none !important; display: none !important; font-size: 0 !important; }
+  /* Starlight's own markdown.css draws a masked chevron ::before on every
+     <summary> inside .sl-markdown-content (which wraps this component in
+     an MDX page) — neutralize it so only our own icon shows. */
+  :global(.ct-filters-summary::before) { content: none !important; display: none !important; }
+
+  .ct-filters-summary:hover {
+    border-color: var(--md-sys-color-outline);
+    background: var(--md-sys-color-surface-container-highest);
+  }
+
+  .ct-filters-summary:focus-visible {
+    outline: none;
+    box-shadow: var(--md3-focus-ring);
+  }
+
+  .ct-filters-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.1em;
+    padding: 0 0.35em;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .ct-filters-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(9rem, 1fr));
+    gap: 12px 16px;
+    width: max-content;
+    padding: 16px;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-large);
+    background: var(--md-sys-color-surface-container-high);
+    box-shadow: var(--md-sys-elevation-2, 0 4px 16px rgba(0, 0, 0, 0.16));
+  }
+
   .ct-filter-group {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
   }
 
   .ct-label {
@@ -604,14 +650,13 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
 
   .ct-select {
+    width: 100%;
     padding: 4px 8px;
     border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--md-sys-shape-corner-small);
-    background: var(--md-sys-color-surface-container-high);
+    background: var(--md-sys-color-surface-container-highest);
     color: var(--md-sys-color-on-surface);
     font-size: var(--md-sys-typescale-body-medium-size);
-    min-width: 9rem;
-    max-width: 12rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -623,7 +668,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   .ct-select:hover {
     border-color: var(--md-sys-color-outline);
-    background: var(--md-sys-color-surface-container-highest);
   }
 
   .ct-select:focus-visible {
@@ -882,9 +926,20 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 4px 8px;
-    font-size: var(--md-sys-typescale-label-small-size);
+    gap: 4px 6px;
+    font-size: 0.7rem;
     color: var(--md-sys-color-outline);
+    opacity: 0.85;
+  }
+
+  .ct-legend .ct-badge {
+    padding: 0.05em 0.5em;
+    font-size: 0.68rem;
+  }
+
+  .ct-legend .ct-best {
+    padding: 0.02em 0.45em;
+    font-size: 0.62rem;
   }
 
   .ct-legend-label {
@@ -916,18 +971,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   /* ── Responsive ───────────────────────────────────────────── */
   @media (max-width: 640px) {
-    .ct-stat {
-      flex: 1 1 45%;
-      border-bottom: 1px solid var(--md-sys-color-outline-variant);
-    }
-    .ct-stat--fresh {
-      margin-left: 0;
-      text-align: left;
-    }
-    .ct-stat--fresh .ct-stat-value,
-    .ct-stat--fresh .ct-stat-label {
-      justify-content: flex-start;
-    }
     .ct-toolbar {
       flex-direction: column;
       align-items: stretch;
@@ -935,6 +978,16 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     .ct-search,
     .ct-search-field { width: 100%; }
     .ct-search { min-width: 0; }
+    .ct-filters-summary { justify-content: center; }
+    /* Flow the panel in normal document flow instead of an absolutely
+       positioned popover — avoids off-screen overflow on narrow widths. */
+    .ct-filters-panel {
+      position: static;
+      grid-template-columns: 1fr;
+      width: auto;
+      margin-top: 6px;
+      box-shadow: none;
+    }
     .ct-actions {
       margin-left: 0;
       justify-content: space-between;

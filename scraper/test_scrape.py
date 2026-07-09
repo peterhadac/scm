@@ -848,6 +848,50 @@ def test_normalize_product_incomplete_on_same_price_different_weights():
     assert len(result["packaging"]) == 3
 
 
+def test_normalize_product_incomplete_when_price_decreases_with_weight():
+    # Real bug: a page shows only its cheapest tier's price as visible text
+    # (e.g. an Upgates "od X€" from-price) and the model fabricates a lower
+    # price for a larger tier — a smaller package costing more than a
+    # larger one is never legitimate, so the guessed price is untrustworthy.
+    raw = {
+        "name": "Colombia Ombligon sugarcane decaf",
+        "origin": "Colombia",
+        "roast_type": "filter",
+        "packaging": [
+            {"weight": "250 g", "price": "15,90 €"},
+            {"weight": "500 g", "price": "8,90 €"},
+        ],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/ombligon/", "2026-07-09")
+    assert result["status"] == "incomplete"
+    assert "price" in result["missing_fields"]
+    assert len(result["packaging"]) == 2
+
+
+def test_normalize_product_ok_when_price_increases_with_weight():
+    raw = {
+        "name": "Colombia Huila",
+        "origin": "Colombia",
+        "roast_type": "filter",
+        "packaging": [
+            {"weight": "250 g", "price": "8,90 €"},
+            {"weight": "500 g", "price": "15,90 €"},
+        ],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/huila/", "2026-07-09")
+    assert result["status"] == "ok"
+
+
+def test_normalize_product_price_decreasing_skipped_for_variation_tiers():
+    # Deterministic WooCommerce/Shopify data is trusted as-is even if a
+    # smaller tier is genuinely priced higher (e.g. a promo) — this
+    # heuristic only guards against LLM guesswork.
+    raw = {"name": "Some Coffee", "origin": "Brazil", "roast_type": "filter", "packaging": []}
+    tiers = [{"weight_g": 250, "price": 15.90}, {"weight_g": 500, "price": 8.90}]
+    result = scrape.normalize_product(raw, "https://x.sk/some/", "2026-07-09", variation_tiers=tiers)
+    assert result["status"] == "ok"
+
+
 def test_normalize_product_incomplete_when_multi_tier_weight_not_per_tier():
     # Multi-tier product where the second tier states no weight of its own —
     # must NOT fall back to a name-parsed weight for it (that would silently

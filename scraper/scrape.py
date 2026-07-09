@@ -42,7 +42,7 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
 # against the new rules.
-SCHEMA_VERSION = 14
+SCHEMA_VERSION = 15
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -1009,13 +1009,14 @@ def normalize_product(
     )
     origin = origin_hint or normalize_origin(raw.get("origin"), name)
 
-    # These two heuristics catch LLM extraction failures specifically — they
+    # These heuristics catch LLM extraction failures specifically — they
     # don't apply when packaging came from variation_tiers (WooCommerce's own
     # structured data), where a real price collision (e.g. a promo, or 250g
     # whole-bean vs. ground priced the same) is known-correct, not a guess.
     if variation_tiers:
         price_collision = False
         weight_as_price = False
+        price_decreasing = False
     else:
         weighted_tiers = [t for t in packaging if t["weight_g"] is not None]
         distinct_weights = {t["weight_g"] for t in weighted_tiers}
@@ -1025,6 +1026,15 @@ def normalize_product(
         # price (e.g. weight_g: 200, price: 200.0) — prices are distinct across
         # tiers so price_collision above misses it.
         weight_as_price = sum(1 for t in weighted_tiers if t["price"] == t["weight_g"]) >= 2
+        # Another bug signature seen live: a page shows only its cheapest
+        # tier's price in visible text (e.g. an Upgates "od X€" from-price),
+        # and the model fills in an unrelated number for the other tier(s) —
+        # a smaller package priced higher than a larger one is never
+        # legitimate retail pricing, so the guessed price is untrustworthy.
+        by_weight = sorted(weighted_tiers, key=lambda t: t["weight_g"])
+        price_decreasing = any(
+            by_weight[i]["price"] > by_weight[i + 1]["price"] for i in range(len(by_weight) - 1)
+        )
 
     missing_fields = []
     if origin is None:
@@ -1033,7 +1043,7 @@ def normalize_product(
         missing_fields.append("roast_type")
     if any(t["weight_g"] is None for t in packaging):
         missing_fields.append("weight_g")
-    if price_collision or weight_as_price:
+    if price_collision or weight_as_price or price_decreasing:
         missing_fields.append("price")
 
     entry = {

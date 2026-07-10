@@ -6,6 +6,7 @@ import os
 import re
 import unicodedata
 from contextlib import AsyncExitStack
+from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
@@ -406,6 +407,24 @@ def normalize_origin(raw, name, aliases=None):
 ORIGIN_ATTRIBUTE_KEYWORDS = ("krajina", "povod", "origin")
 
 
+def woocommerce_attribute_text(html, class_pattern, separator=", "):
+    """Visible text of a WooCommerce product-attribute row's value cell, or None.
+
+    WordPress/WooCommerce renders each product attribute as a
+    `<tr class="...">` row regardless of theme; `class_pattern` picks which
+    attribute row. Shared by the origin/roast-type/weight extractors, which
+    only differ in the row they target and what they parse out of its text.
+    """
+    soup = BeautifulSoup(html or "", "html.parser")
+    row = soup.find("tr", class_=re.compile(class_pattern, re.I))
+    if not row:
+        return None
+    cell = row.find("td")
+    if not cell:
+        return None
+    return cell.get_text(separator)
+
+
 def extract_woocommerce_origin(html):
     """Parse a WooCommerce product's "Additional information" origin attribute row.
 
@@ -420,15 +439,13 @@ def extract_woocommerce_origin(html):
     distinct countries are listed), or None if no origin-like attribute row
     is found — the caller falls through to the LLM's own origin field.
     """
-    soup = BeautifulSoup(html or "", "html.parser")
-    row = soup.find("tr", class_=re.compile(r"attribute_pa_(?:%s)" % "|".join(ORIGIN_ATTRIBUTE_KEYWORDS), re.I))
-    if not row:
-        return None
-    cell = row.find("td")
-    if not cell:
+    text = woocommerce_attribute_text(
+        html, r"attribute_pa_(?:%s)" % "|".join(ORIGIN_ATTRIBUTE_KEYWORDS)
+    )
+    if text is None:
         return None
     countries = set()
-    for part in cell.get_text(", ").split(","):
+    for part in text.split(","):
         part = strip_diacritics(part.strip().lower())
         if not part:
             continue
@@ -510,6 +527,21 @@ def visible_html_text_length(html):
     return len(soup.get_text(strip=True))
 
 
+def is_valid_tier(weight_g, price):
+    """True when a structured variation tier's weight/price pair is usable.
+
+    Shared guard for the WooCommerce and Shopify variation extractors: a
+    tier needs a known weight and a positive numeric price (bool is excluded
+    explicitly — it's an int subclass, so `True` would otherwise pass as 1).
+    """
+    return (
+        weight_g is not None
+        and not isinstance(price, bool)
+        and isinstance(price, (int, float))
+        and price > 0
+    )
+
+
 def extract_woocommerce_variations(html):
     """Parse a WooCommerce variable-product page's `data-product_variations` JSON.
 
@@ -564,14 +596,7 @@ def extract_woocommerce_variations(html):
             price = variation.get("display_price")
         except (AttributeError, TypeError):
             continue
-        if (
-            weight_g is None
-            or isinstance(price, bool)
-            or not isinstance(price, (int, float))
-            or price <= 0
-        ):
-            continue
-        if weight_g in seen_weights:
+        if not is_valid_tier(weight_g, price) or weight_g in seen_weights:
             continue
         seen_weights.add(weight_g)
         tiers.append({"weight_g": weight_g, "price": float(price)})
@@ -722,14 +747,7 @@ async def extract_shopify_variations(crawler, html, product_url):
             continue
         weight_g = parse_weight(str(variant.get("title") or ""))
         price_cents = variant.get("price")
-        if (
-            weight_g is None
-            or isinstance(price_cents, bool)
-            or not isinstance(price_cents, (int, float))
-            or price_cents <= 0
-        ):
-            continue
-        if weight_g in seen_weights:
+        if not is_valid_tier(weight_g, price_cents) or weight_g in seen_weights:
             continue
         seen_weights.add(weight_g)
         tiers.append({"weight_g": weight_g, "price": round(price_cents / 100, 2)})
@@ -849,14 +867,9 @@ def extract_woocommerce_roast_type(html):
     reuses `normalize_roast_type()`'s keyword matching on its text. Returns
     None if no such attribute row is found or it names neither method.
     """
-    soup = BeautifulSoup(html or "", "html.parser")
-    row = soup.find("tr", class_=re.compile(r"attribute_pa_[a-z-]*" + ROAST_TYPE_ATTRIBUTE_KEYWORD, re.I))
-    if not row:
-        return None
-    cell = row.find("td")
-    if not cell:
-        return None
-    return normalize_roast_type(cell.get_text(", "))
+    return normalize_roast_type(
+        woocommerce_attribute_text(html, r"attribute_pa_[a-z-]*" + ROAST_TYPE_ATTRIBUTE_KEYWORD)
+    )
 
 
 def extract_woocommerce_weight(html):
@@ -875,14 +888,11 @@ def extract_woocommerce_weight(html):
     this when there's exactly one packaging tier missing its weight.
     Returns grams, or None if the field is absent or unparseable.
     """
-    soup = BeautifulSoup(html or "", "html.parser")
-    row = soup.find("tr", class_=re.compile(r"woocommerce-product-attributes-item--weight\b"))
-    if not row:
-        return None
-    cell = row.find("td")
-    if not cell:
-        return None
-    return parse_weight(cell.get_text())
+    # separator="" so a value split across inline tags ("0,06 <span>kg</span>")
+    # still reads as one contiguous "0,06 kg" token for parse_weight.
+    return parse_weight(
+        woocommerce_attribute_text(html, r"woocommerce-product-attributes-item--weight\b", separator="")
+    )
 
 
 def parse_weight(text):
@@ -950,16 +960,46 @@ def extract_product(client, url, markdown):
     return None
 
 
-def normalize_product(
-    raw,
-    url,
-    today,
-    variation_tiers=None,
-    roast_type_hint=None,
-    origin_hint=None,
-    roast_type_attribute_hint=None,
-    weight_hint=None,
-):
+@dataclass
+class Hints:
+    """Deterministic per-page signals gathered outside the LLM call.
+
+    Bundles what used to be five separate parameters threaded through
+    `normalize_products()` → `normalize_product()` — a new platform
+    extractor adds a field here instead of widening both signatures.
+
+    `variation_tiers` ([{"weight_g", "price"}, ...]), from
+    `extract_woocommerce_variations()` or `extract_shopify_variations()`,
+    is trusted over the LLM's own packaging guess when non-empty —
+    deterministic data straight from the page beats an LLM reading a price
+    off markdown that only shows the selected variant.
+
+    `origin`, from `extract_woocommerce_origin()`, is trusted over the
+    LLM's own origin guess when present — same reasoning: a WooCommerce
+    attribute row beats an LLM inconsistently resolving a multi-country list.
+
+    `roast_type`, from `extract_woocommerce_roast_type()`, is trusted over
+    the LLM's own roast_type guess when present — same reasoning as origin.
+
+    `category_roast_type`, from `discover_roast_type_hints()` (which
+    category/collection page linked to this product), is the last-resort
+    fallback inside `normalize_roast_type()` for sites that never state a
+    roast type on the product page itself.
+
+    `weight_g`, from `extract_woocommerce_weight()`, is a last-resort
+    fallback used only for a single packaging tier whose weight is still
+    unknown after the name fallback — a multi-tier product's per-tier
+    weights must come from their own tier text, never this one overall value.
+    """
+
+    variation_tiers: list | None = None
+    origin: str | None = None
+    roast_type: str | None = None
+    category_roast_type: str | None = None
+    weight_g: int | None = None
+
+
+def normalize_product(raw, url, today, hints=None):
     """Turn a raw Claude extraction into a products.yaml entry, or None if unusable.
 
     Returns None only when there's no coffee here at all (Claude declined, or
@@ -968,37 +1008,16 @@ def normalize_product(
     tier's weight/price) is still returned, just as `status: incomplete` with
     `missing_fields` listing what's missing, rather than being dropped.
 
-    `variation_tiers`, when non-empty, comes from
-    `extract_woocommerce_variations()` and is trusted over the LLM's own
-    packaging guess — deterministic data straight from the page beats an LLM
-    reading a price off markdown that only shows the selected variant.
-
-    `roast_type_hint`, from `discover_roast_type_hints()`, is the last-resort
-    fallback passed to `normalize_roast_type()` for sites that never state a
-    roast type on the product page itself.
-
-    `origin_hint`, from `extract_woocommerce_origin()`, is trusted over the
-    LLM's own origin guess when present — same reasoning as variation_tiers:
-    a WooCommerce attribute row beats an LLM inconsistently resolving a
-    multi-country list.
-
-    `roast_type_attribute_hint`, from `extract_woocommerce_roast_type()`, is
-    trusted over the LLM's own roast_type guess when present — same
-    reasoning as origin_hint. `roast_type_hint` (the discovery-category
-    hint) remains the last resort inside `normalize_roast_type()` for pages
-    with neither this attribute nor any stated text.
-
-    `weight_hint`, from `extract_woocommerce_weight()`, is a last-resort
-    fallback used only for a single packaging tier whose weight is still
-    unknown after the name fallback — a multi-tier product's per-tier
-    weights must come from their own tier text, never this one overall value.
+    `hints` carries the deterministic per-page extraction signals (see the
+    Hints dataclass for each field's source and precedence).
     """
+    hints = hints or Hints()
     if not raw or not isinstance(raw, dict) or not raw.get("name") or not is_coffee(raw["name"]):
         return None
 
     name = raw["name"]
-    if variation_tiers:
-        packaging = list(variation_tiers)
+    if hints.variation_tiers:
+        packaging = list(hints.variation_tiers)
     else:
         packaging = []
         for tier in raw.get("packaging") or []:
@@ -1018,22 +1037,22 @@ def normalize_product(
         # tier text; falling back to the name for every tier would silently give
         # every tier the same weight.
         if len(packaging) == 1 and packaging[0]["weight_g"] is None:
-            packaging[0]["weight_g"] = parse_weight(name) or weight_hint
+            packaging[0]["weight_g"] = parse_weight(name) or hints.weight_g
 
     if not packaging:
         return None
 
     process = normalize_process(raw.get("process"))
-    roast_type = roast_type_attribute_hint or normalize_roast_type(
-        raw.get("roast_type"), raw.get("process"), name, roast_type_hint
+    roast_type = hints.roast_type or normalize_roast_type(
+        raw.get("roast_type"), raw.get("process"), name, hints.category_roast_type
     )
-    origin = origin_hint or normalize_origin(raw.get("origin"), name)
+    origin = hints.origin or normalize_origin(raw.get("origin"), name)
 
     # These heuristics catch LLM extraction failures specifically — they
     # don't apply when packaging came from variation_tiers (WooCommerce's own
     # structured data), where a real price collision (e.g. a promo, or 250g
     # whole-bean vs. ground priced the same) is known-correct, not a guess.
-    if variation_tiers:
+    if hints.variation_tiers:
         price_collision = False
         weight_as_price = False
         price_decreasing = False
@@ -1085,16 +1104,7 @@ def normalize_product(
     return entry
 
 
-def normalize_products(
-    raw,
-    url,
-    today,
-    variation_tiers=None,
-    roast_type_hint=None,
-    origin_hint=None,
-    roast_type_attribute_hint=None,
-    weight_hint=None,
-):
+def normalize_products(raw, url, today, hints=None):
     """Like normalize_product(), but splits into multiple entries when a
     page's packaging tiers span more than one roast type.
 
@@ -1117,25 +1127,17 @@ def normalize_products(
     alongside tagged ones once a split is triggered, is ambiguous — dropped
     rather than guessed into a group.
 
-    variation_tiers (WooCommerce/Shopify structured data) is out of scope
-    for splitting: neither extractor produces a per-tier roast_type today,
-    and no known WooCommerce/Shopify roaster exhibits this two-axis
+    hints.variation_tiers (WooCommerce/Shopify structured data) is out of
+    scope for splitting: neither extractor produces a per-tier roast_type
+    today, and no known WooCommerce/Shopify roaster exhibits this two-axis
     pattern. A single normalize_product() call is used whenever
     variation_tiers is provided, same as before.
 
     Returns a list of 0, 1, or 2+ entries (never None).
     """
-    if variation_tiers or not raw or not isinstance(raw, dict):
-        result = normalize_product(
-            raw,
-            url,
-            today,
-            variation_tiers,
-            roast_type_hint,
-            origin_hint,
-            roast_type_attribute_hint,
-            weight_hint,
-        )
+    hints = hints or Hints()
+    if hints.variation_tiers or not raw or not isinstance(raw, dict):
+        result = normalize_product(raw, url, today, hints)
         return [result] if result else []
 
     groups = {}  # normalized roast_type ('filter'/'espresso'/None) -> [tier, ...]
@@ -1151,16 +1153,7 @@ def normalize_products(
         # the LLM left the top-level field blank) — pass it through same as
         # the split branch does, rather than silently dropping that signal.
         single_raw = raw if not distinct_tagged else dict(raw, roast_type=next(iter(distinct_tagged)))
-        result = normalize_product(
-            single_raw,
-            url,
-            today,
-            variation_tiers,
-            roast_type_hint,
-            origin_hint,
-            roast_type_attribute_hint,
-            weight_hint,
-        )
+        result = normalize_product(single_raw, url, today, hints)
         return [result] if result else []
 
     results = []
@@ -1169,16 +1162,7 @@ def normalize_products(
         if not group_tiers:
             continue
         group_raw = dict(raw, packaging=group_tiers, roast_type=roast_type)
-        result = normalize_product(
-            group_raw,
-            url,
-            today,
-            None,
-            roast_type_hint,
-            origin_hint,
-            roast_type_attribute_hint,
-            weight_hint,
-        )
+        result = normalize_product(group_raw, url, today, hints)
         if result:
             results.append(result)
     return results
@@ -1265,19 +1249,14 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
             variation_tiers = await extract_shopify_variations(crawler, result.html, url)
 
         raw = extract_product(client, url, markdown)
-        origin_hint = extract_woocommerce_origin(result.html)
-        roast_type_attribute_hint = extract_woocommerce_roast_type(result.html)
-        weight_hint = extract_woocommerce_weight(result.html)
-        normalized_list = normalize_products(
-            raw,
-            url,
-            today,
-            variation_tiers,
-            roast_type_hints.get(url),
-            origin_hint,
-            roast_type_attribute_hint,
-            weight_hint,
+        hints = Hints(
+            variation_tiers=variation_tiers,
+            origin=extract_woocommerce_origin(result.html),
+            roast_type=extract_woocommerce_roast_type(result.html),
+            category_roast_type=roast_type_hints.get(url),
+            weight_g=extract_woocommerce_weight(result.html),
         )
+        normalized_list = normalize_products(raw, url, today, hints)
         if not normalized_list:
             # A bare decline (Claude returned nothing, or no name at all) is
             # ambiguous — could be a transient hiccup — and worth protecting

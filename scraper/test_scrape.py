@@ -718,7 +718,7 @@ def test_normalize_product_uses_variation_tiers_when_provided():
         "packaging": [{"weight": "1 g", "price": "99,00 €"}],
     }
     tiers = [{"weight_g": 1000, "price": 34.0}, {"weight_g": 250, "price": 11.0}]
-    result = scrape.normalize_product(raw, "https://x.sk/mexico/", "2026-07-08", variation_tiers=tiers)
+    result = scrape.normalize_product(raw, "https://x.sk/mexico/", "2026-07-08", hints=scrape.Hints(variation_tiers=tiers))
     assert result["status"] == "ok"
     assert result["packaging"] == tiers
 
@@ -732,7 +732,7 @@ def test_normalize_product_uses_roast_type_hint_when_page_states_nothing():
         "packaging": [{"weight": "250 g", "price": "12,00 €"}],
     }
     result = scrape.normalize_product(
-        raw, "https://x.sk/some-coffee/", "2026-07-08", roast_type_hint="espresso"
+        raw, "https://x.sk/some-coffee/", "2026-07-08", hints=scrape.Hints(category_roast_type="espresso")
     )
     assert result["status"] == "ok"
     assert result["roast_type"] == "espresso"
@@ -747,7 +747,7 @@ def test_normalize_product_origin_hint_wins_over_llm_guess():
         "packaging": [{"weight": "250 g", "price": "8,00 €"}],
     }
     result = scrape.normalize_product(
-        raw, "https://x.sk/budicek/", "2026-07-08", origin_hint="Blend"
+        raw, "https://x.sk/budicek/", "2026-07-08", hints=scrape.Hints(origin="Blend")
     )
     assert result["status"] == "ok"
     assert result["origin"] == "Blend"
@@ -762,7 +762,7 @@ def test_normalize_product_roast_type_attribute_hint_wins_over_llm_guess():
         "packaging": [{"weight": "250 g", "price": "10,00 €"}],
     }
     result = scrape.normalize_product(
-        raw, "https://x.sk/kolumbia/", "2026-07-08", roast_type_attribute_hint="filter"
+        raw, "https://x.sk/kolumbia/", "2026-07-08", hints=scrape.Hints(roast_type="filter")
     )
     assert result["status"] == "ok"
     assert result["roast_type"] == "filter"
@@ -777,7 +777,7 @@ def test_normalize_product_weight_hint_fills_single_tier_gap():
         "roast_type": "Filter",
         "packaging": [{"price": "9,99 €", "weight": None}],
     }
-    result = scrape.normalize_product(raw, "https://x.sk/sweetdrip/", "2026-07-08", weight_hint=60)
+    result = scrape.normalize_product(raw, "https://x.sk/sweetdrip/", "2026-07-08", hints=scrape.Hints(weight_g=60))
     assert result["status"] == "ok"
     assert result["packaging"] == [{"weight_g": 60, "price": 9.99}]
 
@@ -791,7 +791,7 @@ def test_normalize_product_name_weight_wins_over_weight_hint():
         "roast_type": "Filter",
         "packaging": [{"price": "14,50 €", "weight": None}],
     }
-    result = scrape.normalize_product(raw, "https://x.sk/colombia/", "2026-07-08", weight_hint=999)
+    result = scrape.normalize_product(raw, "https://x.sk/colombia/", "2026-07-08", hints=scrape.Hints(weight_g=999))
     assert result["packaging"] == [{"weight_g": 200, "price": 14.50}]
 
 
@@ -799,9 +799,9 @@ def test_normalize_product_variation_tiers_still_requires_a_name():
     # variation_tiers alone doesn't make a page a product — Claude declining
     # (raw=None) or a non-coffee name must still return None.
     tiers = [{"weight_g": 250, "price": 11.0}]
-    assert scrape.normalize_product(None, "https://x.sk/mexico/", "2026-07-08", variation_tiers=tiers) is None
+    assert scrape.normalize_product(None, "https://x.sk/mexico/", "2026-07-08", hints=scrape.Hints(variation_tiers=tiers)) is None
     raw = {"name": "Darčeková poukážka", "packaging": []}
-    assert scrape.normalize_product(raw, "https://x.sk/gift/", "2026-07-08", variation_tiers=tiers) is None
+    assert scrape.normalize_product(raw, "https://x.sk/gift/", "2026-07-08", hints=scrape.Hints(variation_tiers=tiers)) is None
 
 
 def test_normalize_product_variation_tiers_same_price_is_not_a_collision():
@@ -810,7 +810,7 @@ def test_normalize_product_variation_tiers_same_price_is_not_a_collision():
     # WooCommerce's own JSON can legitimately price two weights the same.
     raw = {"name": "Guatemala Huehuetenango", "origin": "Guatemala", "roast_type": "filter"}
     tiers = [{"weight_g": 250, "price": 12.0}, {"weight_g": 1000, "price": 12.0}]
-    result = scrape.normalize_product(raw, "https://x.sk/guatemala/", "2026-07-08", variation_tiers=tiers)
+    result = scrape.normalize_product(raw, "https://x.sk/guatemala/", "2026-07-08", hints=scrape.Hints(variation_tiers=tiers))
     assert result["status"] == "ok"
     assert result["packaging"] == tiers
 
@@ -888,7 +888,7 @@ def test_normalize_product_price_decreasing_skipped_for_variation_tiers():
     # heuristic only guards against LLM guesswork.
     raw = {"name": "Some Coffee", "origin": "Brazil", "roast_type": "filter", "packaging": []}
     tiers = [{"weight_g": 250, "price": 15.90}, {"weight_g": 500, "price": 8.90}]
-    result = scrape.normalize_product(raw, "https://x.sk/some/", "2026-07-09", variation_tiers=tiers)
+    result = scrape.normalize_product(raw, "https://x.sk/some/", "2026-07-09", hints=scrape.Hints(variation_tiers=tiers))
     assert result["status"] == "ok"
 
 
@@ -1130,7 +1130,7 @@ def test_normalize_products_variation_tiers_bypasses_split_logic():
         ],
     }
     variation_tiers = [{"weight_g": 250, "price": 11.0}]
-    result = scrape.normalize_products(raw, "https://x.sk/colombia/", "2026-07-04", variation_tiers)
+    result = scrape.normalize_products(raw, "https://x.sk/colombia/", "2026-07-04", scrape.Hints(variation_tiers=variation_tiers))
     assert len(result) == 1
 
 

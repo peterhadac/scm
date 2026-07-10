@@ -15,11 +15,10 @@ scraper/
   requirements.txt
 data/
   products.yaml        ← per-product intermediate: fields, page_hash, status, packaging (see Architecture.md)
-_data/
-  coffees.sample.json  ← hand-maintained dev fixture (import.meta.env.DEV only)
 src/
   content/docs/index.mdx   ← Starlight page embedding the table component
-  components/CoffeeTable.astro  ← filterable/sortable table (reads ../../data/products.yaml + roasters.yaml directly at build time)
+  components/CoffeeTable.astro  ← filterable/sortable table UI
+  lib/coffees.ts       ← build-time data layer: reads data/products.yaml + roasters.yaml, flattens to table rows
 astro.config.mjs       ← Astro + Starlight config (site + base for project Pages)
 package.json           ← astro, @astrojs/starlight, starlight-theme-md3 (npm)
 .github/workflows/
@@ -63,9 +62,10 @@ date of the last successful scrape that included this item; it stops
 advancing while the roaster is `failed`/`needs_js`.
 
 The Astro build reads `data/products.yaml` + `roasters.yaml` directly at
-build time (see `src/components/CoffeeTable.astro`) and flattens each
-`ok`-status product's packaging tiers into one row per weight — there is no
-separate generated JSON file for the site to import.
+build time (see `src/lib/coffees.ts`, used by
+`src/components/CoffeeTable.astro`) and flattens each `ok`-status product's
+packaging tiers into one row per weight — there is no separate generated
+JSON file for the site to import.
 
 ## Roaster Config (`roasters.yaml`)
 
@@ -75,10 +75,6 @@ roasters:
     slug: kavoholik
     url: https://kavoholik.sk/
     scrape_url: https://kavoholik.sk/
-  - name: Ready After
-    slug: ready-after
-    url: https://www.readyafter.sk/
-    scrape_url: https://www.readyafter.sk/
   - name: Jungle Roastery
     slug: jungle-roastery
     url: https://thisisjungle.sk/
@@ -182,7 +178,7 @@ Steps: checkout → setup-node → `npm ci` → `npm run build` → `actions/upl
   })
   ```
   Brand palette (also applied as MD3 token overrides in `src/styles/custom.css`, light + dark): Morning Snow `#F5F4ED`, Amazon Mist `#ECECDC`, Black Kite `#351E1C`, Aqua Mist `#A0C9CB`, Toxic Orange `#FF6037`, Garnet `#733635`.
-- **Data source**: `CoffeeTable.astro`'s frontmatter reads `data/products.yaml` + `roasters.yaml` directly at build time (via `js-yaml`) and flattens them into table rows — no separate generated JSON file. `import.meta.env.DEV` still uses the hand-maintained `_data/coffees.sample.json` fixture for local dev. A new scrape requires a rebuild (handled by `pages.yml`).
+- **Data source**: `src/lib/coffees.ts` reads `data/products.yaml` + `roasters.yaml` directly at build time (via `js-yaml`) and flattens them into table rows consumed by `CoffeeTable.astro` — no separate generated JSON file, and local dev uses the same real data. A new scrape requires a rebuild (handled by `pages.yml`).
 - **`astro.config.mjs`**: set `site: 'https://<user>.github.io'` and `base: '/scm'` for a project Pages site, or links 404.
 - **UI**: filterable/sortable table
   - Dropdowns: roaster, origin, process

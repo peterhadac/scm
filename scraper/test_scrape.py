@@ -2,6 +2,7 @@ import json
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
+import openai
 import pytest
 
 import scrape
@@ -14,8 +15,9 @@ def fake_tool_call(name, arguments):
     return call
 
 
-def fake_completion(tool_calls=None):
-    return MagicMock(choices=[MagicMock(message=MagicMock(tool_calls=tool_calls or []))])
+def fake_completion(tool_calls=None, content=None, finish_reason="stop"):
+    message = MagicMock(tool_calls=tool_calls or [], content=content)
+    return MagicMock(choices=[MagicMock(message=message, finish_reason=finish_reason)])
 
 
 def fake_result(
@@ -1147,12 +1149,105 @@ def test_extract_product_returns_tool_input():
     assert result == {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]}
 
 
-def test_extract_product_returns_none_when_claude_declines():
+def test_extract_product_returns_none_when_model_explicitly_declines():
     fake_client = MagicMock()
-    fake_client.chat.completions.create.return_value = fake_completion()
+    fake_client.chat.completions.create.return_value = fake_completion(
+        content="This is a category listing page, not a single coffee product."
+    )
 
     result = scrape.extract_product(fake_client, "https://x.sk/kava/", "markdown text")
     assert result is None
+
+
+def test_extract_product_raises_on_empty_response():
+    # No tool call AND no textual decline reason — ambiguous (could be
+    # truncation, a safety refusal, model laziness), so this must NOT be
+    # treated as a confident "not a product" the way a real decline is.
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.return_value = fake_completion()
+
+    with pytest.raises(scrape.ExtractionFailed):
+        scrape.extract_product(fake_client, "https://x.sk/kava/", "markdown text")
+
+
+def test_extract_product_raises_on_truncated_response():
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.return_value = fake_completion(finish_reason="length")
+
+    with pytest.raises(scrape.ExtractionFailed):
+        scrape.extract_product(fake_client, "https://x.sk/kava/", "markdown text")
+
+
+def test_extract_product_raises_on_malformed_tool_call_json():
+    fake_client = MagicMock()
+    bad_call = MagicMock()
+    bad_call.function.name = "extract_product"
+    bad_call.function.arguments = "{not valid json"
+    fake_client.chat.completions.create.return_value = fake_completion([bad_call])
+
+    with pytest.raises(scrape.ExtractionFailed):
+        scrape.extract_product(fake_client, "https://x.sk/kava/", "markdown text")
+
+
+def test_extract_product_truncates_markdown_before_sending():
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]})]
+    )
+    huge_markdown = "x" * (scrape.MAX_MARKDOWN_CHARS + 5000)
+
+    scrape.extract_product(fake_client, "https://x.sk/rwanda/", huge_markdown)
+
+    sent_messages = fake_client.chat.completions.create.call_args.kwargs["messages"]
+    user_content = sent_messages[-1]["content"]
+    assert len(user_content) <= scrape.MAX_MARKDOWN_CHARS + len("<page_content>\n\n</page_content>")
+
+
+def test_extract_product_omits_url_and_uses_system_message():
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]})]
+    )
+
+    scrape.extract_product(fake_client, "https://x.sk/rwanda-250g/", "markdown text")
+
+    kwargs = fake_client.chat.completions.create.call_args.kwargs
+    assert kwargs["temperature"] == 0
+    messages = kwargs["messages"]
+    assert messages[0]["role"] == "system"
+    assert messages[1]["role"] == "user"
+    assert "https://x.sk/rwanda-250g/" not in messages[0]["content"]
+    assert "https://x.sk/rwanda-250g/" not in messages[1]["content"]
+    assert "<page_content>" in messages[1]["content"]
+
+
+def test_extract_product_retries_on_transient_api_error(monkeypatch):
+    import httpx
+
+    monkeypatch.setattr(scrape.time, "sleep", lambda *_: None)
+    fake_client = MagicMock()
+    request = httpx.Request("POST", "https://openrouter.ai/api/v1/chat/completions")
+    fake_client.chat.completions.create.side_effect = [
+        openai.APIConnectionError(request=request),
+        fake_completion([fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]})]),
+    ]
+
+    result = scrape.extract_product(fake_client, "https://x.sk/rwanda/", "markdown text")
+    assert result == {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]}
+    assert fake_client.chat.completions.create.call_count == 2
+
+
+def test_extract_product_raises_after_exhausting_retries(monkeypatch):
+    import httpx
+
+    monkeypatch.setattr(scrape.time, "sleep", lambda *_: None)
+    fake_client = MagicMock()
+    request = httpx.Request("POST", "https://openrouter.ai/api/v1/chat/completions")
+    fake_client.chat.completions.create.side_effect = openai.APIConnectionError(request=request)
+
+    with pytest.raises(scrape.ExtractionFailed):
+        scrape.extract_product(fake_client, "https://x.sk/rwanda/", "markdown text")
+    assert fake_client.chat.completions.create.call_count == scrape.EXTRACT_RETRY_ATTEMPTS
 
 
 # --- discover_product_urls (async, offline via FakeCrawler) ------------------
@@ -1899,7 +1994,9 @@ async def test_process_roaster_keeps_good_product_when_extraction_declines():
         }
     )
     client = MagicMock()
-    client.chat.completions.create.return_value = fake_completion()  # declines, no tool call
+    client.chat.completions.create.return_value = fake_completion(
+        content="This page no longer shows a specific coffee product."
+    )  # explicit decline, no tool call
     existing = [
         {
             "name": "Rwanda",
@@ -1913,6 +2010,55 @@ async def test_process_roaster_keeps_good_product_when_extraction_declines():
     entries, status = await scrape.process_roaster(crawler, client, ROASTER, existing, "2026-07-04")
     assert status == "ok"
     assert entries == existing  # untouched, not downgraded
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_keeps_good_product_when_extraction_fails_ambiguously():
+    # No tool call AND no textual decline reason — extract_product raises
+    # ExtractionFailed rather than being treated as a confident decline.
+    # Same protection as a real decline: a previously-good product must not
+    # be clobbered by an ambiguous/failed extraction.
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(LONG_TEXT + " changed")),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion()  # empty, ambiguous
+    existing = [
+        {
+            "name": "Rwanda",
+            "url": "https://x.sk/rwanda/",
+            "status": "ok",
+            "last_seen": "2026-07-01",
+            "page_hash": "old-hash-does-not-match",
+            "packaging": [{"weight_g": 250, "price": 12.5}],
+        }
+    ]
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, existing, "2026-07-04")
+    assert status == "ok"
+    assert entries == existing  # untouched, not downgraded, not cached as not_a_product
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_does_not_cache_not_a_product_on_ambiguous_failure():
+    # Without an existing prior, an ambiguous/failed extraction must not
+    # produce a not_a_product cache entry either — it should simply yield no
+    # entry for the url, leaving it eligible for retry on the next run.
+    markdown_text = LONG_TEXT + " some page"
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/mystery/"]),
+            "https://x.sk/mystery/": fake_result(markdown=fake_markdown(markdown_text)),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion()  # empty, ambiguous
+
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, [], "2026-07-04")
+    assert status == "ok"
+    assert entries == []
 
 
 @pytest.mark.asyncio
@@ -1960,7 +2106,9 @@ async def test_process_roaster_caches_not_a_product_to_avoid_repeat_calls():
         }
     )
     client = MagicMock()
-    client.chat.completions.create.return_value = fake_completion()  # declines
+    client.chat.completions.create.return_value = fake_completion(
+        content="This is a category/listing page, not a single coffee product."
+    )  # explicit decline
 
     entries, _ = await scrape.process_roaster(crawler, client, ROASTER, [], "2026-07-04")
     assert entries[0]["status"] == "not_a_product"

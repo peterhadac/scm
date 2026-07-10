@@ -239,6 +239,11 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
 
+  // Defense-in-depth: this whole block is one top-level script, so an
+  // unexpected throw anywhere in it (e.g. bad scraped data) would otherwise
+  // abort every feature below the failure point, not just the one it broke.
+  try {
+
   const table       = document.getElementById('coffee-table')!;
   const tbody       = table.querySelector('tbody')!;
   const rows        = Array.from(tbody.querySelectorAll<HTMLTableRowElement>('tr'));
@@ -260,7 +265,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
       (a, b) => (a as string).localeCompare(b as string, 'sk'),
     ) as string[];
     for (const value of values) {
-      if (select.querySelector(`option[value="${value}"]`)) continue;
       const opt = document.createElement('option');
       opt.value = value;
       opt.textContent = value;
@@ -420,6 +424,10 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   updateSortUI();
   applyFilters();
   applySort();
+
+  } catch (err) {
+    console.error('CoffeeTable: table interactivity failed to initialize', err);
+  }
 </script>
 
 <style>

@@ -1,5 +1,6 @@
 crawl4ai==0.9.0
 beautifulsoup4==4.15.0
+lxml==5.4.0
 openai==2.43.0
 pyyaml==6.0.2
 jsonschema==4.26.0

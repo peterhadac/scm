@@ -33,6 +33,18 @@ PRODUCTS_PATH = ROOT / "data" / "products.yaml"
 SCHEMA_PATH = ROOT / "data" / "products.schema.yaml"
 COUNTRIES_PATH = ROOT / "data" / "coffee_origins.yaml"
 
+# lxml is a noticeably faster BeautifulSoup parser than the stdlib
+# html.parser, which matters now that every product page is only parsed
+# once (see issue #27) but that one parse still has to walk a full
+# e-commerce page. Not a hard dependency — fall back to html.parser if
+# lxml isn't installed in some environment (e.g. a minimal CI image).
+try:
+    import lxml  # noqa: F401
+
+    HTML_PARSER = "lxml"
+except ImportError:
+    HTML_PARSER = "html.parser"
+
 # WooCommerce attribute-key substrings roasters use for a coffee's package
 # weight ("hmotnosť"/"váha" are plain Slovak for "weight", "balenie" is
 # Slovak for "packaging"; "weight" covers sites that keep the English
@@ -83,6 +95,23 @@ MIN_TEXT_LENGTH = 200
 
 # Link text that commonly marks a "next page" control on Slovak/English shops.
 NEXT_LINK_TEXTS = ("next", "ďalšia", "dalsia", "ďalej", "další", "nasledujúca", "»", "›", "→")
+
+# Politeness delay (issue #27) between consecutive fetches to the same
+# roaster's domain — these are mostly small shops on shared hosting, and a
+# weekly burst of back-to-back requests (listing pagination, roast-type
+# hint pages, every product page, one after another) is impolite and risks
+# IP-blocking. Cheap insurance now that cross-roaster concurrency (see
+# CROSS_ROASTER_CONCURRENCY) means the total wall-clock cost of throttling
+# any one roaster's own fetches no longer scales with the whole run.
+POLITENESS_DELAY_SECONDS = 1.0
+
+# How many roasters' process_roaster() calls run concurrently in run()
+# (issue #27). Different roasters are different domains, so parallelizing
+# across them doesn't increase request pressure on any single shop — only
+# within-roaster fetches are throttled (POLITENESS_DELAY_SECONDS). Kept
+# modest by default: crawl4ai's browser-backed strategy (roasters with
+# `scraper: playwright`) is comparatively heavy per concurrent instance.
+CROSS_ROASTER_CONCURRENCY = 4
 
 # Name substrings that flag an item as NOT a coffee (equipment, gift cards,
 # subscriptions, accessories). Kept deliberately conservative — each token is
@@ -436,15 +465,18 @@ def normalize_origin(raw, name, aliases=None):
 ORIGIN_ATTRIBUTE_KEYWORDS = ("krajina", "povod", "origin")
 
 
-def woocommerce_attribute_text(html, class_pattern, separator=", "):
+def woocommerce_attribute_text(soup, class_pattern, separator=", "):
     """Visible text of a WooCommerce product-attribute row's value cell, or None.
 
     WordPress/WooCommerce renders each product attribute as a
     `<tr class="...">` row regardless of theme; `class_pattern` picks which
     attribute row. Shared by the origin/roast-type/weight extractors, which
     only differ in the row they target and what they parse out of its text.
+
+    Takes an already-parsed BeautifulSoup of the product page (see issue
+    #27 — a page used to be re-parsed from scratch by every one of these
+    extraction helpers; callers now parse once and share the soup).
     """
-    soup = BeautifulSoup(html or "", "html.parser")
     row = soup.find("tr", class_=re.compile(class_pattern, re.I))
     if not row:
         return None
@@ -454,7 +486,7 @@ def woocommerce_attribute_text(html, class_pattern, separator=", "):
     return cell.get_text(separator)
 
 
-def extract_woocommerce_origin(html):
+def extract_woocommerce_origin(soup):
     """Parse a WooCommerce product's "Additional information" origin attribute row.
 
     WordPress/WooCommerce renders each product attribute as a
@@ -464,12 +496,16 @@ def extract_woocommerce_origin(html):
     several source countries, e.g. "Brazília, Honduras, India, Nikaragua"
     for a blend) into one origin, which it does inconsistently.
 
+    Takes an already-parsed BeautifulSoup of the product page (see issue
+    #27 — a page used to be re-parsed from scratch by every one of these
+    extraction helpers; callers now parse once and share the soup).
+
     Returns a canonical origin (a COUNTRY_ALIASES value, or "Blend" when 2+
     distinct countries are listed), or None if no origin-like attribute row
     is found — the caller falls through to the LLM's own origin field.
     """
     text = woocommerce_attribute_text(
-        html, r"attribute_pa_(?:%s)" % "|".join(ORIGIN_ATTRIBUTE_KEYWORDS)
+        soup, r"attribute_pa_(?:%s)" % "|".join(ORIGIN_ATTRIBUTE_KEYWORDS)
     )
     if text is None:
         return None
@@ -498,7 +534,7 @@ def find_next_page_url(html, current_url):
     ("Next", "Ďalšia", "»", …). Returns None when nothing plausible is found or
     when the only candidate resolves back to ``current_url`` (guards infinite loops).
     """
-    soup = BeautifulSoup(html or "", "html.parser")
+    soup = BeautifulSoup(html or "", HTML_PARSER)
 
     def resolve(href):
         if not href:
@@ -550,6 +586,13 @@ def visible_html_text_length(html):
     unstripped HTML would count inline `<script>` bodies as "content" and miss
     a genuinely empty page.
     """
+    # Deliberately hardcoded to "html.parser", not HTML_PARSER/lxml: lxml
+    # silently drops text that falls outside a malformed page's <html>...
+    # </html> bounds (verified against a real "content past the closing
+    # tag" fixture), which would make this undercount a genuinely-rendered
+    # page's visible text and misclassify it as a JS-rendered empty shell.
+    # html.parser's lenient, forgiving parse is exactly what this check
+    # wants here.
     soup = BeautifulSoup(html or "", "html.parser")
     for tag in soup(["script", "style", "head", "noscript", "svg"]):
         tag.decompose()
@@ -571,7 +614,7 @@ def is_valid_tier(weight_g, price):
     )
 
 
-def extract_woocommerce_variations(html):
+def extract_woocommerce_variations(soup):
     """Parse a WooCommerce variable-product page's `data-product_variations` JSON.
 
     WooCommerce embeds every variation's price in the initial page load (an
@@ -582,6 +625,10 @@ def extract_woocommerce_variations(html):
     relying on the LLM to read a rendered price, which only ever shows the
     currently-selected variant.
 
+    Takes an already-parsed BeautifulSoup of the product page (see issue
+    #27 — a page used to be re-parsed from scratch by every one of these
+    extraction helpers; callers now parse once and share the soup).
+
     Returns (raw_json, tiers): `raw_json` is the attribute's exact string
     value (used by the caller to fold into the page hash so a price-only
     change still busts the cache), "" if this isn't a WooCommerce variable
@@ -590,7 +637,6 @@ def extract_woocommerce_variations(html):
     e.g. roast type, sharing a weight would otherwise produce duplicate
     tiers; revisit if a roaster's variations legitimately need >1 axis).
     """
-    soup = BeautifulSoup(html or "", "html.parser")
     form = soup.find(attrs={"data-product_variations": True})
     if not form:
         return "", []
@@ -632,7 +678,30 @@ def extract_woocommerce_variations(html):
     return raw_json, tiers
 
 
-async def _crawl_listing_links(crawler, start_url, max_pages=MAX_PAGES):
+async def _politeness_wait(throttle):
+    """Sleep POLITENESS_DELAY_SECONDS before a same-domain fetch — except for
+    the very first fetch, which has no prior request on that domain to be
+    polite about.
+
+    `throttle` is a shared single-element list `[is_first]`, mutated in
+    place so every fetch made while processing one roaster (pagination
+    discovery, roast-type-hint discovery, and per-product fetches) shares
+    one "have we made a request yet" flag — a roaster's own pages are all
+    on the same single domain by construction (see roasters.yaml), so no
+    real per-domain tracking is needed. `throttle=None` disables the wait
+    entirely, for call sites that fetch a single URL in isolation (e.g.
+    direct unit tests of a helper) with no prior request to be polite
+    about either.
+    """
+    if throttle is None:
+        return
+    if throttle[0]:
+        throttle[0] = False
+        return
+    await asyncio.sleep(POLITENESS_DELAY_SECONDS)
+
+
+async def _crawl_listing_links(crawler, start_url, max_pages=MAX_PAGES, throttle=None):
     """Follow pagination from `start_url`, collecting same-domain product-ish links.
 
     Shared by discover_product_urls (the roaster's main listing) and
@@ -673,6 +742,7 @@ async def _crawl_listing_links(crawler, start_url, max_pages=MAX_PAGES):
         if not url or url in seen_pages:
             break
         seen_pages.add(url)
+        await _politeness_wait(throttle)
         try:
             result = await crawler.arun(url, config=DISCOVERY_CONFIG)
         except Exception:
@@ -727,7 +797,7 @@ async def _crawl_listing_links(crawler, start_url, max_pages=MAX_PAGES):
     return discovered, first_result, pagination_status
 
 
-async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES):
+async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES, throttle=None):
     """Crawl a roaster's listing (following pagination) and return (urls, status).
 
     Uses ``prefetch=True`` so this costs one plain HTTP fetch per page — no
@@ -738,9 +808,13 @@ async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES):
     more pages still linked, or a fetch on page 2+ failed mid-run — either
     way, `urls` reflects only what was discovered *before* that point, so a
     caller must not treat every prior product missing from it as delisted.
+
+    `throttle` (issue #27), when passed, is shared with every other fetch
+    made for this roaster (see `_politeness_wait`) so pagination pages
+    aren't fetched back-to-back with no delay.
     """
     discovered, first_result, pagination_status = await _crawl_listing_links(
-        crawler, roaster["scrape_url"], max_pages
+        crawler, roaster["scrape_url"], max_pages, throttle
     )
     if first_result is None or not first_result.success:
         return None, "failed"
@@ -764,7 +838,7 @@ async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES):
     return discovered, "ok"
 
 
-async def discover_roast_type_hints(crawler, roaster, max_pages=MAX_PAGES):
+async def discover_roast_type_hints(crawler, roaster, max_pages=MAX_PAGES, throttle=None):
     """Crawl a roaster's optional `roast_type_urls` category pages for roast-type hints.
 
     Some sites (Shopify collections, Shoptet category pages) only reveal a
@@ -774,16 +848,19 @@ async def discover_roast_type_hints(crawler, roaster, max_pages=MAX_PAGES):
     just means no hints from it, not a roaster-level failure. Returns
     {url: roast_type}; last-write-wins on the rare case a product genuinely
     appears under both categories.
+
+    `throttle` (issue #27) is shared with every other fetch made for this
+    roaster — see `_politeness_wait`.
     """
     hints = {}
     for roast_type, url in (roaster.get("roast_type_urls") or {}).items():
-        urls, _, _ = await _crawl_listing_links(crawler, url, max_pages)
+        urls, _, _ = await _crawl_listing_links(crawler, url, max_pages, throttle)
         for discovered_url in urls:
             hints[discovered_url] = roast_type
     return hints
 
 
-async def extract_shopify_variations(crawler, html, product_url):
+async def extract_shopify_variations(crawler, html, product_url, throttle=None):
     """Fetch and parse a Shopify product's price/weight tiers via its `.js` endpoint.
 
     A Shopify product page can hide non-default variant prices from visible
@@ -798,10 +875,16 @@ async def extract_shopify_variations(crawler, html, product_url):
     Returns a list of {"weight_g": int, "price": float} tiers (deduped by
     weight_g, first-seen wins), or [] if this isn't a Shopify product page
     or the endpoint didn't return usable data.
+
+    `throttle` (issue #27), when passed, is shared with every other fetch
+    made for this roaster — see `_politeness_wait`. This extra `.js` fetch
+    lands on the same domain as the product page just fetched, so it's
+    throttled the same as any other same-domain request.
     """
     if "cdn.shopify.com" not in (html or ""):
         return []
     variants_url = product_url.split("?")[0].rstrip("/") + ".js"
+    await _politeness_wait(throttle)
     try:
         result = await crawler.arun(variants_url, config=DETAIL_CONFIG)
     except Exception:
@@ -933,21 +1016,27 @@ def normalize_roast_type(raw, process_raw=None, name=None, category_hint=None):
 ROAST_TYPE_ATTRIBUTE_KEYWORD = "sposob-pripravy"
 
 
-def extract_woocommerce_roast_type(html):
+def extract_woocommerce_roast_type(soup):
     """Parse a WooCommerce product's "recommended preparation method" attribute row.
 
     Same rationale and technique as `extract_woocommerce_origin()`: the LLM
     prompt hint for a multi-method list ("Espresso, Moka, Pour-over") isn't
     reliable on every call, so this reads the attribute row directly and
-    reuses `normalize_roast_type()`'s keyword matching on its text. Returns
-    None if no such attribute row is found or it names neither method.
+    reuses `normalize_roast_type()`'s keyword matching on its text.
+
+    Takes an already-parsed BeautifulSoup of the product page (see issue
+    #27 — a page used to be re-parsed from scratch by every one of these
+    extraction helpers; callers now parse once and share the soup).
+
+    Returns None if no such attribute row is found or it names neither
+    method.
     """
     return normalize_roast_type(
-        woocommerce_attribute_text(html, r"attribute_pa_[a-z-]*" + ROAST_TYPE_ATTRIBUTE_KEYWORD)
+        woocommerce_attribute_text(soup, r"attribute_pa_[a-z-]*" + ROAST_TYPE_ATTRIBUTE_KEYWORD)
     )
 
 
-def extract_woocommerce_weight(html):
+def extract_woocommerce_weight(soup):
     """Parse a WooCommerce product's built-in core "Weight" shipping field.
 
     Unlike the origin/roast-type attributes (custom taxonomies, so their
@@ -958,6 +1047,10 @@ def extract_woocommerce_weight(html):
     (a "5x12g single serve" product whose own core Weight field reads
     "0,06 kg" = 60g, matching exactly).
 
+    Takes an already-parsed BeautifulSoup of the product page (see issue
+    #27 — a page used to be re-parsed from scratch by every one of these
+    extraction helpers; callers now parse once and share the soup).
+
     Only meaningful as a single-tier fallback: a multi-tier variable
     product doesn't have one overall weight, so the caller should only use
     this when there's exactly one packaging tier missing its weight.
@@ -966,7 +1059,7 @@ def extract_woocommerce_weight(html):
     # separator="" so a value split across inline tags ("0,06 <span>kg</span>")
     # still reads as one contiguous "0,06 kg" token for parse_weight.
     return parse_weight(
-        woocommerce_attribute_text(html, r"woocommerce-product-attributes-item--weight\b", separator="")
+        woocommerce_attribute_text(soup, r"woocommerce-product-attributes-item--weight\b", separator="")
     )
 
 
@@ -1355,6 +1448,13 @@ async def process_roaster(crawler, client, roaster, existing_entries, today, max
 
     Returns the roaster's fresh `products.yaml` entry list (unchanged from
     `existing_entries` if discovery failed) and a status string for reporting.
+
+    Every fetch made for this roaster — listing pagination, roast-type-hint
+    category pages, and every product page — shares one politeness
+    `throttle` (issue #27): all of a roaster's own pages are on the same
+    single domain by construction, so POLITENESS_DELAY_SECONDS is inserted
+    between each of them (never before the very first) rather than firing
+    them back-to-back as fast as the event loop allows.
     """
     # List-keyed, not single-value: a normalize_products() split means two
     # entries (one per roast type) can share a url, so the previous run's
@@ -1363,7 +1463,9 @@ async def process_roaster(crawler, client, roaster, existing_entries, today, max
     for e in existing_entries:
         existing_by_url.setdefault(e["url"], []).append(e)
 
-    discovered, status = await discover_product_urls(crawler, roaster, max_pages)
+    throttle = [True]
+
+    discovered, status = await discover_product_urls(crawler, roaster, max_pages, throttle)
     if status in ("failed", "needs_js"):
         return existing_entries, status
     if status == "ok" and not discovered and existing_entries:
@@ -1378,11 +1480,12 @@ async def process_roaster(crawler, client, roaster, existing_entries, today, max
 
     # {} immediately when the roaster has no roast_type_urls configured —
     # no extra crawl for the common case.
-    roast_type_hints = await discover_roast_type_hints(crawler, roaster, max_pages)
+    roast_type_hints = await discover_roast_type_hints(crawler, roaster, max_pages, throttle)
 
     kept = []
     for url in discovered:
         group_priors = existing_by_url.get(url, [])
+        await _politeness_wait(throttle)
         try:
             result = await crawler.arun(url, config=DETAIL_CONFIG)
         except Exception:
@@ -1398,7 +1501,13 @@ async def process_roaster(crawler, client, roaster, existing_entries, today, max
             kept.extend(group_priors)
             continue
 
-        variations_raw, variation_tiers = extract_woocommerce_variations(result.html)
+        # Parsed once per product page and reused by every extraction
+        # helper below (variations, origin, roast type, weight) — a full
+        # e-commerce page is the most expensive pure-Python step in this
+        # loop, and re-parsing it per helper (up to 4x) was pure waste
+        # (issue #27).
+        soup = BeautifulSoup(result.html or "", HTML_PARSER)
+        variations_raw, variation_tiers = extract_woocommerce_variations(soup)
         # WooCommerce shows only the default-selected variant's price as
         # visible text — a price change on another variant wouldn't touch
         # `markdown` at all, so the raw variations JSON is folded into the
@@ -1434,7 +1543,7 @@ async def process_roaster(crawler, client, roaster, existing_entries, today, max
             # when we're already re-extracting for some other reason. Not
             # gated into page_hash: that would force this extra fetch on
             # every run regardless of hash-gate, defeating the point of it.
-            variation_tiers = await extract_shopify_variations(crawler, result.html, url)
+            variation_tiers = await extract_shopify_variations(crawler, result.html, url, throttle)
 
         try:
             raw = extract_product(client, url, markdown)
@@ -1449,10 +1558,10 @@ async def process_roaster(crawler, client, roaster, existing_entries, today, max
 
         hints = Hints(
             variation_tiers=variation_tiers,
-            origin=extract_woocommerce_origin(result.html),
-            roast_type=extract_woocommerce_roast_type(result.html),
+            origin=extract_woocommerce_origin(soup),
+            roast_type=extract_woocommerce_roast_type(soup),
             category_roast_type=roast_type_hints.get(url),
-            weight_g=extract_woocommerce_weight(result.html),
+            weight_g=extract_woocommerce_weight(soup),
         )
         normalized_list = normalize_products(raw, url, today, hints)
         if not normalized_list:
@@ -1541,6 +1650,14 @@ async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PAT
     need_browser = any(r.get("scraper") == "playwright" for r in roasters)
 
     async with AsyncExitStack() as stack:
+        # A single AsyncWebCrawler instance per strategy, shared across
+        # every concurrent roaster task below (issue #27) — unchanged from
+        # before this issue's concurrency work, which only reused one
+        # instance across *sequential* roasters. crawl4ai's own
+        # `arun_many()` API crawls many URLs concurrently through one
+        # AsyncWebCrawler by design, so concurrent `arun()` calls against
+        # the same instance are a supported usage pattern, not something
+        # this change introduces new risk for.
         crawler_http = await stack.enter_async_context(
             AsyncWebCrawler(crawler_strategy=http_strategy)
         )
@@ -1549,38 +1666,68 @@ async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PAT
             browser_cfg = BrowserConfig(headless=True, user_agent=USER_AGENT)
             crawler_browser = await stack.enter_async_context(AsyncWebCrawler(config=browser_cfg))
 
-        for roaster in roasters:
+        # Cross-roaster concurrency (issue #27): different roasters are
+        # different domains, so running several at once doesn't add
+        # request pressure to any single shop — only the semaphore caps
+        # how many run at the same time, per CROSS_ROASTER_CONCURRENCY.
+        # Politeness (POLITENESS_DELAY_SECONDS, see process_roaster) still
+        # applies *within* each roaster's own fetches.
+        semaphore = asyncio.Semaphore(CROSS_ROASTER_CONCURRENCY)
+        # products/statuses are plain dicts mutated from every concurrent
+        # roaster task below, and save_products() dumps the WHOLE products
+        # dict to disk on every roaster's completion (issue #23's
+        # checkpointing). save_products() does synchronous file I/O with
+        # no `await` in the middle, so under asyncio's single-threaded
+        # cooperative scheduling two checkpoint writes can never literally
+        # interleave — but this lock is cheap, and is a deliberate second
+        # line of defense against exactly that, rather than relying solely
+        # on save_products() staying synchronous forever.
+        checkpoint_lock = asyncio.Lock()
+
+        async def process_one(roaster):
             slug = roaster["slug"]
             crawler = crawler_browser if roaster.get("scraper") == "playwright" else crawler_http
-            try:
-                entries, status = await process_roaster(
-                    crawler, client, roaster, products.get(slug, []), today
-                )
-            except Exception as exc:
-                # One roaster's page structure blowing up (an unexpected
-                # crawl4ai exception, a bug tripped by that roaster's
-                # specific markup, ...) shouldn't abort every roaster after
-                # it — degrade to a "failed" status for this roaster only
-                # and keep its prior entries untouched, same as a listing
-                # fetch failure (issue #23). KeyboardInterrupt/SystemExit are
-                # deliberately not caught here (they're not Exception
-                # subclasses), so Ctrl-C / an intentional exit still works.
-                print(f"  ERROR: {roaster['name']}: unexpected exception — {exc!r}")
-                entries, status = products.get(slug, []), "failed"
-            products[slug] = entries
-            statuses[roaster["name"]] = status
-            # Checkpoint after each roaster: any crash from here on (in a
-            # later roaster, or elsewhere) only loses that later roaster's
-            # not-yet-integrated work, not everything scraped so far this
-            # run — and it also persists this roaster's hash-gate updates
-            # immediately, so a later crash doesn't force re-paying the LLM
-            # extraction cost for pages already successfully processed
-            # (issue #23).
-            save_products(products, products_path)
+            async with semaphore:
+                try:
+                    entries, status = await process_roaster(
+                        crawler, client, roaster, products.get(slug, []), today
+                    )
+                except Exception as exc:
+                    # One roaster's page structure blowing up (an unexpected
+                    # crawl4ai exception, a bug tripped by that roaster's
+                    # specific markup, ...) shouldn't abort every roaster —
+                    # degrade to a "failed" status for this roaster only and
+                    # keep its prior entries untouched, same as a listing
+                    # fetch failure (issue #23). KeyboardInterrupt/SystemExit
+                    # are deliberately not caught here (they're not Exception
+                    # subclasses), so Ctrl-C / an intentional exit still
+                    # works. Caught here, inside this roaster's own task,
+                    # rather than left to propagate to asyncio.gather below —
+                    # so one roaster's failure can never cancel or otherwise
+                    # disturb any other roaster's in-flight work.
+                    print(f"  ERROR: {roaster['name']}: unexpected exception — {exc!r}")
+                    entries, status = products.get(slug, []), "failed"
+            # Checkpoint as soon as THIS roaster completes — not all at once
+            # at the end — so a crash later in the run only loses later
+            # roasters' not-yet-integrated work, and this roaster's
+            # hash-gate updates are durable immediately (issue #23). Under
+            # concurrency, roasters now finish in whatever order their
+            # crawls actually complete, not list order — each completion
+            # still gets its own checkpoint save.
+            async with checkpoint_lock:
+                products[slug] = entries
+                statuses[roaster["name"]] = status
+                save_products(products, products_path)
+
+        await asyncio.gather(*(process_one(roaster) for roaster in roasters))
 
     print("scrape_status:")
-    for name, status in statuses.items():
-        print(f"  {name}: {status}")
+    # Sorted for readable, deterministic output — completion order (and so
+    # dict insertion order) is no longer list order once roasters run
+    # concurrently, but that has no bearing on correctness, only on how
+    # this summary reads.
+    for name in sorted(statuses):
+        print(f"  {name}: {statuses[name]}")
 
 
 def main():

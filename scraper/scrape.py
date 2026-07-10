@@ -1507,8 +1507,25 @@ async def process_roaster(crawler, client, roaster, existing_entries, today, max
     return kept, status
 
 
+def _require_openrouter_api_key():
+    """Fail fast with an actionable message if OPENROUTER_API_KEY is unset/empty.
+
+    Called before any crawl/network work starts — a bare KeyError (or an
+    OpenAI client silently constructed with an empty key that only fails
+    much later, mid-run, on the first extraction call) is a worse failure
+    mode than refusing to start at all (issue #23).
+    """
+    api_key = os.environ.get("OPENROUTER_API_KEY")
+    if not api_key:
+        raise RuntimeError(
+            "OPENROUTER_API_KEY environment variable is not set — required "
+            "for LLM extraction. Set it before running the scraper."
+        )
+    return api_key
+
+
 async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PATH):
-    client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=os.environ["OPENROUTER_API_KEY"])
+    client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=_require_openrouter_api_key())
     all_roasters = load_roasters(roasters_path)
     roasters = all_roasters
     if only:
@@ -1535,13 +1552,31 @@ async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PAT
         for roaster in roasters:
             slug = roaster["slug"]
             crawler = crawler_browser if roaster.get("scraper") == "playwright" else crawler_http
-            entries, status = await process_roaster(
-                crawler, client, roaster, products.get(slug, []), today
-            )
+            try:
+                entries, status = await process_roaster(
+                    crawler, client, roaster, products.get(slug, []), today
+                )
+            except Exception as exc:
+                # One roaster's page structure blowing up (an unexpected
+                # crawl4ai exception, a bug tripped by that roaster's
+                # specific markup, ...) shouldn't abort every roaster after
+                # it — degrade to a "failed" status for this roaster only
+                # and keep its prior entries untouched, same as a listing
+                # fetch failure (issue #23). KeyboardInterrupt/SystemExit are
+                # deliberately not caught here (they're not Exception
+                # subclasses), so Ctrl-C / an intentional exit still works.
+                print(f"  ERROR: {roaster['name']}: unexpected exception — {exc!r}")
+                entries, status = products.get(slug, []), "failed"
             products[slug] = entries
             statuses[roaster["name"]] = status
-
-    save_products(products, products_path)
+            # Checkpoint after each roaster: any crash from here on (in a
+            # later roaster, or elsewhere) only loses that later roaster's
+            # not-yet-integrated work, not everything scraped so far this
+            # run — and it also persists this roaster's hash-gate updates
+            # immediately, so a later crash doesn't force re-paying the LLM
+            # extraction cost for pages already successfully processed
+            # (issue #23).
+            save_products(products, products_path)
 
     print("scrape_status:")
     for name, status in statuses.items():

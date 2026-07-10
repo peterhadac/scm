@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 
 import openai
 import pytest
+import yaml
 
 import scrape
 
@@ -2545,3 +2546,245 @@ def test_validate_entry_rejects_bad_roast_type():
 )
 def test_normalize_process(raw, expected):
     assert scrape.normalize_process(raw) == expected
+
+
+# --- run() (checkpointing / per-roaster error isolation, issue #23) ---------
+
+
+class FakeWebCrawler:
+    """Duck-typed async-context-manager stand-in for crawl4ai's AsyncWebCrawler.
+
+    run() only ever awaits `__aenter__`/`__aexit__` on it (via
+    AsyncExitStack) before handing it to process_roaster — which is itself
+    monkeypatched in these tests — so no arun()/network behavior is needed.
+    """
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        return False
+
+
+def three_roasters():
+    return [
+        {"name": "Roaster One", "slug": "roaster-one", "url": "https://a.sk/", "scrape_url": "https://a.sk/"},
+        {"name": "Roaster Two", "slug": "roaster-two", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
+        {"name": "Roaster Three", "slug": "roaster-three", "url": "https://c.sk/", "scrape_url": "https://c.sk/"},
+    ]
+
+
+def write_roasters_yaml(path, roasters):
+    path.write_text(yaml.safe_dump({"roasters": roasters}))
+
+
+@pytest.mark.asyncio
+async def test_run_checkpoints_save_products_after_each_roaster(monkeypatch, tmp_path):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = three_roasters()
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        return [{"name": roaster["name"], "url": roaster["url"] + "p"}], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    save_calls = []
+    real_save_products = scrape.save_products
+
+    def spy_save_products(products, path=scrape.PRODUCTS_PATH):
+        save_calls.append(len(products))
+        return real_save_products(products, path)
+
+    monkeypatch.setattr(scrape, "save_products", spy_save_products)
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path)
+
+    # One checkpoint save per roaster, not just one at the very end — and
+    # each successive checkpoint has one more roaster's worth of data than
+    # the last, confirming it isn't just called 3 times with the same
+    # (fully-built) dict.
+    assert len(save_calls) == len(roasters)
+    assert save_calls == [1, 2, 3]
+
+    on_disk = scrape.load_products(products_path)
+    assert set(on_disk.keys()) == {"roaster-one", "roaster-two", "roaster-three"}
+
+
+@pytest.mark.asyncio
+async def test_run_isolates_roaster_exception_and_continues(monkeypatch, tmp_path):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = three_roasters()
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        if roaster["slug"] == "roaster-two":
+            raise ValueError("boom: simulated bug processing roaster two")
+        return [{"name": roaster["name"], "url": roaster["url"] + "p"}], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    # Should not raise — the exception on roaster-two must be caught and
+    # isolated, letting roaster-three still be processed.
+    await scrape.run(roasters_path=roasters_path, products_path=products_path)
+
+    on_disk = scrape.load_products(products_path)
+    assert on_disk["roaster-one"] == [{"name": "Roaster One", "url": "https://a.sk/p"}]
+    # roaster-two blew up before producing any entries — no data invented,
+    # existing (empty, first-run) entries preserved as-is.
+    assert on_disk["roaster-two"] == []
+    assert on_disk["roaster-three"] == [{"name": "Roaster Three", "url": "https://c.sk/p"}]
+
+
+@pytest.mark.asyncio
+async def test_run_records_failed_status_for_roaster_that_raised(monkeypatch, tmp_path, capsys):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = three_roasters()
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        if roaster["slug"] == "roaster-two":
+            raise RuntimeError("simulated failure")
+        return [], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path)
+
+    out = capsys.readouterr().out
+    assert "Roaster One: ok" in out
+    assert "Roaster Two: failed" in out
+    assert "Roaster Three: ok" in out
+
+
+@pytest.mark.asyncio
+async def test_run_preserves_prior_roaster_entries_when_it_later_raises(monkeypatch, tmp_path):
+    # A roaster that previously had good data, and this run's process_roaster
+    # call blows up before returning anything: the crash must not wipe out
+    # that roaster's existing products.yaml entries.
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = [
+        {"name": "Roaster Two", "slug": "roaster-two", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
+    ]
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+    prior_entry = {
+        "name": "Old Coffee",
+        "url": "https://b.sk/old-coffee/",
+        "origin": "Rwanda",
+        "process": None,
+        "roast_type": "filter",
+        "status": "ok",
+        "last_seen": "2026-07-01",
+        "page_hash": "abc123",
+        "packaging": [{"weight_g": 250, "price": 12.5}],
+        "schema_version": scrape.SCHEMA_VERSION,
+    }
+    scrape.save_products({"roaster-two": [prior_entry]}, products_path)
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        raise ValueError("boom")
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path)
+
+    on_disk = scrape.load_products(products_path)
+    assert on_disk["roaster-two"] == [prior_entry]
+
+
+@pytest.mark.asyncio
+async def test_run_checkpointing_survives_later_fatal_crash(monkeypatch, tmp_path):
+    # Simulates a genuinely-fatal crash that happens OUTSIDE the per-roaster
+    # try/except (e.g. a disk error in save_products itself) partway through
+    # the run — the whole point of per-roaster checkpointing (issue #23) is
+    # that the roasters processed before the crash are already durably on
+    # disk, not just held in memory.
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = three_roasters()
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        return [{"name": roaster["name"], "url": roaster["url"] + "p"}], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    real_save_products = scrape.save_products
+    call_count = {"n": 0}
+
+    def crashing_save_products(products, path=scrape.PRODUCTS_PATH):
+        call_count["n"] += 1
+        if call_count["n"] == 3:
+            raise OSError("simulated disk failure on the third checkpoint")
+        return real_save_products(products, path)
+
+    monkeypatch.setattr(scrape, "save_products", crashing_save_products)
+
+    with pytest.raises(OSError):
+        await scrape.run(roasters_path=roasters_path, products_path=products_path)
+
+    # The crash happened on the 3rd checkpoint write, so the 2nd checkpoint
+    # (roaster-one + roaster-two) already made it to disk before the crash.
+    on_disk = scrape.load_products(products_path)
+    assert set(on_disk.keys()) == {"roaster-one", "roaster-two"}
+
+
+# --- _require_openrouter_api_key ---------------------------------------------
+
+
+def test_require_openrouter_api_key_missing_raises_clear_error(monkeypatch):
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY"):
+        scrape._require_openrouter_api_key()
+
+
+def test_require_openrouter_api_key_empty_raises_clear_error(monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "")
+    with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY"):
+        scrape._require_openrouter_api_key()
+
+
+def test_require_openrouter_api_key_present_returns_it(monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-test-123")
+    assert scrape._require_openrouter_api_key() == "sk-test-123"
+
+
+@pytest.mark.asyncio
+async def test_run_raises_fast_on_missing_api_key_before_processing_any_roaster(monkeypatch, tmp_path):
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = three_roasters()
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+
+    calls = []
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        calls.append(roaster["slug"])
+        return [], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY"):
+        await scrape.run(roasters_path=roasters_path, products_path=products_path)
+
+    assert calls == []
+    assert not products_path.exists()

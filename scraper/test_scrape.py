@@ -1766,9 +1766,7 @@ async def test_process_roaster_schema_version_bump_forces_resplit_of_legacy_sing
     # Mirrors the real production bug shape: one legacy entry, stale/missing
     # schema_version, packaging with the duplicate-pair signature.
     markdown_text = LONG_TEXT + " 11,00 €"
-    import hashlib
-
-    page_hash = hashlib.sha256(markdown_text.encode("utf-8")).hexdigest()
+    page_hash = scrape.compute_page_hash(markdown_text)
     crawler = FakeCrawler(
         {
             "https://x.sk/": listing_result(["https://x.sk/colombia/"]),
@@ -1883,9 +1881,7 @@ async def test_process_roaster_hash_gate_still_skips_when_nothing_changed():
 @pytest.mark.asyncio
 async def test_process_roaster_skips_claude_when_hash_unchanged():
     markdown_text = LONG_TEXT + " 12,50 €"
-    import hashlib
-
-    page_hash = hashlib.sha256(markdown_text.encode("utf-8")).hexdigest()
+    page_hash = scrape.compute_page_hash(markdown_text)
     crawler = FakeCrawler(
         {
             "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
@@ -1913,9 +1909,7 @@ async def test_process_roaster_skips_claude_when_hash_unchanged():
 @pytest.mark.asyncio
 async def test_process_roaster_forces_reextraction_when_schema_version_stale():
     markdown_text = LONG_TEXT + " 12,50 €"
-    import hashlib
-
-    page_hash = hashlib.sha256(markdown_text.encode("utf-8")).hexdigest()
+    page_hash = scrape.compute_page_hash(markdown_text)
     crawler = FakeCrawler(
         {
             "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
@@ -1951,6 +1945,77 @@ async def test_process_roaster_forces_reextraction_when_schema_version_stale():
     assert status == "ok"
     client.chat.completions.create.assert_called_once()  # re-extracted despite unchanged hash
     assert entries[0]["schema_version"] == scrape.SCHEMA_VERSION
+
+
+# --- compute_page_hash (issue #13: hash-gate leaks on dynamic page chrome) -----
+
+
+def test_compute_page_hash_deterministic_for_identical_content():
+    text = "Rwanda Kigali, washed, 12,50 € " * 50
+    assert scrape.compute_page_hash(text) == scrape.compute_page_hash(text)
+
+
+def test_compute_page_hash_ignores_dynamic_chrome_beyond_truncation_window():
+    # A real product's identifying content (title/price/description) fills
+    # the whole MAX_MARKDOWN_CHARS window that gets hashed (same window sent
+    # to the LLM). A "5 people are viewing this" stock-urgency widget, a
+    # rotating testimonial, or a "customers also bought" carousel tacked on
+    # past that window — the kind of dynamic chrome that changes between two
+    # fetches of an otherwise-unchanged page — must not flip the hash.
+    base = "Rwanda Kigali, washed, filter roast, 12,50 € for 250 g. " * 400
+    assert len(base) > scrape.MAX_MARKDOWN_CHARS
+    dynamic_chrome = (
+        "5 people are viewing this product right now! "
+        "Customers also bought: Ethiopia Yirgacheffe, Kenya Nyeri. "
+        "In stock: 3 left. " * 100
+    )
+    assert scrape.compute_page_hash(base) == scrape.compute_page_hash(base + dynamic_chrome)
+
+
+def test_compute_page_hash_changes_when_content_inside_window_changes():
+    # A genuine product change (price, name, description) sitting inside the
+    # hashed window must still reliably change the hash.
+    base = "Rwanda Kigali, washed, filter roast, 12,50 € for 250 g. " * 400
+    price_changed = base.replace("12,50 €", "14,90 €")
+    assert scrape.compute_page_hash(base) != scrape.compute_page_hash(price_changed)
+
+
+def test_compute_page_hash_folds_in_variations_raw():
+    assert scrape.compute_page_hash("same markdown", "v1") != scrape.compute_page_hash("same markdown", "v2")
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_hash_gate_survives_dynamic_chrome_appended_between_runs():
+    # End-to-end regression for issue #13: appending plausible dynamic page
+    # chrome between two fetches of an otherwise-unchanged product must not
+    # force a fresh (paid, nondeterministic) re-extraction.
+    base_markdown = "Rwanda Kigali, washed, filter roast, 12,50 € for 250 g. " * 400
+    assert len(base_markdown) > scrape.MAX_MARKDOWN_CHARS
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €", "weight": "250 g"}]})]
+    )
+    crawler_v1 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(base_markdown)),
+        }
+    )
+    entries_v1, _ = await scrape.process_roaster(crawler_v1, client, ROASTER, [], "2026-07-08")
+    assert client.chat.completions.create.call_count == 1
+
+    dynamic_markdown = base_markdown + (
+        "5 people are viewing this product right now! In stock: 3 left. " * 50
+    )
+    crawler_v2 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(dynamic_markdown)),
+        }
+    )
+    entries_v2, _ = await scrape.process_roaster(crawler_v2, client, ROASTER, entries_v1, "2026-07-09")
+    assert client.chat.completions.create.call_count == 1  # not re-called: chrome fell outside the window
+    assert entries_v2[0]["last_seen"] == "2026-07-09"
 
 
 @pytest.mark.asyncio

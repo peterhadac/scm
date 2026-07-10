@@ -44,8 +44,13 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # the output for already-scraped pages — this forces process_roaster's
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
-# against the new rules.
-SCHEMA_VERSION = 17
+# against the new rules. Also bump whenever the page_hash *computation*
+# itself changes (see compute_page_hash) — old and new hashes for the exact
+# same page content are never equal by construction (they're hashing
+# different projections), so a stored hash from before the change would
+# never match again anyway, but bumping keeps the "why did this
+# re-extract" story consistent in one place instead of two.
+SCHEMA_VERSION = 18
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -1264,6 +1269,38 @@ def normalize_products(raw, url, today, hints=None):
     return results
 
 
+def compute_page_hash(markdown, variations_raw=""):
+    """Hash a stable projection of a product page, not the full raw markdown.
+
+    Issue #13: hashing the entire page (as this used to do) makes the
+    hash-gate leak on dynamic chrome — a cart count, a "customers also
+    bought" carousel, a stock countdown, a rotating testimonial — any of
+    which can change between two fetches of an otherwise-unchanged product,
+    flipping the hash and forcing a fresh paid (and nondeterministic)
+    extraction every single run, exactly the cost the gate exists to avoid.
+
+    A real product's identifying content (title, price, description,
+    packaging selector) reliably lives near the top of crawl4ai's markdown
+    output; site chrome that varies run-to-run (recommendation widgets,
+    "N people are viewing this", social proof, footers) tends to live
+    further down. So this hashes the same MAX_MARKDOWN_CHARS-truncated
+    window that's already sent to the LLM in extract_product() — content
+    beyond that window can wobble freely without busting the cache, while a
+    genuine change near the top (price, name, description) still changes
+    the hash reliably. This also conveniently bounds the cost of hashing a
+    pathologically large page, the same reason that cap exists for the LLM
+    call.
+
+    `variations_raw` (WooCommerce's data-product_variations JSON, or "" when
+    absent) is folded in unwindowed: it's compact, deterministic structured
+    data straight from the page, not markdown prose, and it's how a
+    price-only change hidden behind a variant selector still busts the hash
+    even though it never appears in visible markdown text at all.
+    """
+    projection = markdown[:MAX_MARKDOWN_CHARS] + variations_raw
+    return hashlib.sha256(projection.encode("utf-8")).hexdigest()
+
+
 async def process_roaster(crawler, client, roaster, existing_entries, today):
     """Discover + hash-gate-extract one roaster's products.
 
@@ -1313,7 +1350,9 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
         # visible text — a price change on another variant wouldn't touch
         # `markdown` at all, so the raw variations JSON is folded into the
         # hash too, or such a change would be silently hash-gated away forever.
-        page_hash = hashlib.sha256((markdown + variations_raw).encode("utf-8")).hexdigest()
+        # See compute_page_hash's docstring (issue #13) for why this hashes a
+        # truncated projection rather than the full page.
+        page_hash = compute_page_hash(markdown, variations_raw)
         # A url's entries are gated all-or-nothing: one page fetch backs
         # however many entries currently exist for it (0, 1, or 2 after a
         # roast-type split), so there's no way to re-extract "just one" of

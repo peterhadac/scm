@@ -65,4 +65,80 @@ roasters:
     slug: trip-roasters
     url: https://triproasters.sk/
     scrape_url: https://triproasters.sk/vyberova-kava/
+  - name: Alternativ Coffee
+    slug: alternativ-coffee
+    url: https://avcoffee.sk/
+    scrape_url: https://avcoffee.sk/15-kava
+    metadata:
+      city: Nové Mesto nad Váhom
+  - name: Karma Coffee
+    slug: karma-coffee
+    url: https://www.karmacoffee.sk/
+    scrape_url: https://www.karmacoffee.sk/nasa-kava/
+    metadata:
+      city: Liptovský Mikuláš
+  - name: Pražiareň Rýdze
+    slug: praziaren-rydze
+    url: https://praziarenrydze.sk/
+    scrape_url: https://praziarenrydze.sk/12-prazenakava
+    metadata:
+      city: Golianovo
+  - name: Concept Coffee Roasters
+    slug: concept-coffee-roasters
+    url: https://www.conceptcoffee.sk/
+    scrape_url: https://www.conceptcoffee.sk/filter/   # site splits products across /filter/ and /espresso/ with no combined listing; espresso range needs a second pass
+    metadata:
+      city: Piešťany
+  - name: Casa del Caffe
+    slug: casa-del-caffe
+    url: https://casadelcaffe.sk/
+    scrape_url: https://casadelcaffe.sk/shop/
+  - name: Pražiareň Veľké Zálužie
+    slug: praziaren-velke-zaluzie
+    url: https://www.praziarenvelkezaluzie.sk/
+    scrape_url: https://www.praziarenvelkezaluzie.sk/cerstvo-prazena-kava/
+    metadata:
+      city: Veľké Zálužie
+  - name: 9 Grams Coffee
+    slug: 9-grams-coffee
+    url: https://www.9gramscoffee.sk/
+    scrape_url: https://www.coffeeart.me/kategoria/9-grams-coffee/   # 9gramscoffee.sk has no on-site catalog; products are sold via this external storefront
+    metadata:
+      city: Žilina
+  - name: Green Plantation
+    slug: green-plantation
+    url: https://www.gpkava.sk/
+    scrape_url: https://www.gpkava.sk/cerstva-kava
+    metadata:
+      city: Komárno
+  - name: Simple Coffee
+    slug: simple-coffee
+    url: https://simplecoffee.sk/
+    scrape_url: https://simplecoffee.sk/kategorie/zrnkova-kava/
+    metadata:
+      city: Bratislava
+  - name: Sedmitchka Coffee Roasters
+    slug: sedmitchka-coffee-roasters
+    url: https://sedmitchka.coffee/
+    scrape_url: https://sedmitchka.coffee/en/collections/kava-1
+    metadata:
+      city: Dubnica nad Váhom
+  - name: Incuple
+    slug: incuple
+    url: https://incuple.sk/
+    scrape_url: https://incuple.sk/obchod/
+    metadata:
+      city: Topoľčany
+  - name: Epera Coffee
+    slug: epera-coffee
+    url: https://www.praziarenepera.sk/
+    scrape_url: https://www.praziarenepera.sk/kategoria-produktu/cerstva-kava/
+    metadata:
+      city: Prešov
+  - name: KAAN Roastery
+    slug: kaan-roastery
+    url: https://kaan.sk/
+    scrape_url: https://kaan.sk/kategoria/kava/
+    metadata:
+      city: Prešov
 

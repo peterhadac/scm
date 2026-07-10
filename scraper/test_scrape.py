@@ -1402,6 +1402,123 @@ async def test_discover_product_urls_needs_js_when_text_too_short():
     assert status == "needs_js"
 
 
+# --- _crawl_listing_links pagination completeness (issue #22) ----------------
+
+
+@pytest.mark.asyncio
+async def test_crawl_listing_links_reports_complete_on_natural_end():
+    html = "<html><body>listing</body></html>" + "x" * 200
+    crawler = FakeCrawler({"https://x.sk/": fake_result(html=html, url="https://x.sk/")})
+    urls, first_result, pagination_status = await scrape._crawl_listing_links(crawler, "https://x.sk/")
+    assert pagination_status == "complete"
+
+
+@pytest.mark.asyncio
+async def test_crawl_listing_links_reports_failed_midway_on_page2_fetch_failure():
+    # Page 1 succeeds and links to page 2; page 2's fetch fails outright
+    # (not in the fake crawler's responses -> success=False) — a transient
+    # timeout mid-pagination, not a natural end.
+    page1 = fake_result(
+        html='<a rel="next" href="/shop?page=2">Next</a>' + "x" * 200,
+        links={"internal": [{"href": "https://x.sk/coffee-a/", "text": "A"}]},
+        url="https://x.sk/shop",
+    )
+    crawler = FakeCrawler({"https://x.sk/shop": page1})  # page 2 deliberately absent
+    urls, first_result, pagination_status = await scrape._crawl_listing_links(crawler, "https://x.sk/shop")
+    assert pagination_status == "failed_midway"
+    assert urls == {"https://x.sk/coffee-a/"}  # page 1's links are still returned
+
+
+@pytest.mark.asyncio
+async def test_crawl_listing_links_page1_failure_is_not_failed_midway():
+    # A first-page failure is a total discovery failure (reported via
+    # first_result being unsuccessful/None), not "partial progress that
+    # should be preserved" — pagination_status must stay "complete" so
+    # discover_product_urls's existing "failed" handling isn't shadowed by
+    # the new partial-discovery path.
+    crawler = FakeCrawler({})  # every fetch fails
+    urls, first_result, pagination_status = await scrape._crawl_listing_links(crawler, "https://x.sk/")
+    assert pagination_status == "complete"
+    assert first_result.success is False
+
+
+@pytest.mark.asyncio
+async def test_crawl_listing_links_reports_capped_when_max_pages_hit_with_more_linked():
+    page1 = fake_result(
+        html='<a rel="next" href="/shop?page=2">Next</a>' + "x" * 200,
+        links={"internal": [{"href": "https://x.sk/coffee-a/", "text": "A"}]},
+        url="https://x.sk/shop",
+    )
+    page2 = fake_result(
+        html='<a rel="next" href="/shop?page=3">Next</a>' + "x" * 200,
+        links={"internal": [{"href": "https://x.sk/coffee-b/", "text": "B"}]},
+        url="https://x.sk/shop?page=2",
+    )
+    crawler = FakeCrawler({"https://x.sk/shop": page1, "https://x.sk/shop?page=2": page2})
+    urls, first_result, pagination_status = await scrape._crawl_listing_links(
+        crawler, "https://x.sk/shop", max_pages=2
+    )
+    assert pagination_status == "capped"
+    assert urls == {"https://x.sk/coffee-a/", "https://x.sk/coffee-b/"}
+
+
+@pytest.mark.asyncio
+async def test_crawl_listing_links_not_capped_when_max_pages_hit_with_no_further_link():
+    # max_pages happens to equal the true page count exactly, and the last
+    # page has no next link — this is a natural end, not a cap; the cap
+    # signal must only fire when a further page was left unvisited.
+    page1 = fake_result(
+        html="x" * 200,  # no next link at all
+        links={"internal": [{"href": "https://x.sk/coffee-a/", "text": "A"}]},
+        url="https://x.sk/shop",
+    )
+    crawler = FakeCrawler({"https://x.sk/shop": page1})
+    urls, first_result, pagination_status = await scrape._crawl_listing_links(
+        crawler, "https://x.sk/shop", max_pages=1
+    )
+    assert pagination_status == "complete"
+
+
+# --- discover_product_urls "partial" status (issue #22) ----------------------
+
+
+@pytest.mark.asyncio
+async def test_discover_product_urls_partial_on_mid_pagination_failure(capsys):
+    page1 = fake_result(
+        html='<a rel="next" href="/shop?page=2">Next</a>' + "x" * 200,
+        links={"internal": [{"href": "https://x.sk/coffee-a/", "text": "A"}]},
+        url="https://x.sk/shop",
+    )
+    crawler = FakeCrawler({"https://x.sk/shop": page1})
+    roaster = {"name": "Test Roastery", "url": "https://x.sk/shop", "scrape_url": "https://x.sk/shop"}
+    discovered, status = await scrape.discover_product_urls(crawler, roaster)
+    assert status == "partial"
+    assert discovered == {"https://x.sk/coffee-a/"}
+    assert "Test Roastery" in capsys.readouterr().out
+
+
+@pytest.mark.asyncio
+async def test_discover_product_urls_partial_on_max_pages_cap(capsys):
+    page1 = fake_result(
+        html='<a rel="next" href="/shop?page=2">Next</a>' + "x" * 200,
+        links={"internal": [{"href": "https://x.sk/coffee-a/", "text": "A"}]},
+        url="https://x.sk/shop",
+    )
+    page2 = fake_result(
+        html='<a rel="next" href="/shop?page=3">Next</a>' + "x" * 200,
+        links={"internal": [{"href": "https://x.sk/coffee-b/", "text": "B"}]},
+        url="https://x.sk/shop?page=2",
+    )
+    crawler = FakeCrawler({"https://x.sk/shop": page1, "https://x.sk/shop?page=2": page2})
+    roaster = {"name": "Test Roastery", "url": "https://x.sk/shop", "scrape_url": "https://x.sk/shop"}
+    discovered, status = await scrape.discover_product_urls(crawler, roaster, max_pages=2)
+    assert status == "partial"
+    assert discovered == {"https://x.sk/coffee-a/", "https://x.sk/coffee-b/"}
+    out = capsys.readouterr().out
+    assert "Test Roastery" in out
+    assert "MAX_PAGES" in out
+
+
 # --- discover_roast_type_hints (async, offline via FakeCrawler) --------------
 
 
@@ -2046,6 +2163,142 @@ async def test_process_roaster_removes_delisted_product():
     entries, status = await scrape.process_roaster(crawler, client, ROASTER, existing, "2026-07-04")
     assert status == "ok"
     assert [e["url"] for e in entries] == ["https://x.sk/still-here/"]
+
+
+# --- process_roaster "partial" discovery (issue #22) --------------------------
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_partial_mid_pagination_failure_preserves_undiscovered_entries():
+    # Page 1 discovers "still-here" and links to page 2, whose fetch fails
+    # outright (a transient timeout) rather than pagination naturally
+    # ending. "old-coffee" is prior data for a URL that was never
+    # rediscovered this run (it might well live on the unreached page 2) —
+    # it must be preserved, not treated as delisted, and the roaster status
+    # must be "partial", not "ok".
+    page1 = fake_result(
+        html='<a rel="next" href="/shop?page=2">Next</a>' + LONG_TEXT,
+        links={"internal": [{"href": "https://x.sk/still-here/", "text": "Coffee"}]},
+        url="https://x.sk/shop",
+    )
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/shop": page1,  # page 2 deliberately absent -> fetch fails
+            "https://x.sk/still-here/": fake_result(markdown=fake_markdown(LONG_TEXT + " 9,00 €")),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Still Here", "packaging": [{"price": "9,00 €"}]})]
+    )
+    roaster = dict(ROASTER, scrape_url="https://x.sk/shop")
+    existing = [
+        {
+            "name": "Old Coffee",
+            "url": "https://x.sk/old-coffee/",
+            "status": "ok",
+            "last_seen": "2026-07-01",
+            "page_hash": "deadbeef",
+            "packaging": [{"weight_g": 250, "price": 9.0}],
+        }
+    ]
+    entries, status = await scrape.process_roaster(crawler, client, roaster, existing, "2026-07-04")
+    assert status == "partial"
+    urls = {e["url"] for e in entries}
+    assert urls == {"https://x.sk/old-coffee/", "https://x.sk/still-here/"}
+    old = next(e for e in entries if e["url"] == "https://x.sk/old-coffee/")
+    # Untouched: last_seen doesn't advance and the stored hash isn't
+    # disturbed, so a later successful run still re-extracts it if the page
+    # actually changed rather than treating it as freshly confirmed.
+    assert old["last_seen"] == "2026-07-01"
+    assert old["page_hash"] == "deadbeef"
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_max_pages_cap_reports_partial_and_preserves_entries():
+    page1 = fake_result(
+        html='<a rel="next" href="/shop?page=2">Next</a>' + LONG_TEXT,
+        links={"internal": [{"href": "https://x.sk/still-here/", "text": "Coffee"}]},
+        url="https://x.sk/shop",
+    )
+    page2 = fake_result(
+        html='<a rel="next" href="/shop?page=3">Next</a>' + LONG_TEXT,  # page 3 never fetched: capped
+        links={"internal": []},
+        url="https://x.sk/shop?page=2",
+    )
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/shop": page1,
+            "https://x.sk/shop?page=2": page2,
+            "https://x.sk/still-here/": fake_result(markdown=fake_markdown(LONG_TEXT + " 9,00 €")),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Still Here", "packaging": [{"price": "9,00 €"}]})]
+    )
+    roaster = dict(ROASTER, scrape_url="https://x.sk/shop")
+    existing = [
+        {
+            "name": "Old Coffee",
+            "url": "https://x.sk/old-coffee/",  # would only ever appear on the unreached page 3
+            "status": "ok",
+            "last_seen": "2026-07-01",
+            "page_hash": "deadbeef",
+            "packaging": [{"weight_g": 250, "price": 9.0}],
+        }
+    ]
+    entries, status = await scrape.process_roaster(
+        crawler, client, roaster, existing, "2026-07-04", max_pages=2
+    )
+    assert status == "partial"
+    urls = {e["url"] for e in entries}
+    assert urls == {"https://x.sk/old-coffee/", "https://x.sk/still-here/"}
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_full_natural_pagination_still_drops_delisted_and_reports_ok():
+    # Regression guard: pagination that runs across multiple pages but
+    # completes naturally (no cap, no mid-run failure) must keep behaving
+    # exactly as before "partial" was introduced — genuinely-delisted priors
+    # are dropped and the status stays "ok", not "partial".
+    page1 = fake_result(
+        html='<a rel="next" href="/shop?page=2">Next</a>' + LONG_TEXT,
+        links={"internal": [{"href": "https://x.sk/still-here/", "text": "Coffee"}]},
+        url="https://x.sk/shop",
+    )
+    page2 = fake_result(
+        html=LONG_TEXT,  # no further next link -> natural end
+        links={"internal": [{"href": "https://x.sk/also-here/", "text": "Coffee"}]},
+        url="https://x.sk/shop?page=2",
+    )
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/shop": page1,
+            "https://x.sk/shop?page=2": page2,
+            "https://x.sk/still-here/": fake_result(markdown=fake_markdown(LONG_TEXT + " 9,00 €")),
+            "https://x.sk/also-here/": fake_result(markdown=fake_markdown(LONG_TEXT + " 10,00 €")),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.side_effect = [
+        fake_completion([fake_tool_call("extract_product", {"name": "Still Here", "packaging": [{"price": "9,00 €"}]})]),
+        fake_completion([fake_tool_call("extract_product", {"name": "Also Here", "packaging": [{"price": "10,00 €"}]})]),
+    ]
+    roaster = dict(ROASTER, scrape_url="https://x.sk/shop")
+    existing = [
+        {
+            "name": "Old Coffee",
+            "url": "https://x.sk/old-coffee/",
+            "status": "ok",
+            "last_seen": "2026-07-01",
+            "page_hash": "deadbeef",
+            "packaging": [{"weight_g": 250, "price": 9.0}],
+        }
+    ]
+    entries, status = await scrape.process_roaster(crawler, client, roaster, existing, "2026-07-04")
+    assert status == "ok"
+    assert {e["url"] for e in entries} == {"https://x.sk/still-here/", "https://x.sk/also-here/"}
 
 
 @pytest.mark.asyncio

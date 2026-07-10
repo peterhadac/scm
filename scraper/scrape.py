@@ -70,8 +70,11 @@ MAX_MARKDOWN_CHARS = 18000
 EXTRACT_RETRY_ATTEMPTS = 3
 EXTRACT_RETRY_BACKOFF_SECONDS = 2
 
-# Safety cap so a mis-detected "next" link (e.g. one that loops) can't spin forever.
-MAX_PAGES = 10
+# Safety cap so a mis-detected "next" link (e.g. one that loops) can't spin
+# forever. Discovery pages are cheap (prefetch=True, no LLM call), so this is
+# generous on purpose — a roaster with a genuinely large catalog shouldn't
+# have its tail silently truncated (issue #22).
+MAX_PAGES = 30
 
 # A page whose extracted text is shorter than this is almost certainly a
 # JS-rendered shell rather than real content (used for both listing and
@@ -638,17 +641,35 @@ async def _crawl_listing_links(crawler, start_url, max_pages=MAX_PAGES):
     fetch failure differs (roaster-level "failed"/"needs_js" status vs. a
     category hint page simply contributing no hints).
 
-    Returns (urls, first_result): `urls` is the set of discovered links
-    (empty if the page had none or was unreachable). `first_result` is the
-    crawl result for the first page fetched (None if unreachable) — callers
-    needing roaster-level status inspect it themselves.
+    Returns (urls, first_result, pagination_status): `urls` is the set of
+    discovered links (empty if the page had none or was unreachable).
+    `first_result` is the crawl result for the first page fetched (None if
+    unreachable) — callers needing roaster-level status inspect it
+    themselves. `pagination_status` is one of:
+      - "complete" — pagination ran to its natural end (no further
+        next-page link found, or the first page itself failed/was
+        unreachable — that's reported via `first_result` instead).
+      - "capped" — `max_pages` pages were fetched successfully and the last
+        one still linked to a further page: the tail of the catalog beyond
+        `max_pages` was never visited this run.
+      - "failed_midway" — a fetch on page 2+ raised or came back
+        non-success: pagination stopped early because of a transient
+        failure, not because it was done. (A page-1 failure is NOT this
+        case — that's a total discovery failure, reported via
+        `first_result`, and pre-dates any partial progress worth
+        preserving.)
+    Distinguishing these lets callers (see `discover_product_urls`) tell a
+    roaster whose discovery is known-incomplete apart from one that's
+    genuinely done, so `process_roaster` doesn't treat every prior product
+    not rediscovered this run as delisted (issue #22).
     """
     url = start_url
     seen_pages = set()
     discovered = set()
     first_result = None
+    pagination_status = "complete"
 
-    for _ in range(max_pages):
+    for page_num in range(max_pages):
         if not url or url in seen_pages:
             break
         seen_pages.add(url)
@@ -659,6 +680,8 @@ async def _crawl_listing_links(crawler, start_url, max_pages=MAX_PAGES):
         if first_result is None:
             first_result = result
         if not result or not result.success:
+            if page_num > 0:
+                pagination_status = "failed_midway"
             break
 
         page_domain = urlparse(str(result.redirected_url or result.url or url)).netloc
@@ -693,8 +716,15 @@ async def _crawl_listing_links(crawler, start_url, max_pages=MAX_PAGES):
         if not nxt or nxt in seen_pages:
             break
         url = nxt
+    else:
+        # The loop ran out of `max_pages` iterations without ever hitting a
+        # `break` above — i.e. the very last page fetched successfully AND
+        # still pointed to a further, not-yet-seen next page. That next page
+        # was never fetched: the cap, not a natural end, is why iteration
+        # stopped.
+        pagination_status = "capped"
 
-    return discovered, first_result
+    return discovered, first_result, pagination_status
 
 
 async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES):
@@ -703,15 +733,34 @@ async def discover_product_urls(crawler, roaster, max_pages=MAX_PAGES):
     Uses ``prefetch=True`` so this costs one plain HTTP fetch per page — no
     markdown generation, no LLM call. ``urls`` is None when the listing itself
     couldn't be read; ``status`` mirrors the roaster-level statuses this
-    pipeline used before it went per-product ("ok" / "failed" / "needs_js").
+    pipeline used before it went per-product ("ok" / "failed" / "needs_js"),
+    plus "partial" (issue #22): pagination reached the `max_pages` cap with
+    more pages still linked, or a fetch on page 2+ failed mid-run — either
+    way, `urls` reflects only what was discovered *before* that point, so a
+    caller must not treat every prior product missing from it as delisted.
     """
-    discovered, first_result = await _crawl_listing_links(
+    discovered, first_result, pagination_status = await _crawl_listing_links(
         crawler, roaster["scrape_url"], max_pages
     )
     if first_result is None or not first_result.success:
         return None, "failed"
     if visible_html_text_length(first_result.html) < MIN_TEXT_LENGTH:
         return None, "needs_js"
+    name = roaster.get("name", roaster.get("url", "?"))
+    if pagination_status == "capped":
+        print(
+            f"  WARNING: {name}: listing pagination hit MAX_PAGES={max_pages} "
+            "with more pages still linked — discovery this run is "
+            "incomplete, reporting 'partial'"
+        )
+        return discovered, "partial"
+    if pagination_status == "failed_midway":
+        print(
+            f"  WARNING: {name}: listing pagination fetch failed partway "
+            "through (page 2+) — discovery this run is incomplete, "
+            "reporting 'partial'"
+        )
+        return discovered, "partial"
     return discovered, "ok"
 
 
@@ -728,7 +777,7 @@ async def discover_roast_type_hints(crawler, roaster, max_pages=MAX_PAGES):
     """
     hints = {}
     for roast_type, url in (roaster.get("roast_type_urls") or {}).items():
-        urls, _ = await _crawl_listing_links(crawler, url, max_pages)
+        urls, _, _ = await _crawl_listing_links(crawler, url, max_pages)
         for discovered_url in urls:
             hints[discovered_url] = roast_type
     return hints
@@ -1301,7 +1350,7 @@ def compute_page_hash(markdown, variations_raw=""):
     return hashlib.sha256(projection.encode("utf-8")).hexdigest()
 
 
-async def process_roaster(crawler, client, roaster, existing_entries, today):
+async def process_roaster(crawler, client, roaster, existing_entries, today, max_pages=MAX_PAGES):
     """Discover + hash-gate-extract one roaster's products.
 
     Returns the roaster's fresh `products.yaml` entry list (unchanged from
@@ -1314,18 +1363,22 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
     for e in existing_entries:
         existing_by_url.setdefault(e["url"], []).append(e)
 
-    discovered, status = await discover_product_urls(crawler, roaster)
-    if status != "ok":
+    discovered, status = await discover_product_urls(crawler, roaster, max_pages)
+    if status in ("failed", "needs_js"):
         return existing_entries, status
-    if not discovered and existing_entries:
+    if status == "ok" and not discovered and existing_entries:
         # A successful-looking crawl that suddenly finds zero products is more
         # likely a broken link filter / page restructure than a real wipeout —
         # treat it like needs_js (keep old data) rather than removing everything.
         return existing_entries, "needs_js"
+    # status is "ok" or "partial" (issue #22) here — a "partial" discovery
+    # (MAX_PAGES cap hit, or a mid-pagination fetch failure) still processes
+    # whatever it DID find below; it's only the drop-unrediscovered-entries
+    # step further down that treats it differently from "ok".
 
     # {} immediately when the roaster has no roast_type_urls configured —
     # no extra crawl for the common case.
-    roast_type_hints = await discover_roast_type_hints(crawler, roaster)
+    roast_type_hints = await discover_roast_type_hints(crawler, roaster, max_pages)
 
     kept = []
     for url in discovered:
@@ -1439,7 +1492,19 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
             validate_entry(normalized)
             kept.append(normalized)
 
-    return kept, "ok"
+    if status == "partial":
+        # Discovery didn't finish this run (see discover_product_urls), so
+        # `discovered` is known-incomplete — a prior product whose URL isn't
+        # in it may simply live on a listing page we never reached, not be
+        # genuinely delisted. Carry it over untouched (last_seen/page_hash
+        # unchanged, no re-extraction) rather than dropping it. Products
+        # that WERE rediscovered this run are already handled above and
+        # aren't duplicated here.
+        for url, priors in existing_by_url.items():
+            if url not in discovered:
+                kept.extend(priors)
+
+    return kept, status
 
 
 async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PATH):

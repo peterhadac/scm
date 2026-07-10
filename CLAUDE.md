@@ -108,13 +108,20 @@ Full design in [`Architecture.md`](./Architecture.md). Summary:
 1. Load `roasters.yaml`.
 2. Per roaster, **discover** product URLs from the listing page(s) via crawl4ai's `prefetch=True` mode (cheap — no LLM call), following pagination by hand.
 3. Per discovered URL, fetch via crawl4ai (markdown output), hash it, and **skip the LLM call** if the hash matches what's already stored for that URL in `data/products.yaml`. Otherwise call the model (tool call left optional, not forced, so it can decline non-product pages) to extract `name`/`origin`/`process`/`roast_type`/`packaging` (multi-weight).
-4. Diff this run's discovered URLs against `data/products.yaml`'s existing entries for that roaster — anything missing is genuinely delisted and gets dropped; anything new gets fetched.
+4. Diff this run's discovered URLs against `data/products.yaml`'s existing entries for that roaster — anything missing is genuinely delisted and gets dropped; anything new gets fetched. This diff only runs when discovery for that roaster completed cleanly (see `partial` below) — an incomplete discovery pass must never be read as "everything not rediscovered is gone".
 5. Write a `scrape_status` summary (logged to stdout; not stored in either file).
 
 ### Scrape status values (per product, in `data/products.yaml`)
 - `ok` — extracted a name and ≥1 valid price/weight tier
 - `not_a_product` — discovered link wasn't actually a single coffee product page (cached so it isn't re-sent to the model every run)
 - A fetch failure or JS-rendered-looking page leaves the existing entry untouched (no status overwrite, `last_seen` doesn't advance)
+
+### Roaster-level scrape statuses (`scrape_status` summary)
+Distinct from the per-product statuses above — one of these is reported per roaster in the stdout summary, and returned by `process_roaster()`/`discover_product_urls()`:
+- `ok` — listing discovery completed cleanly (no fetch failure, no `MAX_PAGES` cap hit) and every entry not rediscovered this run is genuinely delisted and dropped.
+- `failed` — the listing page itself couldn't be fetched; existing entries untouched.
+- `needs_js` — the listing page looks JS-rendered (or a successful crawl found zero product links despite prior data existing); existing entries untouched.
+- `partial` — listing discovery started but didn't finish: either a fetch on page 2+ of pagination failed (`failed_midway`), or pagination hit the `MAX_PAGES` cap (currently 30) while a further page was still linked (`capped`) — both logged as a warning by `discover_product_urls()`. Products freshly (re)discovered this run are still processed normally; any prior entry whose URL wasn't rediscovered is **preserved as-is** (no `last_seen`/`page_hash` change) rather than dropped, since it may simply live on a listing page this run never reached (issue #22).
 
 ### LLM extraction (OpenRouter)
 One call per product page's markdown via [OpenRouter](https://openrouter.ai/)'s OpenAI-compatible `/chat/completions` endpoint (`openai` SDK pointed at `base_url="https://openrouter.ai/api/v1"`), model `google/gemini-2.5-flash-lite`. The `extract_product` tool (OpenAI function-calling shape: `{"type": "function", "function": {...}}`) is available but not forced — this lets the model decline (plain text reply, no tool call) when a discovered URL turns out to be a category page, the homepage, or something that isn't coffee, rather than fabricating a product from whatever's on the page.

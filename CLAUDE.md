@@ -15,6 +15,7 @@ scraper/
   requirements.txt
 data/
   products.yaml        ← per-product intermediate: fields, page_hash, status, packaging (see Architecture.md)
+  scrape_status.yaml    ← per-roaster health: status + consecutive_non_ok streak, committed alongside products.yaml (see "Observability" below)
 src/
   content/docs/index.mdx   ← Starlight page embedding the table component
   components/CoffeeTable.astro  ← filterable/sortable table UI
@@ -123,6 +124,40 @@ Distinct from the per-product statuses above — one of these is reported per ro
 - `needs_js` — the listing page looks JS-rendered (or a successful crawl found zero product links despite prior data existing); existing entries untouched.
 - `partial` — listing discovery started but didn't finish: either a fetch on page 2+ of pagination failed (`failed_midway`), or pagination hit the `MAX_PAGES` cap (currently 30) while a further page was still linked (`capped`) — both logged as a warning by `discover_product_urls()`. Products freshly (re)discovered this run are still processed normally; any prior entry whose URL wasn't rediscovered is **preserved as-is** (no `last_seen`/`page_hash` change) rather than dropped, since it may simply live on a listing page this run never reached (issue #22).
 
+### Observability (`data/scrape_status.yaml`)
+
+The roaster-level statuses above are deliberately silent, by-design
+degradations (stale data kept, `last_seen` frozen, exit code still 0) — but
+nothing escalated them, so a roaster that quietly broke months ago just
+faded from the table with no one told (issue #28). `run()` closes that gap
+in three ways, all driven by `data/scrape_status.yaml` — a mapping of
+roaster `slug` → `{name, status, last_run, consecutive_non_ok}` written at
+the end of every run (via `load_scrape_status`/`build_scrape_status_records`/
+`save_scrape_status`, same `yaml.safe_dump(..., sort_keys=True)` style as
+`products.yaml`). `consecutive_non_ok` increments on any non-`"ok"`
+roaster-level status and resets to `0` the moment a roaster comes back
+`"ok"`; a roaster not processed this run (e.g. `--only`) keeps its prior
+record untouched — the streak only means something for runs that actually
+happened.
+
+1. **`::warning::` annotations** (`emit_warning_annotations()`) — one GitHub
+   Actions workflow-command line per non-`"ok"` roaster, printed to stdout.
+   Picked up by the Actions runner and surfaced in the run's checks UI; a
+   harmless stdout line everywhere else.
+2. **`$GITHUB_STEP_SUMMARY` table** (`write_github_step_summary()`) — a
+   Markdown roaster/status/note table appended to the step summary file, so
+   non-ok roasters show up on the run's summary page at a glance. No-op
+   (doesn't error) when `GITHUB_STEP_SUMMARY` isn't set, e.g. running
+   locally.
+3. **Escalation** (`escalate_repeated_failures()`) — prints a distinct
+   `::error::` annotation for any roaster whose `consecutive_non_ok` has
+   reached `CONSECUTIVE_NON_OK_ALERT_THRESHOLD` (3). The scraper itself only
+   annotates — it has no `GITHUB_TOKEN`; `scrape.yml`'s "Escalate roasters
+   non-ok for 3+ consecutive runs" step reads the freshly-written
+   `data/scrape_status.yaml` after the scraper runs and opens (or comments
+   on, to avoid duplicate spam) a `gh issue` titled `Roaster health: <name>`
+   for each one.
+
 ### LLM extraction (OpenRouter)
 One call per product page's markdown via [OpenRouter](https://openrouter.ai/)'s OpenAI-compatible `/chat/completions` endpoint (`openai` SDK pointed at `base_url="https://openrouter.ai/api/v1"`), model `google/gemini-2.5-flash-lite`. The `extract_product` tool (OpenAI function-calling shape: `{"type": "function", "function": {...}}`) is available but not forced — this lets the model decline (plain text reply, no tool call) when a discovered URL turns out to be a category page, the homepage, or something that isn't coffee, rather than fabricating a product from whatever's on the page.
 
@@ -138,12 +173,22 @@ on:
 
 permissions:
   contents: write           # default GITHUB_TOKEN is read-only; needed to push
+  issues: write              # for the escalation step below (issue #28)
 ```
 
-Steps: checkout → install deps → `crawl4ai-setup` (installs Playwright/Patchright browsers crawl4ai needs) → run scraper → commit `data/products.yaml` → push.
+Steps: checkout → install deps → `crawl4ai-setup` (installs Playwright/Patchright browsers crawl4ai needs) → run scraper → **escalate roasters non-ok for 3+ consecutive runs** → commit `data/products.yaml` + `data/scrape_status.yaml` → push.
 
-- Guard the commit so a no-change run doesn't fail the job:
-  `git diff --quiet -- data/products.yaml || (git add data/products.yaml && git commit -m "data: $(date -u +%F)" && git push)`
+- The escalation step (issue #28) reads `data/scrape_status.yaml` (just
+  written by the scraper) with a small inline Python snippet, and for every
+  roaster whose `consecutive_non_ok >= 3` uses the `gh` CLI (preinstalled on
+  `ubuntu-latest`, authenticated via `${{ github.token }}`) to search for an
+  open issue titled `Roaster health: <name>` — commenting on it if found,
+  creating it otherwise, so a persistently-broken roaster doesn't spam a new
+  issue every week.
+- Guard the commit so a no-change run doesn't fail the job — both scraped
+  artifacts are staged and diffed together so either one changing triggers a
+  commit:
+  `git add data/products.yaml data/scrape_status.yaml && git diff --quiet --staged -- data/products.yaml data/scrape_status.yaml || (git commit -m "data: $(date -u +%F)" && git push)`
 - **The push to `main` does NOT trigger `pages.yml`** — a push made with the default `GITHUB_TOKEN` (which `actions/checkout` uses here) doesn't fire other workflows' `on: push`, to prevent recursive runs. `pages.yml` instead listens for `scrape.yml`'s completion via `workflow_run` (see below). Ordinary human pushes to `main` are unaffected and still trigger `pages.yml` normally.
 
 ### `pages.yml` — build & deploy (Astro is **not** auto-built by Pages)
@@ -191,6 +236,12 @@ Steps: checkout → setup-node → `npm ci` → `npm run build` → `actions/upl
   - Dropdowns: roaster, origin, process
   - Sort: price (asc/desc)
   - Implementation: vanilla JS in a `<script>` inside the `.astro` component, no framework island.
+  - **Stale indicator** (issue #28): each row's `last_seen` is compared at
+    build time (`new Date()` in the frontmatter) against a 21-day
+    (~3 weekly scrape cycles) threshold; a row older than that gets a small
+    muted warning icon next to its price (`.ct-stale`, reusing the tertiary
+    / Garnet role already used for the "natural" process badge — no new
+    color) with a title/aria-label explaining the price may be outdated.
 
 ## Brand & Design System
 

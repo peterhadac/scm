@@ -32,6 +32,7 @@ ROASTERS_PATH = ROOT / "roasters.yaml"
 PRODUCTS_PATH = ROOT / "data" / "products.yaml"
 SCHEMA_PATH = ROOT / "data" / "products.schema.yaml"
 COUNTRIES_PATH = ROOT / "data" / "coffee_origins.yaml"
+STATUS_PATH = ROOT / "data" / "scrape_status.yaml"
 
 # lxml is a noticeably faster BeautifulSoup parser than the stdlib
 # html.parser, which matters now that every product page is only parsed
@@ -104,6 +105,22 @@ NEXT_LINK_TEXTS = ("next", "ďalšia", "dalsia", "ďalej", "další", "nasleduj�
 # CROSS_ROASTER_CONCURRENCY) means the total wall-clock cost of throttling
 # any one roaster's own fetches no longer scales with the whole run.
 POLITENESS_DELAY_SECONDS = 1.0
+
+# A roaster whose scrape_status has been non-"ok" for this many consecutive
+# runs (see data/scrape_status.yaml, issue #28) is past "one flaky week" and
+# into "a human needs to look at this" territory — scrape.yml's escalation
+# step opens/comments on a GitHub issue once a roaster crosses this.
+CONSECUTIVE_NON_OK_ALERT_THRESHOLD = 3
+
+# One-line human-readable gloss per non-ok roaster-level scrape_status, used
+# in both the $GITHUB_STEP_SUMMARY table and the ::warning:: annotations
+# (issue #28) — kept next to the status values themselves (see
+# discover_product_urls / process_roaster) so the two don't drift apart.
+ROASTER_STATUS_NOTES = {
+    "failed": "listing page unreachable — existing data kept, last_seen frozen",
+    "needs_js": "looks JS-rendered (or crawl found 0 products) — existing data kept",
+    "partial": "pagination didn't finish this run — some entries may be stale",
+}
 
 # How many roasters' process_roaster() calls run concurrently in run()
 # (issue #27). Different roasters are different domains, so parallelizing
@@ -358,6 +375,33 @@ def load_products(path=PRODUCTS_PATH):
 def save_products(products, path=PRODUCTS_PATH):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(yaml.safe_dump(products, allow_unicode=True, sort_keys=True) or "")
+
+
+def load_scrape_status(path=STATUS_PATH):
+    """Load data/scrape_status.yaml: {roaster slug: {name, status, last_run, consecutive_non_ok}}.
+
+    Issue #28. Same YAML-date round-trip coercion as load_products() — an
+    unquoted "2026-07-04" `last_run` scalar parses back as a datetime.date,
+    not the str this pipeline stores it as.
+    """
+    if not path.exists():
+        return {}
+    data = yaml.safe_load(path.read_text()) or {}
+    for record in data.values():
+        if not isinstance(record, dict):
+            continue
+        last_run = record.get("last_run")
+        if isinstance(last_run, date):
+            record["last_run"] = last_run.isoformat()
+    return data
+
+
+def save_scrape_status(records, path=STATUS_PATH):
+    """Write data/scrape_status.yaml. Same dump style as save_products()
+    (sorted keys, allow_unicode) for consistency between the two committed
+    artifacts."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(yaml.safe_dump(records, allow_unicode=True, sort_keys=True) or "")
 
 
 def strip_diacritics(text):
@@ -1616,6 +1660,102 @@ async def process_roaster(crawler, client, roaster, existing_entries, today, max
     return kept, status
 
 
+def build_scrape_status_records(statuses_by_slug, today, previous=None):
+    """Merge this run's per-roaster statuses into the persisted health record.
+
+    Issue #28. `statuses_by_slug` is {slug: {"name": ..., "status": ...}}
+    for roasters actually processed THIS run — a roaster skipped this run
+    (e.g. `--only`) keeps whatever record `previous` already has for it
+    untouched, since consecutive-run tracking has nothing new to say about
+    a roaster that wasn't run at all.
+
+    `consecutive_non_ok` increments on any non-"ok" status (failed,
+    needs_js, partial all count — every one of them means "the site wasn't
+    cleanly readable this run") and resets to 0 the moment a roaster comes
+    back "ok".
+    """
+    previous = previous or {}
+    records = {slug: dict(record) for slug, record in previous.items()}
+    for slug, info in statuses_by_slug.items():
+        status = info["status"]
+        prior = previous.get(slug) or {}
+        prior_streak = prior.get("consecutive_non_ok", 0) if isinstance(prior, dict) else 0
+        consecutive_non_ok = 0 if status == "ok" else prior_streak + 1
+        records[slug] = {
+            "name": info.get("name", slug),
+            "status": status,
+            "last_run": today,
+            "consecutive_non_ok": consecutive_non_ok,
+        }
+    return records
+
+
+def write_github_step_summary(statuses_by_slug, summary_path=None):
+    """Append a roaster-health Markdown table to $GITHUB_STEP_SUMMARY.
+
+    Issue #28, suggested fix 1. `summary_path` defaults to reading the
+    GITHUB_STEP_SUMMARY env var — only set inside a GitHub Actions job step,
+    so running this locally (or from a test that doesn't pass a path) is a
+    silent no-op, not an error.
+    """
+    if summary_path is None:
+        summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if not summary_path:
+        return
+    lines = ["## Scrape run health", "", "| Roaster | Status | Note |", "| --- | --- | --- |"]
+    for slug in sorted(statuses_by_slug, key=lambda s: statuses_by_slug[s]["name"].lower()):
+        info = statuses_by_slug[slug]
+        status = info["status"]
+        note = ROASTER_STATUS_NOTES.get(status, "") if status != "ok" else ""
+        lines.append(f"| {info['name']} | {status} | {note} |")
+    with open(summary_path, "a", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
+
+
+def emit_warning_annotations(statuses_by_slug):
+    """Print a GitHub Actions ``::warning::`` line per non-"ok" roaster.
+
+    Issue #28, suggested fix 1. Workflow-command syntax per GitHub's docs:
+    a line of the exact form ``::warning::<message>`` printed to stdout is
+    picked up by the Actions runner and surfaced on the run's summary page
+    and in the checks UI — plain stdout noise everywhere else (local runs,
+    pytest), so this is safe to always call.
+    """
+    for slug in sorted(statuses_by_slug, key=lambda s: statuses_by_slug[s]["name"].lower()):
+        info = statuses_by_slug[slug]
+        if info["status"] != "ok":
+            print(f"::warning::Roaster '{info['name']}' has status '{info['status']}'")
+
+
+def escalate_repeated_failures(records, threshold=CONSECUTIVE_NON_OK_ALERT_THRESHOLD):
+    """Print a distinct ``::error::`` annotation for any roaster stuck non-ok.
+
+    Issue #28, suggested fix 3. `records` is the FULL merged
+    data/scrape_status.yaml content (see build_scrape_status_records), not
+    just this run's statuses — a roaster's streak can cross `threshold` even
+    in a run where it wasn't reprocessed at all (e.g. `--only`), so every
+    persisted record is checked, not only ones touched this run.
+
+    Deliberately just an annotation, not a GitHub API call: actually
+    opening/commenting on an issue needs a GITHUB_TOKEN and gh/API calls,
+    which belongs in scrape.yml (workflow level) reading this function's
+    output/data/scrape_status.yaml, not inside the scraper itself.
+    """
+    for slug in sorted(records, key=lambda s: str(records[s].get("name", s)).lower()):
+        record = records[slug]
+        if not isinstance(record, dict):
+            continue
+        streak = record.get("consecutive_non_ok", 0)
+        if streak >= threshold:
+            name = record.get("name", slug)
+            status = record.get("status", "?")
+            print(
+                f"::error::Roaster '{name}' has been non-ok for {streak} "
+                f"consecutive runs (current status: '{status}') — needs "
+                "attention (scraper: playwright? dead scrape_url? delisted?)"
+            )
+
+
 def _require_openrouter_api_key():
     """Fail fast with an actionable message if OPENROUTER_API_KEY is unset/empty.
 
@@ -1633,7 +1773,7 @@ def _require_openrouter_api_key():
     return api_key
 
 
-async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PATH):
+async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PATH, status_path=STATUS_PATH):
     client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=_require_openrouter_api_key())
     all_roasters = load_roasters(roasters_path)
     roasters = all_roasters
@@ -1643,6 +1783,11 @@ async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PAT
     products = load_products(products_path)
     today = date.today().isoformat()
     statuses = {}
+    # Slug-keyed twin of `statuses` (issue #28) — `statuses` stays
+    # name-keyed for the existing stdout summary/tests, but
+    # data/scrape_status.yaml is keyed on slug (products.yaml's stable
+    # key, see CLAUDE.md) so it survives a roaster being renamed.
+    statuses_by_slug = {}
 
     http_strategy = AsyncHTTPCrawlerStrategy(
         browser_config=HTTPCrawlerConfig(headers={"User-Agent": USER_AGENT})
@@ -1717,6 +1862,7 @@ async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PAT
             async with checkpoint_lock:
                 products[slug] = entries
                 statuses[roaster["name"]] = status
+                statuses_by_slug[slug] = {"name": roaster["name"], "status": status}
                 save_products(products, products_path)
 
         await asyncio.gather(*(process_one(roaster) for roaster in roasters))
@@ -1728,6 +1874,19 @@ async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PAT
     # this summary reads.
     for name in sorted(statuses):
         print(f"  {name}: {statuses[name]}")
+
+    # Issue #28: the stdout summary above is invisible unless someone opens
+    # the Actions log — surface non-ok roasters where they're actually
+    # seen (the run's summary page, ::warning:: annotations in the checks
+    # UI), persist a run-over-run health record, and escalate a roaster
+    # that's been stuck non-ok for CONSECUTIVE_NON_OK_ALERT_THRESHOLD+ runs.
+    emit_warning_annotations(statuses_by_slug)
+    write_github_step_summary(statuses_by_slug)
+
+    previous_status_records = load_scrape_status(status_path)
+    status_records = build_scrape_status_records(statuses_by_slug, today, previous_status_records)
+    save_scrape_status(status_records, status_path)
+    escalate_repeated_failures(status_records)
 
 
 def main():

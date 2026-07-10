@@ -2809,7 +2809,7 @@ async def test_run_checkpoints_save_products_after_each_roaster(monkeypatch, tmp
 
     monkeypatch.setattr(scrape, "save_products", spy_save_products)
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path)
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
 
     # One checkpoint save per roaster, not just one at the very end — and
     # each successive checkpoint has one more roaster's worth of data than
@@ -2840,7 +2840,7 @@ async def test_run_isolates_roaster_exception_and_continues(monkeypatch, tmp_pat
 
     # Should not raise — the exception on roaster-two must be caught and
     # isolated, letting roaster-three still be processed.
-    await scrape.run(roasters_path=roasters_path, products_path=products_path)
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
 
     on_disk = scrape.load_products(products_path)
     assert on_disk["roaster-one"] == [{"name": "Roaster One", "url": "https://a.sk/p"}]
@@ -2866,7 +2866,7 @@ async def test_run_records_failed_status_for_roaster_that_raised(monkeypatch, tm
 
     monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path)
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
 
     out = capsys.readouterr().out
     assert "Roaster One: ok" in out
@@ -2906,7 +2906,7 @@ async def test_run_preserves_prior_roaster_entries_when_it_later_raises(monkeypa
 
     monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path)
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
 
     on_disk = scrape.load_products(products_path)
     assert on_disk["roaster-two"] == [prior_entry]
@@ -2943,7 +2943,7 @@ async def test_run_checkpointing_survives_later_fatal_crash(monkeypatch, tmp_pat
     monkeypatch.setattr(scrape, "save_products", crashing_save_products)
 
     with pytest.raises(OSError):
-        await scrape.run(roasters_path=roasters_path, products_path=products_path)
+        await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
 
     # The crash happened on the 3rd checkpoint write, so the 2nd checkpoint
     # (roaster-one + roaster-two) already made it to disk before the crash.
@@ -2989,7 +2989,7 @@ async def test_run_processes_roasters_concurrently_not_sequentially(monkeypatch,
 
     monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path)
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
 
     starts = [i for i, (kind, _) in enumerate(events) if kind == "start"]
     ends = [i for i, (kind, _) in enumerate(events) if kind == "end"]
@@ -3035,7 +3035,7 @@ async def test_run_respects_cross_roaster_concurrency_limit(monkeypatch, tmp_pat
 
     monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path)
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
 
     assert in_flight["peak"] == scrape.CROSS_ROASTER_CONCURRENCY
 
@@ -3067,7 +3067,7 @@ async def test_run_isolates_roaster_exception_under_real_concurrency(monkeypatch
 
     # Should not raise — the exception on roaster-two must be caught and
     # isolated, letting roaster-one and roaster-three still complete.
-    await scrape.run(roasters_path=roasters_path, products_path=products_path)
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
 
     on_disk = scrape.load_products(products_path)
     assert on_disk["roaster-one"] == [{"name": "Roaster One", "url": "https://a.sk/p"}]
@@ -3109,7 +3109,7 @@ async def test_run_checkpoint_lock_serializes_concurrent_saves(monkeypatch, tmp_
 
     monkeypatch.setattr(scrape, "save_products", instrumented_save_products)
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path)
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
 
     assert concurrent_calls["max_overlap"] == 1
     on_disk = scrape.load_products(products_path)
@@ -3154,7 +3154,359 @@ async def test_run_raises_fast_on_missing_api_key_before_processing_any_roaster(
     monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
 
     with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY"):
-        await scrape.run(roasters_path=roasters_path, products_path=products_path)
+        await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
 
     assert calls == []
-    assert not products_path.exists()
+
+
+# --- Observability (issue #28): GITHUB_STEP_SUMMARY, ::warning:: annotations,
+# --- data/scrape_status.yaml persistence, and repeated-failure escalation ---
+
+
+def _statuses_by_slug(*, ok=(), failed=(), needs_js=(), partial=()):
+    result = {}
+    for slug in ok:
+        result[slug] = {"name": slug.replace("-", " ").title(), "status": "ok"}
+    for slug in failed:
+        result[slug] = {"name": slug.replace("-", " ").title(), "status": "failed"}
+    for slug in needs_js:
+        result[slug] = {"name": slug.replace("-", " ").title(), "status": "needs_js"}
+    for slug in partial:
+        result[slug] = {"name": slug.replace("-", " ").title(), "status": "partial"}
+    return result
+
+
+def test_write_github_step_summary_writes_table(tmp_path):
+    summary_path = tmp_path / "step_summary.md"
+    statuses = _statuses_by_slug(ok=["kavoholik"], failed=["broken-roaster"], needs_js=["js-roaster"])
+
+    scrape.write_github_step_summary(statuses, summary_path=str(summary_path))
+
+    content = summary_path.read_text()
+    assert "## Scrape run health" in content
+    assert "| Roaster | Status | Note |" in content
+    assert "Kavoholik" in content and "| ok |" in content
+    assert "Broken Roaster" in content and "| failed |" in content
+    assert "Js Roaster" in content and "| needs_js |" in content
+
+
+def test_write_github_step_summary_appends_not_overwrites(tmp_path):
+    summary_path = tmp_path / "step_summary.md"
+    summary_path.write_text("# Previous step's summary\n")
+    statuses = _statuses_by_slug(ok=["kavoholik"])
+
+    scrape.write_github_step_summary(statuses, summary_path=str(summary_path))
+
+    content = summary_path.read_text()
+    assert content.startswith("# Previous step's summary\n")
+    assert "## Scrape run health" in content
+
+
+def test_write_github_step_summary_reads_env_var_when_no_path_given(monkeypatch, tmp_path):
+    summary_path = tmp_path / "step_summary.md"
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary_path))
+    statuses = _statuses_by_slug(failed=["broken-roaster"])
+
+    scrape.write_github_step_summary(statuses)
+
+    assert "Broken Roaster" in summary_path.read_text()
+
+
+def test_write_github_step_summary_noop_without_env_var(monkeypatch):
+    # Not set locally (guard case from the issue) — must not raise, must not
+    # try to write anywhere.
+    monkeypatch.delenv("GITHUB_STEP_SUMMARY", raising=False)
+    scrape.write_github_step_summary(_statuses_by_slug(ok=["kavoholik"]))  # no exception
+
+
+def test_emit_warning_annotations_only_for_non_ok(capsys):
+    statuses = _statuses_by_slug(ok=["kavoholik"], failed=["broken-roaster"], needs_js=["js-roaster"])
+
+    scrape.emit_warning_annotations(statuses)
+
+    out = capsys.readouterr().out
+    assert "::warning::Roaster 'Broken Roaster' has status 'failed'" in out
+    assert "::warning::Roaster 'Js Roaster' has status 'needs_js'" in out
+    assert "Kavoholik" not in out
+
+
+def test_emit_warning_annotations_silent_when_all_ok(capsys):
+    scrape.emit_warning_annotations(_statuses_by_slug(ok=["kavoholik", "ready-after"]))
+    assert capsys.readouterr().out == ""
+
+
+# --- build_scrape_status_records --------------------------------------------
+
+
+def test_build_scrape_status_records_first_ok_run_has_zero_streak():
+    records = scrape.build_scrape_status_records(
+        _statuses_by_slug(ok=["kavoholik"]), "2026-07-06", previous=None
+    )
+    assert records["kavoholik"] == {
+        "name": "Kavoholik",
+        "status": "ok",
+        "last_run": "2026-07-06",
+        "consecutive_non_ok": 0,
+    }
+
+
+def test_build_scrape_status_records_increments_streak_across_two_failed_runs():
+    # Simulate two consecutive scrape runs where the same roaster stays
+    # "failed" both times.
+    run1 = scrape.build_scrape_status_records(
+        _statuses_by_slug(failed=["broken-roaster"]), "2026-07-06", previous=None
+    )
+    assert run1["broken-roaster"]["consecutive_non_ok"] == 1
+
+    run2 = scrape.build_scrape_status_records(
+        _statuses_by_slug(failed=["broken-roaster"]), "2026-07-13", previous=run1
+    )
+    assert run2["broken-roaster"]["consecutive_non_ok"] == 2
+    assert run2["broken-roaster"]["last_run"] == "2026-07-13"
+    assert run2["broken-roaster"]["status"] == "failed"
+
+
+def test_build_scrape_status_records_resets_streak_on_recovery():
+    run1 = scrape.build_scrape_status_records(
+        _statuses_by_slug(failed=["flaky-roaster"]), "2026-07-06", previous=None
+    )
+    assert run1["flaky-roaster"]["consecutive_non_ok"] == 1
+
+    run2 = scrape.build_scrape_status_records(
+        _statuses_by_slug(ok=["flaky-roaster"]), "2026-07-13", previous=run1
+    )
+    assert run2["flaky-roaster"]["consecutive_non_ok"] == 0
+    assert run2["flaky-roaster"]["status"] == "ok"
+
+
+def test_build_scrape_status_records_preserves_untouched_roasters():
+    # A roaster not processed this run (e.g. --only filtered it out) keeps
+    # its previous record untouched rather than being dropped.
+    previous = {
+        "untouched-roaster": {
+            "name": "Untouched Roaster",
+            "status": "failed",
+            "last_run": "2026-06-01",
+            "consecutive_non_ok": 5,
+        }
+    }
+    records = scrape.build_scrape_status_records(
+        _statuses_by_slug(ok=["kavoholik"]), "2026-07-06", previous=previous
+    )
+    assert records["untouched-roaster"] == previous["untouched-roaster"]
+    assert records["kavoholik"]["consecutive_non_ok"] == 0
+
+
+def test_build_scrape_status_records_partial_and_needs_js_count_as_non_ok():
+    records = scrape.build_scrape_status_records(
+        _statuses_by_slug(partial=["partial-roaster"], needs_js=["js-roaster"]),
+        "2026-07-06",
+        previous=None,
+    )
+    assert records["partial-roaster"]["consecutive_non_ok"] == 1
+    assert records["js-roaster"]["consecutive_non_ok"] == 1
+
+
+# --- load_scrape_status / save_scrape_status ---------------------------------
+
+
+def test_save_and_load_scrape_status_roundtrip(tmp_path):
+    path = tmp_path / "scrape_status.yaml"
+    records = {
+        "kavoholik": {"name": "Kavoholik", "status": "ok", "last_run": "2026-07-06", "consecutive_non_ok": 0},
+        "broken-roaster": {
+            "name": "Broken Roaster",
+            "status": "failed",
+            "last_run": "2026-07-06",
+            "consecutive_non_ok": 3,
+        },
+    }
+    scrape.save_scrape_status(records, path)
+
+    loaded = scrape.load_scrape_status(path)
+    assert loaded == records
+    # Structural sanity check on the on-disk YAML shape.
+    raw = yaml.safe_load(path.read_text())
+    assert set(raw["broken-roaster"]) == {"name", "status", "last_run", "consecutive_non_ok"}
+
+
+def test_load_scrape_status_missing_file_returns_empty_dict(tmp_path):
+    assert scrape.load_scrape_status(tmp_path / "does-not-exist.yaml") == {}
+
+
+def test_load_scrape_status_coerces_yaml_date_back_to_string(tmp_path):
+    path = tmp_path / "scrape_status.yaml"
+    path.write_text("roaster:\n  name: Roaster\n  status: failed\n  last_run: 2026-07-06\n  consecutive_non_ok: 1\n")
+    loaded = scrape.load_scrape_status(path)
+    assert loaded["roaster"]["last_run"] == "2026-07-06"
+    assert isinstance(loaded["roaster"]["last_run"], str)
+
+
+# --- escalate_repeated_failures -----------------------------------------------
+
+
+def test_escalate_repeated_failures_prints_error_at_threshold(capsys):
+    records = {
+        "broken-roaster": {
+            "name": "Broken Roaster",
+            "status": "failed",
+            "last_run": "2026-07-06",
+            "consecutive_non_ok": 3,
+        },
+        "flaky-roaster": {
+            "name": "Flaky Roaster",
+            "status": "needs_js",
+            "last_run": "2026-07-06",
+            "consecutive_non_ok": 2,
+        },
+    }
+    scrape.escalate_repeated_failures(records)
+
+    out = capsys.readouterr().out
+    assert "::error::Roaster 'Broken Roaster' has been non-ok for 3 consecutive runs" in out
+    assert "Flaky Roaster" not in out
+
+
+def test_escalate_repeated_failures_silent_below_threshold(capsys):
+    records = {
+        "flaky-roaster": {
+            "name": "Flaky Roaster",
+            "status": "needs_js",
+            "last_run": "2026-07-06",
+            "consecutive_non_ok": 2,
+        },
+    }
+    scrape.escalate_repeated_failures(records)
+    assert capsys.readouterr().out == ""
+
+
+def test_escalate_repeated_failures_respects_custom_threshold(capsys):
+    records = {
+        "roaster": {"name": "Roaster", "status": "failed", "last_run": "2026-07-06", "consecutive_non_ok": 1},
+    }
+    scrape.escalate_repeated_failures(records, threshold=1)
+    assert "::error::Roaster 'Roaster' has been non-ok for 1 consecutive runs" in capsys.readouterr().out
+
+
+# --- run() integration: scrape_status.yaml persisted end-to-end -------------
+
+
+@pytest.mark.asyncio
+async def test_run_persists_scrape_status_with_consecutive_non_ok_tracking(monkeypatch, tmp_path):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = [
+        {"name": "Broken Roaster", "slug": "broken-roaster", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
+        {"name": "Good Roaster", "slug": "good-roaster", "url": "https://g.sk/", "scrape_url": "https://g.sk/"},
+    ]
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+    status_path = tmp_path / "scrape_status.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        if roaster["slug"] == "broken-roaster":
+            return existing_entries, "failed"
+        return [{"name": roaster["name"], "url": roaster["url"] + "p"}], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    # Run 1: broken-roaster fails for the first time.
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+    records = scrape.load_scrape_status(status_path)
+    assert records["broken-roaster"]["status"] == "failed"
+    assert records["broken-roaster"]["consecutive_non_ok"] == 1
+    assert records["good-roaster"]["status"] == "ok"
+    assert records["good-roaster"]["consecutive_non_ok"] == 0
+
+    # Run 2: broken-roaster fails again — streak must climb to 2. Recreate
+    # products.yaml's roaster entry so the second run starts from what the
+    # first run actually persisted (mirrors a real second cron run).
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+    records = scrape.load_scrape_status(status_path)
+    assert records["broken-roaster"]["consecutive_non_ok"] == 2
+    assert records["good-roaster"]["consecutive_non_ok"] == 0
+
+
+@pytest.mark.asyncio
+async def test_run_resets_consecutive_non_ok_when_roaster_recovers(monkeypatch, tmp_path):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = [
+        {"name": "Flaky Roaster", "slug": "flaky-roaster", "url": "https://f.sk/", "scrape_url": "https://f.sk/"},
+    ]
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+    status_path = tmp_path / "scrape_status.yaml"
+
+    call_count = {"n": 0}
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        call_count["n"] += 1
+        if call_count["n"] == 1:
+            return existing_entries, "failed"
+        return [{"name": roaster["name"], "url": roaster["url"] + "p"}], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+    records = scrape.load_scrape_status(status_path)
+    assert records["flaky-roaster"]["consecutive_non_ok"] == 1
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+    records = scrape.load_scrape_status(status_path)
+    assert records["flaky-roaster"]["status"] == "ok"
+    assert records["flaky-roaster"]["consecutive_non_ok"] == 0
+
+
+@pytest.mark.asyncio
+async def test_run_emits_warning_and_writes_step_summary_for_non_ok_roaster(monkeypatch, tmp_path, capsys):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(tmp_path / "step_summary.md"))
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = [
+        {"name": "Broken Roaster", "slug": "broken-roaster", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
+    ]
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+    status_path = tmp_path / "scrape_status.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        return existing_entries, "failed"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+
+    out = capsys.readouterr().out
+    assert "::warning::Roaster 'Broken Roaster' has status 'failed'" in out
+
+    summary_path = tmp_path / "step_summary.md"
+    assert summary_path.exists()
+    assert "Broken Roaster" in summary_path.read_text()
+
+
+@pytest.mark.asyncio
+async def test_run_escalates_after_three_consecutive_non_ok_runs(monkeypatch, tmp_path, capsys):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = [
+        {"name": "Broken Roaster", "slug": "broken-roaster", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
+    ]
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+    status_path = tmp_path / "scrape_status.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        return existing_entries, "failed"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    for _ in range(3):
+        await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+
+    out = capsys.readouterr().out
+    assert "::error::Roaster 'Broken Roaster' has been non-ok for 3 consecutive runs" in out

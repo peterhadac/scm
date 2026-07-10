@@ -22,6 +22,20 @@ export default defineConfig({
             href: 'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap',
           },
         },
+        { tag: 'script', attrs: { src: 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js' } },
+        {
+          tag: 'script',
+          content: `
+            window.addEventListener('load', function () {
+              kofiWidgetOverlay.draw('slovakcoffeemap', {
+                type: 'floating-chat',
+                'floating-chat.donateButton.text': 'Donate',
+                'floating-chat.donateButton.background-color': '#ff5f5f',
+                'floating-chat.donateButton.text-color': '#fff',
+              });
+            });
+          `,
+        },
       ],
       sidebar: [
         {
@@ -39,13 +53,15 @@ export default defineConfig({
             { label: 'Espresso Cube Cappuccino', link: '/drinks/espresso-cube-cappuccino/' },
             { label: 'Filterccino', link: '/drinks/filterccino/' },
             { label: 'Filter Ice Cappuccino', link: '/drinks/filter-ice-cappuccino/' },
-            { label: 'FTS - Filter To Survive', link: '/drinks/fts/' },
+            { label: 'French Press', link: '/drinks/french-press/' },
+            { label: 'FTS - Filter To Survive', link: '/drinks/v60/' },
           ],
         },
         {
           label: 'Brew Methods',
           items: [
             { label: 'V60', link: '/brew-methods/v60/' },
+            { label: 'Aeropress', link: '/brew-methods/aeropress/' },
             { label: 'French Press', link: '/brew-methods/french-press/' },
             { label: 'Cold Brew', link: '/brew-methods/cold-brew/' },
           ],

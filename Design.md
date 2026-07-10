@@ -1,10 +1,10 @@
 # Slovak Coffee Map — Brand & Design System
 
-> These rules are binding. When writing or editing any UI code for this project, follow them exactly. Do not substitute generic defaults, introduce new colors, or add icon marks.
+> These rules are binding. When writing or editing any UI code for this project, follow them exactly. Do not substitute generic defaults, introduce new colors, or add icon marks beyond the one defined below.
 
-## Logo — Wordmark only
+## Logo — Icon + Wordmark lockup
 
-The logo is **purely typographic**. There is no icon, no map silhouette, no coffee bean illustration, and no symbol mark. The wordmark has exactly two lines:
+The logo is an icon mark paired with the typographic wordmark, in that left-to-right order. The wordmark has exactly two lines:
 
 ```
 Slovak           ← DM Serif Display, letter-spacing −0.02 em
@@ -13,7 +13,9 @@ COFFEE MAP       ← DM Sans Light 300, ALL CAPS, letter-spacing +0.28 em
 
 The second line is shifted ~5% of the display text size to the right for optical alignment (not mechanical).
 
-**Four approved colour variants — pick by background:**
+**Icon mark:** a coffee-cherry silhouette — an outer droplet shape with a bean-split ellipse cut out of the center and a curved seam through it — on a rounded-square chip (corner radius ≈22% of the chip's side). Defined once in `src/components/LogoIcon.astro` (inline, for the site header) and as standalone assets in `public/favicon.svg` / `public/logo-mark.svg` (browser favicon and larger exports). The icon always renders in fixed **Full colour · Dark** styling — chip `#351E1C`, cherry shell `#FF6037`, bean cutout `#351E1C` — regardless of the surrounding page theme or background; it does not invert for light mode.
+
+**Four approved wordmark colour variants — pick by background:**
 
 | Variant | Background | "Slovak" colour | "COFFEE MAP" colour |
 |---|---|---|---|
@@ -24,7 +26,7 @@ The second line is shifted ~5% of the display text size to the right for optical
 
 No other colour combinations are permitted.
 
-**Minimum size:** 120 px wide (digital) / 30 mm wide (print).  
+**Minimum size:** 120 px wide (digital, icon + wordmark together) / 30 mm wide (print). Icon alone (favicon/app-icon use): never below 16 px.
 **Clear space:** 1× the wordmark's total height on all four sides — no text, logos, or imagery inside this zone.
 
 **Never:**
@@ -33,7 +35,8 @@ No other colour combinations are permitted.
 - Stretch, distort, or scale the two lines unevenly
 - Add shadows, glows, outlines, or emboss effects
 - Place the logo on a busy patterned background without a solid clear zone
-- Recolour outside the four variants above
+- Recolour the wordmark outside the four variants above, or recolour the icon mark at all
+- Introduce a second icon/symbol mark alongside or instead of the coffee-cherry mark
 
 ## Colour Palette
 

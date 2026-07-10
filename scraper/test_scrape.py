@@ -576,12 +576,23 @@ def test_normalize_origin_matches_costarica_no_space():
     assert scrape.normalize_origin(None, "Costarica Palmichal Los Vindas") == "Costa Rica"
 
 
-def test_normalize_origin_keeps_unmatched_raw_text_as_is():
-    assert scrape.normalize_origin("Fantasyland", None) == "Fantasyland"
+def test_normalize_origin_discards_unmatched_raw_text_instead_of_keeping_it_verbatim():
+    # issue #14: raw LLM free text that matches no known country/blend signal
+    # must not leak into the origin field verbatim — it would pollute the
+    # site's origin filter dropdown with one-off values. Note this does NOT
+    # fall back to scanning `name` — raw, once present, is still never
+    # cross-checked against name (same invariant as before).
+    assert scrape.normalize_origin("Fantasyland", None) is None
+    assert scrape.normalize_origin("Fantasyland", "Ethiopia Sidamo") is None
+
+
+def test_normalize_origin_unmatched_raw_still_falls_back_to_blend_keyword_in_raw():
+    assert scrape.normalize_origin("Zmes rôznych krajín", None) == "Blend"
 
 
 def test_normalize_origin_none_when_nothing_matches():
     assert scrape.normalize_origin(None, "Mystery Coffee") is None
+    assert scrape.normalize_origin("Mystery Coffee", None) is None
 
 
 def test_normalize_origin_none_for_whitespace_only_raw():

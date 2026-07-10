@@ -45,7 +45,7 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # hash-gate to re-extract every existing entry once, even if the page's
 # content hasn't changed, since there's no cached raw LLM output to replay
 # against the new rules.
-SCHEMA_VERSION = 16
+SCHEMA_VERSION = 17
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -385,9 +385,16 @@ def normalize_origin(raw, name, aliases=None):
 
     Only falls back to scanning the product name when `raw` is empty —
     trusts an LLM-stated origin as-is (translating known aliases), it never
-    cross-checks it against the name. Text that matches no known country is
-    kept verbatim rather than discarded (better than losing real data for a
-    producing country not yet in the list).
+    cross-checks it against the name. Unlike an earlier version of this
+    function, text that states an origin but matches no known
+    country/blend signal is now discarded (returns None) rather than kept
+    verbatim (see issue #14): the site's origin filter is a dropdown, and
+    storing raw, ungated LLM text ("Yirgacheffe region", a country not yet
+    in coffee_origins.yaml, stray whitespace/casing variants, ...) would
+    pollute it with one-off values instead of collapsing to the controlled
+    vocabulary CLAUDE.md documents — a matched country, the "Blend"
+    sentinel, or null. A country genuinely missing from coffee_origins.yaml
+    should be added there, not leaked through here.
 
     A multi-origin blend (name or raw text names it as such) rarely states
     one source country at all — falls back to the sentinel "Blend" rather
@@ -400,8 +407,9 @@ def normalize_origin(raw, name, aliases=None):
         for alias, canonical in aliases.items():
             if alias in lowered:
                 return canonical
-        stripped = raw.strip()
-        return stripped or None
+        if any(keyword in lowered for keyword in BLEND_KEYWORDS):
+            return "Blend"
+        return None
     if name:
         lowered = strip_diacritics(name.lower())
         for alias, canonical in aliases.items():

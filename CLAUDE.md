@@ -76,21 +76,11 @@ roasters:
     slug: kavoholik
     url: https://kavoholik.sk/
     scrape_url: https://kavoholik.sk/
-  - name: Jungle Roastery
-    slug: jungle-roastery
-    url: https://thisisjungle.sk/
-    scrape_url: https://thisisjungle.sk/
-    metadata:
-      city: Bratislava
   - name: Coffeein
     slug: coffeein
     url: https://www.coffeein.sk/
     scrape_url: https://www.coffeein.sk/
     scraper: playwright   # opt-in for JS-heavy sites
-  - name: Trip Coffee Roasters
-    slug: trip-roasters
-    url: https://triproasters.sk/
-    scrape_url: https://triproasters.sk/vyberova-kava/   # homepage doesn't link every product; the shop listing does
   - name: Ready After
     slug: ready-after
     url: https://www.readyafter.sk/
@@ -99,6 +89,8 @@ roasters:
       espresso: https://www.readyafter.sk/espresso-zmesi/
       filter: https://www.readyafter.sk/kava-filter/
 ```
+
+(See the real [`roasters.yaml`](./roasters.yaml) ~30 lines below this file for the full, current list — this snippet only illustrates the optional keys.)
 
 `slug` is the stable key `data/products.yaml` is keyed on (lowercase-kebab of the name). `url` is the roaster's canonical site link; `scrape_url` is the discovery entry point the scraper crawls for product links — usually the same page, but point it at the actual shop/listing page when the homepage doesn't link to every product. `metadata` is optional, added as roaster details are gathered — not required for the scraper to run. Add `scraper: playwright` to any roaster that requires JavaScript rendering (selects crawl4ai's browser-backed crawler instead of the HTTP one). `roast_type_urls` (optional, `{espresso: <url>, filter: <url>}`) is for sites (Shopify collections, Shoptet category pages) that only reveal a product's roast type through which category page links to it, never on the product page itself — the scraper crawls each configured category and uses it as a last-resort `roast_type` fallback (see `discover_roast_type_hints()` in `scraper/scrape.py`).
 

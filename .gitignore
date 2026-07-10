@@ -18,6 +18,7 @@ venv/
 
 # Claude Code agent worktrees / local scratch
 .claude/worktrees
+.check-*.mjs
 
 # OS
 .DS_Store

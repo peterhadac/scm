@@ -4,6 +4,8 @@
 
 Weekly-updated catalogue of coffees available on the Slovak market, scraped from roaster websites, stored as JSON, and published via GitHub Pages (Astro + Starlight).
 
+**Live site:** https://peterhadac.github.io/scm/
+
 ## How it works
 
 ```mermaid
@@ -32,3 +34,33 @@ flowchart TD
 ```
 
 See [`Architecture.md`](./Architecture.md) for the full scraping pipeline and [`CLAUDE.md`](./CLAUDE.md) for the project layout.
+
+## Adding a roaster
+
+1. Add an entry (`name`, `slug`, `url`, `scrape_url`) to `roasters.yaml`.
+2. Run the scraper locally to verify extraction works (see below).
+3. If extraction comes back empty, the site likely needs JS rendering —
+   add `scraper: playwright` to the roaster entry and re-test.
+4. Commit `roasters.yaml`; the next weekly cron run picks it up.
+
+Full details, including `roast_type_urls` for sites that only reveal roast
+type via category pages, are in [`CLAUDE.md`](./CLAUDE.md#adding-a-new-roaster).
+
+## Development
+
+```bash
+# Scraper
+pip install -r scraper/requirements.txt
+OPENROUTER_API_KEY=... python scraper/scrape.py
+
+# Site
+npm install
+npm run dev   # astro dev server with live reload
+```
+
+## License
+
+Code is licensed under the [MIT License](./LICENSE). `data/products.yaml`
+contains facts (prices, weights, origins) scraped from third-party roaster
+shops — the license covers the code, not any claim of ownership over that
+data.

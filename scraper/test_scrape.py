@@ -796,7 +796,7 @@ def test_normalize_product_name_weight_wins_over_weight_hint():
 
 
 def test_normalize_product_variation_tiers_still_requires_a_name():
-    # variation_tiers alone doesn't make a page a product — Claude declining
+    # variation_tiers alone doesn't make a page a product — the model declining
     # (raw=None) or a non-coffee name must still return None.
     tiers = [{"weight_g": 250, "price": 11.0}]
     assert scrape.normalize_product(None, "https://x.sk/mexico/", "2026-07-08", hints=scrape.Hints(variation_tiers=tiers)) is None
@@ -1890,7 +1890,7 @@ async def test_process_roaster_keeps_existing_entries_on_listing_failure():
 
 @pytest.mark.asyncio
 async def test_process_roaster_keeps_good_product_when_extraction_declines():
-    # A previously-good product whose page still hashes differently, but Claude
+    # A previously-good product whose page still hashes differently, but the model
     # declines this time — must not clobber the known-good data.
     crawler = FakeCrawler(
         {
@@ -1917,7 +1917,7 @@ async def test_process_roaster_keeps_good_product_when_extraction_declines():
 
 @pytest.mark.asyncio
 async def test_process_roaster_reclassifies_stale_incomplete_when_confidently_not_coffee():
-    # Claude DID extract a name this run (unlike a bare decline) — our own
+    # The model DID extract a name this run (unlike a bare decline) — our own
     # is_coffee() rejects it. That's a confident, deterministic
     # classification (e.g. a NON_COFFEE_KEYWORDS addition catching a gift
     # set that slipped through before) and must reclassify the stale

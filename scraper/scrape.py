@@ -160,7 +160,7 @@ NON_COFFEE_KEYWORDS = (
 # account, legal, nav) rather than a product page. Same conservative-substring
 # approach as NON_COFFEE_KEYWORDS, applied to the link's path instead of a
 # product name — a cheap first-pass filter, not a guarantee: any non-product
-# page that slips through still gets rejected downstream because Claude's
+# page that slips through still gets rejected downstream because the model's
 # extraction of it will yield no usable price/packaging (see normalize_product).
 NON_PRODUCT_PATH_SEGMENTS = (
     "kosik",
@@ -1000,9 +1000,9 @@ class Hints:
 
 
 def normalize_product(raw, url, today, hints=None):
-    """Turn a raw Claude extraction into a products.yaml entry, or None if unusable.
+    """Turn a raw Gemini extraction into a products.yaml entry, or None if unusable.
 
-    Returns None only when there's no coffee here at all (Claude declined, or
+    Returns None only when there's no coffee here at all (the model declined, or
     the name reads as non-coffee/equipment) — same as before. Anything that
     IS a coffee but is missing a required field (origin, roast_type, or a
     tier's weight/price) is still returned, just as `status: incomplete` with
@@ -1258,9 +1258,9 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
         )
         normalized_list = normalize_products(raw, url, today, hints)
         if not normalized_list:
-            # A bare decline (Claude returned nothing, or no name at all) is
+            # A bare decline (the model returned nothing, or no name at all) is
             # ambiguous — could be a transient hiccup — and worth protecting
-            # prior data against. A name that Claude DID extract but that our
+            # prior data against. A name that the model DID extract but that our
             # own is_coffee() rejects is a confident, deterministic
             # classification (e.g. a NON_COFFEE_KEYWORDS addition correctly
             # catching a product type that slipped through before) — that
@@ -1278,7 +1278,7 @@ async def process_roaster(crawler, client, roaster, existing_entries, today):
             else:
                 # Genuinely not a product (nav/category link that slipped past
                 # discovery's filter, or a first-time unparseable page). Cache
-                # the hash so this URL isn't re-fetched and re-sent to Claude
+                # the hash so this URL isn't re-fetched and re-sent to the model
                 # every single run until the page actually changes.
                 not_a_product_entry = {
                     "url": url,

@@ -1,5 +1,6 @@
 ---
 import { flattenProducts, safeUrl } from '../lib/coffees';
+import { UI, localizedOrigin, localizedProcess, localizedRoastType, type Lang } from '../lib/i18n';
 
 interface Props {
   // When set, page is locked to one roast profile: the Roast dropdown is
@@ -9,6 +10,11 @@ interface Props {
 }
 
 const { roastType } = Astro.props;
+
+// Starlight sets this from the `locales` config in astro.config.mjs — see
+// src/lib/i18n.ts for the EN/SK string tables this drives.
+const lang: Lang = Astro.locals.starlightRoute.lang === 'sk' ? 'sk' : 'en';
+const t = UI[lang];
 
 const allCoffees = flattenProducts();
 const coffees = roastType
@@ -54,17 +60,17 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 <div class="ct-wrap">
   <!-- ── Compact summary line ────────────────────────────────── -->
   <p class="ct-summary">
-    <strong>{total}</strong> coffees · <strong>{roasterCount}</strong> roasters
-    {cheapest !== null && <> · from <strong>{fmtEur(cheapest)}</strong></>}
+    <strong>{t.coffeeCount(total)}</strong> · <strong>{t.roasterCount(roasterCount)}</strong>
+    {cheapest !== null && <> · {t.from} <strong>{fmtEur(cheapest)}</strong></>}
     {lastUpdated && (
-      <> · <span class="ct-fresh-dot" aria-hidden="true"></span> updated <time datetime={lastUpdated}>{lastUpdated}</time></>
+      <> · <span class="ct-fresh-dot" aria-hidden="true"></span> {t.updated} <time datetime={lastUpdated}>{lastUpdated}</time></>
     )}
   </p>
 
   <div class="ct-toolbar-wrap">
   <div class="ct-toolbar">
     <div class="ct-search-group">
-      <label class="ct-label" for="filter-search">Search</label>
+      <label class="ct-label" for="filter-search">{t.search}</label>
       <div class="ct-search-field">
         <svg class="ct-search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <circle cx="6" cy="6" r="4.25" stroke="currentColor" stroke-width="1.5"/>
@@ -74,7 +80,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
           id="filter-search"
           type="search"
           class="ct-search"
-          placeholder="Coffee or roaster…"
+          placeholder={t.searchPlaceholder}
           autocomplete="off"
           aria-describedby="result-count"
         />
@@ -85,29 +91,29 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <path d="M2 4h10M4 7h6M5.5 10h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
-        Filters
+        {t.filters}
         <span id="filters-badge" class="ct-filters-badge" hidden></span>
       </summary>
       <div class="ct-filters-panel">
         <div class="ct-filter-group">
-          <label class="ct-label" for="filter-roaster">Roaster</label>
-          <select id="filter-roaster" class="ct-select"><option value="">All</option></select>
+          <label class="ct-label" for="filter-roaster">{t.roaster}</label>
+          <select id="filter-roaster" class="ct-select"><option value="">{t.all}</option></select>
         </div>
         <div class="ct-filter-group">
-          <label class="ct-label" for="filter-origin">Origin</label>
-          <select id="filter-origin" class="ct-select"><option value="">All</option></select>
+          <label class="ct-label" for="filter-origin">{t.origin}</label>
+          <select id="filter-origin" class="ct-select"><option value="">{t.all}</option></select>
         </div>
         <div class="ct-filter-group">
-          <label class="ct-label" for="filter-process">Process</label>
-          <select id="filter-process" class="ct-select"><option value="">All</option></select>
+          <label class="ct-label" for="filter-process">{t.process}</label>
+          <select id="filter-process" class="ct-select"><option value="">{t.all}</option></select>
         </div>
         {!roastType && (
           <div class="ct-filter-group">
-            <label class="ct-label" for="filter-roast">Roast</label>
+            <label class="ct-label" for="filter-roast">{t.roast}</label>
             <select id="filter-roast" class="ct-select">
-              <option value="">All</option>
-              <option value="filter">Filter</option>
-              <option value="espresso">Espresso</option>
+              <option value="">{t.all}</option>
+              <option value="filter">{localizedRoastType('filter', lang)}</option>
+              <option value="espresso">{localizedRoastType('espresso', lang)}</option>
             </select>
           </div>
         )}
@@ -118,24 +124,24 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
           <path d="M3 3L9 9M9 3L3 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
-        Clear
+        {t.clear}
       </button>
       <span id="result-count" class="ct-count" aria-live="polite"></span>
     </div>
   </div>
   </div>
 
-  <div class="ct-legend" aria-label="Process colour key">
-    <span class="ct-legend-label">Process:</span>
-    <span class="ct-badge ct-badge--washed">Washed · Umytá</span>
-    <span class="ct-badge ct-badge--honey">Honey · Med</span>
-    <span class="ct-badge ct-badge--natural">Natural · Prírodná</span>
+  <div class="ct-legend" aria-label={t.processColourKey}>
+    <span class="ct-legend-label">{t.processLegendLabel}</span>
+    <span class="ct-badge ct-badge--washed">{localizedProcess('washed', lang)}</span>
+    <span class="ct-badge ct-badge--honey">{localizedProcess('honey', lang)}</span>
+    <span class="ct-badge ct-badge--natural">{localizedProcess('natural', lang)}</span>
     <span class="ct-legend-sep" aria-hidden="true">·</span>
-    <span class="ct-best" title="Lowest price per 100g">best value</span>
-    <span class="ct-legend-desc">= lowest €/100g</span>
+    <span class="ct-best" title={t.bestValueTitle}>{t.bestValue}</span>
+    <span class="ct-legend-desc">{t.bestValueDesc}</span>
   </div>
 
-  <p id="empty-state" hidden class="ct-empty">No coffees match the selected filters.</p>
+  <p id="empty-state" hidden class="ct-empty">{t.emptyFiltered}</p>
 
   <!-- `not-content` opts the table out of the MD3 theme's prose table styling
        (its own border/radius/background on <table> would double up with the
@@ -146,21 +152,21 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
         <tr>
           <th aria-sort="none">
             <button type="button" class="ct-sort-th" data-sort="name">
-              Coffee <span class="ct-sort-ind" aria-hidden="true"></span>
+              {t.coffee} <span class="ct-sort-ind" aria-hidden="true"></span>
             </button>
           </th>
-          <th>Roaster</th>
-          <th>Origin</th>
-          <th>Process</th>
-          <th class="ct-num">Weight</th>
+          <th>{t.roaster}</th>
+          <th>{t.origin}</th>
+          <th>{t.process}</th>
+          <th class="ct-num">{t.weight}</th>
           <th class="ct-num" aria-sort="none">
             <button type="button" class="ct-sort-th ct-sort-th--num" data-sort="price">
-              Price <span class="ct-sort-ind" aria-hidden="true"></span>
+              {t.price} <span class="ct-sort-ind" aria-hidden="true"></span>
             </button>
           </th>
           <th class="ct-num ct-muted-h" aria-sort="none">
             <button type="button" class="ct-sort-th ct-sort-th--num" data-sort="per100g">
-              Per 100g <span class="ct-sort-ind" aria-hidden="true"></span>
+              {t.per100g} <span class="ct-sort-ind" aria-hidden="true"></span>
             </button>
           </th>
         </tr>
@@ -174,6 +180,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
             bestPer100g !== null &&
             per100gNum <= bestPer100g + 0.001;
           const stale = isStale(c.last_seen);
+          const originLabel = localizedOrigin(c.origin, lang);
+          const processLabel = localizedProcess(c.process, lang);
           return (
             <tr
               style={`--i: ${Math.min(i, 20)}`}
@@ -195,10 +203,10 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
                 </a>
               </td>
               <td>{c.roaster}</td>
-              <td class="ct-muted">{c.origin ?? '—'}</td>
+              <td class="ct-muted">{originLabel ?? '—'}</td>
               <td>
                 {c.process
-                  ? <span class={`ct-badge ct-badge--${PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other'}`} title={c.process}>{c.process}</span>
+                  ? <span class={`ct-badge ct-badge--${PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other'}`} title={processLabel ?? undefined}>{processLabel}</span>
                   : <span class="ct-muted">—</span>
                 }
               </td>
@@ -208,8 +216,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
                 {stale && (
                   <span
                     class="ct-stale"
-                    title={`Price last confirmed over 3 weeks ago (last checked ${c.last_seen})`}
-                    aria-label={`Price may be outdated — last confirmed ${c.last_seen}`}
+                    title={t.staleTitle(c.last_seen)}
+                    aria-label={t.staleAriaLabel(c.last_seen)}
                   >
                     <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                       <path d="M6 1.2L11 10.2H1L6 1.2Z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/>
@@ -221,7 +229,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               </td>
               <td class="ct-num ct-muted">
                 {per100g}
-                {isBest && <span class="ct-best" title="Lowest price per 100g">best value</span>}
+                {isBest && <span class="ct-best" title={t.bestValueTitle}>{t.bestValue}</span>}
               </td>
             </tr>
           );
@@ -232,6 +240,14 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 </div>
 
 <script>
+  import { UI, ORIGIN_LABELS, PROCESS_LABELS, type Lang } from '../lib/i18n';
+
+  // Starlight always sets <html lang> to match the current page's locale —
+  // reading it here keeps this client script in sync with the server-rendered
+  // markup above without needing a separate data attribute for it.
+  const lang: Lang = document.documentElement.lang === 'sk' ? 'sk' : 'en';
+  const t = UI[lang];
+
   // Slovak names/roasters carry diacritics (ž, á, ň…) that users often skip
   // when typing, especially on non-Slovak keyboards — fold both sides of the
   // search so "kava" still matches "Žltá Káva Pražiareň".
@@ -255,19 +271,29 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   // scraped at all" (a data problem, not a filtering problem) — the fix isn't
   // the same, so the message shouldn't be either.
   if (rows.length === 0) {
-    emptyState.textContent = 'No coffees available right now — check back soon.';
+    emptyState.textContent = t.emptyNoData;
+  }
+
+  // Dropdown *values* stay the raw English key so filtering (which compares
+  // against the English data-* attributes below) is unaffected by language —
+  // only the visible option text is translated.
+  function labelFor(attr: 'roaster' | 'origin' | 'process' | 'roast', value: string): string {
+    if (attr === 'origin') return ORIGIN_LABELS[value]?.[lang] ?? value;
+    if (attr === 'process') return PROCESS_LABELS[value]?.[lang] ?? value;
+    return value;
   }
 
   function populateSelect(id: string, attr: 'roaster' | 'origin' | 'process' | 'roast') {
     const select = document.getElementById(id) as HTMLSelectElement | null;
     if (!select) return;
-    const values = [...new Set(rows.map(r => r.dataset[attr]).filter(Boolean))].sort(
-      (a, b) => (a as string).localeCompare(b as string, 'sk'),
-    ) as string[];
-    for (const value of values) {
+    const values = [...new Set(rows.map(r => r.dataset[attr]).filter(Boolean))] as string[];
+    const options = values
+      .map((value) => ({ value, label: labelFor(attr, value) }))
+      .sort((a, b) => a.label.localeCompare(b.label, lang));
+    for (const { value, label } of options) {
       const opt = document.createElement('option');
       opt.value = value;
-      opt.textContent = value;
+      opt.textContent = label;
       select.appendChild(opt);
     }
   }
@@ -316,7 +342,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     }
     emptyState.hidden = count > 0;
     tableWrap.hidden = count === 0;
-    resultCount.textContent = `${count} coffee${count !== 1 ? 's' : ''}`;
+    resultCount.textContent = t.coffeeCount(count);
     clearBtn.hidden = !filtersActive();
 
     const dropdownCount = [roaster, origin, process, roast].filter(Boolean).length;
@@ -348,7 +374,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
       if (vb === Number.POSITIVE_INFINITY && va !== Number.POSITIVE_INFINITY) return -1;
       let diff: number;
       if (typeof va === 'string' || typeof vb === 'string') {
-        diff = String(va).localeCompare(String(vb), 'sk');
+        diff = String(va).localeCompare(String(vb), lang);
       } else {
         diff = va - vb;
       }

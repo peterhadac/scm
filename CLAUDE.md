@@ -92,7 +92,7 @@ roasters:
 
 (See the real [`roasters.yaml`](./roasters.yaml) ~30 lines below this file for the full, current list — this snippet only illustrates the optional keys.)
 
-`slug` is the stable key `data/products.yaml` is keyed on (lowercase-kebab of the name). `url` is the roaster's canonical site link; `scrape_url` is the discovery entry point the scraper crawls for product links — usually the same page, but point it at the actual shop/listing page when the homepage doesn't link to every product. `metadata` is optional, added as roaster details are gathered — not required for the scraper to run. Add `scraper: playwright` to any roaster that requires JavaScript rendering (selects crawl4ai's browser-backed crawler instead of the HTTP one). `roast_type_urls` (optional, `{espresso: <url>, filter: <url>}`) is for sites (Shopify collections, Shoptet category pages) that only reveal a product's roast type through which category page links to it, never on the product page itself — the scraper crawls each configured category and uses it as a last-resort `roast_type` fallback (see `discover_roast_type_hints()` in `scraper/scrape.py`).
+`slug` is the stable key `data/products.yaml` is keyed on (lowercase-kebab of the name). `url` is the roaster's canonical site link; `scrape_url` is the discovery entry point the scraper crawls for product links — usually the same page, but point it at the actual shop/listing page when the homepage doesn't link to every product. `metadata` is optional, added as roaster details are gathered — not required for the scraper to run; currently just `{city: <string>}` (the roaster's Slovak town/city), not read by the scraper itself. Add `scraper: playwright` to any roaster that requires JavaScript rendering (selects crawl4ai's browser-backed crawler instead of the HTTP one). `roast_type_urls` (optional, `{espresso: <url>, filter: <url>}`) is for sites (Shopify collections, Shoptet category pages) that only reveal a product's roast type through which category page links to it, never on the product page itself — the scraper crawls each configured category and uses it as a last-resort `roast_type` fallback (see `discover_roast_type_hints()` in `scraper/scrape.py`).
 
 ## Scraper (`scraper/scrape.py`)
 
@@ -239,6 +239,46 @@ Steps: checkout → setup-node → `npm ci` → `npm run build` → `actions/upl
 
 See [`Design.md`](./Design.md) — logo, colour palette, typography, and spacing rules. All rules there are binding when writing UI code.
 
+## Testing
+
+`scraper/test_scrape.py` is a pytest suite covering the pure-function/parsing logic
+(`normalize_product`, `extract_product`'s decline/failure contract, weight/price
+parsing, WooCommerce/Shopify variation extraction, pagination, etc.) — no network
+access or `OPENROUTER_API_KEY` needed. Run it with:
+
+```bash
+cd scraper
+pip install -r requirements.txt pytest   # pytest isn't in requirements.txt itself
+python -m pytest test_scrape.py -v
+```
+
+There's no site-side test suite beyond `npm run build` (Astro build + type-check).
+Any change to `scraper/scrape.py`'s extraction/normalization logic should come with
+a matching test in `test_scrape.py`, and `pytest` should pass before opening a PR.
+
+## Larger-feature planning (`docs/superpowers/`)
+
+Multi-task features get a paired design spec + implementation plan under
+`docs/superpowers/specs/` and `docs/superpowers/plans/` (e.g.
+`2026-07-05-products-schema-migration-design.md` /
+`-products-schema-migration.md`), written before implementation and referenced from
+the eventual PR body. Not required for a small, single-file bug fix — reserve it for
+changes that touch several files/behaviors together (a schema migration, a new CI
+workflow, a new site section).
+
+## Issue/PR conventions
+
+- When a single PR or commit fixes **multiple** GitHub issues, repeat the closing
+  keyword before every issue number on its own (`Fixes #10, Fixes #11, Fixes #12`),
+  not a keyword followed by a comma-separated list (`Fixes #10, #11, #12`) — GitHub
+  only auto-closes the issue immediately following the keyword, so the
+  comma-separated form silently leaves the rest open even though the fix is merged.
+  This has already caused stale "fixed but still open" issues once in this repo.
+- Prefer one issue per PR where practical; when using worktrees to fix several
+  issues in parallel, open one PR per worktree/issue rather than squashing them
+  into a single branch — it keeps the "Fixes #N" auto-close working per-PR and
+  keeps review scoped to one change.
+
 ## Environment Variables / Secrets
 
 - `OPENROUTER_API_KEY` — required by scraper (OpenRouter, model `google/gemini-2.5-flash-lite`), stored as GitHub Actions secret
@@ -248,6 +288,9 @@ See [`Design.md`](./Design.md) — logo, colour palette, typography, and spacing
 ```bash
 # Install scraper deps
 pip install -r scraper/requirements.txt
+crawl4ai-setup        # installs the Playwright/Patchright browsers crawl4ai needs
+                      # (required even for the plain-HTTP crawler; definitely
+                      # required to test any roaster with `scraper: playwright`)
 
 # Run scraper locally
 OPENROUTER_API_KEY=... python scraper/scrape.py

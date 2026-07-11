@@ -15,6 +15,22 @@ const coffees = roastType
   ? allCoffees.filter((c) => c.roast_type === roastType)
   : allCoffees;
 
+// Scrapes run weekly (see CLAUDE.md's scrape.yml cron) — a product whose
+// last_seen hasn't advanced in ~3 cycles means the roaster's own scrape has
+// been failed/needs_js/partial (see data/scrape_status.yaml) for a while,
+// so this row's price is stale, not necessarily still accurate. Computed
+// once at build time against "now", not per-request — a static site build
+// only ever has one "now".
+const STALE_THRESHOLD_DAYS = 21;
+const now = new Date();
+function isStale(lastSeen: string | undefined | null): boolean {
+  if (!lastSeen) return false;
+  const seen = new Date(lastSeen);
+  if (Number.isNaN(seen.getTime())) return false;
+  const ageDays = (now.getTime() - seen.getTime()) / (1000 * 60 * 60 * 24);
+  return ageDays > STALE_THRESHOLD_DAYS;
+}
+
 const PROCESS_BADGE_CLASSES = new Set(['washed', 'natural', 'honey']);
 
 // ── Build-time stats derived from the imported JSON ──────────────
@@ -157,6 +173,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
             per100gNum !== null &&
             bestPer100g !== null &&
             per100gNum <= bestPer100g + 0.001;
+          const stale = isStale(c.last_seen);
           return (
             <tr
               style={`--i: ${Math.min(i, 20)}`}
@@ -186,7 +203,22 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
                 }
               </td>
               <td class="ct-num ct-muted">{c.weight_g ? `${c.weight_g} g` : '—'}</td>
-              <td class="ct-num ct-price">{fmtEur(c.price)}</td>
+              <td class="ct-num ct-price">
+                {fmtEur(c.price)}
+                {stale && (
+                  <span
+                    class="ct-stale"
+                    title={`Price last confirmed over 3 weeks ago (last checked ${c.last_seen})`}
+                    aria-label={`Price may be outdated — last confirmed ${c.last_seen}`}
+                  >
+                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                      <path d="M6 1.2L11 10.2H1L6 1.2Z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/>
+                      <path d="M6 4.6V6.6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+                      <circle cx="6" cy="8.4" r="0.55" fill="currentColor"/>
+                    </svg>
+                  </span>
+                )}
+              </td>
               <td class="ct-num ct-muted">
                 {per100g}
                 {isBest && <span class="ct-best" title="Lowest price per 100g">best value</span>}
@@ -206,6 +238,11 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   function foldDiacritics(s: string): string {
     return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
+
+  // Defense-in-depth: this whole block is one top-level script, so an
+  // unexpected throw anywhere in it (e.g. bad scraped data) would otherwise
+  // abort every feature below the failure point, not just the one it broke.
+  try {
 
   const table       = document.getElementById('coffee-table')!;
   const tbody       = table.querySelector('tbody')!;
@@ -228,7 +265,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
       (a, b) => (a as string).localeCompare(b as string, 'sk'),
     ) as string[];
     for (const value of values) {
-      if (select.querySelector(`option[value="${value}"]`)) continue;
       const opt = document.createElement('option');
       opt.value = value;
       opt.textContent = value;
@@ -388,6 +424,10 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   updateSortUI();
   applyFilters();
   applySort();
+
+  } catch (err) {
+    console.error('CoffeeTable: table interactivity failed to initialize', err);
+  }
 </script>
 
 <style>
@@ -825,6 +865,25 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     letter-spacing: 0;
     text-transform: uppercase;
     vertical-align: middle;
+  }
+
+  /* ── Stale-price indicator ────────────────────────────────────
+     A row whose last_seen hasn't advanced in ~3 weekly scrape cycles (see
+     isStale() above) — the roaster's own scrape has likely been
+     failed/needs_js/partial for a while, so this price may no longer be
+     accurate. Deliberately just a small muted icon, not a filled pill like
+     .ct-best: this is a soft caveat, not a call to action, and shouldn't
+     compete for attention with the price itself. Reuses the tertiary
+     (Garnet) role already used for the "natural" process badge — no new
+     color introduced, per Design.md. */
+  .ct-stale {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 4px;
+    color: var(--md-sys-color-tertiary);
+    opacity: 0.75;
+    vertical-align: middle;
+    cursor: help;
   }
 
   /* ── Coffee link ──────────────────────────────────────────── */

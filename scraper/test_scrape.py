@@ -1,10 +1,31 @@
+import asyncio
 import json
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
+import openai
 import pytest
+import yaml
+from bs4 import BeautifulSoup
 
 import scrape
+
+# Captured before anything ever monkeypatches it. `scrape.asyncio` is the
+# very same module object as this `asyncio` import (module identity, not a
+# separate copy) — the autouse `_no_real_politeness_sleep` fixture below
+# patches `scrape.asyncio.sleep` globally, so any later `asyncio.sleep`
+# lookup (including from this test file itself) would otherwise also see
+# the stub, not the real function, making it impossible to restore real
+# sleep()-based yielding within a single test.
+_REAL_ASYNCIO_SLEEP = asyncio.sleep
+
+
+def _soup(html):
+    """Build a BeautifulSoup the same way process_roaster does (issue #27:
+    the extraction helpers now take an already-parsed soup instead of a raw
+    HTML string, since a product page used to be re-parsed from scratch by
+    each one of them)."""
+    return BeautifulSoup(html or "", scrape.HTML_PARSER)
 
 
 def fake_tool_call(name, arguments):
@@ -14,8 +35,9 @@ def fake_tool_call(name, arguments):
     return call
 
 
-def fake_completion(tool_calls=None):
-    return MagicMock(choices=[MagicMock(message=MagicMock(tool_calls=tool_calls or []))])
+def fake_completion(tool_calls=None, content=None, finish_reason="stop"):
+    message = MagicMock(tool_calls=tool_calls or [], content=content)
+    return MagicMock(choices=[MagicMock(message=message, finish_reason=finish_reason)])
 
 
 def fake_result(
@@ -53,6 +75,24 @@ class FakeCrawler:
         if result is None:
             return fake_result(success=False)
         return result
+
+
+@pytest.fixture(autouse=True)
+def _no_real_politeness_sleep(monkeypatch):
+    """process_roaster/run() now insert a real POLITENESS_DELAY_SECONDS
+    sleep (issue #27) between same-domain fetches, and most tests exercise
+    a roaster with several discovered pages/products — without this, the
+    suite would burn several real seconds per such test. Stub
+    asyncio.sleep to return instantly by default; the dedicated
+    politeness-delay tests below install their own instrumented stub (via
+    the same `monkeypatch` fixture instance, which simply overrides this)
+    to actually verify the call happens with the right arguments.
+    """
+
+    async def instant_sleep(seconds):
+        return None
+
+    monkeypatch.setattr(scrape.asyncio, "sleep", instant_sleep)
 
 
 # --- load_products (YAML date round-trip) ------------------------------------
@@ -146,7 +186,7 @@ WOO_VARIATIONS_HTML = (
 
 
 def test_extract_woocommerce_variations_parses_weight_price_pairs():
-    raw_json, tiers = scrape.extract_woocommerce_variations(WOO_VARIATIONS_HTML)
+    raw_json, tiers = scrape.extract_woocommerce_variations(_soup(WOO_VARIATIONS_HTML))
     assert raw_json  # non-empty, used for hashing
     assert tiers == [
         {"weight_g": 1000, "price": 34.0},
@@ -166,7 +206,7 @@ def test_extract_woocommerce_variations_recognizes_vaha_weight_slug():
         "&quot;display_price&quot;:29.9}]"
         '"></form>'
     )
-    _, tiers = scrape.extract_woocommerce_variations(html)
+    _, tiers = scrape.extract_woocommerce_variations(_soup(html))
     assert tiers == [
         {"weight_g": 500, "price": 16.9},
         {"weight_g": 1000, "price": 29.9},
@@ -185,7 +225,7 @@ def test_extract_woocommerce_variations_recognizes_weight_slug():
         "&quot;display_price&quot;:29}]"
         '"></form>'
     )
-    _, tiers = scrape.extract_woocommerce_variations(html)
+    _, tiers = scrape.extract_woocommerce_variations(_soup(html))
     assert tiers == [
         {"weight_g": 200, "price": 14.0},
         {"weight_g": 500, "price": 29.0},
@@ -202,7 +242,7 @@ def test_extract_woocommerce_variations_recognizes_balenie_weight_slug():
         "&quot;display_price&quot;:35.9}]"
         '"></form>'
     )
-    _, tiers = scrape.extract_woocommerce_variations(html)
+    _, tiers = scrape.extract_woocommerce_variations(_soup(html))
     assert tiers == [
         {"weight_g": 250, "price": 9.9},
         {"weight_g": 1000, "price": 35.9},
@@ -210,14 +250,14 @@ def test_extract_woocommerce_variations_recognizes_balenie_weight_slug():
 
 
 def test_extract_woocommerce_variations_absent_returns_empty():
-    raw_json, tiers = scrape.extract_woocommerce_variations("<html><body>no form here</body></html>")
+    raw_json, tiers = scrape.extract_woocommerce_variations(_soup("<html><body>no form here</body></html>"))
     assert raw_json == ""
     assert tiers == []
 
 
 def test_extract_woocommerce_variations_malformed_json_returns_raw_and_empty_tiers():
     html = '<form data-product_variations="not valid json"></form>'
-    raw_json, tiers = scrape.extract_woocommerce_variations(html)
+    raw_json, tiers = scrape.extract_woocommerce_variations(_soup(html))
     assert raw_json == "not valid json"
     assert tiers == []
 
@@ -233,7 +273,7 @@ def test_extract_woocommerce_variations_dedupes_same_weight_first_wins():
         "&quot;display_price&quot;:13,&quot;display_regular_price&quot;:13}]"
         '"></form>'
     )
-    _, tiers = scrape.extract_woocommerce_variations(html)
+    _, tiers = scrape.extract_woocommerce_variations(_soup(html))
     assert tiers == [{"weight_g": 250, "price": 11.0}]
 
 
@@ -245,7 +285,7 @@ def test_extract_woocommerce_variations_skips_unparseable_weight():
         "&quot;display_price&quot;:11}]"
         '"></form>'
     )
-    _, tiers = scrape.extract_woocommerce_variations(html)
+    _, tiers = scrape.extract_woocommerce_variations(_soup(html))
     assert tiers == []
 
 
@@ -257,7 +297,7 @@ def test_extract_woocommerce_variations_skips_zero_and_missing_price():
         "{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;1000-g&quot;}}]"
         '"></form>'
     )
-    _, tiers = scrape.extract_woocommerce_variations(html)
+    _, tiers = scrape.extract_woocommerce_variations(_soup(html))
     assert tiers == []
 
 
@@ -265,7 +305,7 @@ def test_extract_woocommerce_variations_non_list_json_returns_raw_and_empty_tier
     # Well-formed JSON that isn't a list (e.g. a bare number) must degrade
     # gracefully rather than raising when iterated.
     html = '<form data-product_variations="5"></form>'
-    raw_json, tiers = scrape.extract_woocommerce_variations(html)
+    raw_json, tiers = scrape.extract_woocommerce_variations(_soup(html))
     assert raw_json == "5"
     assert tiers == []
 
@@ -278,7 +318,7 @@ def test_extract_woocommerce_variations_skips_non_dict_attributes():
         "[{&quot;attributes&quot;:&quot;x&quot;,&quot;display_price&quot;:11}]"
         '"></form>'
     )
-    _, tiers = scrape.extract_woocommerce_variations(html)
+    _, tiers = scrape.extract_woocommerce_variations(_soup(html))
     assert tiers == []
 
 
@@ -291,7 +331,7 @@ def test_extract_woocommerce_variations_skips_non_string_weight_slug():
         "&quot;display_price&quot;:34}]"
         '"></form>'
     )
-    _, tiers = scrape.extract_woocommerce_variations(html)
+    _, tiers = scrape.extract_woocommerce_variations(_soup(html))
     assert tiers == []
 
 
@@ -304,8 +344,21 @@ def test_extract_woocommerce_variations_skips_boolean_price():
         "&quot;display_price&quot;:true}]"
         '"></form>'
     )
-    _, tiers = scrape.extract_woocommerce_variations(html)
+    _, tiers = scrape.extract_woocommerce_variations(_soup(html))
     assert tiers == []
+
+
+def test_woocommerce_extraction_helpers_accept_a_pre_parsed_soup():
+    # issue #27: all four extraction helpers take an already-built
+    # BeautifulSoup, not a raw HTML string, so process_roaster can parse a
+    # product page once and reuse the soup across all of them. Passing a
+    # BeautifulSoup object in directly (no HTML string in sight) is the
+    # contract this locks in.
+    soup = BeautifulSoup(WOO_VARIATIONS_HTML, scrape.HTML_PARSER)
+    assert isinstance(scrape.extract_woocommerce_variations(soup), tuple)
+    assert scrape.extract_woocommerce_origin(soup) is None or isinstance(scrape.extract_woocommerce_origin(soup), str)
+    assert scrape.extract_woocommerce_roast_type(soup) in (None, "filter", "espresso")
+    assert scrape.extract_woocommerce_weight(soup) is None or isinstance(scrape.extract_woocommerce_weight(soup), int)
 
 
 # --- is_coffee (non-coffee filtering) ---------------------------------------
@@ -468,7 +521,7 @@ def test_extract_woocommerce_roast_type_espresso_wins_in_multi_method_list():
         '<td><span class="wd-term-name">Espresso</span><span class="wd-term-sep">, </span>'
         '<span class="wd-term-name">Zalievaná</span></td></tr>'
     )
-    assert scrape.extract_woocommerce_roast_type(html) == "espresso"
+    assert scrape.extract_woocommerce_roast_type(_soup(html)) == "espresso"
 
 
 def test_extract_woocommerce_roast_type_filter_only():
@@ -476,7 +529,7 @@ def test_extract_woocommerce_roast_type_filter_only():
         '<tr class="woocommerce-product-attributes-item--attribute_pa_odporucany-sposob-pripravy">'
         '<td><span class="wd-term-name">Zalievaná</span></td></tr>'
     )
-    assert scrape.extract_woocommerce_roast_type(html) == "filter"
+    assert scrape.extract_woocommerce_roast_type(_soup(html)) == "filter"
 
 
 def test_extract_woocommerce_roast_type_ignores_unrelated_roast_degree_attribute():
@@ -486,11 +539,11 @@ def test_extract_woocommerce_roast_type_ignores_unrelated_roast_degree_attribute
         '<tr class="woocommerce-product-attributes-item--attribute_pa_stupen-prazenia">'
         '<td><span class="wd-term-name">Tmavé</span></td></tr>'
     )
-    assert scrape.extract_woocommerce_roast_type(html) is None
+    assert scrape.extract_woocommerce_roast_type(_soup(html)) is None
 
 
 def test_extract_woocommerce_roast_type_absent_returns_none():
-    assert scrape.extract_woocommerce_roast_type("<html><body>nothing here</body></html>") is None
+    assert scrape.extract_woocommerce_roast_type(_soup("<html><body>nothing here</body></html>")) is None
 
 
 # --- extract_woocommerce_weight -------------------------------------------------
@@ -501,7 +554,7 @@ def test_extract_woocommerce_weight_parses_core_field():
         '<tr class="woocommerce-product-attributes-item woocommerce-product-attributes-item--weight">'
         "<td>0,06 kg</td></tr>"
     )
-    assert scrape.extract_woocommerce_weight(html) == 60
+    assert scrape.extract_woocommerce_weight(_soup(html)) == 60
 
 
 def test_extract_woocommerce_weight_ignores_custom_attribute_rows():
@@ -510,11 +563,11 @@ def test_extract_woocommerce_weight_ignores_custom_attribute_rows():
         '<tr class="woocommerce-product-attributes-item--attribute_pa_hmotnost">'
         "<td>250 g</td></tr>"
     )
-    assert scrape.extract_woocommerce_weight(html) is None
+    assert scrape.extract_woocommerce_weight(_soup(html)) is None
 
 
 def test_extract_woocommerce_weight_absent_returns_none():
-    assert scrape.extract_woocommerce_weight("<html><body>nothing here</body></html>") is None
+    assert scrape.extract_woocommerce_weight(_soup("<html><body>nothing here</body></html>")) is None
 
 
 def test_normalize_roast_type_none_when_unstated():
@@ -574,12 +627,23 @@ def test_normalize_origin_matches_costarica_no_space():
     assert scrape.normalize_origin(None, "Costarica Palmichal Los Vindas") == "Costa Rica"
 
 
-def test_normalize_origin_keeps_unmatched_raw_text_as_is():
-    assert scrape.normalize_origin("Fantasyland", None) == "Fantasyland"
+def test_normalize_origin_discards_unmatched_raw_text_instead_of_keeping_it_verbatim():
+    # issue #14: raw LLM free text that matches no known country/blend signal
+    # must not leak into the origin field verbatim — it would pollute the
+    # site's origin filter dropdown with one-off values. Note this does NOT
+    # fall back to scanning `name` — raw, once present, is still never
+    # cross-checked against name (same invariant as before).
+    assert scrape.normalize_origin("Fantasyland", None) is None
+    assert scrape.normalize_origin("Fantasyland", "Ethiopia Sidamo") is None
+
+
+def test_normalize_origin_unmatched_raw_still_falls_back_to_blend_keyword_in_raw():
+    assert scrape.normalize_origin("Zmes rôznych krajín", None) == "Blend"
 
 
 def test_normalize_origin_none_when_nothing_matches():
     assert scrape.normalize_origin(None, "Mystery Coffee") is None
+    assert scrape.normalize_origin("Mystery Coffee", None) is None
 
 
 def test_normalize_origin_none_for_whitespace_only_raw():
@@ -630,7 +694,7 @@ WOO_ORIGIN_ROW_HTML = (
 
 
 def test_extract_woocommerce_origin_multi_country_is_blend():
-    assert scrape.extract_woocommerce_origin(WOO_ORIGIN_ROW_HTML) == "Blend"
+    assert scrape.extract_woocommerce_origin(_soup(WOO_ORIGIN_ROW_HTML)) == "Blend"
 
 
 def test_extract_woocommerce_origin_single_country():
@@ -638,11 +702,11 @@ def test_extract_woocommerce_origin_single_country():
         '<tr class="woocommerce-product-attributes-item--attribute_pa_krajina-povodu">'
         '<td><span class="wd-term-name">Etiópia</span></td></tr>'
     )
-    assert scrape.extract_woocommerce_origin(html) == "Ethiopia"
+    assert scrape.extract_woocommerce_origin(_soup(html)) == "Ethiopia"
 
 
 def test_extract_woocommerce_origin_absent_returns_none():
-    assert scrape.extract_woocommerce_origin("<html><body>no attribute table</body></html>") is None
+    assert scrape.extract_woocommerce_origin(_soup("<html><body>no attribute table</body></html>")) is None
 
 
 def test_extract_woocommerce_origin_unrecognized_text_returns_none():
@@ -650,7 +714,7 @@ def test_extract_woocommerce_origin_unrecognized_text_returns_none():
         '<tr class="woocommerce-product-attributes-item--attribute_pa_krajina-povodu">'
         '<td><span class="wd-term-name">Neznáma planéta</span></td></tr>'
     )
-    assert scrape.extract_woocommerce_origin(html) is None
+    assert scrape.extract_woocommerce_origin(_soup(html)) is None
 
 
 # --- normalize_product --------------------------------------------------------
@@ -796,7 +860,7 @@ def test_normalize_product_name_weight_wins_over_weight_hint():
 
 
 def test_normalize_product_variation_tiers_still_requires_a_name():
-    # variation_tiers alone doesn't make a page a product — Claude declining
+    # variation_tiers alone doesn't make a page a product — the model declining
     # (raw=None) or a non-coffee name must still return None.
     tiers = [{"weight_g": 250, "price": 11.0}]
     assert scrape.normalize_product(None, "https://x.sk/mexico/", "2026-07-08", hints=scrape.Hints(variation_tiers=tiers)) is None
@@ -1147,12 +1211,105 @@ def test_extract_product_returns_tool_input():
     assert result == {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]}
 
 
-def test_extract_product_returns_none_when_claude_declines():
+def test_extract_product_returns_none_when_model_explicitly_declines():
     fake_client = MagicMock()
-    fake_client.chat.completions.create.return_value = fake_completion()
+    fake_client.chat.completions.create.return_value = fake_completion(
+        content="This is a category listing page, not a single coffee product."
+    )
 
     result = scrape.extract_product(fake_client, "https://x.sk/kava/", "markdown text")
     assert result is None
+
+
+def test_extract_product_raises_on_empty_response():
+    # No tool call AND no textual decline reason — ambiguous (could be
+    # truncation, a safety refusal, model laziness), so this must NOT be
+    # treated as a confident "not a product" the way a real decline is.
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.return_value = fake_completion()
+
+    with pytest.raises(scrape.ExtractionFailed):
+        scrape.extract_product(fake_client, "https://x.sk/kava/", "markdown text")
+
+
+def test_extract_product_raises_on_truncated_response():
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.return_value = fake_completion(finish_reason="length")
+
+    with pytest.raises(scrape.ExtractionFailed):
+        scrape.extract_product(fake_client, "https://x.sk/kava/", "markdown text")
+
+
+def test_extract_product_raises_on_malformed_tool_call_json():
+    fake_client = MagicMock()
+    bad_call = MagicMock()
+    bad_call.function.name = "extract_product"
+    bad_call.function.arguments = "{not valid json"
+    fake_client.chat.completions.create.return_value = fake_completion([bad_call])
+
+    with pytest.raises(scrape.ExtractionFailed):
+        scrape.extract_product(fake_client, "https://x.sk/kava/", "markdown text")
+
+
+def test_extract_product_truncates_markdown_before_sending():
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]})]
+    )
+    huge_markdown = "x" * (scrape.MAX_MARKDOWN_CHARS + 5000)
+
+    scrape.extract_product(fake_client, "https://x.sk/rwanda/", huge_markdown)
+
+    sent_messages = fake_client.chat.completions.create.call_args.kwargs["messages"]
+    user_content = sent_messages[-1]["content"]
+    assert len(user_content) <= scrape.MAX_MARKDOWN_CHARS + len("<page_content>\n\n</page_content>")
+
+
+def test_extract_product_omits_url_and_uses_system_message():
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]})]
+    )
+
+    scrape.extract_product(fake_client, "https://x.sk/rwanda-250g/", "markdown text")
+
+    kwargs = fake_client.chat.completions.create.call_args.kwargs
+    assert kwargs["temperature"] == 0
+    messages = kwargs["messages"]
+    assert messages[0]["role"] == "system"
+    assert messages[1]["role"] == "user"
+    assert "https://x.sk/rwanda-250g/" not in messages[0]["content"]
+    assert "https://x.sk/rwanda-250g/" not in messages[1]["content"]
+    assert "<page_content>" in messages[1]["content"]
+
+
+def test_extract_product_retries_on_transient_api_error(monkeypatch):
+    import httpx
+
+    monkeypatch.setattr(scrape.time, "sleep", lambda *_: None)
+    fake_client = MagicMock()
+    request = httpx.Request("POST", "https://openrouter.ai/api/v1/chat/completions")
+    fake_client.chat.completions.create.side_effect = [
+        openai.APIConnectionError(request=request),
+        fake_completion([fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]})]),
+    ]
+
+    result = scrape.extract_product(fake_client, "https://x.sk/rwanda/", "markdown text")
+    assert result == {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]}
+    assert fake_client.chat.completions.create.call_count == 2
+
+
+def test_extract_product_raises_after_exhausting_retries(monkeypatch):
+    import httpx
+
+    monkeypatch.setattr(scrape.time, "sleep", lambda *_: None)
+    fake_client = MagicMock()
+    request = httpx.Request("POST", "https://openrouter.ai/api/v1/chat/completions")
+    fake_client.chat.completions.create.side_effect = openai.APIConnectionError(request=request)
+
+    with pytest.raises(scrape.ExtractionFailed):
+        scrape.extract_product(fake_client, "https://x.sk/rwanda/", "markdown text")
+    assert fake_client.chat.completions.create.call_count == scrape.EXTRACT_RETRY_ATTEMPTS
 
 
 # --- discover_product_urls (async, offline via FakeCrawler) ------------------
@@ -1294,6 +1451,123 @@ async def test_discover_product_urls_needs_js_when_text_too_short():
     discovered, status = await scrape.discover_product_urls(crawler, {"url": "https://x.sk/", "scrape_url": "https://x.sk/"})
     assert discovered is None
     assert status == "needs_js"
+
+
+# --- _crawl_listing_links pagination completeness (issue #22) ----------------
+
+
+@pytest.mark.asyncio
+async def test_crawl_listing_links_reports_complete_on_natural_end():
+    html = "<html><body>listing</body></html>" + "x" * 200
+    crawler = FakeCrawler({"https://x.sk/": fake_result(html=html, url="https://x.sk/")})
+    urls, first_result, pagination_status = await scrape._crawl_listing_links(crawler, "https://x.sk/")
+    assert pagination_status == "complete"
+
+
+@pytest.mark.asyncio
+async def test_crawl_listing_links_reports_failed_midway_on_page2_fetch_failure():
+    # Page 1 succeeds and links to page 2; page 2's fetch fails outright
+    # (not in the fake crawler's responses -> success=False) — a transient
+    # timeout mid-pagination, not a natural end.
+    page1 = fake_result(
+        html='<a rel="next" href="/shop?page=2">Next</a>' + "x" * 200,
+        links={"internal": [{"href": "https://x.sk/coffee-a/", "text": "A"}]},
+        url="https://x.sk/shop",
+    )
+    crawler = FakeCrawler({"https://x.sk/shop": page1})  # page 2 deliberately absent
+    urls, first_result, pagination_status = await scrape._crawl_listing_links(crawler, "https://x.sk/shop")
+    assert pagination_status == "failed_midway"
+    assert urls == {"https://x.sk/coffee-a/"}  # page 1's links are still returned
+
+
+@pytest.mark.asyncio
+async def test_crawl_listing_links_page1_failure_is_not_failed_midway():
+    # A first-page failure is a total discovery failure (reported via
+    # first_result being unsuccessful/None), not "partial progress that
+    # should be preserved" — pagination_status must stay "complete" so
+    # discover_product_urls's existing "failed" handling isn't shadowed by
+    # the new partial-discovery path.
+    crawler = FakeCrawler({})  # every fetch fails
+    urls, first_result, pagination_status = await scrape._crawl_listing_links(crawler, "https://x.sk/")
+    assert pagination_status == "complete"
+    assert first_result.success is False
+
+
+@pytest.mark.asyncio
+async def test_crawl_listing_links_reports_capped_when_max_pages_hit_with_more_linked():
+    page1 = fake_result(
+        html='<a rel="next" href="/shop?page=2">Next</a>' + "x" * 200,
+        links={"internal": [{"href": "https://x.sk/coffee-a/", "text": "A"}]},
+        url="https://x.sk/shop",
+    )
+    page2 = fake_result(
+        html='<a rel="next" href="/shop?page=3">Next</a>' + "x" * 200,
+        links={"internal": [{"href": "https://x.sk/coffee-b/", "text": "B"}]},
+        url="https://x.sk/shop?page=2",
+    )
+    crawler = FakeCrawler({"https://x.sk/shop": page1, "https://x.sk/shop?page=2": page2})
+    urls, first_result, pagination_status = await scrape._crawl_listing_links(
+        crawler, "https://x.sk/shop", max_pages=2
+    )
+    assert pagination_status == "capped"
+    assert urls == {"https://x.sk/coffee-a/", "https://x.sk/coffee-b/"}
+
+
+@pytest.mark.asyncio
+async def test_crawl_listing_links_not_capped_when_max_pages_hit_with_no_further_link():
+    # max_pages happens to equal the true page count exactly, and the last
+    # page has no next link — this is a natural end, not a cap; the cap
+    # signal must only fire when a further page was left unvisited.
+    page1 = fake_result(
+        html="x" * 200,  # no next link at all
+        links={"internal": [{"href": "https://x.sk/coffee-a/", "text": "A"}]},
+        url="https://x.sk/shop",
+    )
+    crawler = FakeCrawler({"https://x.sk/shop": page1})
+    urls, first_result, pagination_status = await scrape._crawl_listing_links(
+        crawler, "https://x.sk/shop", max_pages=1
+    )
+    assert pagination_status == "complete"
+
+
+# --- discover_product_urls "partial" status (issue #22) ----------------------
+
+
+@pytest.mark.asyncio
+async def test_discover_product_urls_partial_on_mid_pagination_failure(capsys):
+    page1 = fake_result(
+        html='<a rel="next" href="/shop?page=2">Next</a>' + "x" * 200,
+        links={"internal": [{"href": "https://x.sk/coffee-a/", "text": "A"}]},
+        url="https://x.sk/shop",
+    )
+    crawler = FakeCrawler({"https://x.sk/shop": page1})
+    roaster = {"name": "Test Roastery", "url": "https://x.sk/shop", "scrape_url": "https://x.sk/shop"}
+    discovered, status = await scrape.discover_product_urls(crawler, roaster)
+    assert status == "partial"
+    assert discovered == {"https://x.sk/coffee-a/"}
+    assert "Test Roastery" in capsys.readouterr().out
+
+
+@pytest.mark.asyncio
+async def test_discover_product_urls_partial_on_max_pages_cap(capsys):
+    page1 = fake_result(
+        html='<a rel="next" href="/shop?page=2">Next</a>' + "x" * 200,
+        links={"internal": [{"href": "https://x.sk/coffee-a/", "text": "A"}]},
+        url="https://x.sk/shop",
+    )
+    page2 = fake_result(
+        html='<a rel="next" href="/shop?page=3">Next</a>' + "x" * 200,
+        links={"internal": [{"href": "https://x.sk/coffee-b/", "text": "B"}]},
+        url="https://x.sk/shop?page=2",
+    )
+    crawler = FakeCrawler({"https://x.sk/shop": page1, "https://x.sk/shop?page=2": page2})
+    roaster = {"name": "Test Roastery", "url": "https://x.sk/shop", "scrape_url": "https://x.sk/shop"}
+    discovered, status = await scrape.discover_product_urls(crawler, roaster, max_pages=2)
+    assert status == "partial"
+    assert discovered == {"https://x.sk/coffee-a/", "https://x.sk/coffee-b/"}
+    out = capsys.readouterr().out
+    assert "Test Roastery" in out
+    assert "MAX_PAGES" in out
 
 
 # --- discover_roast_type_hints (async, offline via FakeCrawler) --------------
@@ -1441,6 +1715,50 @@ async def test_process_roaster_extracts_new_product():
     assert len(entries) == 1
     assert entries[0]["name"] == "Rwanda"
     assert entries[0]["page_hash"]
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_parses_product_html_only_once(monkeypatch):
+    # issue #27: extract_woocommerce_variations/origin/roast_type/weight
+    # used to each build their own BeautifulSoup from result.html — up to
+    # 4 separate parses of the very same product page. process_roaster
+    # should now parse a given product page's HTML exactly once and hand
+    # every helper the same soup object.
+    product_html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;},"
+        "&quot;display_price&quot;:11}]"
+        '"></form>'
+    )
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(html=product_html, markdown=fake_markdown(LONG_TEXT + " 12,50 €")),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €", "weight": "250 g"}]})]
+    )
+
+    parse_calls = []
+    real_beautifulsoup = scrape.BeautifulSoup
+
+    def counting_beautifulsoup(*args, **kwargs):
+        parse_calls.append(args[0] if args else kwargs.get("markup"))
+        return real_beautifulsoup(*args, **kwargs)
+
+    monkeypatch.setattr(scrape, "BeautifulSoup", counting_beautifulsoup)
+
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, [], "2026-07-04")
+    assert status == "ok"
+    # Discovery's own listing-page parses (find_next_page_url,
+    # visible_html_text_length) are a separate, earlier phase and not what
+    # this test is about — filter down to parses of THIS product page's
+    # HTML specifically, which the four extraction helpers all used to
+    # parse independently.
+    product_page_parses = [c for c in parse_calls if c == product_html]
+    assert len(product_page_parses) == 1
 
 
 @pytest.mark.asyncio
@@ -1660,9 +1978,7 @@ async def test_process_roaster_schema_version_bump_forces_resplit_of_legacy_sing
     # Mirrors the real production bug shape: one legacy entry, stale/missing
     # schema_version, packaging with the duplicate-pair signature.
     markdown_text = LONG_TEXT + " 11,00 €"
-    import hashlib
-
-    page_hash = hashlib.sha256(markdown_text.encode("utf-8")).hexdigest()
+    page_hash = scrape.compute_page_hash(markdown_text)
     crawler = FakeCrawler(
         {
             "https://x.sk/": listing_result(["https://x.sk/colombia/"]),
@@ -1777,9 +2093,7 @@ async def test_process_roaster_hash_gate_still_skips_when_nothing_changed():
 @pytest.mark.asyncio
 async def test_process_roaster_skips_claude_when_hash_unchanged():
     markdown_text = LONG_TEXT + " 12,50 €"
-    import hashlib
-
-    page_hash = hashlib.sha256(markdown_text.encode("utf-8")).hexdigest()
+    page_hash = scrape.compute_page_hash(markdown_text)
     crawler = FakeCrawler(
         {
             "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
@@ -1807,9 +2121,7 @@ async def test_process_roaster_skips_claude_when_hash_unchanged():
 @pytest.mark.asyncio
 async def test_process_roaster_forces_reextraction_when_schema_version_stale():
     markdown_text = LONG_TEXT + " 12,50 €"
-    import hashlib
-
-    page_hash = hashlib.sha256(markdown_text.encode("utf-8")).hexdigest()
+    page_hash = scrape.compute_page_hash(markdown_text)
     crawler = FakeCrawler(
         {
             "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
@@ -1847,6 +2159,77 @@ async def test_process_roaster_forces_reextraction_when_schema_version_stale():
     assert entries[0]["schema_version"] == scrape.SCHEMA_VERSION
 
 
+# --- compute_page_hash (issue #13: hash-gate leaks on dynamic page chrome) -----
+
+
+def test_compute_page_hash_deterministic_for_identical_content():
+    text = "Rwanda Kigali, washed, 12,50 € " * 50
+    assert scrape.compute_page_hash(text) == scrape.compute_page_hash(text)
+
+
+def test_compute_page_hash_ignores_dynamic_chrome_beyond_truncation_window():
+    # A real product's identifying content (title/price/description) fills
+    # the whole MAX_MARKDOWN_CHARS window that gets hashed (same window sent
+    # to the LLM). A "5 people are viewing this" stock-urgency widget, a
+    # rotating testimonial, or a "customers also bought" carousel tacked on
+    # past that window — the kind of dynamic chrome that changes between two
+    # fetches of an otherwise-unchanged page — must not flip the hash.
+    base = "Rwanda Kigali, washed, filter roast, 12,50 € for 250 g. " * 400
+    assert len(base) > scrape.MAX_MARKDOWN_CHARS
+    dynamic_chrome = (
+        "5 people are viewing this product right now! "
+        "Customers also bought: Ethiopia Yirgacheffe, Kenya Nyeri. "
+        "In stock: 3 left. " * 100
+    )
+    assert scrape.compute_page_hash(base) == scrape.compute_page_hash(base + dynamic_chrome)
+
+
+def test_compute_page_hash_changes_when_content_inside_window_changes():
+    # A genuine product change (price, name, description) sitting inside the
+    # hashed window must still reliably change the hash.
+    base = "Rwanda Kigali, washed, filter roast, 12,50 € for 250 g. " * 400
+    price_changed = base.replace("12,50 €", "14,90 €")
+    assert scrape.compute_page_hash(base) != scrape.compute_page_hash(price_changed)
+
+
+def test_compute_page_hash_folds_in_variations_raw():
+    assert scrape.compute_page_hash("same markdown", "v1") != scrape.compute_page_hash("same markdown", "v2")
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_hash_gate_survives_dynamic_chrome_appended_between_runs():
+    # End-to-end regression for issue #13: appending plausible dynamic page
+    # chrome between two fetches of an otherwise-unchanged product must not
+    # force a fresh (paid, nondeterministic) re-extraction.
+    base_markdown = "Rwanda Kigali, washed, filter roast, 12,50 € for 250 g. " * 400
+    assert len(base_markdown) > scrape.MAX_MARKDOWN_CHARS
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €", "weight": "250 g"}]})]
+    )
+    crawler_v1 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(base_markdown)),
+        }
+    )
+    entries_v1, _ = await scrape.process_roaster(crawler_v1, client, ROASTER, [], "2026-07-08")
+    assert client.chat.completions.create.call_count == 1
+
+    dynamic_markdown = base_markdown + (
+        "5 people are viewing this product right now! In stock: 3 left. " * 50
+    )
+    crawler_v2 = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(dynamic_markdown)),
+        }
+    )
+    entries_v2, _ = await scrape.process_roaster(crawler_v2, client, ROASTER, entries_v1, "2026-07-09")
+    assert client.chat.completions.create.call_count == 1  # not re-called: chrome fell outside the window
+    assert entries_v2[0]["last_seen"] == "2026-07-09"
+
+
 @pytest.mark.asyncio
 async def test_process_roaster_removes_delisted_product():
     # This run discovers a different, still-live product — "old-coffee" is
@@ -1877,6 +2260,253 @@ async def test_process_roaster_removes_delisted_product():
     assert [e["url"] for e in entries] == ["https://x.sk/still-here/"]
 
 
+# --- politeness delay (issue #27) --------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_politeness_wait_skips_the_first_fetch_then_sleeps(monkeypatch):
+    sleep_calls = []
+
+    async def recording_sleep(seconds):
+        sleep_calls.append(seconds)
+
+    monkeypatch.setattr(scrape.asyncio, "sleep", recording_sleep)
+
+    throttle = [True]
+    await scrape._politeness_wait(throttle)  # this roaster's very first fetch: no sleep
+    assert sleep_calls == []
+    await scrape._politeness_wait(throttle)
+    await scrape._politeness_wait(throttle)
+    assert sleep_calls == [scrape.POLITENESS_DELAY_SECONDS, scrape.POLITENESS_DELAY_SECONDS]
+
+
+@pytest.mark.asyncio
+async def test_politeness_wait_disabled_when_throttle_is_none(monkeypatch):
+    # throttle=None is the "fetching a single URL in isolation" case (e.g.
+    # a direct unit test of a helper) — never sleeps, regardless of how
+    # many times it's called.
+    sleep_calls = []
+
+    async def recording_sleep(seconds):
+        sleep_calls.append(seconds)
+
+    monkeypatch.setattr(scrape.asyncio, "sleep", recording_sleep)
+
+    await scrape._politeness_wait(None)
+    await scrape._politeness_wait(None)
+    assert sleep_calls == []
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_delays_between_same_domain_fetches_but_not_the_first(monkeypatch):
+    # One listing fetch + two product fetches = 3 same-domain fetches for
+    # this roaster -> exactly 2 politeness sleeps, never before the very
+    # first fetch.
+    sleep_calls = []
+
+    async def recording_sleep(seconds):
+        sleep_calls.append(seconds)
+
+    monkeypatch.setattr(scrape.asyncio, "sleep", recording_sleep)
+
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/", "https://x.sk/kenya/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(LONG_TEXT + " 12,50 €")),
+            "https://x.sk/kenya/": fake_result(markdown=fake_markdown(LONG_TEXT + " 13,50 €")),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [
+            fake_tool_call(
+                "extract_product", {"name": "Coffee", "packaging": [{"price": "12,50 €", "weight": "250 g"}]}
+            )
+        ]
+    )
+
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, [], "2026-07-04")
+    assert status == "ok"
+    assert len(entries) == 2
+    assert sleep_calls == [scrape.POLITENESS_DELAY_SECONDS, scrape.POLITENESS_DELAY_SECONDS]
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_shares_throttle_across_discovery_hints_and_products(monkeypatch):
+    # A roast_type_urls-configured roaster fetches: the main listing, the
+    # "espresso" hint category listing, and one product page -> 3 total
+    # same-domain fetches -> 2 politeness sleeps. Confirms the throttle
+    # flows through discover_product_urls AND discover_roast_type_hints,
+    # not just the per-product loop.
+    sleep_calls = []
+
+    async def recording_sleep(seconds):
+        sleep_calls.append(seconds)
+
+    monkeypatch.setattr(scrape.asyncio, "sleep", recording_sleep)
+
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(LONG_TEXT + " 12,50 €")),
+            "https://x.sk/espresso/": fake_result(
+                html=LONG_TEXT,
+                links={"internal": [{"href": "https://x.sk/rwanda/", "text": "Rwanda"}]},
+                url="https://x.sk/espresso/",
+            ),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [
+            fake_tool_call(
+                "extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €", "weight": "250 g"}]}
+            )
+        ]
+    )
+    roaster = dict(ROASTER, roast_type_urls={"espresso": "https://x.sk/espresso/"})
+
+    entries, status = await scrape.process_roaster(crawler, client, roaster, [], "2026-07-04")
+    assert status == "ok"
+    assert len(sleep_calls) == 2
+
+
+# --- process_roaster "partial" discovery (issue #22) --------------------------
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_partial_mid_pagination_failure_preserves_undiscovered_entries():
+    # Page 1 discovers "still-here" and links to page 2, whose fetch fails
+    # outright (a transient timeout) rather than pagination naturally
+    # ending. "old-coffee" is prior data for a URL that was never
+    # rediscovered this run (it might well live on the unreached page 2) —
+    # it must be preserved, not treated as delisted, and the roaster status
+    # must be "partial", not "ok".
+    page1 = fake_result(
+        html='<a rel="next" href="/shop?page=2">Next</a>' + LONG_TEXT,
+        links={"internal": [{"href": "https://x.sk/still-here/", "text": "Coffee"}]},
+        url="https://x.sk/shop",
+    )
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/shop": page1,  # page 2 deliberately absent -> fetch fails
+            "https://x.sk/still-here/": fake_result(markdown=fake_markdown(LONG_TEXT + " 9,00 €")),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Still Here", "packaging": [{"price": "9,00 €"}]})]
+    )
+    roaster = dict(ROASTER, scrape_url="https://x.sk/shop")
+    existing = [
+        {
+            "name": "Old Coffee",
+            "url": "https://x.sk/old-coffee/",
+            "status": "ok",
+            "last_seen": "2026-07-01",
+            "page_hash": "deadbeef",
+            "packaging": [{"weight_g": 250, "price": 9.0}],
+        }
+    ]
+    entries, status = await scrape.process_roaster(crawler, client, roaster, existing, "2026-07-04")
+    assert status == "partial"
+    urls = {e["url"] for e in entries}
+    assert urls == {"https://x.sk/old-coffee/", "https://x.sk/still-here/"}
+    old = next(e for e in entries if e["url"] == "https://x.sk/old-coffee/")
+    # Untouched: last_seen doesn't advance and the stored hash isn't
+    # disturbed, so a later successful run still re-extracts it if the page
+    # actually changed rather than treating it as freshly confirmed.
+    assert old["last_seen"] == "2026-07-01"
+    assert old["page_hash"] == "deadbeef"
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_max_pages_cap_reports_partial_and_preserves_entries():
+    page1 = fake_result(
+        html='<a rel="next" href="/shop?page=2">Next</a>' + LONG_TEXT,
+        links={"internal": [{"href": "https://x.sk/still-here/", "text": "Coffee"}]},
+        url="https://x.sk/shop",
+    )
+    page2 = fake_result(
+        html='<a rel="next" href="/shop?page=3">Next</a>' + LONG_TEXT,  # page 3 never fetched: capped
+        links={"internal": []},
+        url="https://x.sk/shop?page=2",
+    )
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/shop": page1,
+            "https://x.sk/shop?page=2": page2,
+            "https://x.sk/still-here/": fake_result(markdown=fake_markdown(LONG_TEXT + " 9,00 €")),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Still Here", "packaging": [{"price": "9,00 €"}]})]
+    )
+    roaster = dict(ROASTER, scrape_url="https://x.sk/shop")
+    existing = [
+        {
+            "name": "Old Coffee",
+            "url": "https://x.sk/old-coffee/",  # would only ever appear on the unreached page 3
+            "status": "ok",
+            "last_seen": "2026-07-01",
+            "page_hash": "deadbeef",
+            "packaging": [{"weight_g": 250, "price": 9.0}],
+        }
+    ]
+    entries, status = await scrape.process_roaster(
+        crawler, client, roaster, existing, "2026-07-04", max_pages=2
+    )
+    assert status == "partial"
+    urls = {e["url"] for e in entries}
+    assert urls == {"https://x.sk/old-coffee/", "https://x.sk/still-here/"}
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_full_natural_pagination_still_drops_delisted_and_reports_ok():
+    # Regression guard: pagination that runs across multiple pages but
+    # completes naturally (no cap, no mid-run failure) must keep behaving
+    # exactly as before "partial" was introduced — genuinely-delisted priors
+    # are dropped and the status stays "ok", not "partial".
+    page1 = fake_result(
+        html='<a rel="next" href="/shop?page=2">Next</a>' + LONG_TEXT,
+        links={"internal": [{"href": "https://x.sk/still-here/", "text": "Coffee"}]},
+        url="https://x.sk/shop",
+    )
+    page2 = fake_result(
+        html=LONG_TEXT,  # no further next link -> natural end
+        links={"internal": [{"href": "https://x.sk/also-here/", "text": "Coffee"}]},
+        url="https://x.sk/shop?page=2",
+    )
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/shop": page1,
+            "https://x.sk/shop?page=2": page2,
+            "https://x.sk/still-here/": fake_result(markdown=fake_markdown(LONG_TEXT + " 9,00 €")),
+            "https://x.sk/also-here/": fake_result(markdown=fake_markdown(LONG_TEXT + " 10,00 €")),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.side_effect = [
+        fake_completion([fake_tool_call("extract_product", {"name": "Still Here", "packaging": [{"price": "9,00 €"}]})]),
+        fake_completion([fake_tool_call("extract_product", {"name": "Also Here", "packaging": [{"price": "10,00 €"}]})]),
+    ]
+    roaster = dict(ROASTER, scrape_url="https://x.sk/shop")
+    existing = [
+        {
+            "name": "Old Coffee",
+            "url": "https://x.sk/old-coffee/",
+            "status": "ok",
+            "last_seen": "2026-07-01",
+            "page_hash": "deadbeef",
+            "packaging": [{"weight_g": 250, "price": 9.0}],
+        }
+    ]
+    entries, status = await scrape.process_roaster(crawler, client, roaster, existing, "2026-07-04")
+    assert status == "ok"
+    assert {e["url"] for e in entries} == {"https://x.sk/still-here/", "https://x.sk/also-here/"}
+
+
 @pytest.mark.asyncio
 async def test_process_roaster_keeps_existing_entries_on_listing_failure():
     crawler = FakeCrawler({})  # listing fetch fails
@@ -1890,7 +2520,7 @@ async def test_process_roaster_keeps_existing_entries_on_listing_failure():
 
 @pytest.mark.asyncio
 async def test_process_roaster_keeps_good_product_when_extraction_declines():
-    # A previously-good product whose page still hashes differently, but Claude
+    # A previously-good product whose page still hashes differently, but the model
     # declines this time — must not clobber the known-good data.
     crawler = FakeCrawler(
         {
@@ -1899,7 +2529,9 @@ async def test_process_roaster_keeps_good_product_when_extraction_declines():
         }
     )
     client = MagicMock()
-    client.chat.completions.create.return_value = fake_completion()  # declines, no tool call
+    client.chat.completions.create.return_value = fake_completion(
+        content="This page no longer shows a specific coffee product."
+    )  # explicit decline, no tool call
     existing = [
         {
             "name": "Rwanda",
@@ -1916,8 +2548,57 @@ async def test_process_roaster_keeps_good_product_when_extraction_declines():
 
 
 @pytest.mark.asyncio
+async def test_process_roaster_keeps_good_product_when_extraction_fails_ambiguously():
+    # No tool call AND no textual decline reason — extract_product raises
+    # ExtractionFailed rather than being treated as a confident decline.
+    # Same protection as a real decline: a previously-good product must not
+    # be clobbered by an ambiguous/failed extraction.
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/rwanda/"]),
+            "https://x.sk/rwanda/": fake_result(markdown=fake_markdown(LONG_TEXT + " changed")),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion()  # empty, ambiguous
+    existing = [
+        {
+            "name": "Rwanda",
+            "url": "https://x.sk/rwanda/",
+            "status": "ok",
+            "last_seen": "2026-07-01",
+            "page_hash": "old-hash-does-not-match",
+            "packaging": [{"weight_g": 250, "price": 12.5}],
+        }
+    ]
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, existing, "2026-07-04")
+    assert status == "ok"
+    assert entries == existing  # untouched, not downgraded, not cached as not_a_product
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_does_not_cache_not_a_product_on_ambiguous_failure():
+    # Without an existing prior, an ambiguous/failed extraction must not
+    # produce a not_a_product cache entry either — it should simply yield no
+    # entry for the url, leaving it eligible for retry on the next run.
+    markdown_text = LONG_TEXT + " some page"
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/mystery/"]),
+            "https://x.sk/mystery/": fake_result(markdown=fake_markdown(markdown_text)),
+        }
+    )
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion()  # empty, ambiguous
+
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, [], "2026-07-04")
+    assert status == "ok"
+    assert entries == []
+
+
+@pytest.mark.asyncio
 async def test_process_roaster_reclassifies_stale_incomplete_when_confidently_not_coffee():
-    # Claude DID extract a name this run (unlike a bare decline) — our own
+    # The model DID extract a name this run (unlike a bare decline) — our own
     # is_coffee() rejects it. That's a confident, deterministic
     # classification (e.g. a NON_COFFEE_KEYWORDS addition catching a gift
     # set that slipped through before) and must reclassify the stale
@@ -1960,7 +2641,9 @@ async def test_process_roaster_caches_not_a_product_to_avoid_repeat_calls():
         }
     )
     client = MagicMock()
-    client.chat.completions.create.return_value = fake_completion()  # declines
+    client.chat.completions.create.return_value = fake_completion(
+        content="This is a category/listing page, not a single coffee product."
+    )  # explicit decline
 
     entries, _ = await scrape.process_roaster(crawler, client, ROASTER, [], "2026-07-04")
     assert entries[0]["status"] == "not_a_product"
@@ -2068,3 +2751,762 @@ def test_validate_entry_rejects_bad_roast_type():
 )
 def test_normalize_process(raw, expected):
     assert scrape.normalize_process(raw) == expected
+
+
+# --- run() (checkpointing / per-roaster error isolation, issue #23) ---------
+
+
+class FakeWebCrawler:
+    """Duck-typed async-context-manager stand-in for crawl4ai's AsyncWebCrawler.
+
+    run() only ever awaits `__aenter__`/`__aexit__` on it (via
+    AsyncExitStack) before handing it to process_roaster — which is itself
+    monkeypatched in these tests — so no arun()/network behavior is needed.
+    """
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        return False
+
+
+def three_roasters():
+    return [
+        {"name": "Roaster One", "slug": "roaster-one", "url": "https://a.sk/", "scrape_url": "https://a.sk/"},
+        {"name": "Roaster Two", "slug": "roaster-two", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
+        {"name": "Roaster Three", "slug": "roaster-three", "url": "https://c.sk/", "scrape_url": "https://c.sk/"},
+    ]
+
+
+def write_roasters_yaml(path, roasters):
+    path.write_text(yaml.safe_dump({"roasters": roasters}))
+
+
+@pytest.mark.asyncio
+async def test_run_checkpoints_save_products_after_each_roaster(monkeypatch, tmp_path):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = three_roasters()
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        return [{"name": roaster["name"], "url": roaster["url"] + "p"}], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    save_calls = []
+    real_save_products = scrape.save_products
+
+    def spy_save_products(products, path=scrape.PRODUCTS_PATH):
+        save_calls.append(len(products))
+        return real_save_products(products, path)
+
+    monkeypatch.setattr(scrape, "save_products", spy_save_products)
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+
+    # One checkpoint save per roaster, not just one at the very end — and
+    # each successive checkpoint has one more roaster's worth of data than
+    # the last, confirming it isn't just called 3 times with the same
+    # (fully-built) dict.
+    assert len(save_calls) == len(roasters)
+    assert save_calls == [1, 2, 3]
+
+    on_disk = scrape.load_products(products_path)
+    assert set(on_disk.keys()) == {"roaster-one", "roaster-two", "roaster-three"}
+
+
+@pytest.mark.asyncio
+async def test_run_isolates_roaster_exception_and_continues(monkeypatch, tmp_path):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = three_roasters()
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        if roaster["slug"] == "roaster-two":
+            raise ValueError("boom: simulated bug processing roaster two")
+        return [{"name": roaster["name"], "url": roaster["url"] + "p"}], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    # Should not raise — the exception on roaster-two must be caught and
+    # isolated, letting roaster-three still be processed.
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+
+    on_disk = scrape.load_products(products_path)
+    assert on_disk["roaster-one"] == [{"name": "Roaster One", "url": "https://a.sk/p"}]
+    # roaster-two blew up before producing any entries — no data invented,
+    # existing (empty, first-run) entries preserved as-is.
+    assert on_disk["roaster-two"] == []
+    assert on_disk["roaster-three"] == [{"name": "Roaster Three", "url": "https://c.sk/p"}]
+
+
+@pytest.mark.asyncio
+async def test_run_records_failed_status_for_roaster_that_raised(monkeypatch, tmp_path, capsys):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = three_roasters()
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        if roaster["slug"] == "roaster-two":
+            raise RuntimeError("simulated failure")
+        return [], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+
+    out = capsys.readouterr().out
+    assert "Roaster One: ok" in out
+    assert "Roaster Two: failed" in out
+    assert "Roaster Three: ok" in out
+
+
+@pytest.mark.asyncio
+async def test_run_preserves_prior_roaster_entries_when_it_later_raises(monkeypatch, tmp_path):
+    # A roaster that previously had good data, and this run's process_roaster
+    # call blows up before returning anything: the crash must not wipe out
+    # that roaster's existing products.yaml entries.
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = [
+        {"name": "Roaster Two", "slug": "roaster-two", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
+    ]
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+    prior_entry = {
+        "name": "Old Coffee",
+        "url": "https://b.sk/old-coffee/",
+        "origin": "Rwanda",
+        "process": None,
+        "roast_type": "filter",
+        "status": "ok",
+        "last_seen": "2026-07-01",
+        "page_hash": "abc123",
+        "packaging": [{"weight_g": 250, "price": 12.5}],
+        "schema_version": scrape.SCHEMA_VERSION,
+    }
+    scrape.save_products({"roaster-two": [prior_entry]}, products_path)
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        raise ValueError("boom")
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+
+    on_disk = scrape.load_products(products_path)
+    assert on_disk["roaster-two"] == [prior_entry]
+
+
+@pytest.mark.asyncio
+async def test_run_checkpointing_survives_later_fatal_crash(monkeypatch, tmp_path):
+    # Simulates a genuinely-fatal crash that happens OUTSIDE the per-roaster
+    # try/except (e.g. a disk error in save_products itself) partway through
+    # the run — the whole point of per-roaster checkpointing (issue #23) is
+    # that the roasters processed before the crash are already durably on
+    # disk, not just held in memory.
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = three_roasters()
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        return [{"name": roaster["name"], "url": roaster["url"] + "p"}], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    real_save_products = scrape.save_products
+    call_count = {"n": 0}
+
+    def crashing_save_products(products, path=scrape.PRODUCTS_PATH):
+        call_count["n"] += 1
+        if call_count["n"] == 3:
+            raise OSError("simulated disk failure on the third checkpoint")
+        return real_save_products(products, path)
+
+    monkeypatch.setattr(scrape, "save_products", crashing_save_products)
+
+    with pytest.raises(OSError):
+        await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+
+    # The crash happened on the 3rd checkpoint write, so the 2nd checkpoint
+    # (roaster-one + roaster-two) already made it to disk before the crash.
+    on_disk = scrape.load_products(products_path)
+    assert set(on_disk.keys()) == {"roaster-one", "roaster-two"}
+
+
+# --- run() cross-roaster concurrency (issue #27) -----------------------------
+
+
+@pytest.mark.asyncio
+async def test_run_processes_roasters_concurrently_not_sequentially(monkeypatch, tmp_path):
+    # Give each fake process_roaster a real await point (like a genuine
+    # network fetch would be) so the event loop actually gets a chance to
+    # interleave them. A strictly sequential run() would produce
+    # start/end/start/end/start/end; true concurrency produces every
+    # "start" before any "end" (all 3 roasters overlap).
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    # This test needs asyncio.sleep(0) to genuinely yield control (to prove
+    # real interleaving) — undo the autouse fixture's no-op stub, which
+    # would otherwise also swallow this explicit sleep(0) since it patches
+    # the same shared asyncio module object that `import asyncio` above
+    # refers to. process_roaster itself is fully replaced by the fake
+    # below, so no *real* politeness delay is at risk of firing here.
+    monkeypatch.setattr(scrape.asyncio, "sleep", _REAL_ASYNCIO_SLEEP)
+    roasters = three_roasters()
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+
+    events = []
+    in_flight = {"current": 0, "peak": 0}
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        events.append(("start", roaster["slug"]))
+        in_flight["current"] += 1
+        in_flight["peak"] = max(in_flight["peak"], in_flight["current"])
+        await asyncio.sleep(0)  # yields control, standing in for real network I/O
+        in_flight["current"] -= 1
+        events.append(("end", roaster["slug"]))
+        return [{"name": roaster["name"], "url": roaster["url"] + "p"}], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+
+    starts = [i for i, (kind, _) in enumerate(events) if kind == "start"]
+    ends = [i for i, (kind, _) in enumerate(events) if kind == "end"]
+    assert len(starts) == len(ends) == 3
+    assert max(starts) < min(ends), f"expected all starts before any end, got {events}"
+    assert in_flight["peak"] >= 2  # genuinely overlapped, not one-at-a-time
+
+    # Checkpointing still lands every roaster's data correctly under
+    # concurrency, whatever order they actually completed in.
+    on_disk = scrape.load_products(products_path)
+    assert on_disk == {
+        "roaster-one": [{"name": "Roaster One", "url": "https://a.sk/p"}],
+        "roaster-two": [{"name": "Roaster Two", "url": "https://b.sk/p"}],
+        "roaster-three": [{"name": "Roaster Three", "url": "https://c.sk/p"}],
+    }
+
+
+@pytest.mark.asyncio
+async def test_run_respects_cross_roaster_concurrency_limit(monkeypatch, tmp_path):
+    # More roasters than CROSS_ROASTER_CONCURRENCY — peak concurrent
+    # in-flight processing must never exceed the semaphore's limit.
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    # See test_run_processes_roasters_concurrently_not_sequentially: restore
+    # real asyncio.sleep so this test's own sleep(0) actually yields.
+    monkeypatch.setattr(scrape.asyncio, "sleep", _REAL_ASYNCIO_SLEEP)
+    roasters = [
+        {"name": f"Roaster {i}", "slug": f"roaster-{i}", "url": f"https://r{i}.sk/", "scrape_url": f"https://r{i}.sk/"}
+        for i in range(scrape.CROSS_ROASTER_CONCURRENCY * 2)
+    ]
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+
+    in_flight = {"current": 0, "peak": 0}
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        in_flight["current"] += 1
+        in_flight["peak"] = max(in_flight["peak"], in_flight["current"])
+        await asyncio.sleep(0)
+        in_flight["current"] -= 1
+        return [], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+
+    assert in_flight["peak"] == scrape.CROSS_ROASTER_CONCURRENCY
+
+
+@pytest.mark.asyncio
+async def test_run_isolates_roaster_exception_under_real_concurrency(monkeypatch, tmp_path):
+    # Same guarantee as test_run_isolates_roaster_exception_and_continues,
+    # but with a real await point in each fake process_roaster so the
+    # roasters genuinely overlap — a raise inside one concurrently-running
+    # task must not cancel or otherwise disturb the others.
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    # See test_run_processes_roasters_concurrently_not_sequentially: restore
+    # real asyncio.sleep so this test's own sleep(0) actually yields.
+    monkeypatch.setattr(scrape.asyncio, "sleep", _REAL_ASYNCIO_SLEEP)
+    roasters = three_roasters()
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        await asyncio.sleep(0)
+        if roaster["slug"] == "roaster-two":
+            raise ValueError("boom: simulated bug processing roaster two")
+        await asyncio.sleep(0)
+        return [{"name": roaster["name"], "url": roaster["url"] + "p"}], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    # Should not raise — the exception on roaster-two must be caught and
+    # isolated, letting roaster-one and roaster-three still complete.
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+
+    on_disk = scrape.load_products(products_path)
+    assert on_disk["roaster-one"] == [{"name": "Roaster One", "url": "https://a.sk/p"}]
+    assert on_disk["roaster-two"] == []
+    assert on_disk["roaster-three"] == [{"name": "Roaster Three", "url": "https://c.sk/p"}]
+
+
+@pytest.mark.asyncio
+async def test_run_checkpoint_lock_serializes_concurrent_saves(monkeypatch, tmp_path):
+    # Every roaster's checkpoint save dumps the WHOLE products dict —
+    # instrument save_products to detect any overlap between two
+    # concurrent calls (which would indicate a torn/interleaved write).
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    # See test_run_processes_roasters_concurrently_not_sequentially: restore
+    # real asyncio.sleep so this test's own sleep(0) actually yields.
+    monkeypatch.setattr(scrape.asyncio, "sleep", _REAL_ASYNCIO_SLEEP)
+    roasters = three_roasters()
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        await asyncio.sleep(0)
+        return [{"name": roaster["name"], "url": roaster["url"] + "p"}], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    real_save_products = scrape.save_products
+    concurrent_calls = {"active": 0, "max_overlap": 0}
+
+    def instrumented_save_products(products, path=scrape.PRODUCTS_PATH):
+        concurrent_calls["active"] += 1
+        concurrent_calls["max_overlap"] = max(concurrent_calls["max_overlap"], concurrent_calls["active"])
+        try:
+            return real_save_products(products, path)
+        finally:
+            concurrent_calls["active"] -= 1
+
+    monkeypatch.setattr(scrape, "save_products", instrumented_save_products)
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+
+    assert concurrent_calls["max_overlap"] == 1
+    on_disk = scrape.load_products(products_path)
+    assert set(on_disk.keys()) == {"roaster-one", "roaster-two", "roaster-three"}
+
+
+# --- _require_openrouter_api_key ---------------------------------------------
+
+
+def test_require_openrouter_api_key_missing_raises_clear_error(monkeypatch):
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY"):
+        scrape._require_openrouter_api_key()
+
+
+def test_require_openrouter_api_key_empty_raises_clear_error(monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "")
+    with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY"):
+        scrape._require_openrouter_api_key()
+
+
+def test_require_openrouter_api_key_present_returns_it(monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-test-123")
+    assert scrape._require_openrouter_api_key() == "sk-test-123"
+
+
+@pytest.mark.asyncio
+async def test_run_raises_fast_on_missing_api_key_before_processing_any_roaster(monkeypatch, tmp_path):
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = three_roasters()
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+
+    calls = []
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        calls.append(roaster["slug"])
+        return [], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY"):
+        await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+
+    assert calls == []
+
+
+# --- Observability (issue #28): GITHUB_STEP_SUMMARY, ::warning:: annotations,
+# --- data/scrape_status.yaml persistence, and repeated-failure escalation ---
+
+
+def _statuses_by_slug(*, ok=(), failed=(), needs_js=(), partial=()):
+    result = {}
+    for slug in ok:
+        result[slug] = {"name": slug.replace("-", " ").title(), "status": "ok"}
+    for slug in failed:
+        result[slug] = {"name": slug.replace("-", " ").title(), "status": "failed"}
+    for slug in needs_js:
+        result[slug] = {"name": slug.replace("-", " ").title(), "status": "needs_js"}
+    for slug in partial:
+        result[slug] = {"name": slug.replace("-", " ").title(), "status": "partial"}
+    return result
+
+
+def test_write_github_step_summary_writes_table(tmp_path):
+    summary_path = tmp_path / "step_summary.md"
+    statuses = _statuses_by_slug(ok=["kavoholik"], failed=["broken-roaster"], needs_js=["js-roaster"])
+
+    scrape.write_github_step_summary(statuses, summary_path=str(summary_path))
+
+    content = summary_path.read_text()
+    assert "## Scrape run health" in content
+    assert "| Roaster | Status | Note |" in content
+    assert "Kavoholik" in content and "| ok |" in content
+    assert "Broken Roaster" in content and "| failed |" in content
+    assert "Js Roaster" in content and "| needs_js |" in content
+
+
+def test_write_github_step_summary_appends_not_overwrites(tmp_path):
+    summary_path = tmp_path / "step_summary.md"
+    summary_path.write_text("# Previous step's summary\n")
+    statuses = _statuses_by_slug(ok=["kavoholik"])
+
+    scrape.write_github_step_summary(statuses, summary_path=str(summary_path))
+
+    content = summary_path.read_text()
+    assert content.startswith("# Previous step's summary\n")
+    assert "## Scrape run health" in content
+
+
+def test_write_github_step_summary_reads_env_var_when_no_path_given(monkeypatch, tmp_path):
+    summary_path = tmp_path / "step_summary.md"
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary_path))
+    statuses = _statuses_by_slug(failed=["broken-roaster"])
+
+    scrape.write_github_step_summary(statuses)
+
+    assert "Broken Roaster" in summary_path.read_text()
+
+
+def test_write_github_step_summary_noop_without_env_var(monkeypatch):
+    # Not set locally (guard case from the issue) — must not raise, must not
+    # try to write anywhere.
+    monkeypatch.delenv("GITHUB_STEP_SUMMARY", raising=False)
+    scrape.write_github_step_summary(_statuses_by_slug(ok=["kavoholik"]))  # no exception
+
+
+def test_emit_warning_annotations_only_for_non_ok(capsys):
+    statuses = _statuses_by_slug(ok=["kavoholik"], failed=["broken-roaster"], needs_js=["js-roaster"])
+
+    scrape.emit_warning_annotations(statuses)
+
+    out = capsys.readouterr().out
+    assert "::warning::Roaster 'Broken Roaster' has status 'failed'" in out
+    assert "::warning::Roaster 'Js Roaster' has status 'needs_js'" in out
+    assert "Kavoholik" not in out
+
+
+def test_emit_warning_annotations_silent_when_all_ok(capsys):
+    scrape.emit_warning_annotations(_statuses_by_slug(ok=["kavoholik", "ready-after"]))
+    assert capsys.readouterr().out == ""
+
+
+# --- build_scrape_status_records --------------------------------------------
+
+
+def test_build_scrape_status_records_first_ok_run_has_zero_streak():
+    records = scrape.build_scrape_status_records(
+        _statuses_by_slug(ok=["kavoholik"]), "2026-07-06", previous=None
+    )
+    assert records["kavoholik"] == {
+        "name": "Kavoholik",
+        "status": "ok",
+        "last_run": "2026-07-06",
+        "consecutive_non_ok": 0,
+    }
+
+
+def test_build_scrape_status_records_increments_streak_across_two_failed_runs():
+    # Simulate two consecutive scrape runs where the same roaster stays
+    # "failed" both times.
+    run1 = scrape.build_scrape_status_records(
+        _statuses_by_slug(failed=["broken-roaster"]), "2026-07-06", previous=None
+    )
+    assert run1["broken-roaster"]["consecutive_non_ok"] == 1
+
+    run2 = scrape.build_scrape_status_records(
+        _statuses_by_slug(failed=["broken-roaster"]), "2026-07-13", previous=run1
+    )
+    assert run2["broken-roaster"]["consecutive_non_ok"] == 2
+    assert run2["broken-roaster"]["last_run"] == "2026-07-13"
+    assert run2["broken-roaster"]["status"] == "failed"
+
+
+def test_build_scrape_status_records_resets_streak_on_recovery():
+    run1 = scrape.build_scrape_status_records(
+        _statuses_by_slug(failed=["flaky-roaster"]), "2026-07-06", previous=None
+    )
+    assert run1["flaky-roaster"]["consecutive_non_ok"] == 1
+
+    run2 = scrape.build_scrape_status_records(
+        _statuses_by_slug(ok=["flaky-roaster"]), "2026-07-13", previous=run1
+    )
+    assert run2["flaky-roaster"]["consecutive_non_ok"] == 0
+    assert run2["flaky-roaster"]["status"] == "ok"
+
+
+def test_build_scrape_status_records_preserves_untouched_roasters():
+    # A roaster not processed this run (e.g. --only filtered it out) keeps
+    # its previous record untouched rather than being dropped.
+    previous = {
+        "untouched-roaster": {
+            "name": "Untouched Roaster",
+            "status": "failed",
+            "last_run": "2026-06-01",
+            "consecutive_non_ok": 5,
+        }
+    }
+    records = scrape.build_scrape_status_records(
+        _statuses_by_slug(ok=["kavoholik"]), "2026-07-06", previous=previous
+    )
+    assert records["untouched-roaster"] == previous["untouched-roaster"]
+    assert records["kavoholik"]["consecutive_non_ok"] == 0
+
+
+def test_build_scrape_status_records_partial_and_needs_js_count_as_non_ok():
+    records = scrape.build_scrape_status_records(
+        _statuses_by_slug(partial=["partial-roaster"], needs_js=["js-roaster"]),
+        "2026-07-06",
+        previous=None,
+    )
+    assert records["partial-roaster"]["consecutive_non_ok"] == 1
+    assert records["js-roaster"]["consecutive_non_ok"] == 1
+
+
+# --- load_scrape_status / save_scrape_status ---------------------------------
+
+
+def test_save_and_load_scrape_status_roundtrip(tmp_path):
+    path = tmp_path / "scrape_status.yaml"
+    records = {
+        "kavoholik": {"name": "Kavoholik", "status": "ok", "last_run": "2026-07-06", "consecutive_non_ok": 0},
+        "broken-roaster": {
+            "name": "Broken Roaster",
+            "status": "failed",
+            "last_run": "2026-07-06",
+            "consecutive_non_ok": 3,
+        },
+    }
+    scrape.save_scrape_status(records, path)
+
+    loaded = scrape.load_scrape_status(path)
+    assert loaded == records
+    # Structural sanity check on the on-disk YAML shape.
+    raw = yaml.safe_load(path.read_text())
+    assert set(raw["broken-roaster"]) == {"name", "status", "last_run", "consecutive_non_ok"}
+
+
+def test_load_scrape_status_missing_file_returns_empty_dict(tmp_path):
+    assert scrape.load_scrape_status(tmp_path / "does-not-exist.yaml") == {}
+
+
+def test_load_scrape_status_coerces_yaml_date_back_to_string(tmp_path):
+    path = tmp_path / "scrape_status.yaml"
+    path.write_text("roaster:\n  name: Roaster\n  status: failed\n  last_run: 2026-07-06\n  consecutive_non_ok: 1\n")
+    loaded = scrape.load_scrape_status(path)
+    assert loaded["roaster"]["last_run"] == "2026-07-06"
+    assert isinstance(loaded["roaster"]["last_run"], str)
+
+
+# --- escalate_repeated_failures -----------------------------------------------
+
+
+def test_escalate_repeated_failures_prints_error_at_threshold(capsys):
+    records = {
+        "broken-roaster": {
+            "name": "Broken Roaster",
+            "status": "failed",
+            "last_run": "2026-07-06",
+            "consecutive_non_ok": 3,
+        },
+        "flaky-roaster": {
+            "name": "Flaky Roaster",
+            "status": "needs_js",
+            "last_run": "2026-07-06",
+            "consecutive_non_ok": 2,
+        },
+    }
+    scrape.escalate_repeated_failures(records)
+
+    out = capsys.readouterr().out
+    assert "::error::Roaster 'Broken Roaster' has been non-ok for 3 consecutive runs" in out
+    assert "Flaky Roaster" not in out
+
+
+def test_escalate_repeated_failures_silent_below_threshold(capsys):
+    records = {
+        "flaky-roaster": {
+            "name": "Flaky Roaster",
+            "status": "needs_js",
+            "last_run": "2026-07-06",
+            "consecutive_non_ok": 2,
+        },
+    }
+    scrape.escalate_repeated_failures(records)
+    assert capsys.readouterr().out == ""
+
+
+def test_escalate_repeated_failures_respects_custom_threshold(capsys):
+    records = {
+        "roaster": {"name": "Roaster", "status": "failed", "last_run": "2026-07-06", "consecutive_non_ok": 1},
+    }
+    scrape.escalate_repeated_failures(records, threshold=1)
+    assert "::error::Roaster 'Roaster' has been non-ok for 1 consecutive runs" in capsys.readouterr().out
+
+
+# --- run() integration: scrape_status.yaml persisted end-to-end -------------
+
+
+@pytest.mark.asyncio
+async def test_run_persists_scrape_status_with_consecutive_non_ok_tracking(monkeypatch, tmp_path):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = [
+        {"name": "Broken Roaster", "slug": "broken-roaster", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
+        {"name": "Good Roaster", "slug": "good-roaster", "url": "https://g.sk/", "scrape_url": "https://g.sk/"},
+    ]
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+    status_path = tmp_path / "scrape_status.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        if roaster["slug"] == "broken-roaster":
+            return existing_entries, "failed"
+        return [{"name": roaster["name"], "url": roaster["url"] + "p"}], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    # Run 1: broken-roaster fails for the first time.
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+    records = scrape.load_scrape_status(status_path)
+    assert records["broken-roaster"]["status"] == "failed"
+    assert records["broken-roaster"]["consecutive_non_ok"] == 1
+    assert records["good-roaster"]["status"] == "ok"
+    assert records["good-roaster"]["consecutive_non_ok"] == 0
+
+    # Run 2: broken-roaster fails again — streak must climb to 2. Recreate
+    # products.yaml's roaster entry so the second run starts from what the
+    # first run actually persisted (mirrors a real second cron run).
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+    records = scrape.load_scrape_status(status_path)
+    assert records["broken-roaster"]["consecutive_non_ok"] == 2
+    assert records["good-roaster"]["consecutive_non_ok"] == 0
+
+
+@pytest.mark.asyncio
+async def test_run_resets_consecutive_non_ok_when_roaster_recovers(monkeypatch, tmp_path):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = [
+        {"name": "Flaky Roaster", "slug": "flaky-roaster", "url": "https://f.sk/", "scrape_url": "https://f.sk/"},
+    ]
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+    status_path = tmp_path / "scrape_status.yaml"
+
+    call_count = {"n": 0}
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        call_count["n"] += 1
+        if call_count["n"] == 1:
+            return existing_entries, "failed"
+        return [{"name": roaster["name"], "url": roaster["url"] + "p"}], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+    records = scrape.load_scrape_status(status_path)
+    assert records["flaky-roaster"]["consecutive_non_ok"] == 1
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+    records = scrape.load_scrape_status(status_path)
+    assert records["flaky-roaster"]["status"] == "ok"
+    assert records["flaky-roaster"]["consecutive_non_ok"] == 0
+
+
+@pytest.mark.asyncio
+async def test_run_emits_warning_and_writes_step_summary_for_non_ok_roaster(monkeypatch, tmp_path, capsys):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(tmp_path / "step_summary.md"))
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = [
+        {"name": "Broken Roaster", "slug": "broken-roaster", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
+    ]
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+    status_path = tmp_path / "scrape_status.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        return existing_entries, "failed"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+
+    out = capsys.readouterr().out
+    assert "::warning::Roaster 'Broken Roaster' has status 'failed'" in out
+
+    summary_path = tmp_path / "step_summary.md"
+    assert summary_path.exists()
+    assert "Broken Roaster" in summary_path.read_text()
+
+
+@pytest.mark.asyncio
+async def test_run_escalates_after_three_consecutive_non_ok_runs(monkeypatch, tmp_path, capsys):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = [
+        {"name": "Broken Roaster", "slug": "broken-roaster", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
+    ]
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    products_path = tmp_path / "products.yaml"
+    status_path = tmp_path / "scrape_status.yaml"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        return existing_entries, "failed"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    for _ in range(3):
+        await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+
+    out = capsys.readouterr().out
+    assert "::error::Roaster 'Broken Roaster' has been non-ok for 3 consecutive runs" in out

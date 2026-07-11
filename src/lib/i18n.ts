@@ -43,6 +43,12 @@ export const UI = {
     staleAriaLabel: (lastSeen: string) => `Price may be outdated — last confirmed ${lastSeen}`,
     coffeeCount: (n: number) => `${n} coffee${n !== 1 ? 's' : ''}`,
     roasterCount: (n: number) => `${n} roaster${n !== 1 ? 's' : ''}`,
+    favouritesOnly: 'Favourites only',
+    addFavourite: (name: string) => `Add ${name} to favourites`,
+    removeFavourite: (name: string) => `Remove ${name} from favourites`,
+    favouritesStoredLocally: "Favourites are saved only in this browser — they won't follow you to another device or be visible to anyone else.",
+    noFavouritesYet: 'No favourite roasteries yet — tap the star on any roaster below (or in the coffee table) to add one.',
+    favouriteRoasterCount: (n: number) => `${n} favourite roaster${n !== 1 ? 's' : ''}`,
   },
   sk: {
     search: 'Hľadať',
@@ -71,6 +77,12 @@ export const UI = {
     staleAriaLabel: (lastSeen: string) => `Cena môže byť neaktuálna — posledná kontrola ${lastSeen}`,
     coffeeCount: (n: number) => `${n} ${skCount(n, 'káva', 'kávy', 'káv')}`,
     roasterCount: (n: number) => `${n} ${skCount(n, 'pražiareň', 'pražiarne', 'pražiarní')}`,
+    favouritesOnly: 'Iba obľúbené',
+    addFavourite: (name: string) => `Pridať ${name} medzi obľúbené`,
+    removeFavourite: (name: string) => `Odstrániť ${name} z obľúbených`,
+    favouritesStoredLocally: 'Obľúbené sú uložené iba vo vašom prehliadači — neprenesú sa do iného zariadenia ani ich nikto iný neuvidí.',
+    noFavouritesYet: 'Zatiaľ nemáte žiadne obľúbené pražiarne — kliknutím na hviezdičku pri pražiarni nižšie (alebo v tabuľke káv) ju pridáte.',
+    favouriteRoasterCount: (n: number) => `${n} ${skCount(n, 'obľúbená pražiareň', 'obľúbené pražiarne', 'obľúbených pražiarní')}`,
   },
 } satisfies Record<Lang, Record<string, string | ((...args: never[]) => string)>>;
 

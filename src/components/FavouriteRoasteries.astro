@@ -1,0 +1,212 @@
+---
+import { loadRoasters, safeUrl } from '../lib/coffees';
+import { UI, type Lang } from '../lib/i18n';
+
+const lang: Lang = Astro.locals.starlightRoute.lang === 'sk' ? 'sk' : 'en';
+const t = UI[lang];
+
+const roasters = loadRoasters()
+  .slice()
+  .sort((a, b) => a.name.localeCompare(b.name, lang));
+---
+
+<div class="fr-wrap not-content">
+  <p class="fr-note">{t.favouritesStoredLocally}</p>
+
+  <p class="fr-summary" aria-live="polite">
+    <strong id="fr-count">{t.favouriteRoasterCount(0)}</strong>
+  </p>
+  <p id="fr-empty" class="fr-empty">{t.noFavouritesYet}</p>
+
+  <ul class="fr-grid" id="fr-list">
+    {roasters.map((r) => (
+      <li class="fr-card" data-slug={r.slug}>
+        <button
+          type="button"
+          class="fr-fav-btn"
+          data-fav-slug={r.slug}
+          data-fav-name={r.name}
+          aria-pressed="false"
+          aria-label={t.addFavourite(r.name)}
+        >
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M10 1.6l2.47 5.24 5.63.55-4.24 3.9 1.2 5.71L10 14.2l-5.06 2.8 1.2-5.71-4.24-3.9 5.63-.55L10 1.6z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="fr-card-body">
+          <a class="fr-card-name" href={safeUrl(r.url)} target="_blank" rel="noopener noreferrer">{r.name}</a>
+          {r.metadata?.city && <span class="fr-card-city">{r.metadata.city}</span>}
+        </div>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<script>
+  import { getFavoriteSlugs, toggleFavoriteRoaster, onFavoritesChange } from '../lib/favorites';
+  import { UI, type Lang } from '../lib/i18n';
+
+  const lang: Lang = document.documentElement.lang === 'sk' ? 'sk' : 'en';
+  const t = UI[lang];
+
+  try {
+
+  const list    = document.getElementById('fr-list')!;
+  const cards   = Array.from(list.querySelectorAll<HTMLLIElement>('.fr-card'));
+  const emptyEl = document.getElementById('fr-empty')!;
+  const countEl = document.getElementById('fr-count')!;
+
+  function sync() {
+    const favs = new Set(getFavoriteSlugs());
+    let favCount = 0;
+    for (const card of cards) {
+      const slug = card.dataset.slug || '';
+      const isFav = favs.has(slug);
+      if (isFav) favCount++;
+      // Favourited roasteries float to the top of the grid so the page
+      // doubles as an at-a-glance "my roasteries" view, not just a toggle list.
+      card.style.order = isFav ? '-1' : '0';
+      card.classList.toggle('fr-card--favourite', isFav);
+
+      const btn = card.querySelector<HTMLButtonElement>('.fr-fav-btn')!;
+      const name = btn.dataset.favName || '';
+      btn.classList.toggle('fr-fav-btn--active', isFav);
+      btn.setAttribute('aria-pressed', String(isFav));
+      btn.setAttribute('aria-label', isFav ? t.removeFavourite(name) : t.addFavourite(name));
+    }
+    countEl.textContent = t.favouriteRoasterCount(favCount);
+    emptyEl.hidden = favCount > 0;
+  }
+
+  for (const card of cards) {
+    const btn = card.querySelector<HTMLButtonElement>('.fr-fav-btn')!;
+    btn.addEventListener('click', () => {
+      toggleFavoriteRoaster(btn.dataset.favSlug || '');
+      sync();
+    });
+  }
+
+  onFavoritesChange(sync);
+  sync();
+
+  } catch (err) {
+    console.error('FavouriteRoasteries: failed to initialize', err);
+  }
+</script>
+
+<style>
+  .fr-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 1.5rem;
+  }
+
+  .fr-note {
+    margin: 0;
+    font-size: var(--md-sys-typescale-body-medium-size);
+    color: var(--md-sys-color-outline);
+  }
+
+  .fr-summary {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: var(--md-sys-typescale-title-medium-size);
+  }
+
+  .fr-summary strong {
+    color: var(--md-sys-color-on-surface);
+  }
+
+  .fr-empty {
+    margin: 0;
+    padding: 24px;
+    text-align: center;
+    color: var(--md-sys-color-outline);
+    font-size: var(--md-sys-typescale-body-medium-size);
+    background: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-large);
+  }
+
+  .fr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .fr-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-large);
+    background: var(--md-sys-color-surface-container-lowest);
+    transition: border-color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+  }
+
+  .fr-card--favourite {
+    border-color: color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
+    background: color-mix(in srgb, var(--md-sys-color-primary-container) 30%, var(--md-sys-color-surface-container-lowest));
+  }
+
+  .fr-fav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 2px;
+    border: none;
+    background: none;
+    color: var(--md-sys-color-outline);
+    cursor: pointer;
+    border-radius: var(--md-sys-shape-corner-extra-small, 4px);
+    transition: color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+  }
+
+  .fr-fav-btn:hover { color: var(--md-sys-color-primary); }
+
+  .fr-fav-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--md3-focus-ring);
+  }
+
+  .fr-fav-btn svg { transition: fill var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard); }
+
+  .fr-fav-btn--active {
+    color: var(--md-sys-color-primary);
+  }
+
+  .fr-fav-btn--active svg {
+    fill: currentColor;
+  }
+
+  .fr-card-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .fr-card-name {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface);
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .fr-card-name:hover {
+    color: var(--md-sys-color-primary);
+  }
+
+  .fr-card-city {
+    font-size: var(--md-sys-typescale-label-small-size);
+    color: var(--md-sys-color-outline);
+  }
+</style>

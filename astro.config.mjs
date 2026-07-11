@@ -79,6 +79,7 @@ export default defineConfig({
             { label: 'All', translations: { sk: 'Všetky' }, link: '/coffees/' },
             { label: 'Filter coffees', translations: { sk: 'Filter kávy' }, link: '/coffees/filter/' },
             { label: 'Espresso coffees', translations: { sk: 'Espresso kávy' }, link: '/coffees/espresso/' },
+            { label: 'Favourite Roasteries', translations: { sk: 'Obľúbené pražiarne' }, link: '/favourites/' },
           ]
         },
         {

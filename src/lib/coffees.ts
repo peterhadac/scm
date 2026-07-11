@@ -39,14 +39,17 @@ interface ProductEntry {
   packaging: ProductTier[];
 }
 
-interface Roaster {
+export interface Roaster {
   name: string;
   slug: string;
+  url: string;
+  metadata?: { city?: string };
 }
 
 export interface CoffeeRow {
   name: string;
   roaster: string;
+  roasterSlug: string;
   origin: string;
   process: string | null;
   roast_type: 'filter' | 'espresso';
@@ -61,13 +64,19 @@ function loadYaml<T>(relativePath: string): T {
   return yaml.load(fs.readFileSync(file, 'utf8')) as T;
 }
 
+// Shared by flattenProducts() below and the favourite-roasteries management
+// page, which needs the full roster (name/url/city) rather than just the
+// flattened coffee rows.
+export function loadRoasters(): Roaster[] {
+  return loadYaml<{ roasters: Roaster[] }>('roasters.yaml').roasters;
+}
+
 // Explodes each ok-status product's packaging tiers into flat rows, joined
 // with the roaster's display name from roasters.yaml by slug — mirrors
 // scraper/scrape.py's old flatten_to_coffees(), now run at site-build time
 // instead of by the Python scraper.
 export function flattenProducts(): CoffeeRow[] {
-  const roasterList = loadYaml<{ roasters: Roaster[] }>('roasters.yaml').roasters;
-  const roasterBySlug = new Map(roasterList.map((r) => [r.slug, r]));
+  const roasterBySlug = new Map(loadRoasters().map((r) => [r.slug, r]));
   const products = loadYaml<Record<string, ProductEntry[]>>('data/products.yaml');
 
   const seen = new Set<string>();
@@ -83,6 +92,7 @@ export function flattenProducts(): CoffeeRow[] {
         rows.push({
           name: product.name,
           roaster: roasterName,
+          roasterSlug: slug,
           origin: product.origin,
           process: product.process,
           roast_type: product.roast_type,

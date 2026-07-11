@@ -17,10 +17,11 @@ data/
   products.yaml        ← per-product intermediate: fields, page_hash, status, packaging (see Architecture.md)
   scrape_status.yaml    ← per-roaster health: status + consecutive_non_ok streak, committed alongside products.yaml (see "Observability" below)
 src/
-  content/docs/index.mdx   ← Starlight page embedding the table component
+  content/docs/index.mdx   ← Starlight page embedding the table component (+ sk/ mirror for Slovak)
   components/CoffeeTable.astro  ← filterable/sortable table UI
   lib/coffees.ts       ← build-time data layer: reads data/products.yaml + roasters.yaml, flattens to table rows
-astro.config.mjs       ← Astro + Starlight config (site + base for project Pages)
+  lib/i18n.ts           ← EN/SK UI string table + origin/process/roast_type display-label maps
+astro.config.mjs       ← Astro + Starlight config (site + base for project Pages, locales for EN/SK)
 package.json           ← astro, @astrojs/starlight, starlight-theme-md3 (npm)
 .github/workflows/
   scrape.yml           ← weekly cron, commits products.yaml (its push does NOT trigger pages.yml — see below)
@@ -234,6 +235,38 @@ Steps: checkout → setup-node → `npm ci` → `npm run build` → `actions/upl
     muted warning icon next to its price (`.ct-stale`, reusing the tertiary
     / Garnet role already used for the "natural" process badge — no new
     color) with a title/aria-label explaining the price may be outdated.
+- **Internationalization (English + Slovak)**: uses Starlight's built-in
+  i18n rather than a bespoke toggle — `locales: { root: { lang: 'en' }, sk:
+  { lang: 'sk' } }` in `astro.config.mjs` gives URL-based routing
+  (`/scm/sk/...`), a translated sidebar, and a language picker for free.
+  Starlight's own chrome (search, pagination, 404, "skip to content"...)
+  already ships a complete Slovak translation
+  (`@astrojs/starlight/translations/sk.json`) and needs no extra work.
+  - **Content pages**: every page under `src/content/docs/` has a 1:1
+    mirror under `src/content/docs/sk/` with hand-written Slovak prose
+    (internal links inside those pages point at the `/scm/sk/...` path).
+    Sidebar item labels are translated via each item's `translations: {
+    sk: '...' }` key in `astro.config.mjs`; the `link` itself stays
+    unprefixed — Starlight injects the current locale automatically.
+  - **`CoffeeTable.astro` UI strings and data-field display translation**:
+    `src/lib/i18n.ts` holds the EN/SK string table (`UI`) plus display-label
+    maps for the controlled-vocabulary fields (`ORIGIN_LABELS`,
+    `PROCESS_LABELS`, `ROAST_TYPE_LABELS`, keyed by the canonical English
+    value from `data/products.yaml`). The component reads the active locale
+    from `Astro.locals.starlightRoute.lang` server-side and from
+    `document.documentElement.lang` in its client `<script>` (both set by
+    Starlight). Only the *rendered* text changes with language — every
+    `data-origin`/`data-process`/`data-roast` attribute (and the filter
+    `<select>` option **values**) stays the stable English key from
+    `products.yaml`, so switching language never changes which rows match a
+    filter. Coffee `name` and `roaster` are never translated — they're
+    scraped proper nouns linking out to the roaster's own untranslated page.
+  - **Persistence**: Starlight's language picker is purely URL-based with no
+    memory of its own, so a small inline script (in `astro.config.mjs`'s
+    `head` array) stores the chosen language in `localStorage` and, on any
+    page load, redirects to that language's mirror of the current path if
+    it doesn't already match — safe because every page has a 1:1 `/sk`
+    counterpart, so the redirect is just a path-segment swap.
 
 ## Brand & Design System
 

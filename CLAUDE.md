@@ -12,7 +12,8 @@ Weekly-updated catalogue of coffees available on the Slovak market, scraped from
 roasters.yaml          ← seed list of roasters + per-site scraper overrides + slug/metadata
 scraper/
   scrape.py            ← main entrypoint: crawl4ai discover → hash-gate → AI extract → normalize/validate → products.yaml
-  requirements.txt
+  pyproject.toml       ← uv project: runtime deps + pytest dev dep
+  uv.lock              ← pinned lockfile
 data/
   products.yaml        ← per-product intermediate: fields, page_hash, status, packaging (see Architecture.md)
   scrape_status.yaml    ← per-roaster health: status + consecutive_non_ok streak, committed alongside products.yaml (see "Observability" below)
@@ -22,7 +23,7 @@ src/
   lib/coffees.ts       ← build-time data layer: reads data/products.yaml + roasters.yaml, flattens to table rows
   lib/i18n.ts           ← EN/SK UI string table + origin/process/roast_type display-label maps
 astro.config.mjs       ← Astro + Starlight config (site + base for project Pages, locales for EN/SK)
-package.json           ← astro, @astrojs/starlight, starlight-theme-md3 (npm)
+package.json           ← astro, @astrojs/starlight, starlight-theme-md3 (pnpm)
 .github/workflows/
   scrape.yml           ← weekly cron, commits products.yaml (its push does NOT trigger pages.yml — see below)
   pages.yml            ← build Astro + deploy to Pages on push to main / scrape.yml completion / manual
@@ -169,7 +170,7 @@ permissions:
   issues: write              # for the escalation step below (issue #28)
 ```
 
-Steps: checkout → install deps → `crawl4ai-setup` (installs Playwright/Patchright browsers crawl4ai needs) → run scraper → **escalate roasters non-ok for 3+ consecutive runs** → commit `data/products.yaml` + `data/scrape_status.yaml` → push.
+Steps: checkout → `setup-uv` → `uv sync --directory scraper` → `crawl4ai-setup` (installs Playwright/Patchright browsers) → run scraper → **escalate roasters non-ok for 3+ consecutive runs** → commit `data/products.yaml` + `data/scrape_status.yaml` → push.
 
 - The escalation step (issue #28) reads `data/scrape_status.yaml` (just
   written by the scraper) with a small inline Python snippet, and for every
@@ -280,9 +281,7 @@ parsing, WooCommerce/Shopify variation extraction, pagination, etc.) — no netw
 access or `OPENROUTER_API_KEY` needed. Run it with:
 
 ```bash
-cd scraper
-pip install -r requirements.txt pytest   # pytest isn't in requirements.txt itself
-python -m pytest test_scrape.py -v
+uv run --directory scraper pytest test_scrape.py -v
 ```
 
 There's no site-side test suite beyond `npm run build` (Astro build + type-check).
@@ -319,18 +318,18 @@ workflow, a new site section).
 ## Development
 
 ```bash
-# Install scraper deps
-pip install -r scraper/requirements.txt
-crawl4ai-setup        # installs the Playwright/Patchright browsers crawl4ai needs
-                      # (required even for the plain-HTTP crawler; definitely
-                      # required to test any roaster with `scraper: playwright`)
+# Install scraper deps and set up Playwright/Patchright browsers
+uv sync --directory scraper
+uv run --directory scraper crawl4ai-setup
+# (required even for the plain-HTTP crawler; definitely
+# required to test any roaster with `scraper: playwright`)
 
 # Run scraper locally
-OPENROUTER_API_KEY=... python scraper/scrape.py
+OPENROUTER_API_KEY=... uv run --directory scraper python scrape.py
 
 # Serve site locally
-npm install
-npm run dev          # astro dev server with live reload
+pnpm install
+pnpm dev             # astro dev server with live reload
 ```
 
 ## Adding a New Roaster

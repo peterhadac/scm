@@ -8,6 +8,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'Slovak Coffee Map',
+      plugins: [md3Theme({ seed: '#FF6037', variant: 'tonalSpot' })],
       locales: {
         root: { label: 'English', lang: 'en' },
         sk: { label: 'Slovensky', lang: 'sk' },

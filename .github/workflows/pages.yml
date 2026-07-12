@@ -14,6 +14,9 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  # For the alert-on-failure job below (issue #61) — opens/comments on a
+  # "Site deploy failing" issue when build or deploy fails.
+  issues: write
 
 concurrency:
   group: pages
@@ -49,3 +52,29 @@ jobs:
     steps:
       - uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
         id: deployment
+
+  # Issue #61: a failed deploy silently leaves the last good build up — the
+  # scraper side escalates its failures to issues (issue #28), but nothing
+  # watched the site side. Same dedup pattern as scrape.yml's roaster
+  # escalation: one stable-titled issue, commented on rather than
+  # re-created, so a persistent breakage doesn't spam.
+  alert-on-failure:
+    needs: [build, deploy]
+    if: failure() && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Site deploy failing"
+          body="Pages build/deploy failed — the published site is now stale (it keeps serving the last successful build). See the failed run: $RUN_URL"
+          existing=$(gh issue list --state open --json number,title \
+            --jq ".[] | select(.title == \"$title\") | .number" | head -n1)
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body"
+          fi

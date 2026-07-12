@@ -33,6 +33,14 @@ jobs:
       - run: uv run --directory scraper python scrape.py
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      # Issue #62: run one known-good fixture page through the real
+      # extraction pipeline and ::warning:: on drift — the model fallback
+      # (issue #42) catches errors, this catches silently wrong answers.
+      # One cheap API call, no crawling; never fails the workflow.
+      - name: LLM extraction canary
+        run: uv run --directory scraper python scrape.py --canary
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       # Issue #28, suggested fix 3: data/scrape_status.yaml (just written by
       # the scraper run above) tracks each roaster's consecutive_non_ok
       # streak. A roaster stuck non-ok for 3+ runs in a row is past "one

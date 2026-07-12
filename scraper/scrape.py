@@ -1427,6 +1427,45 @@ EXTRACT_SYSTEM_PROMPT = (
     "a short reason instead."
 )
 
+# Cumulative OpenRouter usage for the current process (issue #62) —
+# reset by run(), incremented on every successful completions.create in
+# extract_product, reported to stdout + $GITHUB_STEP_SUMMARY at the end of
+# a run so the weekly cost curve is visible without opening OpenRouter's
+# dashboard.
+LLM_USAGE = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0}
+
+
+def _reset_usage():
+    LLM_USAGE.update(calls=0, prompt_tokens=0, completion_tokens=0)
+
+
+def _record_usage(response):
+    usage = getattr(response, "usage", None)
+    LLM_USAGE["calls"] += 1
+    for field in ("prompt_tokens", "completion_tokens"):
+        value = getattr(usage, field, 0)
+        # bool excluded on principle (int subclass); non-int (None, or a
+        # test double's auto-attribute) counts as 0 rather than crashing
+        # the run over bookkeeping.
+        if isinstance(value, int) and not isinstance(value, bool):
+            LLM_USAGE[field] += value
+
+
+def report_llm_usage(summary_path=None):
+    """Print the run's LLM usage; append it to $GITHUB_STEP_SUMMARY if set."""
+    line = (
+        f"llm_usage: {LLM_USAGE['calls']} call(s), "
+        f"{LLM_USAGE['prompt_tokens']} prompt + {LLM_USAGE['completion_tokens']} completion tokens"
+    )
+    print(line)
+    if summary_path is None:
+        summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summary_path:
+        with open(summary_path, "a", encoding="utf-8") as f:
+            f.write(f"\n**LLM usage:** {LLM_USAGE['calls']} call(s), "
+                    f"{LLM_USAGE['prompt_tokens']} prompt / "
+                    f"{LLM_USAGE['completion_tokens']} completion tokens\n")
+
 
 def extract_product(client, url, markdown):
     """Ask the model to extract one product, or decline for a non-product page.
@@ -1502,6 +1541,7 @@ def extract_product(client, url, markdown):
             f"OpenRouter API call failed for {url} after trying model(s): {', '.join(MODELS)}"
         ) from last_error
 
+    _record_usage(response)
     choice = response.choices[0]
     for call in choice.message.tool_calls or []:
         if call.function.name != "extract_product":
@@ -2114,6 +2154,7 @@ async def run(
 
     products = load_products(products_path)
     today = date.today().isoformat()
+    _reset_usage()
     statuses = {}
     # Slug-keyed twin of `statuses` (issue #28) — `statuses` stays
     # name-keyed for the existing stdout summary/tests, but
@@ -2228,6 +2269,7 @@ async def run(
     status_records = build_scrape_status_records(statuses_by_slug, today, previous_status_records)
     save_scrape_status(status_records, status_path)
     escalate_repeated_failures(status_records)
+    report_llm_usage()
 
     # Price time series (issue #41): appended after every roaster has
     # checkpointed, against the FULL products dict — a roaster skipped this
@@ -2239,10 +2281,82 @@ async def run(
         print(f"price_history: appended {len(history_rows)} observation(s)")
 
 
+# LLM extraction canary (issue #62): a known-good, in-repo product page
+# run through the REAL extract_product + normalize_products pipeline. The
+# model fallback (issue #42) catches errors; this catches silently WRONG
+# answers — quality drift after a provider-side model update. Field
+# expectations are deterministic properties of the fixture, not free text.
+CANARY_PATH = Path(__file__).resolve().parent / "canary_page.md"
+CANARY_URL = "https://canary.invalid/colombia-el-canario/"
+CANARY_EXPECTED = {
+    "origin": "Colombia",
+    "process": "natural",
+    "roast_type": "filter",
+    "status": "ok",
+}
+CANARY_EXPECTED_TIER = {"weight_g": 250, "price": 12.5}
+
+
+def run_canary(client, fixture_path=CANARY_PATH):
+    """Extract the canary fixture and diff against expectations.
+
+    Returns True on a clean pass. Any failure prints a ``::warning::``
+    annotation (not ::error:: — the weekly data run itself succeeded; this
+    is a quality signal for a human) and returns False.
+    """
+    markdown = fixture_path.read_text()
+    try:
+        raw = extract_product(client, CANARY_URL, markdown)
+    except ExtractionFailed as exc:
+        print(f"::warning::LLM canary: extraction failed — {exc}")
+        return False
+    if raw is None:
+        print("::warning::LLM canary: model declined the known-good product fixture")
+        return False
+
+    normalized = normalize_products(raw, CANARY_URL, date.today().isoformat())
+    if not normalized:
+        print("::warning::LLM canary: extraction produced no normalized product")
+        return False
+    entry = normalized[0]
+
+    mismatches = []
+    for field, expected in CANARY_EXPECTED.items():
+        actual = entry.get(field)
+        if actual != expected:
+            mismatches.append(f"{field}: expected {expected!r}, got {actual!r}")
+    tiers = entry.get("packaging") or []
+    if not any(
+        t.get("weight_g") == CANARY_EXPECTED_TIER["weight_g"]
+        and t.get("price") == CANARY_EXPECTED_TIER["price"]
+        for t in tiers
+    ):
+        mismatches.append(f"packaging: expected a {CANARY_EXPECTED_TIER} tier, got {tiers!r}")
+
+    if mismatches:
+        print("::warning::LLM canary: extraction drift on known-good fixture — " + "; ".join(mismatches))
+        return False
+    print("LLM canary: ok")
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--only", help="limit the run to roasters whose name contains this substring")
+    parser.add_argument(
+        "--canary",
+        action="store_true",
+        help="run only the LLM extraction canary (one cheap API call, no crawling) and exit",
+    )
     args = parser.parse_args()
+    if args.canary:
+        client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=_require_openrouter_api_key())
+        run_canary(client)
+        report_llm_usage()
+        # Deliberately exit 0 even on mismatch: the ::warning:: annotation
+        # is the signal, and a flaky canary must not fail the whole
+        # scheduled workflow.
+        raise SystemExit(0)
     asyncio.run(run(only=args.only))
 
 

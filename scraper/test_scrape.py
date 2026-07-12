@@ -4096,3 +4096,80 @@ async def test_run_appends_price_history_for_ok_products(monkeypatch, tmp_path):
     # identical second run appends nothing
     await scrape.run(roasters_path=roasters_path, products_path=tmp_path / "products.yaml", status_path=tmp_path / "scrape_status.yaml", history_path=history_path)
     assert len(history_path.read_text().splitlines()) == 2
+
+
+# --- LLM usage tracking + canary (issue #62) ------------------------------------
+
+
+def _usage_response(prompt=100, completion=20):
+    resp = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]})]
+    )
+    resp.usage = SimpleNamespace(prompt_tokens=prompt, completion_tokens=completion)
+    return resp
+
+
+def test_record_usage_accumulates_and_reports(tmp_path):
+    scrape._reset_usage()
+    client = MagicMock()
+    client.chat.completions.create.return_value = _usage_response(100, 20)
+    scrape.extract_product(client, "https://x.sk/a/", "markdown")
+    scrape.extract_product(client, "https://x.sk/b/", "markdown")
+    assert scrape.LLM_USAGE == {"calls": 2, "prompt_tokens": 200, "completion_tokens": 40}
+
+    summary = tmp_path / "summary.md"
+    scrape.report_llm_usage(summary_path=str(summary))
+    assert "2 call(s), 200 prompt / 40 completion tokens" in summary.read_text()
+    scrape._reset_usage()
+
+
+def test_record_usage_tolerates_missing_or_mock_usage():
+    scrape._reset_usage()
+    client = MagicMock()
+    # MagicMock auto-attributes are not ints — must count the call but add 0.
+    client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "1 €"}]})]
+    )
+    scrape.extract_product(client, "https://x.sk/a/", "markdown")
+    assert scrape.LLM_USAGE["calls"] == 1
+    assert scrape.LLM_USAGE["prompt_tokens"] == 0
+    scrape._reset_usage()
+
+
+def _canary_client(arguments):
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", arguments)]
+    )
+    return client
+
+
+CANARY_GOOD_ARGS = {
+    "name": "Colombia El Canario",
+    "origin": "Kolumbia",
+    "process": "natural",
+    "roast_type": "filter",
+    "packaging": [{"price": "12,50 €", "weight": "250 g"}],
+}
+
+
+def test_run_canary_passes_on_expected_extraction(capsys):
+    assert scrape.run_canary(_canary_client(CANARY_GOOD_ARGS)) is True
+    out = capsys.readouterr().out
+    assert "LLM canary: ok" in out
+    assert "::warning::" not in out
+
+
+def test_run_canary_warns_on_field_drift(capsys):
+    args = dict(CANARY_GOOD_ARGS, origin="Brazil")  # wrong on purpose
+    assert scrape.run_canary(_canary_client(args)) is False
+    out = capsys.readouterr().out
+    assert "::warning::LLM canary: extraction drift" in out
+    assert "origin" in out
+
+
+def test_run_canary_warns_on_decline(capsys):
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(content="not a product page")
+    assert scrape.run_canary(client) is False
+    assert "::warning::LLM canary: model declined" in capsys.readouterr().out

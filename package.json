@@ -15,6 +15,7 @@
     "@fontsource/dm-serif-display": "^5.2.8",
     "astro": "^7.0.7",
     "js-yaml": "^4.1.1",
+    "leaflet": "^1.9.4",
     "starlight-theme-md3": "^0.2.0"
   },
   "devDependencies": {

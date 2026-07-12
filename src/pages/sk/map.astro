@@ -1,0 +1,19 @@
+---
+// Mapa pražiarní, SK (issue #59).
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import RoasterMap from '../../components/RoasterMap.astro';
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Mapa pražiarní',
+    description: 'Kde sídlia slovenské pražiarne výberovej kávy.',
+    tableOfContents: false,
+  }}
+>
+  <p>
+    Každá pražiareň na mape sa raz týždenne scrapuje do tabuľky káv.
+    Kliknite na mesto a uvidíte, kto v ňom praží.
+  </p>
+  <RoasterMap />
+</StarlightPage>

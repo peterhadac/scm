@@ -117,6 +117,7 @@ export default defineConfig({
       ],
       sidebar: [
         { label: 'This week', translations: { sk: 'Tento týždeň' }, link: '/this-week/' },
+        { label: 'Roaster map', translations: { sk: 'Mapa pražiarní' }, link: '/map/' },
         {
           label: 'Roasted coffee',
           translations: { sk: 'Pražená káva' },

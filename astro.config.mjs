@@ -15,6 +15,7 @@ export default defineConfig({
       },
       components: {
         SiteTitle: './src/components/SiteTitle.astro',
+        Footer: './src/components/Footer.astro',
       },
       head: [
         { tag: 'script', attrs: { src: 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js' } },

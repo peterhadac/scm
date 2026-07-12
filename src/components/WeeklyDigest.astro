@@ -1,0 +1,111 @@
+---
+// "This week" digest view (issue #55): renders buildDigest()'s new
+// arrivals / price drops / price rises. Strings are kept local rather than
+// in lib/i18n.ts — this component owns them and nothing else shares them.
+import { buildDigest } from '../lib/digest';
+import { safeUrl } from '../lib/coffees';
+import type { Lang } from '../lib/i18n';
+
+const lang: Lang = Astro.locals.starlightRoute.lang === 'sk' ? 'sk' : 'en';
+const digest = buildDigest();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const T = {
+  en: {
+    noData:
+      'The change feed starts with the next weekly update (Mondays around 8:00). Check back then — or subscribe to the RSS feed below so you don’t have to.',
+    baseline:
+      'This was the first tracked week, so every coffee counts as “new”. Real week-over-week changes start appearing with the next update.',
+    asOf: (d: string) => `Changes from the update on ${d}`,
+    newHeading: 'New this week',
+    dropsHeading: 'Price drops',
+    risesHeading: 'Price rises',
+    nothingNew: 'No new coffees this week.',
+    noDrops: 'No price drops this week.',
+    noRises: 'No price rises this week.',
+    was: (p: string) => `was ${p}`,
+    rss: 'Subscribe via RSS',
+  },
+  sk: {
+    noData:
+      'Prehľad zmien sa začne najbližšou týždennou aktualizáciou (pondelky okolo 8:00). Vráťte sa potom — alebo si nižšie pridajte RSS feed a nemusíte.',
+    baseline:
+      'Toto bol prvý sledovaný týždeň, takže ako „nová“ sa počíta každá káva. Skutočné medzitýždňové zmeny sa začnú zobrazovať od najbližšej aktualizácie.',
+    asOf: (d: string) => `Zmeny z aktualizácie ${d}`,
+    newHeading: 'Novinky tohto týždňa',
+    dropsHeading: 'Zlacnené kávy',
+    risesHeading: 'Zdražené kávy',
+    nothingNew: 'Tento týždeň nepribudli žiadne nové kávy.',
+    noDrops: 'Tento týždeň nič nezlacnelo.',
+    noRises: 'Tento týždeň nič nezdraželo.',
+    was: (p: string) => `predtým ${p}`,
+    rss: 'Odoberať cez RSS',
+  },
+}[lang];
+
+const fmtEur = (n: number) => `€${n.toFixed(2)}`;
+---
+
+{digest.runDate === null && <p>{T.noData}</p>}
+{digest.runDate !== null && (
+  <>
+    <p class="wd-asof">{T.asOf(digest.runDate)}</p>
+    {digest.isBaseline && <p>{T.baseline}</p>}
+
+    <h2>{T.dropsHeading}</h2>
+    {digest.drops.length === 0 && <p>{T.noDrops}</p>}
+    {digest.drops.length > 0 && (
+      <ul>
+        {digest.drops.map((d) => (
+          <li>
+            <a href={safeUrl(d.row.url)} target="_blank" rel="noopener noreferrer">
+              {d.row.name}
+            </a>{' '}
+            ({d.row.roaster}, {d.row.weight_g} g): <strong>{fmtEur(d.row.price)}</strong>{' '}
+            <s>{fmtEur(d.prevPrice)}</s>
+          </li>
+        ))}
+      </ul>
+    )}
+
+    <h2>{T.newHeading}</h2>
+    {digest.newCoffees.length === 0 && <p>{T.nothingNew}</p>}
+    {digest.newCoffees.length > 0 && (
+      <ul>
+        {digest.newCoffees.map((c) => (
+          <li>
+            <a href={safeUrl(c.url)} target="_blank" rel="noopener noreferrer">
+              {c.name}
+            </a>{' '}
+            ({c.roaster}) — {fmtEur(c.price)} / {c.weight_g} g
+          </li>
+        ))}
+      </ul>
+    )}
+
+    <h2>{T.risesHeading}</h2>
+    {digest.rises.length === 0 && <p>{T.noRises}</p>}
+    {digest.rises.length > 0 && (
+      <ul>
+        {digest.rises.map((d) => (
+          <li>
+            <a href={safeUrl(d.row.url)} target="_blank" rel="noopener noreferrer">
+              {d.row.name}
+            </a>{' '}
+            ({d.row.roaster}, {d.row.weight_g} g): <strong>{fmtEur(d.row.price)}</strong>{' '}
+            <s>{fmtEur(d.prevPrice)}</s>
+          </li>
+        ))}
+      </ul>
+    )}
+  </>
+)}
+
+<p><a href={`${base}/digest.xml`}>{T.rss}</a></p>
+
+<style>
+  .wd-asof {
+    color: var(--md-sys-color-outline);
+    font-size: var(--md-sys-typescale-label-small-size);
+  }
+</style>

@@ -65,7 +65,20 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # re-extract" story consistent in one place instead of two.
 SCHEMA_VERSION = 19
 
-MODEL = "google/gemini-2.5-flash-lite"
+# Ordered extraction-model preference list (issue #42): extract_product
+# works through these left to right, so a deprecated/unavailable primary
+# degrades to the next model instead of failing the whole weekly run.
+# Overridable without a code change via OPENROUTER_MODELS (comma-separated
+# OpenRouter model ids) — read once at import, like every other constant
+# here. Every model listed must support OpenAI-style function calling.
+DEFAULT_MODELS = "google/gemini-2.5-flash-lite,google/gemini-2.5-flash"
+
+
+def _parse_models(value):
+    return tuple(m.strip() for m in value.split(",") if m.strip())
+
+
+MODELS = _parse_models(os.environ.get("OPENROUTER_MODELS", DEFAULT_MODELS))
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -1288,30 +1301,48 @@ def extract_product(client, url, markdown):
     """
     truncated_markdown = markdown[:MAX_MARKDOWN_CHARS]
 
+    # Model fallback (issue #42): work through MODELS left to right. A
+    # model-level rejection (404 model gone/renamed, 400 request shape not
+    # accepted) moves to the next model immediately — retrying the same
+    # model can't fix those — while transient errors (429/5xx/connection)
+    # get the usual bounded retries before this model is given up on.
     response = None
-    for attempt in range(1, EXTRACT_RETRY_ATTEMPTS + 1):
-        try:
-            response = client.chat.completions.create(
-                model=MODEL,
-                max_tokens=1024,
-                temperature=0,
-                seed=0,
-                tools=[EXTRACT_PRODUCT_TOOL],
-                messages=[
-                    {"role": "system", "content": EXTRACT_SYSTEM_PROMPT},
-                    {
-                        "role": "user",
-                        "content": f"<page_content>\n{truncated_markdown}\n</page_content>",
-                    },
-                ],
-            )
+    last_error = None
+    for model in MODELS:
+        if response is not None:
             break
-        except openai.APIError:
-            if attempt == EXTRACT_RETRY_ATTEMPTS:
-                raise ExtractionFailed(
-                    f"OpenRouter API call failed after {EXTRACT_RETRY_ATTEMPTS} attempts for {url}"
-                ) from None
-            time.sleep(EXTRACT_RETRY_BACKOFF_SECONDS * attempt)
+        for attempt in range(1, EXTRACT_RETRY_ATTEMPTS + 1):
+            try:
+                response = client.chat.completions.create(
+                    model=model,
+                    max_tokens=1024,
+                    temperature=0,
+                    seed=0,
+                    tools=[EXTRACT_PRODUCT_TOOL],
+                    messages=[
+                        {"role": "system", "content": EXTRACT_SYSTEM_PROMPT},
+                        {
+                            "role": "user",
+                            "content": f"<page_content>\n{truncated_markdown}\n</page_content>",
+                        },
+                    ],
+                )
+                break
+            except (openai.NotFoundError, openai.BadRequestError) as exc:
+                last_error = exc
+                print(
+                    f"  WARNING: model '{model}' rejected the request "
+                    f"({exc.__class__.__name__}) — falling back to the next configured model"
+                )
+                break
+            except openai.APIError as exc:
+                last_error = exc
+                if attempt < EXTRACT_RETRY_ATTEMPTS:
+                    time.sleep(EXTRACT_RETRY_BACKOFF_SECONDS * attempt)
+    if response is None:
+        raise ExtractionFailed(
+            f"OpenRouter API call failed for {url} after trying model(s): {', '.join(MODELS)}"
+        ) from last_error
 
     choice = response.choices[0]
     for call in choice.message.tool_calls or []:

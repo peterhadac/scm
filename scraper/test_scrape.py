@@ -1434,7 +1434,7 @@ def test_extract_product_retries_on_transient_api_error(monkeypatch):
     assert fake_client.chat.completions.create.call_count == 2
 
 
-def test_extract_product_raises_after_exhausting_retries(monkeypatch):
+def test_extract_product_raises_after_exhausting_retries_on_every_model(monkeypatch):
     import httpx
 
     monkeypatch.setattr(scrape.time, "sleep", lambda *_: None)
@@ -1444,7 +1444,58 @@ def test_extract_product_raises_after_exhausting_retries(monkeypatch):
 
     with pytest.raises(scrape.ExtractionFailed):
         scrape.extract_product(fake_client, "https://x.sk/rwanda/", "markdown text")
-    assert fake_client.chat.completions.create.call_count == scrape.EXTRACT_RETRY_ATTEMPTS
+    # issue #42: a transient error burns its full retry budget on each
+    # configured model before the call is given up on entirely.
+    assert fake_client.chat.completions.create.call_count == scrape.EXTRACT_RETRY_ATTEMPTS * len(
+        scrape.MODELS
+    )
+
+
+# --- model fallback (issue #42) -------------------------------------------------
+
+
+def _model_error(cls):
+    import httpx
+
+    request = httpx.Request("POST", "https://openrouter.ai/api/v1/chat/completions")
+    response = httpx.Response(
+        404 if cls is openai.NotFoundError else 400, request=request, json={"error": "nope"}
+    )
+    return cls("model error", response=response, body=None)
+
+
+def test_extract_product_falls_back_to_next_model_on_model_level_error(monkeypatch, capsys):
+    monkeypatch.setattr(scrape, "MODELS", ("dead/model", "live/model"))
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.side_effect = [
+        _model_error(openai.NotFoundError),  # primary model deprecated/gone
+        fake_completion(
+            [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]})]
+        ),
+    ]
+
+    result = scrape.extract_product(fake_client, "https://x.sk/rwanda/", "markdown text")
+    assert result == {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]}
+    # a model-level rejection moves on immediately: no retries wasted on it
+    assert fake_client.chat.completions.create.call_count == 2
+    assert fake_client.chat.completions.create.call_args_list[0].kwargs["model"] == "dead/model"
+    assert fake_client.chat.completions.create.call_args_list[1].kwargs["model"] == "live/model"
+    assert "falling back to the next configured model" in capsys.readouterr().out
+
+
+def test_extract_product_reports_all_tried_models_when_everything_fails(monkeypatch):
+    monkeypatch.setattr(scrape, "MODELS", ("dead/model", "deader/model"))
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.side_effect = _model_error(openai.NotFoundError)
+
+    with pytest.raises(scrape.ExtractionFailed, match="dead/model, deader/model"):
+        scrape.extract_product(fake_client, "https://x.sk/rwanda/", "markdown text")
+    assert fake_client.chat.completions.create.call_count == 2  # one shot per model, no retries
+
+
+def test_parse_models_splits_and_strips():
+    assert scrape._parse_models("a/x, b/y ,c/z,") == ("a/x", "b/y", "c/z")
+    assert scrape.MODELS == scrape._parse_models(scrape.DEFAULT_MODELS)  # no env override in tests
 
 
 # --- discover_product_urls (async, offline via FakeCrawler) ------------------

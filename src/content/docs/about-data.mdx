@@ -1,0 +1,60 @@
+---
+title: About the data
+description: Where the Slovak Coffee Map data comes from, how often it updates, and how to use the public JSON endpoint.
+tableOfContents: true
+---
+
+Slovak Coffee Map is an independent, automated catalogue of specialty coffee
+currently sold by Slovak roasters. Nobody pays to be listed, and no roaster
+can edit their own data.
+
+## Where the data comes from
+
+Every Monday morning a scraper visits each roaster's public online shop,
+discovers their product pages, and extracts the coffee's name, origin
+country, processing method, roast type, and every package size with its
+price. The full pipeline is open source — you can read exactly how it works
+in the [GitHub repository](https://github.com/peterhadac/scm).
+
+A few honesty rules the pipeline follows:
+
+- **Prices are read from the roaster's own page** — never estimated,
+  converted, or adjusted. All prices are in EUR, as published.
+- **Incomplete products are hidden, not guessed.** If a page doesn't state
+  an origin or a usable price, the coffee stays out of the table rather
+  than appearing with made-up values.
+- **Stale data is flagged.** If a roaster's site couldn't be read for a few
+  weeks, its rows show a small warning icon — the price may be outdated.
+- **Delistings are respected.** A coffee that disappears from a roaster's
+  shop disappears from the map on the next weekly run.
+
+## How fresh is it?
+
+The dataset refreshes **weekly** (Monday, ~6:00 UTC), and the site is
+rebuilt immediately after each successful run. Each row carries the date it
+was last confirmed on the roaster's site.
+
+## Public JSON endpoint
+
+The complete current dataset is available as JSON:
+
+**[`/scm/coffees.json`](/scm/coffees.json)**
+
+One object per (coffee, package size) with these fields:
+
+| Field | Meaning |
+| --- | --- |
+| `name` | Coffee name as published by the roaster |
+| `roaster` | Roaster display name |
+| `origin` | English country name, or `"Blend"` for multi-origin blends |
+| `process` | `washed` / `natural` / `honey` / `wet-hulled` / `anaerobic` / `carbonic-maceration` / `other`, or `null` when unstated |
+| `roast_type` | `filter` / `espresso` / `nespresso` / `drip-bag` |
+| `weight_g` | Package size in grams |
+| `price` | Price in EUR for that package |
+| `url` | The roaster's own product page |
+| `last_seen` | Date this entry was last confirmed |
+
+Feel free to use it for research, apps, or price comparisons — a link back
+to Slovak Coffee Map is appreciated. If you build something on top of it or
+need historical price data, [open an issue on
+GitHub](https://github.com/peterhadac/scm/issues) or get in touch.

@@ -1,0 +1,62 @@
+---
+title: O dátach
+description: Odkiaľ pochádzajú dáta Slovak Coffee Map, ako často sa aktualizujú a ako používať verejný JSON endpoint.
+tableOfContents: true
+---
+
+Slovak Coffee Map je nezávislý, automatizovaný katalóg výberovej kávy,
+ktorú aktuálne predávajú slovenské pražiarne. Nikto neplatí za zaradenie do
+zoznamu a žiadna pražiareň si nemôže upravovať vlastné údaje.
+
+## Odkiaľ pochádzajú dáta
+
+Každý pondelok ráno scraper navštívi verejný e-shop každej pražiarne, nájde
+produktové stránky a extrahuje názov kávy, krajinu pôvodu, spôsob
+spracovania, typ praženia a každú veľkosť balenia s cenou. Celý pipeline je
+open source — presný postup si môžete prečítať v [GitHub
+repozitári](https://github.com/peterhadac/scm).
+
+Niekoľko zásad poctivosti, ktorými sa pipeline riadi:
+
+- **Ceny sa čítajú priamo zo stránky pražiarne** — nikdy sa neodhadujú,
+  neprepočítavajú ani neupravujú. Všetky ceny sú v EUR tak, ako sú
+  zverejnené.
+- **Neúplné produkty sa skrývajú, nie dopĺňajú.** Ak stránka neuvádza pôvod
+  alebo použiteľnú cenu, káva sa v tabuľke nezobrazí — radšej, než aby sa
+  objavila s vymyslenými hodnotami.
+- **Zastarané dáta sú označené.** Ak sa stránku pražiarne nepodarilo
+  niekoľko týždňov prečítať, jej riadky zobrazujú malú výstražnú ikonu —
+  cena môže byť neaktuálna.
+- **Vyradenie z ponuky sa rešpektuje.** Káva, ktorá zmizne z e-shopu
+  pražiarne, zmizne z mapy pri najbližšom týždennom behu.
+
+## Ako čerstvé sú dáta?
+
+Dataset sa obnovuje **týždenne** (pondelok, ~6:00 UTC) a stránka sa po
+každom úspešnom behu okamžite prebuduje. Každý riadok nesie dátum, kedy bol
+naposledy potvrdený na stránke pražiarne.
+
+## Verejný JSON endpoint
+
+Kompletný aktuálny dataset je dostupný ako JSON:
+
+**[`/scm/coffees.json`](/scm/coffees.json)**
+
+Jeden objekt na (kávu, veľkosť balenia) s týmito poľami:
+
+| Pole | Význam |
+| --- | --- |
+| `name` | Názov kávy tak, ako ho uvádza pražiareň |
+| `roaster` | Zobrazované meno pražiarne |
+| `origin` | Anglický názov krajiny, alebo `"Blend"` pre zmesi z viacerých krajín |
+| `process` | `washed` / `natural` / `honey` / `wet-hulled` / `anaerobic` / `carbonic-maceration` / `other`, alebo `null` ak nie je uvedený |
+| `roast_type` | `filter` / `espresso` / `nespresso` / `drip-bag` |
+| `weight_g` | Veľkosť balenia v gramoch |
+| `price` | Cena v EUR za dané balenie |
+| `url` | Produktová stránka priamo u pražiarne |
+| `last_seen` | Dátum posledného potvrdenia záznamu |
+
+Pokojne ho použite na výskum, aplikácie či porovnávanie cien — odkaz späť
+na Slovak Coffee Map poteší. Ak na ňom niečo postavíte alebo potrebujete
+historické dáta o cenách, [otvorte issue na
+GitHube](https://github.com/peterhadac/scm/issues) alebo sa ozvite.

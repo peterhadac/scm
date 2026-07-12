@@ -119,6 +119,7 @@ Distinct from the per-product statuses above — one of these is reported per ro
 - `failed` — the listing page itself couldn't be fetched; existing entries untouched.
 - `needs_js` — the listing page looks JS-rendered (or a successful crawl found zero product links despite prior data existing); existing entries untouched.
 - `partial` — listing discovery started but didn't finish: either a fetch on page 2+ of pagination failed (`failed_midway`), or pagination hit the `MAX_PAGES` cap (currently 30) while a further page was still linked (`capped`) — both logged as a warning by `discover_product_urls()`. Products freshly (re)discovered this run are still processed normally; any prior entry whose URL wasn't rediscovered is **preserved as-is** (no `last_seen`/`page_hash` change) rather than dropped, since it may simply live on a listing page this run never reached (issue #22).
+- `suspect` — discovery looked clean but would have dropped most of the roaster's known-good products in one run (more than `MASS_DELIST_GUARD_FRACTION` (50%) of `ok`/`incomplete` priors, and at least `MASS_DELIST_GUARD_MIN_DROPPED` (3) of them) — far more likely a site redesign that still parses as a listing than a real catalogue wipeout (issue #39). Prior entries are preserved exactly like a `partial` run; only `ok`/`incomplete` priors count, so a mass drop of `not_a_product` noise (e.g. after a discovery-filter tightening) doesn't trip it.
 
 ### Observability (`data/scrape_status.yaml`)
 

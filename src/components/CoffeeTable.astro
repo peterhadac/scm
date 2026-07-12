@@ -158,10 +158,26 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               {t.coffee} <span class="ct-sort-ind" aria-hidden="true"></span>
             </button>
           </th>
-          <th>{t.roaster}</th>
-          <th>{t.origin}</th>
-          <th>{t.process}</th>
-          <th class="ct-num">{t.weight}</th>
+          <th aria-sort="none">
+            <button type="button" class="ct-sort-th" data-sort="roaster">
+              {t.roaster} <span class="ct-sort-ind" aria-hidden="true"></span>
+            </button>
+          </th>
+          <th aria-sort="none">
+            <button type="button" class="ct-sort-th" data-sort="origin">
+              {t.origin} <span class="ct-sort-ind" aria-hidden="true"></span>
+            </button>
+          </th>
+          <th aria-sort="none">
+            <button type="button" class="ct-sort-th" data-sort="process">
+              {t.process} <span class="ct-sort-ind" aria-hidden="true"></span>
+            </button>
+          </th>
+          <th class="ct-num" aria-sort="none">
+            <button type="button" class="ct-sort-th ct-sort-th--num" data-sort="weight">
+              {t.weight} <span class="ct-sort-ind" aria-hidden="true"></span>
+            </button>
+          </th>
           <th class="ct-num" aria-sort="none">
             <button type="button" class="ct-sort-th ct-sort-th--num" data-sort="price">
               {t.price} <span class="ct-sort-ind" aria-hidden="true"></span>
@@ -193,6 +209,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               data-origin={c.origin ?? ''}
               data-process={c.process ?? ''}
               data-roast={c.roast_type ?? ''}
+              data-weight={c.weight_g ?? ''}
               data-price={c.price}
               data-per100g={per100gNum !== null ? per100gNum.toFixed(4) : ''}
               class={isBest ? 'ct-row--best' : undefined}
@@ -354,15 +371,27 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
 
   // ── Sorting: click a column header to sort, click again to flip ──
-  type SortKey = 'name' | 'price' | 'per100g';
+  type SortKey = 'name' | 'roaster' | 'origin' | 'process' | 'weight' | 'price' | 'per100g';
   let sortState: { key: SortKey; dir: 'asc' | 'desc' } | null = null;
 
-  function valueFor(row: HTMLTableRowElement, key: SortKey): number | string {
+  // null means the cell shows "—" (no origin/process/weight scraped) — such
+  // rows are pinned to the bottom regardless of direction, so flipping the
+  // sort never surfaces a screenful of dashes first.
+  function valueFor(row: HTMLTableRowElement, key: SortKey): number | string | null {
     if (key === 'name') return (row.dataset.name || '').toLowerCase();
+    if (key === 'roaster') return (row.dataset.roaster || '').toLowerCase();
+    if (key === 'origin' || key === 'process') {
+      // Sort by the *displayed* (localized) label, not the English data-*
+      // key — on the Slovak pages the column reads Slovak labels, and
+      // sorting by hidden English keys would look randomly ordered.
+      const raw = row.dataset[key];
+      if (!raw) return null;
+      const labels = key === 'origin' ? ORIGIN_LABELS : PROCESS_LABELS;
+      return (labels[raw]?.[lang] ?? raw).toLowerCase();
+    }
     if (key === 'price') return parseFloat(row.dataset.price || '0');
-    // per100g: missing weight sorts to the bottom regardless of direction
-    const raw = row.dataset.per100g;
-    return raw ? parseFloat(raw) : Number.POSITIVE_INFINITY;
+    const raw = key === 'weight' ? row.dataset.weight : row.dataset.per100g;
+    return raw ? parseFloat(raw) : null;
   }
 
   function applySort() {
@@ -372,9 +401,10 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     const sorted = [...rows].sort((a, b) => {
       const va = valueFor(a, key);
       const vb = valueFor(b, key);
-      // Keep rows without a per-100g value pinned to the bottom.
-      if (va === Number.POSITIVE_INFINITY && vb !== Number.POSITIVE_INFINITY) return 1;
-      if (vb === Number.POSITIVE_INFINITY && va !== Number.POSITIVE_INFINITY) return -1;
+      // Keep rows without a value in this column pinned to the bottom.
+      if (va === null && vb === null) return 0;
+      if (va === null) return 1;
+      if (vb === null) return -1;
       let diff: number;
       if (typeof va === 'string' || typeof vb === 'string') {
         diff = String(va).localeCompare(String(vb), lang);

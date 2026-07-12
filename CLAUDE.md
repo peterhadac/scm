@@ -160,7 +160,7 @@ happened.
    for each one.
 
 ### LLM extraction (OpenRouter)
-One call per product page's markdown via [OpenRouter](https://openrouter.ai/)'s OpenAI-compatible `/chat/completions` endpoint (`openai` SDK pointed at `base_url="https://openrouter.ai/api/v1"`), model `google/gemini-2.5-flash-lite`. The `extract_product` tool (OpenAI function-calling shape: `{"type": "function", "function": {...}}`) is available but not forced — this lets the model decline (plain text reply, no tool call) when a discovered URL turns out to be a category page, the homepage, or something that isn't coffee, rather than fabricating a product from whatever's on the page.
+One call per product page's markdown via [OpenRouter](https://openrouter.ai/)'s OpenAI-compatible `/chat/completions` endpoint (`openai` SDK pointed at `base_url="https://openrouter.ai/api/v1"`), model `google/gemini-2.5-flash-lite` with fallback to `google/gemini-2.5-flash` (ordered `MODELS` list, issue #42 — a model-level 404/400 moves to the next model immediately, transient errors retry first; override via the `OPENROUTER_MODELS` env var, comma-separated). The `extract_product` tool (OpenAI function-calling shape: `{"type": "function", "function": {...}}`) is available but not forced — this lets the model decline (plain text reply, no tool call) when a discovered URL turns out to be a category page, the homepage, or something that isn't coffee, rather than fabricating a product from whatever's on the page.
 
 ## GitHub Actions
 
@@ -323,7 +323,8 @@ workflow, a new site section).
 
 ## Environment Variables / Secrets
 
-- `OPENROUTER_API_KEY` — required by scraper (OpenRouter, model `google/gemini-2.5-flash-lite`), stored as GitHub Actions secret
+- `OPENROUTER_API_KEY` — required by scraper (OpenRouter, models `google/gemini-2.5-flash-lite` → `google/gemini-2.5-flash` fallback), stored as GitHub Actions secret
+- `OPENROUTER_MODELS` — optional comma-separated ordered override of the extraction model list (issue #42)
 
 ## Development
 

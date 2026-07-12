@@ -93,7 +93,6 @@ export default defineConfig({
             { label: 'Filterccino', link: '/drinks/filterccino/' },
             { label: 'Filter Ice Cappuccino', link: '/drinks/filter-ice-cappuccino/' },
             { label: 'French Press', link: '/drinks/french-press/' },
-            { label: 'FTS - Filter To Survive', link: '/drinks/v60/' },
           ],
         },
         {

@@ -92,6 +92,10 @@ export const PROCESS_LABELS: Record<string, Record<Lang, string>> = {
 export const ROAST_TYPE_LABELS: Record<string, Record<Lang, string>> = {
   filter: { en: 'Filter', sk: 'Filter' },
   espresso: { en: 'Espresso', sk: 'Espresso' },
+  // "Nespresso" is a brand/format name and "drip bag" the borrowed term
+  // Slovak roasters themselves use — neither gets a translated label.
+  nespresso: { en: 'Nespresso', sk: 'Nespresso' },
+  'drip-bag': { en: 'Drip bag', sk: 'Drip bag' },
 };
 
 // Proper-cased Slovak display names for data/coffee_origins.yaml's canonical

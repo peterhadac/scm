@@ -23,6 +23,10 @@ export function safeUrl(raw: string | null | undefined): string {
   }
 }
 
+// Mirrors data/products.schema.yaml's roast_type enum — the canonical
+// English keys stored in data/products.yaml.
+export type RoastType = 'filter' | 'espresso' | 'nespresso' | 'drip-bag';
+
 interface ProductTier {
   weight_g: number;
   price: number;
@@ -33,7 +37,7 @@ interface ProductEntry {
   url: string;
   origin: string;
   process: string | null;
-  roast_type: 'filter' | 'espresso';
+  roast_type: RoastType;
   status: string;
   last_seen: string;
   packaging: ProductTier[];
@@ -49,7 +53,7 @@ export interface CoffeeRow {
   roaster: string;
   origin: string;
   process: string | null;
-  roast_type: 'filter' | 'espresso';
+  roast_type: RoastType;
   price: number;
   weight_g: number;
   url: string;

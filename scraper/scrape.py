@@ -63,7 +63,7 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # different projections), so a stored hash from before the change would
 # never match again anyway, but bumping keeps the "why did this
 # re-extract" story consistent in one place instead of two.
-SCHEMA_VERSION = 18
+SCHEMA_VERSION = 19
 
 MODEL = "google/gemini-2.5-flash-lite"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -651,7 +651,7 @@ def visible_html_text_length(html):
 def is_valid_tier(weight_g, price):
     """True when a structured variation tier's weight/price pair is usable.
 
-    Shared guard for the WooCommerce and Shopify variation extractors: a
+    Shared guard for the WooCommerce/Shopify/Shoptet variation extractors: a
     tier needs a known weight and a positive numeric price (bool is excluded
     explicitly — it's an int subclass, so `True` would otherwise pass as 1).
     """
@@ -725,6 +725,70 @@ def extract_woocommerce_variations(soup):
         seen_weights.add(weight_g)
         tiers.append({"weight_g": weight_g, "price": float(price)})
     return raw_json, tiers
+
+
+def extract_shoptet_variations(soup):
+    """Parse a Shoptet product page's `trackingScript` variant data.
+
+    Shoptet (e.g. praziarenvelkezaluzie.sk) renders variants as a bare
+    `<select>` with no prices in visible text — the LLM sees N variant rows
+    and one price, and fabricates weight/price tiers to fill the gap. But
+    the page embeds every variant's price in a
+    `<script id="trackingScript" data-products='...'>` JSON blob: one record
+    per variant, each with the axis string
+    ("Hmotnosť: 500g, Zomlieť kávu?: Zrnková káva") and the price ("value",
+    a string in EUR). The same blob also carries records for the
+    related-products carousel, so records are filtered to this page's own
+    product via the add-to-cart form's hidden `productId` input, which
+    equals each record's `base_id`.
+
+    Returns (raw_projection, tiers) with the same contract as
+    `extract_woocommerce_variations()`. `raw_projection` is a deterministic
+    JSON dump of just the own-product (variant, price) pairs, sorted — NOT
+    the whole attribute, which would leak the related-products carousel
+    into the page hash (issue #13's exact failure mode). Tiers are deduped
+    by weight_g (first-seen wins): a grind axis crossed with the weight
+    axis yields many records per weight, all at that weight's price, and
+    unique weights are exactly the packaging model.
+    """
+    script = soup.find("script", id="trackingScript")
+    if not script or not script.has_attr("data-products"):
+        return "", []
+    product_id_input = soup.find("input", attrs={"name": "productId"})
+    page_product_id = product_id_input.get("value") if product_id_input else None
+    if not page_product_id:
+        # Can't tell this page's own records apart from related-product ones.
+        return "", []
+    try:
+        data = json.loads(script["data-products"])
+    except (ValueError, TypeError):
+        return "", []
+    products = data.get("products") if isinstance(data, dict) else None
+    if not isinstance(products, dict):
+        return "", []
+
+    pairs = []
+    for record in products.values():
+        if not isinstance(record, dict):
+            continue
+        if str(record.get("base_id")) != str(page_product_id):
+            continue
+        try:
+            price = float(record.get("value"))
+        except (TypeError, ValueError):
+            continue
+        pairs.append((str(record.get("variant") or ""), price))
+
+    tiers = []
+    seen_weights = set()
+    for variant, price in pairs:
+        weight_g = parse_weight(variant)
+        if not is_valid_tier(weight_g, price) or weight_g in seen_weights:
+            continue
+        seen_weights.add(weight_g)
+        tiers.append({"weight_g": weight_g, "price": price})
+    raw_projection = json.dumps(sorted(pairs), ensure_ascii=False) if pairs else ""
+    return raw_projection, tiers
 
 
 async def _politeness_wait(throttle):
@@ -1277,7 +1341,8 @@ class Hints:
     extractor adds a field here instead of widening both signatures.
 
     `variation_tiers` ([{"weight_g", "price"}, ...]), from
-    `extract_woocommerce_variations()` or `extract_shopify_variations()`,
+    `extract_woocommerce_variations()`, `extract_shopify_variations()`, or
+    `extract_shoptet_variations()`,
     is trusted over the LLM's own packaging guess when non-empty —
     deterministic data straight from the page beats an LLM reading a price
     off markdown that only shows the selected variant.
@@ -1498,11 +1563,12 @@ def compute_page_hash(markdown, variations_raw=""):
     pathologically large page, the same reason that cap exists for the LLM
     call.
 
-    `variations_raw` (WooCommerce's data-product_variations JSON, or "" when
-    absent) is folded in unwindowed: it's compact, deterministic structured
-    data straight from the page, not markdown prose, and it's how a
-    price-only change hidden behind a variant selector still busts the hash
-    even though it never appears in visible markdown text at all.
+    `variations_raw` (WooCommerce's data-product_variations JSON and/or
+    Shoptet's trackingScript projection, or "" when absent) is folded in
+    unwindowed: it's compact, deterministic structured data straight from
+    the page, not markdown prose, and it's how a price-only change hidden
+    behind a variant selector still busts the hash even though it never
+    appears in visible markdown text at all.
     """
     projection = markdown[:MAX_MARKDOWN_CHARS] + variations_raw
     return hashlib.sha256(projection.encode("utf-8")).hexdigest()
@@ -1573,13 +1639,21 @@ async def process_roaster(crawler, client, roaster, existing_entries, today, max
         # (issue #27).
         soup = BeautifulSoup(result.html or "", HTML_PARSER)
         variations_raw, variation_tiers = extract_woocommerce_variations(soup)
-        # WooCommerce shows only the default-selected variant's price as
-        # visible text — a price change on another variant wouldn't touch
-        # `markdown` at all, so the raw variations JSON is folded into the
-        # hash too, or such a change would be silently hash-gated away forever.
-        # See compute_page_hash's docstring (issue #13) for why this hashes a
-        # truncated projection rather than the full page.
-        page_hash = compute_page_hash(markdown, variations_raw)
+        # Shoptet has the same hidden-behind-a-variant-selector problem as
+        # WooCommerce, with the structured data in a different place — a
+        # page is only ever one platform, so at most one of these returns
+        # anything, but both run unconditionally to keep the hash input
+        # deterministic.
+        shoptet_raw, shoptet_tiers = extract_shoptet_variations(soup)
+        if not variation_tiers:
+            variation_tiers = shoptet_tiers
+        # WooCommerce/Shoptet show only the default-selected variant's price
+        # as visible text — a price change on another variant wouldn't touch
+        # `markdown` at all, so the structured variations data is folded into
+        # the hash too, or such a change would be silently hash-gated away
+        # forever. See compute_page_hash's docstring (issue #13) for why this
+        # hashes a truncated projection rather than the full page.
+        page_hash = compute_page_hash(markdown, variations_raw + shoptet_raw)
         # A url's entries are gated all-or-nothing: one page fetch backs
         # however many entries currently exist for it (0, 1, or 2 after a
         # roast-type split), so there's no way to re-extract "just one" of

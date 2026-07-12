@@ -361,6 +361,117 @@ def test_woocommerce_extraction_helpers_accept_a_pre_parsed_soup():
     assert scrape.extract_woocommerce_weight(soup) is None or isinstance(scrape.extract_woocommerce_weight(soup), int)
 
 
+# --- extract_shoptet_variations ----------------------------------------------
+
+
+def _shoptet_html(records, product_id="1290"):
+    """Build a minimal Shoptet product page: trackingScript data-products
+    JSON + the add-to-cart form's hidden productId input."""
+    payload = json.dumps({"products": records}, ensure_ascii=False).replace("'", "&#39;")
+    return (
+        f"<script id=\"trackingScript\" data-products='{payload}'></script>"
+        f'<input type="hidden" name="productId" value="{product_id}" />'
+    )
+
+
+# The real shape from praziarenvelkezaluzie.sk (issue: LLM fabricated 15
+# weight tiers for a 2-weight product): weight axis × grind axis, every
+# grind of a weight at the same price, plus a related-products-carousel
+# record under a different base_id.
+SHOPTET_RECORDS = {
+    "2406": {
+        "base_id": 1290,
+        "variant": "Hmotnosť: 500g, Zomlieť kávu?: Zrnková káva",
+        "value": "17",
+    },
+    "2412": {
+        "base_id": 1290,
+        "variant": "Hmotnosť: 500g, Zomlieť kávu?: Mletá káva na zalievanie",
+        "value": "17",
+    },
+    "2409": {
+        "base_id": 1290,
+        "variant": "Hmotnosť: 1000g, Zomlieť kávu?: Zrnková káva",
+        "value": "34",
+    },
+    "2415": {
+        "base_id": 1290,
+        "variant": "Hmotnosť: 1000g, Zomlieť kávu?: Mletá káva na frenchpress",
+        "value": "34",
+    },
+    "2316": {
+        "base_id": 1284,
+        "variant": "Hmotnosť: 500g, Zomlieť kávu?: Zrnková káva",
+        "value": "15",
+    },
+}
+
+
+def test_extract_shoptet_variations_collapses_grind_axis_to_unique_weights():
+    raw, tiers = scrape.extract_shoptet_variations(_soup(_shoptet_html(SHOPTET_RECORDS)))
+    assert raw  # non-empty, folded into the page hash
+    assert sorted(tiers, key=lambda t: t["weight_g"]) == [
+        {"weight_g": 500, "price": 17.0},
+        {"weight_g": 1000, "price": 34.0},
+    ]
+
+
+def test_extract_shoptet_variations_excludes_related_product_records():
+    # The base_id 1284 record (€15) belongs to the related-products carousel,
+    # not this page's product — it must appear in neither tiers nor the hash
+    # projection.
+    raw, tiers = scrape.extract_shoptet_variations(_soup(_shoptet_html(SHOPTET_RECORDS)))
+    assert all(t["price"] != 15.0 for t in tiers)
+    assert "15.0" not in raw
+
+
+def test_extract_shoptet_variations_hash_projection_is_deterministic():
+    # Same records in a different dict order must produce the identical
+    # projection string, or the hash-gate would leak on serialization order.
+    reordered = dict(reversed(list(SHOPTET_RECORDS.items())))
+    raw_a, _ = scrape.extract_shoptet_variations(_soup(_shoptet_html(SHOPTET_RECORDS)))
+    raw_b, _ = scrape.extract_shoptet_variations(_soup(_shoptet_html(reordered)))
+    assert raw_a == raw_b
+
+
+def test_extract_shoptet_variations_absent_returns_empty():
+    raw, tiers = scrape.extract_shoptet_variations(_soup("<html><body>plain page</body></html>"))
+    assert raw == ""
+    assert tiers == []
+
+
+def test_extract_shoptet_variations_missing_product_id_returns_empty():
+    # Without the hidden productId input there's no way to tell this page's
+    # own variant records from the related-products carousel — bail rather
+    # than risk folding a related product's price into the tiers.
+    payload = json.dumps({"products": SHOPTET_RECORDS})
+    html = f"<script id=\"trackingScript\" data-products='{payload}'></script>"
+    raw, tiers = scrape.extract_shoptet_variations(_soup(html))
+    assert raw == ""
+    assert tiers == []
+
+
+def test_extract_shoptet_variations_malformed_json_returns_empty():
+    html = (
+        "<script id=\"trackingScript\" data-products='not json {'></script>"
+        '<input type="hidden" name="productId" value="1290" />'
+    )
+    raw, tiers = scrape.extract_shoptet_variations(_soup(html))
+    assert raw == ""
+    assert tiers == []
+
+
+def test_extract_shoptet_variations_skips_unparseable_weight_and_bad_price():
+    records = {
+        "1": {"base_id": 7, "variant": "Zomlieť kávu?: Zrnková káva", "value": "17"},
+        "2": {"base_id": 7, "variant": "Hmotnosť: 500g", "value": "zero"},
+        "3": {"base_id": 7, "variant": "Hmotnosť: 500g", "value": None},
+        "4": {"base_id": 7, "variant": "Hmotnosť: 250g", "value": "9.5"},
+    }
+    _, tiers = scrape.extract_shoptet_variations(_soup(_shoptet_html(records, product_id="7")))
+    assert tiers == [{"weight_g": 250, "price": 9.5}]
+
+
 # --- is_coffee (non-coffee filtering) ---------------------------------------
 
 

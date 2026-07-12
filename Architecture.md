@@ -102,6 +102,14 @@ re-extraction of every pre-existing entry after a normalization-rule change
 ships (there's no cached raw LLM output to replay against new rules), after
 which hash-gating resumes as normal.
 
+An `incomplete` entry additionally bypasses the gate on up to
+`MAX_INCOMPLETE_REEXTRACTIONS` (3) later runs even when its page hash is
+unchanged (issue #36): a flaky extraction — the model missing a field the
+page does state — self-heals on a retry, while a page that genuinely omits
+the field stops burning a weekly LLM call once its per-entry
+`reextract_attempts` counter (carried across runs only while the hash stays
+identical, so any page change resets the budget) reaches the limit.
+
 ## Flatten / Build Step
 
 Exploding each `ok`-status product's `packaging` array into one flat row per

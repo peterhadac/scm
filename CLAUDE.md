@@ -43,7 +43,10 @@ for the validated shape. Each entry is one of:
 - **`status: incomplete`** — a genuine coffee product, but missing one of
   `origin`/`roast_type`/`weight_g`/`price` (listed in `missing_fields`).
   Excluded from the site until fixed; kept in `products.yaml` so hash-gating
-  still applies.
+  still applies — though an unchanged page is still re-extracted on up to
+  `MAX_INCOMPLETE_REEXTRACTIONS` (3) later runs (tracked per entry as
+  `reextract_attempts`, issue #36) so a flaky extraction self-heals; after
+  that it hash-gates normally until the page changes.
 - **`status: not_a_product`** — the discovered URL wasn't a single coffee
   product page.
 

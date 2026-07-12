@@ -83,6 +83,16 @@ MAX_MARKDOWN_CHARS = 18000
 EXTRACT_RETRY_ATTEMPTS = 3
 EXTRACT_RETRY_BACKOFF_SECONDS = 2
 
+# An `incomplete` entry whose page hash hasn't changed is still re-extracted
+# on up to this many later runs (issue #36): a flaky extraction (the model
+# missing a field the page does state) self-heals on a retry, while a page
+# that genuinely omits the field stops burning a weekly LLM call once its
+# `reextract_attempts` counter reaches this — from then on it hash-gates
+# like any other entry until the page actually changes (which resets the
+# counter, since the counter is only carried across runs with an unchanged
+# hash).
+MAX_INCOMPLETE_REEXTRACTIONS = 3
+
 # Safety cap so a mis-detected "next" link (e.g. one that loops) can't spin
 # forever. Discovery pages are cheap (prefetch=True, no LLM call), so this is
 # generous on purpose — a roaster with a genuinely large catalog shouldn't
@@ -1662,11 +1672,17 @@ async def process_roaster(crawler, client, roaster, existing_entries, today, max
         # stale), in which case the whole url is reprocessed once even
         # though the page itself didn't change. not_a_product entries carry
         # no schema_version and are unaffected by normalization changes, so
-        # they always gate.
+        # they always gate. An `incomplete` entry only gates once its
+        # bounded re-extraction budget is spent (issue #36) — see
+        # MAX_INCOMPLETE_REEXTRACTIONS.
         hash_gate_ok = bool(group_priors) and all(
             p.get("page_hash") == page_hash
             and p.get("status") in ("ok", "incomplete", "not_a_product")
             and (p.get("status") == "not_a_product" or p.get("schema_version") == SCHEMA_VERSION)
+            and (
+                p.get("status") != "incomplete"
+                or p.get("reextract_attempts", 0) >= MAX_INCOMPLETE_REEXTRACTIONS
+            )
             for p in group_priors
         )
         if hash_gate_ok:
@@ -1735,8 +1751,20 @@ async def process_roaster(crawler, client, roaster, existing_entries, today, max
                 validate_entry(not_a_product_entry)
                 kept.append(not_a_product_entry)
             continue
+        # Carry the bounded-retry counter (issue #36) across runs only while
+        # the page stays byte-identical: a re-extraction of an unchanged page
+        # that STILL comes out incomplete spends one unit of its retry
+        # budget. A changed page (or an entry that came out `ok`) starts
+        # fresh — the counter simply isn't set.
+        prior_incomplete_attempts = [
+            p.get("reextract_attempts", 0)
+            for p in group_priors
+            if p.get("status") == "incomplete" and p.get("page_hash") == page_hash
+        ]
         for normalized in normalized_list:
             normalized["page_hash"] = page_hash
+            if normalized.get("status") == "incomplete" and prior_incomplete_attempts:
+                normalized["reextract_attempts"] = max(prior_incomplete_attempts) + 1
             validate_entry(normalized)
             kept.append(normalized)
 

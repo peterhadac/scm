@@ -18,6 +18,7 @@
     "starlight-theme-md3": "^0.2.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.61.1",
     "@types/js-yaml": "^4.0.9",
     "playwright": "^1.61.1"

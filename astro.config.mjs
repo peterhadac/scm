@@ -2,6 +2,47 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import md3Theme from 'starlight-theme-md3';
 
+// GoatCounter site code (issue #56): analytics scripts are only emitted
+// when GOATCOUNTER_CODE is set at build time (pages.yml passes the
+// GOATCOUNTER_CODE repository variable), so local dev builds and forks
+// never report into the production property. GoatCounter is cookie-less
+// and GDPR-friendly — no consent banner needed.
+const goatcounterCode = process.env.GOATCOUNTER_CODE;
+const goatcounterHead = goatcounterCode
+  ? [
+      {
+        tag: 'script',
+        attrs: {
+          'data-goatcounter': `https://${goatcounterCode}.goatcounter.com/count`,
+          async: true,
+          src: '//gc.zgo.at/count.js',
+        },
+      },
+      {
+        // Outbound-click events ("out:<host><path>"): the numbers behind
+        // any referral/sponsorship conversation with a roaster. count.js
+        // only tracks pageviews by itself.
+        tag: 'script',
+        content: `
+          document.addEventListener('click', function (e) {
+            var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+            if (!a) return;
+            var url;
+            try { url = new URL(a.href); } catch (err) { return; }
+            if (url.host === window.location.host) return;
+            if (window.goatcounter && window.goatcounter.count) {
+              window.goatcounter.count({
+                path: 'out:' + url.host + url.pathname,
+                title: (a.textContent || '').trim().slice(0, 100),
+                event: true,
+              });
+            }
+          });
+        `,
+      },
+    ]
+  : [];
+
 export default defineConfig({
   site: 'https://peterhadac.github.io',
   base: '/scm',
@@ -17,6 +58,7 @@ export default defineConfig({
         SiteTitle: './src/components/SiteTitle.astro',
       },
       head: [
+        ...goatcounterHead,
         { tag: 'script', attrs: { src: 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js' } },
         {
           tag: 'script',

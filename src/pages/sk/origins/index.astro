@@ -1,0 +1,33 @@
+---
+// Slovenský zoznam krajín pôvodu (issue #58).
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { listOrigins } from '../../../lib/origins';
+import { localizedOrigin } from '../../../lib/i18n';
+
+const origins = listOrigins();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Káva podľa pôvodu',
+    description: 'Prehliadajte kávy dostupné na Slovensku podľa krajiny pôvodu.',
+    tableOfContents: false,
+  }}
+>
+  <p>
+    Všetky krajiny pôvodu aktuálne zastúpené na slovenskom trhu výberovej
+    kávy, zoradené podľa počtu káv. Každá stránka obsahuje kávy danej
+    krajiny s cenami, obnovované každý týždeň.
+  </p>
+  <ul>
+    {origins.map((o) => (
+      <li>
+        <a href={`${base}/sk/origins/${o.slug}/`}>
+          {o.origin === 'Blend' ? 'Zmesi' : localizedOrigin(o.origin, 'sk') ?? o.origin}
+        </a>{' '}
+        ({o.coffeeCount})
+      </li>
+    ))}
+  </ul>
+</StarlightPage>

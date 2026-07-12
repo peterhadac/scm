@@ -1,0 +1,28 @@
+---
+// Slovak mirror of the per-origin landing page (issue #58) — same slugs
+// (canonical English origin keys), Slovak prose and labels.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import CoffeeTable from '../../../components/CoffeeTable.astro';
+import { listOrigins, originJsonLd } from '../../../lib/origins';
+import { localizedOrigin } from '../../../lib/i18n';
+
+export function getStaticPaths() {
+  return listOrigins().map((o) => ({ params: { slug: o.slug }, props: { summary: o } }));
+}
+
+const { summary } = Astro.props;
+const label = localizedOrigin(summary.origin, 'sk') ?? summary.origin;
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const jsonLd = originJsonLd(summary.origin, pageUrl);
+const title = summary.origin === 'Blend' ? 'Kávové zmesi' : `Káva z krajiny ${label}`;
+const intro =
+  summary.origin === 'Blend'
+    ? `Všetky zmesi z viacerých krajín aktuálne dostupné u slovenských výberových pražiarní — ${summary.coffeeCount} káv od ${summary.roasterCount} pražiarní, obnovované každý týždeň.`
+    : `Všetky kávy z krajiny ${label} aktuálne dostupné u slovenských výberových pražiarní — ${summary.coffeeCount} káv od ${summary.roasterCount} pražiarní, obnovované každý týždeň.`;
+---
+
+<StarlightPage frontmatter={{ title, description: intro, tableOfContents: false }}>
+  <script type="application/ld+json" set:html={jsonLd} />
+  <p>{intro}</p>
+  <CoffeeTable origin={summary.origin} />
+</StarlightPage>

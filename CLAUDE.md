@@ -335,6 +335,7 @@ workflow, a new site section).
 
 - `OPENROUTER_API_KEY` — required by scraper (OpenRouter, models `google/gemini-2.5-flash-lite` → `google/gemini-2.5-flash` fallback), stored as GitHub Actions secret
 - `OPENROUTER_MODELS` — optional comma-separated ordered override of the extraction model list (issue #42)
+- `GOATCOUNTER_CODE` — optional GoatCounter site code (issue #56), stored as a GitHub Actions **repository variable** (not a secret) and passed to `pnpm build` by `pages.yml`. When unset (local dev, forks) the analytics scripts are simply not emitted. Enables pageviews + `out:<host><path>` outbound-click events on roaster links — the numbers behind referral conversations.
 
 ## Development
 

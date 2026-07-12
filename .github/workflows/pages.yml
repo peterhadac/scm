@@ -38,6 +38,11 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+        env:
+          # Repository variable (Settings -> Secrets and variables ->
+          # Actions -> Variables). Unset = analytics scripts not emitted
+          # (issue #56) — the build works fine without it.
+          GOATCOUNTER_CODE: ${{ vars.GOATCOUNTER_CODE }}
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: dist/

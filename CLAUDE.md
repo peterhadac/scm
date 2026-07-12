@@ -17,6 +17,7 @@ scraper/
 data/
   products.yaml        ← per-product intermediate: fields, page_hash, status, packaging (see Architecture.md)
   scrape_status.yaml    ← per-roaster health: status + consecutive_non_ok streak, committed alongside products.yaml (see "Observability" below)
+  price_history.csv     ← append-only price time series (issue #41): one row per (date, roaster, url, weight_g), appended only when that tier's price is new or changed; a no-change week appends nothing
 src/
   content/docs/index.mdx   ← Starlight page embedding the table component (+ sk/ mirror for Slovak)
   components/CoffeeTable.astro  ← filterable/sortable table UI
@@ -172,7 +173,7 @@ permissions:
   issues: write              # for the escalation step below (issue #28)
 ```
 
-Steps: checkout → `setup-uv` → `uv sync --directory scraper` → `crawl4ai-setup` (installs Playwright/Patchright browsers) → run scraper → **escalate roasters non-ok for 3+ consecutive runs** → commit `data/products.yaml` + `data/scrape_status.yaml` → push.
+Steps: checkout → `setup-uv` → `uv sync --directory scraper` → `crawl4ai-setup` (installs Playwright/Patchright browsers) → run scraper → **escalate roasters non-ok for 3+ consecutive runs** → commit `data/products.yaml` + `data/scrape_status.yaml` + `data/price_history.csv` → push.
 
 - The escalation step (issue #28) reads `data/scrape_status.yaml` (just
   written by the scraper) with a small inline Python snippet, and for every
@@ -181,10 +182,13 @@ Steps: checkout → `setup-uv` → `uv sync --directory scraper` → `crawl4ai-s
   open issue titled `Roaster health: <name>` — commenting on it if found,
   creating it otherwise, so a persistently-broken roaster doesn't spam a new
   issue every week.
-- Guard the commit so a no-change run doesn't fail the job — both scraped
-  artifacts are staged and diffed together so either one changing triggers a
-  commit:
-  `git add data/products.yaml data/scrape_status.yaml && git diff --quiet --staged -- data/products.yaml data/scrape_status.yaml || (git commit -m "data: $(date -u +%F)" && git push)`
+- Guard the commit so a no-change run doesn't fail the job — all scraped
+  artifacts are staged **first** and then diffed staged (a plain `git diff`
+  never sees a brand-new untracked artifact, e.g. the first-ever
+  `scrape_status.yaml`/`price_history.csv`), so any one of them changing
+  triggers a commit; `price_history.csv` is `git add`ed behind an existence
+  guard since it only appears once the first run with an `ok` product has
+  happened.
 - **The push to `main` does NOT trigger `pages.yml`** — a push made with the default `GITHUB_TOKEN` (which `actions/checkout` uses here) doesn't fire other workflows' `on: push`, to prevent recursive runs. `pages.yml` instead listens for `scrape.yml`'s completion via `workflow_run` (see below). Ordinary human pushes to `main` are unaffected and still trigger `pages.yml` normally.
 
 ### `pages.yml` — build & deploy (Astro is **not** auto-built by Pages)

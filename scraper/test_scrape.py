@@ -2944,7 +2944,7 @@ async def test_run_checkpoints_save_products_after_each_roaster(monkeypatch, tmp
 
     monkeypatch.setattr(scrape, "save_products", spy_save_products)
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml", history_path=tmp_path / "price_history.csv")
 
     # One checkpoint save per roaster, not just one at the very end — and
     # each successive checkpoint has one more roaster's worth of data than
@@ -2975,7 +2975,7 @@ async def test_run_isolates_roaster_exception_and_continues(monkeypatch, tmp_pat
 
     # Should not raise — the exception on roaster-two must be caught and
     # isolated, letting roaster-three still be processed.
-    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml", history_path=tmp_path / "price_history.csv")
 
     on_disk = scrape.load_products(products_path)
     assert on_disk["roaster-one"] == [{"name": "Roaster One", "url": "https://a.sk/p"}]
@@ -3001,7 +3001,7 @@ async def test_run_records_failed_status_for_roaster_that_raised(monkeypatch, tm
 
     monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml", history_path=tmp_path / "price_history.csv")
 
     out = capsys.readouterr().out
     assert "Roaster One: ok" in out
@@ -3041,7 +3041,7 @@ async def test_run_preserves_prior_roaster_entries_when_it_later_raises(monkeypa
 
     monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml", history_path=tmp_path / "price_history.csv")
 
     on_disk = scrape.load_products(products_path)
     assert on_disk["roaster-two"] == [prior_entry]
@@ -3078,7 +3078,7 @@ async def test_run_checkpointing_survives_later_fatal_crash(monkeypatch, tmp_pat
     monkeypatch.setattr(scrape, "save_products", crashing_save_products)
 
     with pytest.raises(OSError):
-        await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+        await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml", history_path=tmp_path / "price_history.csv")
 
     # The crash happened on the 3rd checkpoint write, so the 2nd checkpoint
     # (roaster-one + roaster-two) already made it to disk before the crash.
@@ -3124,7 +3124,7 @@ async def test_run_processes_roasters_concurrently_not_sequentially(monkeypatch,
 
     monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml", history_path=tmp_path / "price_history.csv")
 
     starts = [i for i, (kind, _) in enumerate(events) if kind == "start"]
     ends = [i for i, (kind, _) in enumerate(events) if kind == "end"]
@@ -3170,7 +3170,7 @@ async def test_run_respects_cross_roaster_concurrency_limit(monkeypatch, tmp_pat
 
     monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml", history_path=tmp_path / "price_history.csv")
 
     assert in_flight["peak"] == scrape.CROSS_ROASTER_CONCURRENCY
 
@@ -3202,7 +3202,7 @@ async def test_run_isolates_roaster_exception_under_real_concurrency(monkeypatch
 
     # Should not raise — the exception on roaster-two must be caught and
     # isolated, letting roaster-one and roaster-three still complete.
-    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml", history_path=tmp_path / "price_history.csv")
 
     on_disk = scrape.load_products(products_path)
     assert on_disk["roaster-one"] == [{"name": "Roaster One", "url": "https://a.sk/p"}]
@@ -3244,7 +3244,7 @@ async def test_run_checkpoint_lock_serializes_concurrent_saves(monkeypatch, tmp_
 
     monkeypatch.setattr(scrape, "save_products", instrumented_save_products)
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml", history_path=tmp_path / "price_history.csv")
 
     assert concurrent_calls["max_overlap"] == 1
     on_disk = scrape.load_products(products_path)
@@ -3289,7 +3289,7 @@ async def test_run_raises_fast_on_missing_api_key_before_processing_any_roaster(
     monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
 
     with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY"):
-        await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml")
+        await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=tmp_path / "scrape_status.yaml", history_path=tmp_path / "price_history.csv")
 
     assert calls == []
 
@@ -3547,7 +3547,7 @@ async def test_run_persists_scrape_status_with_consecutive_non_ok_tracking(monke
     monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
 
     # Run 1: broken-roaster fails for the first time.
-    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path, history_path=tmp_path / "price_history.csv")
     records = scrape.load_scrape_status(status_path)
     assert records["broken-roaster"]["status"] == "failed"
     assert records["broken-roaster"]["consecutive_non_ok"] == 1
@@ -3557,7 +3557,7 @@ async def test_run_persists_scrape_status_with_consecutive_non_ok_tracking(monke
     # Run 2: broken-roaster fails again — streak must climb to 2. Recreate
     # products.yaml's roaster entry so the second run starts from what the
     # first run actually persisted (mirrors a real second cron run).
-    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path, history_path=tmp_path / "price_history.csv")
     records = scrape.load_scrape_status(status_path)
     assert records["broken-roaster"]["consecutive_non_ok"] == 2
     assert records["good-roaster"]["consecutive_non_ok"] == 0
@@ -3585,11 +3585,11 @@ async def test_run_resets_consecutive_non_ok_when_roaster_recovers(monkeypatch, 
 
     monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path, history_path=tmp_path / "price_history.csv")
     records = scrape.load_scrape_status(status_path)
     assert records["flaky-roaster"]["consecutive_non_ok"] == 1
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path, history_path=tmp_path / "price_history.csv")
     records = scrape.load_scrape_status(status_path)
     assert records["flaky-roaster"]["status"] == "ok"
     assert records["flaky-roaster"]["consecutive_non_ok"] == 0
@@ -3613,7 +3613,7 @@ async def test_run_emits_warning_and_writes_step_summary_for_non_ok_roaster(monk
 
     monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
 
-    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+    await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path, history_path=tmp_path / "price_history.csv")
 
     out = capsys.readouterr().out
     assert "::warning::Roaster 'Broken Roaster' has status 'failed'" in out
@@ -3641,7 +3641,116 @@ async def test_run_escalates_after_three_consecutive_non_ok_runs(monkeypatch, tm
     monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
 
     for _ in range(3):
-        await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path)
+        await scrape.run(roasters_path=roasters_path, products_path=products_path, status_path=status_path, history_path=tmp_path / "price_history.csv")
 
     out = capsys.readouterr().out
     assert "::error::Roaster 'Broken Roaster' has been non-ok for 3 consecutive runs" in out
+
+
+# --- price history (issue #41) -------------------------------------------------
+
+
+def _history_products():
+    return {
+        "roaster-a": [
+            {
+                "name": "Rwanda",
+                "url": "https://a.sk/rwanda/",
+                "status": "ok",
+                "packaging": [{"weight_g": 250, "price": 12.5}, {"weight_g": 1000, "price": 39.0}],
+            },
+            {
+                "name": "Mystery",
+                "url": "https://a.sk/mystery/",
+                "status": "incomplete",
+                "packaging": [{"weight_g": 250, "price": None}],
+            },
+            {"url": "https://a.sk/kosik/", "status": "not_a_product"},
+        ],
+    }
+
+
+def test_build_price_history_rows_records_every_ok_tier_on_first_run():
+    rows = scrape.build_price_history_rows(_history_products(), "2026-07-12", {})
+    # only the ok entry contributes — incomplete/not_a_product never do
+    assert [(r["weight_g"], r["price"]) for r in rows] == [(250, 12.5), (1000, 39.0)]
+    assert all(r["date"] == "2026-07-12" and r["roaster"] == "roaster-a" for r in rows)
+
+
+def test_build_price_history_rows_appends_only_changed_prices():
+    last = {
+        ("roaster-a", "https://a.sk/rwanda/", 250): 12.5,   # unchanged
+        ("roaster-a", "https://a.sk/rwanda/", 1000): 35.0,  # changed 35 -> 39
+    }
+    rows = scrape.build_price_history_rows(_history_products(), "2026-07-12", last)
+    assert [(r["weight_g"], r["price"]) for r in rows] == [(1000, 39.0)]
+
+
+def test_price_history_round_trip_last_wins(tmp_path):
+    path = tmp_path / "price_history.csv"
+    scrape.append_price_history(
+        [
+            {"date": "2026-07-05", "roaster": "r", "url": "https://a.sk/x/", "weight_g": 250, "price": 10.0, "name": "X"},
+        ],
+        path,
+    )
+    scrape.append_price_history(
+        [
+            {"date": "2026-07-12", "roaster": "r", "url": "https://a.sk/x/", "weight_g": 250, "price": 11.0, "name": "X"},
+        ],
+        path,
+    )
+    assert path.read_text().splitlines()[0] == "date,roaster,url,weight_g,price,name"  # header once
+    last = scrape.load_last_known_prices(path)
+    assert last == {("r", "https://a.sk/x/", 250): 11.0}
+
+
+def test_append_price_history_no_rows_is_a_no_op(tmp_path):
+    path = tmp_path / "price_history.csv"
+    scrape.append_price_history([], path)
+    assert not path.exists()  # a no-change week must not create/touch the file
+
+
+def test_load_last_known_prices_skips_malformed_rows(tmp_path):
+    path = tmp_path / "price_history.csv"
+    path.write_text(
+        "date,roaster,url,weight_g,price,name\n"
+        "2026-07-05,r,https://a.sk/x/,250,10.0,X\n"
+        "2026-07-06,r,https://a.sk/x/,not-a-weight,11.0,X\n"
+    )
+    assert scrape.load_last_known_prices(path) == {("r", "https://a.sk/x/", 250): 10.0}
+
+
+@pytest.mark.asyncio
+async def test_run_appends_price_history_for_ok_products(monkeypatch, tmp_path):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
+    roasters = [
+        {"name": "Roaster A", "slug": "roaster-a", "url": "https://a.sk/", "scrape_url": "https://a.sk/"},
+    ]
+    roasters_path = tmp_path / "roasters.yaml"
+    write_roasters_yaml(roasters_path, roasters)
+    history_path = tmp_path / "price_history.csv"
+
+    async def fake_process_roaster(crawler, client, roaster, existing_entries, today, max_pages=scrape.MAX_PAGES):
+        return [
+            {
+                "name": "Rwanda",
+                "url": "https://a.sk/rwanda/",
+                "status": "ok",
+                "last_seen": today,
+                "page_hash": "h",
+                "packaging": [{"weight_g": 250, "price": 12.5}],
+                "schema_version": scrape.SCHEMA_VERSION,
+            }
+        ], "ok"
+
+    monkeypatch.setattr(scrape, "process_roaster", fake_process_roaster)
+
+    await scrape.run(roasters_path=roasters_path, products_path=tmp_path / "products.yaml", status_path=tmp_path / "scrape_status.yaml", history_path=history_path)
+    lines = history_path.read_text().splitlines()
+    assert len(lines) == 2  # header + one observation
+
+    # identical second run appends nothing
+    await scrape.run(roasters_path=roasters_path, products_path=tmp_path / "products.yaml", status_path=tmp_path / "scrape_status.yaml", history_path=history_path)
+    assert len(history_path.read_text().splitlines()) == 2

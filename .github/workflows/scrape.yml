@@ -71,11 +71,18 @@ jobs:
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet -- data/products.yaml data/scrape_status.yaml; then
+          # add BEFORE diffing (staged diff): a plain `git diff --quiet` never
+          # sees a brand-new untracked artifact (the first-ever
+          # scrape_status.yaml / price_history.csv), so it would skip the
+          # commit that should introduce the file.
+          git add data/products.yaml data/scrape_status.yaml
+          # created on the first run with >=1 ok product; git add errors on
+          # a pathspec that matches nothing, hence the existence guard
+          [ -f data/price_history.csv ] && git add data/price_history.csv
+          if git diff --quiet --staged -- data/products.yaml data/scrape_status.yaml data/price_history.csv; then
             echo "No changes to commit"
             exit 0
           fi
-          git add data/products.yaml data/scrape_status.yaml
           git commit -m "data: $(date -u +%F)"
           for i in 1 2 3; do
             if git pull --rebase origin main && git push; then

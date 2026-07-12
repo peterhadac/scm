@@ -224,35 +224,75 @@ NON_COFFEE_KEYWORDS = (
 )
 
 # URL path segments that mark a discovered link as site plumbing (cart,
-# account, legal, nav) rather than a product page. Same conservative-substring
-# approach as NON_COFFEE_KEYWORDS, applied to the link's path instead of a
-# product name — a cheap first-pass filter, not a guarantee: any non-product
-# page that slips through still gets rejected downstream because the model's
-# extraction of it will yield no usable price/packaging (see normalize_product).
-NON_PRODUCT_PATH_SEGMENTS = (
-    "kosik",
-    "cart",
-    "checkout",
-    "registracia",
-    "prihlasenie",
-    "login",
-    "zabudnute-heslo",
-    "kontakt",
-    "vop",
-    "obchodne-podmienky",
-    "ochrana-osobnych-udajov",
-    "ochrany-osobnych-udajov",
-    "gdpr",
-    "privacy",
-    "b2b",
-    "menu",
-    "eventy",
-    "blog",
-    "news",
-    "faq",
-    "o-nas",
-    "about",
-    "sluzby",
+# account, legal, nav) or a listing page (category, brand, blog rubric)
+# rather than a product page. Matched as EXACT path segments, not substrings
+# (issue #37): the expanded list below contains words like "info" and "chut"
+# that appear inside legitimate Slovak product slugs, so substring matching
+# would silently drop real coffees — the asymmetry matters, since a false
+# positive here hides a product from the map forever while a false negative
+# just costs one cached LLM decline. A cheap first-pass filter, not a
+# guarantee: any non-product page that slips through still gets rejected
+# downstream because the model's extraction of it will yield no usable
+# price/packaging (see normalize_product). Every segment added for issue #37
+# was verified against data/products.yaml to appear only in not_a_product
+# entries, never in an ok/incomplete one.
+NON_PRODUCT_PATH_SEGMENTS = frozenset(
+    {
+        # cart / account / order flow
+        "kosik",
+        "cart",
+        "checkout",
+        "registracia",
+        "prihlasenie",
+        "login",
+        "zabudnute-heslo",
+        "moj-ucet",
+        "my-account",
+        "account",
+        "kontrola-objednavky",
+        # legal / policy pages
+        "vop",
+        "obchodne-podmienky",
+        "ochrana-osobnych-udajov",
+        "ochrany-osobnych-udajov",
+        "ochrana-sukromia",
+        "odstupenie-od-zmluvy",
+        "reklamacny-poriadok",
+        "doprava-a-platba",
+        "gdpr",
+        "privacy",
+        "policies",
+        # info / content / blog
+        "kontakt",
+        "menu",
+        "eventy",
+        "blog",
+        "news",
+        "faq",
+        "o-nas",
+        "about",
+        "sluzby",
+        "info",
+        "content",
+        "clanky",
+        "rubriky",
+        "spolupraca",
+        "module",
+        # category / brand / filter listings (never a single product page)
+        "kategoria",
+        "kategorie",
+        "kategoria-produktu",
+        "kategorie-produktov",
+        "znacka",
+        "znacka-produktu",
+        "collections",
+        "chut",
+        # wholesale / non-coffee sections
+        "b2b",
+        "velkoobchod",
+        "prislusenstvo",
+        "doplnky",
+    }
 )
 
 DISCOVERY_CONFIG = CrawlerRunConfig(prefetch=True, cache_mode=CacheMode.BYPASS)
@@ -623,8 +663,24 @@ def find_next_page_url(html, current_url):
 
 
 def looks_like_product_link(href):
+    """Cheap first-pass filter: does this discovered URL plausibly point at
+    a single product page?
+
+    Exact-segment matching against NON_PRODUCT_PATH_SEGMENTS (see its
+    comment for why not substrings, issue #37). A bare site root is never a
+    product page — 28 homepage self-links were cached as not_a_product
+    before this check existed. Shopify nests real product pages under a
+    collection (`/collections/<c>/products/<p>`), so "collections" only
+    disqualifies a link when no "products" segment follows it.
+    """
     path = urlparse(href).path.lower()
-    return not any(segment in path for segment in NON_PRODUCT_PATH_SEGMENTS)
+    segments = [s for s in path.split("/") if s]
+    if not segments:
+        return False
+    blocked = set(segments) & NON_PRODUCT_PATH_SEGMENTS
+    if blocked == {"collections"} and "products" in segments:
+        return True
+    return not blocked
 
 
 def visible_html_text_length(html):

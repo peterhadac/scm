@@ -1,0 +1,34 @@
+version: 2
+updates:
+  # Workflow actions — some are SHA-pinned (checkout, setup-node, deploy
+  # steps), others float on tags (setup-uv, pnpm/action-setup); Dependabot
+  # keeps both current and preserves the pin style it finds.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # Site: astro / starlight / theme (pnpm-lock.yaml at repo root).
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      npm-minor-patch:
+        update-types: [minor, patch]
+
+  # Scraper: crawl4ai / openai / bs4 etc. (uv-managed pyproject + uv.lock —
+  # Dependabot's pip ecosystem supports uv lockfiles).
+  - package-ecosystem: pip
+    directory: /scraper
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      python-minor-patch:
+        update-types: [minor, patch]

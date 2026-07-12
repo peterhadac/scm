@@ -2568,6 +2568,119 @@ async def test_process_roaster_removes_delisted_product():
     assert [e["url"] for e in entries] == ["https://x.sk/still-here/"]
 
 
+# --- mass-delisting guard (issue #39) -----------------------------------------
+
+
+def _ok_prior_entry(url, name="Old Coffee"):
+    return {
+        "name": name,
+        "url": url,
+        "status": "ok",
+        "last_seen": "2026-07-01",
+        "page_hash": "deadbeef",
+        "packaging": [{"weight_g": 250, "price": 9.0}],
+        "schema_version": scrape.SCHEMA_VERSION,
+    }
+
+
+def _single_product_crawler():
+    return FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/new-one/"]),
+            "https://x.sk/new-one/": fake_result(markdown=fake_markdown(LONG_TEXT + " 12,50 €")),
+        }
+    )
+
+
+def _ok_extraction_client():
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [
+            fake_tool_call(
+                "extract_product",
+                {
+                    "name": "New One",
+                    "origin": "Rwanda",
+                    "roast_type": "Filter",
+                    "packaging": [{"price": "12,50 €", "weight": "250 g"}],
+                },
+            )
+        ]
+    )
+    return client
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_mass_delist_guard_preserves_entries_and_reports_suspect(capsys):
+    # A clean-looking discovery that would drop 4 of 4 known-good products
+    # in one run is a suspected site redesign, not a real wipeout — priors
+    # must survive untouched and the roaster must report "suspect".
+    existing = [_ok_prior_entry(f"https://x.sk/old-{i}/", f"Old {i}") for i in range(4)]
+
+    entries, status = await scrape.process_roaster(
+        _single_product_crawler(), _ok_extraction_client(), ROASTER, existing, "2026-07-04"
+    )
+    assert status == "suspect"
+    assert "suspect" in scrape.ROASTER_STATUS_NOTES  # warns in summary/annotations
+    urls = {e["url"] for e in entries}
+    assert urls == {f"https://x.sk/old-{i}/" for i in range(4)} | {"https://x.sk/new-one/"}
+    # preserved exactly like a partial run: untouched, last_seen frozen
+    for e in entries:
+        if e["url"] != "https://x.sk/new-one/":
+            assert e["last_seen"] == "2026-07-01"
+    assert "would drop 4 of 4 known products" in capsys.readouterr().out
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_mass_delist_guard_ignores_not_a_product_drops():
+    # Tightening the discovery filter (issue #37) legitimately drops
+    # hundreds of not_a_product entries at once — that must NOT trip the
+    # guard; only ok/incomplete priors count as "known products".
+    existing = [
+        {
+            "url": f"https://x.sk/kategoria-{i}/",
+            "status": "not_a_product",
+            "last_seen": "2026-07-01",
+            "page_hash": "deadbeef",
+        }
+        for i in range(6)
+    ]
+
+    entries, status = await scrape.process_roaster(
+        _single_product_crawler(), _ok_extraction_client(), ROASTER, existing, "2026-07-04"
+    )
+    assert status == "ok"
+    assert [e["url"] for e in entries] == ["https://x.sk/new-one/"]  # noise really dropped
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_mass_delist_guard_floor_lets_small_real_delistings_through():
+    # 2 of 3 products delisted clears the fraction but not the
+    # MASS_DELIST_GUARD_MIN_DROPPED floor — a tiny catalogue shrinking is
+    # ordinary churn, and the drop must go through as a plain "ok" run.
+    markdown_text = LONG_TEXT + " 12,50 €"
+    page_hash = scrape.compute_page_hash(markdown_text)
+    crawler = FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/keeper/"]),
+            "https://x.sk/keeper/": fake_result(markdown=fake_markdown(markdown_text)),
+        }
+    )
+    keeper = _ok_prior_entry("https://x.sk/keeper/", "Keeper")
+    keeper["page_hash"] = page_hash  # hash-gates, no LLM call needed
+    existing = [
+        keeper,
+        _ok_prior_entry("https://x.sk/old-1/", "Old 1"),
+        _ok_prior_entry("https://x.sk/old-2/", "Old 2"),
+    ]
+
+    client = MagicMock()
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, existing, "2026-07-04")
+    assert status == "ok"
+    assert [e["url"] for e in entries] == ["https://x.sk/keeper/"]
+    client.chat.completions.create.assert_not_called()
+
+
 # --- politeness delay (issue #27) --------------------------------------------
 
 

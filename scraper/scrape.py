@@ -130,7 +130,23 @@ ROASTER_STATUS_NOTES = {
     "failed": "listing page unreachable — existing data kept, last_seen frozen",
     "needs_js": "looks JS-rendered (or crawl found 0 products) — existing data kept",
     "partial": "pagination didn't finish this run — some entries may be stale",
+    "suspect": "clean-looking discovery would drop most known products — kept prior entries, verify manually",
 }
+
+# Mass-delisting guard (issue #39): a discovery pass that reports "ok" but
+# would drop more than this fraction of a roaster's known-good
+# (ok/incomplete) products in ONE run is far more likely a site redesign
+# that still parses as a listing (but yields only a few product links) than
+# a real catalogue wipeout — roasters delist coffees a handful at a time.
+# When tripped, prior entries are preserved exactly like a "partial" run and
+# the roaster is reported "suspect" so it warns/escalates instead of
+# silently publishing a gutted catalogue. Only ok/incomplete priors count:
+# not_a_product entries vanishing en masse is expected whenever the
+# discovery filter is tightened (issue #37) and must not trip this.
+MASS_DELIST_GUARD_FRACTION = 0.5
+# ...and a floor, so a tiny catalogue (2 of 3 coffees genuinely delisted)
+# doesn't false-alarm on the fraction alone.
+MASS_DELIST_GUARD_MIN_DROPPED = 3
 
 # How many roasters' process_roaster() calls run concurrently in run()
 # (issue #27). Different roasters are different domains, so parallelizing
@@ -1835,6 +1851,30 @@ async def process_roaster(crawler, client, roaster, existing_entries, today, max
         for url, priors in existing_by_url.items():
             if url not in discovered:
                 kept.extend(priors)
+
+    if status == "ok":
+        # Mass-delisting guard (issue #39): a clean discovery normally means
+        # "everything not rediscovered is genuinely delisted" — but a site
+        # redesign that still parses as a listing while exposing only a few
+        # product links would wipe the whole catalogue in one run. If most
+        # known-good products would vanish at once, keep them (exactly like
+        # a partial run) and report "suspect" instead of publishing the cut.
+        discovered_urls = set(discovered)
+        prior_good = [e for e in existing_entries if e.get("status") in ("ok", "incomplete")]
+        dropped_good = [e for e in prior_good if e["url"] not in discovered_urls]
+        if (
+            len(dropped_good) >= MASS_DELIST_GUARD_MIN_DROPPED
+            and len(dropped_good) > MASS_DELIST_GUARD_FRACTION * len(prior_good)
+        ):
+            print(
+                f"  WARNING: {roaster['name']}: clean-looking discovery would drop "
+                f"{len(dropped_good)} of {len(prior_good)} known products in one run — "
+                "preserving prior entries and reporting 'suspect' (issue #39)"
+            )
+            for url, priors in existing_by_url.items():
+                if url not in discovered_urls:
+                    kept.extend(priors)
+            status = "suspect"
 
     return kept, status
 

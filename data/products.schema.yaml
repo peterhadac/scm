@@ -58,6 +58,10 @@ definitions:
       last_seen: {type: string}
       page_hash: {type: string}
       schema_version: {type: integer}
+      # How many times an unchanged page has been re-extracted and still come
+      # out incomplete (issue #36) — absent means 0; the hash gate holds once
+      # it reaches MAX_INCOMPLETE_REEXTRACTIONS in scraper/scrape.py.
+      reextract_attempts: {type: integer, minimum: 1}
 
   not_a_product:
     type: object

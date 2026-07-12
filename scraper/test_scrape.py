@@ -2200,6 +2200,9 @@ async def test_process_roaster_hash_gate_catches_price_only_variation_change():
 async def test_process_roaster_hash_gate_still_skips_when_nothing_changed():
     # Regression guard: identical markdown AND identical (or absent)
     # variations JSON across two runs must still hit the hash-gate.
+    # The extraction is deliberately complete (`ok`) — an incomplete entry
+    # now intentionally bypasses the gate for a few runs (issue #36), which
+    # is not what this test is about.
     markdown_text = LONG_TEXT + " 12,50 €"
     crawler_v1 = FakeCrawler(
         {
@@ -2209,7 +2212,16 @@ async def test_process_roaster_hash_gate_still_skips_when_nothing_changed():
     )
     client = MagicMock()
     client.chat.completions.create.return_value = fake_completion(
-        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €", "weight": "250 g"}]})]
+        [
+            fake_tool_call(
+                "extract_product",
+                {
+                    "name": "Rwanda",
+                    "roast_type": "Filter",
+                    "packaging": [{"price": "12,50 €", "weight": "250 g"}],
+                },
+            )
+        ]
     )
     entries_v1, _ = await scrape.process_roaster(crawler_v1, client, ROASTER, [], "2026-07-08")
     assert client.chat.completions.create.call_count == 1
@@ -2294,6 +2306,135 @@ async def test_process_roaster_forces_reextraction_when_schema_version_stale():
     assert entries[0]["schema_version"] == scrape.SCHEMA_VERSION
 
 
+# --- incomplete re-extraction budget (issue #36) -------------------------------
+
+
+def _incomplete_prior(page_hash, **overrides):
+    entry = {
+        "name": "Mystery Coffee",
+        "url": "https://x.sk/mystery/",
+        "status": "incomplete",
+        "missing_fields": ["origin", "roast_type"],
+        "last_seen": "2026-07-01",
+        "page_hash": page_hash,
+        "packaging": [{"weight_g": 250, "price": 12.5}],
+        "schema_version": scrape.SCHEMA_VERSION,
+    }
+    entry.update(overrides)
+    return entry
+
+
+def _mystery_crawler(markdown_text):
+    return FakeCrawler(
+        {
+            "https://x.sk/": listing_result(["https://x.sk/mystery/"]),
+            "https://x.sk/mystery/": fake_result(markdown=fake_markdown(markdown_text)),
+        }
+    )
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_reextracts_incomplete_despite_unchanged_hash():
+    # issue #36: an incomplete entry used to hash-gate exactly like an ok
+    # one, so a flaky extraction (model missed a field the page states)
+    # could never self-heal until the roaster edited the page.
+    markdown_text = LONG_TEXT + " 12,50 €"
+    page_hash = scrape.compute_page_hash(markdown_text)
+    crawler = _mystery_crawler(markdown_text)
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [
+            fake_tool_call(
+                "extract_product",
+                {
+                    "name": "Mystery Coffee",
+                    "origin": "Rwanda",
+                    "roast_type": "Filter",
+                    "packaging": [{"price": "12,50 €", "weight": "250 g"}],
+                },
+            )
+        ]
+    )
+
+    entries, status = await scrape.process_roaster(
+        crawler, client, ROASTER, [_incomplete_prior(page_hash)], "2026-07-04"
+    )
+    assert status == "ok"
+    client.chat.completions.create.assert_called_once()  # gate bypassed
+    assert entries[0]["status"] == "ok"  # healed
+    assert "reextract_attempts" not in entries[0]  # counter only exists while incomplete
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_increments_reextract_attempts_when_still_incomplete():
+    markdown_text = LONG_TEXT + " 12,50 €"
+    page_hash = scrape.compute_page_hash(markdown_text)
+    crawler = _mystery_crawler(markdown_text)
+    client = MagicMock()
+    # Model still can't find origin/roast_type — page genuinely omits them.
+    client.chat.completions.create.return_value = fake_completion(
+        [
+            fake_tool_call(
+                "extract_product",
+                {"name": "Mystery Coffee", "packaging": [{"price": "12,50 €", "weight": "250 g"}]},
+            )
+        ]
+    )
+
+    entries, status = await scrape.process_roaster(
+        crawler, client, ROASTER, [_incomplete_prior(page_hash, reextract_attempts=1)], "2026-07-04"
+    )
+    assert status == "ok"
+    client.chat.completions.create.assert_called_once()  # 1 < budget, so retried
+    assert entries[0]["status"] == "incomplete"
+    assert entries[0]["reextract_attempts"] == 2
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_gates_incomplete_once_retry_budget_spent():
+    markdown_text = LONG_TEXT + " 12,50 €"
+    page_hash = scrape.compute_page_hash(markdown_text)
+    crawler = _mystery_crawler(markdown_text)
+    client = MagicMock()
+
+    prior = _incomplete_prior(
+        page_hash, reextract_attempts=scrape.MAX_INCOMPLETE_REEXTRACTIONS
+    )
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, [prior], "2026-07-04")
+    assert status == "ok"
+    client.chat.completions.create.assert_not_called()  # budget spent — gated again
+    assert entries[0]["status"] == "incomplete"
+    assert entries[0]["last_seen"] == "2026-07-04"  # still bumped like any gated entry
+
+
+@pytest.mark.asyncio
+async def test_process_roaster_resets_reextract_counter_when_page_changes():
+    # A changed page is a fresh start: the counter must not carry over from
+    # the old page's spent budget, or a roaster who reworks a product page
+    # (still without stating origin) would never get its retry chances back.
+    new_markdown = LONG_TEXT + " now with new description 12,50 €"
+    crawler = _mystery_crawler(new_markdown)
+    client = MagicMock()
+    client.chat.completions.create.return_value = fake_completion(
+        [
+            fake_tool_call(
+                "extract_product",
+                {"name": "Mystery Coffee", "packaging": [{"price": "12,50 €", "weight": "250 g"}]},
+            )
+        ]
+    )
+
+    prior = _incomplete_prior(
+        scrape.compute_page_hash(LONG_TEXT + " 12,50 €"),  # old page's hash
+        reextract_attempts=scrape.MAX_INCOMPLETE_REEXTRACTIONS,
+    )
+    entries, status = await scrape.process_roaster(crawler, client, ROASTER, [prior], "2026-07-04")
+    assert status == "ok"
+    client.chat.completions.create.assert_called_once()  # hash mismatch re-extracts as before
+    assert entries[0]["status"] == "incomplete"
+    assert "reextract_attempts" not in entries[0]  # fresh page, fresh budget
+
+
 # --- compute_page_hash (issue #13: hash-gate leaks on dynamic page chrome) -----
 
 
@@ -2339,8 +2480,20 @@ async def test_process_roaster_hash_gate_survives_dynamic_chrome_appended_betwee
     base_markdown = "Rwanda Kigali, washed, filter roast, 12,50 € for 250 g. " * 400
     assert len(base_markdown) > scrape.MAX_MARKDOWN_CHARS
     client = MagicMock()
+    # Complete (`ok`) extraction on purpose — an incomplete entry now
+    # bypasses the gate for a few runs (issue #36), which would mask the
+    # dynamic-chrome regression this test guards.
     client.chat.completions.create.return_value = fake_completion(
-        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €", "weight": "250 g"}]})]
+        [
+            fake_tool_call(
+                "extract_product",
+                {
+                    "name": "Rwanda",
+                    "roast_type": "Filter",
+                    "packaging": [{"price": "12,50 €", "weight": "250 g"}],
+                },
+            )
+        ]
     )
     crawler_v1 = FakeCrawler(
         {

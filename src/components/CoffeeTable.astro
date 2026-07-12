@@ -1107,12 +1107,16 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     font-size: 0.62rem;
   }
 
+  /* on-surface-variant, not outline: at this small size the outline role
+     lands at 4.45:1 on Morning Snow — just under WCAG AA's 4.5:1 (issue
+     #63, caught by the axe gate). */
   .ct-legend-label {
     font-family: var(--font-sans);
     font-weight: 300;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     margin-right: 4px;
+    color: var(--md-sys-color-on-surface-variant);
   }
 
   .ct-legend-sep {
@@ -1120,7 +1124,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     font-size: 1.1em;
   }
 
-  .ct-legend-desc { color: var(--md-sys-color-outline); }
+  /* Same 4.5:1 reasoning as .ct-legend-label above (issue #63). */
+  .ct-legend-desc { color: var(--md-sys-color-on-surface-variant); }
 
   /* ── Empty state ──────────────────────────────────────────── */
   .ct-empty {

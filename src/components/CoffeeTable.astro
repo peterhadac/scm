@@ -1,6 +1,7 @@
 ---
 import { flattenProducts, safeUrl, type RoastType } from '../lib/coffees';
 import { UI, localizedOrigin, localizedProcess, localizedRoastType, type Lang } from '../lib/i18n';
+import { loadPriceHistory, historyKey, sparklinePoints } from '../lib/priceHistory';
 
 interface Props {
   // When set, page is locked to one roast profile: the Roast dropdown is
@@ -21,6 +22,11 @@ const allCoffees = flattenProducts();
 const coffees = roastType
   ? allCoffees.filter((c) => c.roast_type === roastType)
   : allCoffees;
+
+// Price time series per (url, weight) from data/price_history.csv (issue
+// #54) — empty map until the scraper's first append (issue #41), in which
+// case every row simply renders without a sparkline.
+const priceHistory = loadPriceHistory();
 
 // Scrapes run weekly (see CLAUDE.md's scrape.yml cron) — a product whose
 // last_seen hasn't advanced in ~3 cycles means the roaster's own scrape has
@@ -201,6 +207,14 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
           const stale = isStale(c.last_seen);
           const originLabel = localizedOrigin(c.origin, lang);
           const processLabel = localizedProcess(c.process, lang);
+          // Sparkline/drop badge only with >=2 observations for THIS tier —
+          // a single point draws nothing meaningful, and rows without
+          // history (file absent, or product newer than the history file)
+          // render exactly as before.
+          const series = c.weight_g ? priceHistory.get(historyKey(c.url, c.weight_g)) ?? [] : [];
+          const hasSpark = series.length >= 2;
+          const prevPoint = hasSpark ? series[series.length - 2] : null;
+          const dropped = prevPoint !== null && series[series.length - 1].price < prevPoint.price;
           return (
             <tr
               style={`--i: ${Math.min(i, 20)}`}
@@ -232,7 +246,32 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               </td>
               <td class="ct-num ct-muted">{c.weight_g ? `${c.weight_g} g` : '—'}</td>
               <td class="ct-num ct-price">
+                {hasSpark && (
+                  <svg
+                    class="ct-spark"
+                    width="56"
+                    height="14"
+                    viewBox="0 0 56 14"
+                    role="img"
+                    aria-label={t.sparklineLabel(series[0].date)}
+                  >
+                    <title>{t.sparklineLabel(series[0].date)}</title>
+                    <polyline
+                      points={sparklinePoints(series)}
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                )}
                 {fmtEur(c.price)}
+                {dropped && prevPoint && (
+                  <span class="ct-drop" title={t.priceDropTitle(fmtEur(prevPoint.price), prevPoint.date)}>
+                    ↓ {t.priceDrop}
+                  </span>
+                )}
                 {stale && (
                   <span
                     class="ct-stale"
@@ -942,6 +981,32 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     color: var(--md-sys-color-tertiary);
     opacity: 0.75;
     vertical-align: middle;
+    cursor: help;
+  }
+
+  /* Price history sparkline (issue #54): quiet context, not a call to
+     action. Outline role keeps it below the price in visual weight; no
+     new color, per Design.md. */
+  .ct-spark {
+    margin-right: 6px;
+    color: var(--md-sys-color-outline);
+    vertical-align: middle;
+  }
+
+  /* Price-drop chip: positive news, reuses the secondary (Aqua Mist) role
+     already used by the fresh-dot — no new color, per Design.md. */
+  .ct-drop {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 0.05em 0.5em;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    font-family: var(--font-sans);
+    font-size: var(--md-sys-typescale-label-small-size);
+    font-weight: 500;
+    letter-spacing: 0;
+    white-space: nowrap;
     cursor: help;
   }
 

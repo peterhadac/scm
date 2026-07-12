@@ -9,9 +9,13 @@ interface Props {
   // filter/espresso/nespresso/drip-bag submenu pages). Omit to show every
   // coffee with a Roast filter.
   roastType?: RoastType;
+  // When set, page is locked to one origin (the /origins/<slug>/ landing
+  // pages, issue #58) — rows are pre-filtered to that canonical English
+  // origin key.
+  origin?: string;
 }
 
-const { roastType } = Astro.props;
+const { roastType, origin } = Astro.props;
 
 // Starlight sets this from the `locales` config in astro.config.mjs — see
 // src/lib/i18n.ts for the EN/SK string tables this drives.
@@ -19,9 +23,10 @@ const lang: Lang = Astro.locals.starlightRoute.lang === 'sk' ? 'sk' : 'en';
 const t = UI[lang];
 
 const allCoffees = flattenProducts();
-const coffees = roastType
+let coffees = roastType
   ? allCoffees.filter((c) => c.roast_type === roastType)
   : allCoffees;
+if (origin) coffees = coffees.filter((c) => c.origin === origin);
 
 // Price time series per (url, weight) from data/price_history.csv (issue
 // #54) — empty map until the scraper's first append (issue #41), in which

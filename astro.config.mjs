@@ -84,6 +84,7 @@ export default defineConfig({
             { label: 'Espresso coffees', translations: { sk: 'Espresso kávy' }, link: '/coffees/espresso/' },
             { label: 'Nespresso capsules', translations: { sk: 'Nespresso kapsuly' }, link: '/coffees/nespresso/' },
             { label: 'Drip bags', translations: { sk: 'Drip bagy' }, link: '/coffees/drip-bags/' },
+            { label: 'By origin', translations: { sk: 'Podľa pôvodu' }, link: '/origins/' },
           ]
         },
         {

@@ -80,6 +80,8 @@ export default defineConfig({
             { label: 'All', translations: { sk: 'Všetky' }, link: '/coffees/' },
             { label: 'Filter coffees', translations: { sk: 'Filter kávy' }, link: '/coffees/filter/' },
             { label: 'Espresso coffees', translations: { sk: 'Espresso kávy' }, link: '/coffees/espresso/' },
+            { label: 'Nespresso capsules', translations: { sk: 'Nespresso kapsuly' }, link: '/coffees/nespresso/' },
+            { label: 'Drip bags', translations: { sk: 'Drip bagy' }, link: '/coffees/drip-bags/' },
           ]
         },
         {

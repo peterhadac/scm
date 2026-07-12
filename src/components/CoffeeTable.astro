@@ -1,12 +1,13 @@
 ---
-import { flattenProducts, safeUrl } from '../lib/coffees';
+import { flattenProducts, safeUrl, type RoastType } from '../lib/coffees';
 import { UI, localizedOrigin, localizedProcess, localizedRoastType, type Lang } from '../lib/i18n';
 
 interface Props {
   // When set, page is locked to one roast profile: the Roast dropdown is
-  // hidden and only matching coffees are shown (used by the filter/espresso
-  // submenu pages). Omit to show every coffee with a Roast filter.
-  roastType?: 'filter' | 'espresso';
+  // hidden and only matching coffees are shown (used by the
+  // filter/espresso/nespresso/drip-bag submenu pages). Omit to show every
+  // coffee with a Roast filter.
+  roastType?: RoastType;
 }
 
 const { roastType } = Astro.props;
@@ -114,6 +115,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               <option value="">{t.all}</option>
               <option value="filter">{localizedRoastType('filter', lang)}</option>
               <option value="espresso">{localizedRoastType('espresso', lang)}</option>
+              <option value="nespresso">{localizedRoastType('nespresso', lang)}</option>
+              <option value="drip-bag">{localizedRoastType('drip-bag', lang)}</option>
             </select>
           </div>
         )}

@@ -29,7 +29,7 @@ definitions:
       url: {type: string}
       origin: {type: string, minLength: 1}
       process: {enum: [washed, natural, honey, wet-hulled, anaerobic, carbonic-maceration, other, null]}
-      roast_type: {enum: [filter, espresso]}
+      roast_type: {enum: [filter, espresso, nespresso, drip-bag]}
       packaging:
         type: array
         minItems: 1

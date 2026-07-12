@@ -298,14 +298,18 @@ EXTRACT_PRODUCT_TOOL = {
                 "roast_type": {
                     "type": ["string", "null"],
                     "description": (
-                        "How the coffee is roasted for brewing: 'Filter' (drip/filter "
-                        "roast) or 'Espresso'. If the page doesn't state this directly, "
-                        "check for a 'recommended preparation method' attribute/tag list "
+                        "How the coffee is roasted/packaged for brewing: 'Filter' "
+                        "(drip/filter roast), 'Espresso', 'Nespresso' (Nespresso-"
+                        "compatible capsules), or 'Drip bag' (single-serve drip "
+                        "bags that steep in a cup). Capsules and drip bags are "
+                        "usually obvious from the product name/format. For whole "
+                        "beans, if the page doesn't state this directly, check for "
+                        "a 'recommended preparation method' attribute/tag list "
                         "(e.g. 'Espresso, Moka, Pour-over') and infer from it: "
                         "'Espresso' if Espresso or Moka is listed, 'Filter' if only "
                         "pour-over/drip/V60/Chemex/Aeropress/French press methods are "
                         "listed. Raw text (or your inference) as a string, null only if "
-                        "truly nothing on the page suggests either."
+                        "truly nothing on the page suggests any of these."
                     ),
                 },
                 "packaging": {
@@ -336,8 +340,9 @@ EXTRACT_PRODUCT_TOOL = {
                                     "coffee in more than one roast type (e.g. "
                                     "separate Espresso/Filter buttons alongside "
                                     "the weight selector) — tag which roast type "
-                                    "THIS tier's price belongs to: 'Filter' or "
-                                    "'Espresso'. Leave null if the page only ever "
+                                    "THIS tier's price belongs to: 'Filter', "
+                                    "'Espresso', 'Nespresso', or 'Drip bag'. "
+                                    "Leave null if the page only ever "
                                     "shows one roast type overall (the top-level "
                                     "roast_type field covers that case)."
                                 ),
@@ -1023,7 +1028,7 @@ def normalize_process(raw):
 
 
 def normalize_roast_type(raw, process_raw=None, name=None, category_hint=None):
-    """Bucket free-text roast info into 'filter' / 'espresso' / None.
+    """Bucket free-text roast info into 'filter' / 'espresso' / 'nespresso' / 'drip-bag' / None.
 
     Tries `raw` (the model's own roast_type field) first, then falls back to
     the raw `process` text, then the product name — e.g. `process: "filter
@@ -1038,6 +1043,22 @@ def normalize_roast_type(raw, process_raw=None, name=None, category_hint=None):
         if not text:
             continue
         lowered = text.strip().lower()
+        # Capsules/drip bags first: "nespresso" contains "espresso" as a
+        # substring, so the espresso check below would swallow it otherwise.
+        # "kapsul"/"capsule" is treated as Nespresso-compatible — specialty
+        # roasters on the Slovak market sell Nespresso-format capsules
+        # essentially exclusively.
+        if (
+            "nespresso" in lowered
+            or "kapsul" in lowered  # kapsula / kapsule
+            or "kapsúl" in lowered
+            or "capsule" in lowered
+        ):
+            return "nespresso"
+        # Deliberately not bare "drip" — it also appears in equipment names
+        # ("Hario V60 dripper") and fantasy coffee names.
+        if "drip bag" in lowered or "dripbag" in lowered or "drip-bag" in lowered:
+            return "drip-bag"
         if "espresso" in lowered:
             return "espresso"
         if (
@@ -1048,7 +1069,7 @@ def normalize_roast_type(raw, process_raw=None, name=None, category_hint=None):
             or "kvapkov" in lowered  # drip
         ):
             return "filter"
-    if category_hint in ("filter", "espresso"):
+    if category_hint in ("filter", "espresso", "nespresso", "drip-bag"):
         return category_hint
     return None
 
@@ -1427,7 +1448,7 @@ def normalize_products(raw, url, today, hints=None):
         result = normalize_product(raw, url, today, hints)
         return [result] if result else []
 
-    groups = {}  # normalized roast_type ('filter'/'espresso'/None) -> [tier, ...]
+    groups = {}  # normalized roast_type ('filter'/'espresso'/'nespresso'/'drip-bag'/None) -> [tier, ...]
     for tier in raw.get("packaging") or []:
         if isinstance(tier, dict):
             groups.setdefault(normalize_roast_type(tier.get("roast_type")), []).append(tier)
@@ -1444,7 +1465,7 @@ def normalize_products(raw, url, today, hints=None):
         return [result] if result else []
 
     results = []
-    for roast_type in ("filter", "espresso"):  # stable, deterministic order
+    for roast_type in ("filter", "espresso", "nespresso", "drip-bag"):  # stable, deterministic order
         group_tiers = groups.get(roast_type)
         if not group_tiers:
             continue

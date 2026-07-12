@@ -51,7 +51,9 @@ Controlled vocabularies (translated to English at scrape time regardless of
 source language):
 - `process`: `washed` | `natural` | `honey` | `wet-hulled` | `anaerobic` |
   `carbonic-maceration` | `other` | `null`
-- `roast_type`: `filter` | `espresso` (never `null` on an `ok` entry)
+- `roast_type`: `filter` | `espresso` | `nespresso` (Nespresso-compatible
+  capsules) | `drip-bag` (single-serve drip bags) — never `null` on an `ok`
+  entry
 - `origin`: an English country name, matched against
   [`data/coffee_origins.yaml`](./data/coffee_origins.yaml) — falls back to
   scanning the product name for a country mention when the site doesn't
@@ -94,7 +96,7 @@ roasters:
 
 (See the real [`roasters.yaml`](./roasters.yaml) ~30 lines below this file for the full, current list — this snippet only illustrates the optional keys.)
 
-`slug` is the stable key `data/products.yaml` is keyed on (lowercase-kebab of the name). `url` is the roaster's canonical site link; `scrape_url` is the discovery entry point the scraper crawls for product links — usually the same page, but point it at the actual shop/listing page when the homepage doesn't link to every product. `metadata` is optional, added as roaster details are gathered — not required for the scraper to run; currently just `{city: <string>}` (the roaster's Slovak town/city), not read by the scraper itself. Add `scraper: playwright` to any roaster that requires JavaScript rendering (selects crawl4ai's browser-backed crawler instead of the HTTP one). `roast_type_urls` (optional, `{espresso: <url>, filter: <url>}`) is for sites (Shopify collections, Shoptet category pages) that only reveal a product's roast type through which category page links to it, never on the product page itself — the scraper crawls each configured category and uses it as a last-resort `roast_type` fallback (see `discover_roast_type_hints()` in `scraper/scrape.py`).
+`slug` is the stable key `data/products.yaml` is keyed on (lowercase-kebab of the name). `url` is the roaster's canonical site link; `scrape_url` is the discovery entry point the scraper crawls for product links — usually the same page, but point it at the actual shop/listing page when the homepage doesn't link to every product. `metadata` is optional, added as roaster details are gathered — not required for the scraper to run; currently just `{city: <string>}` (the roaster's Slovak town/city), not read by the scraper itself. Add `scraper: playwright` to any roaster that requires JavaScript rendering (selects crawl4ai's browser-backed crawler instead of the HTTP one). `roast_type_urls` (optional, mapping of `roast_type` value → category URL, e.g. `{espresso: <url>, filter: <url>}` — `nespresso`/`drip-bag` keys work too) is for sites (Shopify collections, Shoptet category pages) that only reveal a product's roast type through which category page links to it, never on the product page itself — the scraper crawls each configured category and uses it as a last-resort `roast_type` fallback (see `discover_roast_type_hints()` in `scraper/scrape.py`).
 
 ## Scraper (`scraper/scrape.py`)
 

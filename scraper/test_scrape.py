@@ -502,9 +502,33 @@ def test_normalize_roast_type_espresso_wins_in_multi_method_list():
     assert scrape.normalize_roast_type("Espresso, Moka, Zalievaná") == "espresso"
 
 
+def test_normalize_roast_type_nespresso_not_swallowed_by_espresso():
+    # "nespresso" contains "espresso" as a substring — the capsule check must
+    # run before the espresso one or every capsule misclassifies as espresso.
+    assert scrape.normalize_roast_type("Nespresso") == "nespresso"
+    assert scrape.normalize_roast_type(None, None, "Ethiopia — Nespresso kompatibilné kapsule") == "nespresso"
+
+
+def test_normalize_roast_type_capsule_keywords():
+    assert scrape.normalize_roast_type("Kávové kapsule") == "nespresso"
+    assert scrape.normalize_roast_type(None, None, "Brazil coffee capsules 10 ks") == "nespresso"
+
+
+def test_normalize_roast_type_drip_bag():
+    assert scrape.normalize_roast_type("Drip bag") == "drip-bag"
+    assert scrape.normalize_roast_type(None, None, "Kolumbia dripbag 12 g") == "drip-bag"
+
+
+def test_normalize_roast_type_dripper_equipment_is_not_drip_bag():
+    # Bare "drip" must not match — "Hario V60 dripper" is brewing equipment.
+    assert scrape.normalize_roast_type(None, None, "Hario V60 dripper") is None
+
+
 def test_normalize_roast_type_category_hint_is_last_resort():
     # Only used when the page itself states nothing at all.
     assert scrape.normalize_roast_type(None, None, "Some Coffee", category_hint="filter") == "filter"
+    assert scrape.normalize_roast_type(None, None, "Some Coffee", category_hint="nespresso") == "nespresso"
+    assert scrape.normalize_roast_type(None, None, "Some Coffee", category_hint="drip-bag") == "drip-bag"
 
 
 def test_normalize_roast_type_page_text_wins_over_category_hint():

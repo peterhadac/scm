@@ -1883,6 +1883,11 @@ async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PAT
     # data/scrape_status.yaml is keyed on slug (products.yaml's stable
     # key, see CLAUDE.md) so it survives a roaster being renamed.
     statuses_by_slug = {}
+    # Wall-clock seconds each roaster spent actually being processed
+    # (semaphore wait excluded — that's contention, not the roaster's own
+    # cost), so a run creeping toward scrape.yml's job timeout shows WHICH
+    # roasters to look at (issue #38).
+    durations = {}
 
     http_strategy = AsyncHTTPCrawlerStrategy(
         browser_config=HTTPCrawlerConfig(headers={"User-Agent": USER_AGENT})
@@ -1928,6 +1933,7 @@ async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PAT
             slug = roaster["slug"]
             crawler = crawler_browser if roaster.get("scraper") == "playwright" else crawler_http
             async with semaphore:
+                started = time.monotonic()
                 try:
                     entries, status = await process_roaster(
                         crawler, client, roaster, products.get(slug, []), today
@@ -1947,6 +1953,8 @@ async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PAT
                     # disturb any other roaster's in-flight work.
                     print(f"  ERROR: {roaster['name']}: unexpected exception — {exc!r}")
                     entries, status = products.get(slug, []), "failed"
+                finally:
+                    duration = time.monotonic() - started
             # Checkpoint as soon as THIS roaster completes — not all at once
             # at the end — so a crash later in the run only loses later
             # roasters' not-yet-integrated work, and this roaster's
@@ -1958,6 +1966,7 @@ async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PAT
                 products[slug] = entries
                 statuses[roaster["name"]] = status
                 statuses_by_slug[slug] = {"name": roaster["name"], "status": status}
+                durations[roaster["name"]] = duration
                 save_products(products, products_path)
 
         await asyncio.gather(*(process_one(roaster) for roaster in roasters))
@@ -1968,7 +1977,7 @@ async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PAT
     # concurrently, but that has no bearing on correctness, only on how
     # this summary reads.
     for name in sorted(statuses):
-        print(f"  {name}: {statuses[name]}")
+        print(f"  {name}: {statuses[name]} ({durations.get(name, 0.0):.0f}s)")
 
     # Issue #28: the stdout summary above is invisible unless someone opens
     # the Actions log — surface non-ok roasters where they're actually

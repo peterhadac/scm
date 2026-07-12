@@ -18,7 +18,10 @@ concurrency:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # The 2026-07-10 run took ~46 min wall-clock against the previous cap of
+    # 45 (issue #38) — headroom, not a target; the per-roaster durations in
+    # the scrape_status stdout summary show where the time actually goes.
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: astral-sh/setup-uv@v5

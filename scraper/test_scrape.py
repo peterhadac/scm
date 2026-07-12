@@ -540,6 +540,19 @@ def test_is_coffee_drops_non_coffee(name):
         "https://x.sk/b2b/",
         "https://x.sk/sluzby/",
         "https://x.sk/news/colombia-el-rubi",
+        # issue #37: category / brand / account / legal listings that used to
+        # slip through and get cached as not_a_product (1,042 entries strong)
+        "https://x.sk/kategoria/zrnkova-kava/",
+        "https://x.sk/kategoria-produktu/espresso/",
+        "https://x.sk/znacka/la-marzocco/",
+        "https://x.sk/moj-ucet/",
+        "https://x.sk/odstupenie-od-zmluvy/",
+        "https://x.sk/clanky/ako-pripravit-v60/",
+        "https://x.sk/collections/filter-coffee",  # Shopify collection listing
+        "https://x.sk/velkoobchod/",
+        "https://x.sk/prislusenstvo/salky/",
+        "https://x.sk/",  # bare site root, never a product page
+        "https://x.sk",
     ],
 )
 def test_looks_like_product_link_rejects_site_plumbing(href):
@@ -551,6 +564,12 @@ def test_looks_like_product_link_rejects_site_plumbing(href):
     [
         "https://x.sk/rwanda/",
         "https://x.sk/produkty/kolumbia-huila/",
+        # issue #37: exact-segment matching must not reject product slugs
+        # that merely CONTAIN a blocked word as a substring
+        "https://x.sk/produkt/kava-info-brazil/",
+        "https://x.sk/produkt/vychutnajte-si-etiopiu/",  # contains "chut"
+        # Shopify nests real product pages under a collection
+        "https://x.sk/collections/filter/products/ethiopia-sidamo",
     ],
 )
 def test_looks_like_product_link_accepts_plausible_products(href):

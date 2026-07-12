@@ -6,7 +6,8 @@
     "preview": "astro preview",
     "scrape": "uv run --directory scraper python scrape.py",
     "scrape:setup": "uv run --directory scraper crawl4ai-setup",
-    "test": "uv run --directory scraper pytest test_scrape.py -v"
+    "test": "uv run --directory scraper pytest test_scrape.py -v",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.41.1",
@@ -17,10 +18,13 @@
     "starlight-theme-md3": "^0.2.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@types/js-yaml": "^4.0.9",
     "playwright": "^1.61.1"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

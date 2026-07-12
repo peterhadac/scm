@@ -286,9 +286,19 @@ access or `OPENROUTER_API_KEY` needed. Run it with:
 uv run --directory scraper pytest test_scrape.py -v
 ```
 
-There's no site-side test suite beyond `npm run build` (Astro build + type-check).
+Site-side, `e2e/coffee-table.spec.ts` is a Playwright smoke suite (issue #43)
+covering CoffeeTable.astro's client logic against the real built site: rows
+render, the origin filter narrows to matching `data-origin` rows, the price
+header flips the default cheapest-first sort, and the `/sk` locale filters on
+the stable English keys. Run it with `pnpm build && pnpm test:e2e` (the
+config's `webServer` starts `astro preview` on `dist/` itself); CI runs it in
+`.github/workflows/e2e.yml`. Playwright artifacts (`test-results/`,
+`playwright-report/`) are gitignored.
+
 Any change to `scraper/scrape.py`'s extraction/normalization logic should come with
-a matching test in `test_scrape.py`, and `pytest` should pass before opening a PR.
+a matching test in `test_scrape.py`, and `pytest` should pass before opening a PR;
+a behavior change in `CoffeeTable.astro`'s filtering/sorting/i18n should keep
+`pnpm test:e2e` passing the same way.
 
 ## Larger-feature planning (`docs/superpowers/`)
 

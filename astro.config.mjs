@@ -105,6 +105,7 @@ export default defineConfig({
             { label: 'Cold Brew', translations: { sk: 'Studená káva' }, link: '/brew-methods/cold-brew/' },
           ],
         },
+        { label: 'About the data', translations: { sk: 'O dátach' }, link: '/about-data/' },
       ],
       customCss: ['./src/styles/custom.css'],
       social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/peterhadac/scm' }],

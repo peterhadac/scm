@@ -1,5 +1,6 @@
 import asyncio
 import json
+import re
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -3179,6 +3180,11 @@ async def test_run_records_failed_status_for_roaster_that_raised(monkeypatch, tm
     assert "Roaster One: ok" in out
     assert "Roaster Two: failed" in out
     assert "Roaster Three: ok" in out
+    # issue #38: every summary line carries the roaster's own processing
+    # duration so a run creeping toward the job timeout shows which
+    # roasters to look at.
+    assert re.search(r"Roaster One: ok \(\d+s\)", out)
+    assert re.search(r"Roaster Two: failed \(\d+s\)", out)
 
 
 @pytest.mark.asyncio

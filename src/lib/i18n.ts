@@ -43,6 +43,9 @@ export const UI = {
     staleAriaLabel: (lastSeen: string) => `Price may be outdated — last confirmed ${lastSeen}`,
     coffeeCount: (n: number) => `${n} coffee${n !== 1 ? 's' : ''}`,
     roasterCount: (n: number) => `${n} roaster${n !== 1 ? 's' : ''}`,
+    priceDrop: 'price drop',
+    priceDropTitle: (prev: string, date: string) => `Price dropped — was ${prev} on ${date}`,
+    sparklineLabel: (from: string) => `Price history since ${from}`,
   },
   sk: {
     search: 'Hľadať',
@@ -71,6 +74,9 @@ export const UI = {
     staleAriaLabel: (lastSeen: string) => `Cena môže byť neaktuálna — posledná kontrola ${lastSeen}`,
     coffeeCount: (n: number) => `${n} ${skCount(n, 'káva', 'kávy', 'káv')}`,
     roasterCount: (n: number) => `${n} ${skCount(n, 'pražiareň', 'pražiarne', 'pražiarní')}`,
+    priceDrop: 'zľava',
+    priceDropTitle: (prev: string, date: string) => `Cena klesla — predtým ${prev} (${date})`,
+    sparklineLabel: (from: string) => `História ceny od ${from}`,
   },
 } satisfies Record<Lang, Record<string, string | ((...args: never[]) => string)>>;
 

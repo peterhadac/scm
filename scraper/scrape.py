@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import csv
 import hashlib
 import json
 import os
@@ -33,6 +34,7 @@ PRODUCTS_PATH = ROOT / "data" / "products.yaml"
 SCHEMA_PATH = ROOT / "data" / "products.schema.yaml"
 COUNTRIES_PATH = ROOT / "data" / "coffee_origins.yaml"
 STATUS_PATH = ROOT / "data" / "scrape_status.yaml"
+HISTORY_PATH = ROOT / "data" / "price_history.csv"
 
 # lxml is a noticeably faster BeautifulSoup parser than the stdlib
 # html.parser, which matters now that every product page is only parsed
@@ -473,6 +475,80 @@ def save_scrape_status(records, path=STATUS_PATH):
     artifacts."""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(yaml.safe_dump(records, allow_unicode=True, sort_keys=True) or "")
+
+
+# data/price_history.csv (issue #41): append-only price time series, one row
+# per (date, roaster, url, weight_g) observation, appended only when that
+# tier's price differs from the last row already recorded for it. Chosen
+# over reconstructing history from git commits of products.yaml: the CSV is
+# self-contained (survives history rewrites, needs no git at read time),
+# append-only (weekly diffs stay tiny — a no-change week appends nothing),
+# and directly loadable by pandas/a future chart component. Assortment
+# history isn't duplicated here — a product's first/last appearance is
+# already derivable from this file's first row / products.yaml's presence.
+PRICE_HISTORY_COLUMNS = ("date", "roaster", "url", "weight_g", "price", "name")
+
+
+def load_last_known_prices(path=HISTORY_PATH):
+    """Last recorded price per (roaster, url, weight_g) key — later rows win.
+
+    Malformed rows (hand-edited file, interrupted write) are skipped rather
+    than fatal: worst case a price is re-recorded once, which a later read
+    de-duplicates naturally by last-wins.
+    """
+    if not path.exists():
+        return {}
+    last = {}
+    with open(path, newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            try:
+                key = (row["roaster"], row["url"], int(row["weight_g"]))
+                last[key] = float(row["price"])
+            except (KeyError, TypeError, ValueError):
+                continue
+    return last
+
+
+def build_price_history_rows(products, today, last_known):
+    """Rows to append this run: every ok tier whose price is new or changed.
+
+    Only `ok` entries contribute — an incomplete tier's null price isn't an
+    observation, and not_a_product entries have no price at all. Sorted for
+    a deterministic file regardless of roaster completion order.
+    """
+    rows = []
+    for slug in sorted(products):
+        for entry in products[slug]:
+            if entry.get("status") != "ok":
+                continue
+            for tier in entry.get("packaging", []):
+                key = (slug, entry["url"], tier["weight_g"])
+                if last_known.get(key) == tier["price"]:
+                    continue
+                rows.append(
+                    {
+                        "date": today,
+                        "roaster": slug,
+                        "url": entry["url"],
+                        "weight_g": tier["weight_g"],
+                        "price": tier["price"],
+                        "name": entry.get("name", ""),
+                    }
+                )
+    return rows
+
+
+def append_price_history(rows, path=HISTORY_PATH):
+    """Append observation rows, creating the file with a header if absent."""
+    if not rows:
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    write_header = not path.exists()
+    with open(path, "a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=PRICE_HISTORY_COLUMNS)
+        if write_header:
+            writer.writeheader()
+        writer.writerows(rows)
 
 
 def strip_diacritics(text):
@@ -1992,7 +2068,13 @@ def _require_openrouter_api_key():
     return api_key
 
 
-async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PATH, status_path=STATUS_PATH):
+async def run(
+    only=None,
+    roasters_path=ROASTERS_PATH,
+    products_path=PRODUCTS_PATH,
+    status_path=STATUS_PATH,
+    history_path=HISTORY_PATH,
+):
     client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=_require_openrouter_api_key())
     all_roasters = load_roasters(roasters_path)
     roasters = all_roasters
@@ -2115,6 +2197,15 @@ async def run(only=None, roasters_path=ROASTERS_PATH, products_path=PRODUCTS_PAT
     status_records = build_scrape_status_records(statuses_by_slug, today, previous_status_records)
     save_scrape_status(status_records, status_path)
     escalate_repeated_failures(status_records)
+
+    # Price time series (issue #41): appended after every roaster has
+    # checkpointed, against the FULL products dict — a roaster skipped this
+    # run (--only) simply contributes no new observations, since its prices
+    # match what the history already recorded.
+    history_rows = build_price_history_rows(products, today, load_last_known_prices(history_path))
+    append_price_history(history_rows, history_path)
+    if history_rows:
+        print(f"price_history: appended {len(history_rows)} observation(s)")
 
 
 def main():

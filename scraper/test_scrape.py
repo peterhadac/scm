@@ -806,6 +806,28 @@ def test_normalize_origin_none_for_whitespace_only_raw():
     assert scrape.normalize_origin("   ", "some name") is None
 
 
+@pytest.mark.parametrize(
+    "raw, expected",
+    [
+        # Unambiguous single-country regions heal to their country (issue #106)
+        # rather than being stored raw as "Huila"/"Tolima"/"Blue Mountain".
+        ("Huila", "Colombia"),
+        ("Tolima", "Colombia"),
+        ("Blue Mountain", "Jamaica"),
+        # Czech spelling of a country name.
+        ("Indonézie", "Indonesia"),
+    ],
+)
+def test_normalize_origin_heals_region_and_foreign_country_aliases(raw, expected):
+    assert scrape.normalize_origin(raw, None) == expected
+
+
+def test_normalize_origin_svet_world_is_not_a_country():
+    # "Svet" (Slovak/Czech for "world") pins no source country — stays null
+    # rather than leaking into the origin dropdown (issue #106).
+    assert scrape.normalize_origin("Svet", None) is None
+
+
 # --- normalize_origin blend fallback ------------------------------------------
 
 
@@ -970,6 +992,22 @@ def test_normalize_product_origin_hint_wins_over_llm_guess():
     )
     assert result["status"] == "ok"
     assert result["origin"] == "Blend"
+
+
+def test_normalize_product_unrecognized_origin_hint_falls_through_to_llm():
+    # A hint source must never store raw text verbatim (issue #106): an
+    # unrecognized hint origin is discarded and the LLM's own (recognized)
+    # origin is used instead, rather than "Fantasyland" reaching products.yaml.
+    raw = {
+        "name": "Kolumbia Excelso",
+        "origin": "Colombia",
+        "roast_type": "Filter",
+        "packaging": [{"weight": "250 g", "price": "10,00 €"}],
+    }
+    result = scrape.normalize_product(
+        raw, "https://x.sk/kolumbia/", "2026-07-13", hints=scrape.Hints(origin="Fantasyland")
+    )
+    assert result["origin"] == "Colombia"
 
 
 def test_normalize_product_roast_type_attribute_hint_wins_over_llm_guess():

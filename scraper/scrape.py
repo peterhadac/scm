@@ -1648,7 +1648,14 @@ def normalize_product(raw, url, today, hints=None):
     roast_type = hints.roast_type or normalize_roast_type(
         raw.get("roast_type"), raw.get("process"), name, hints.category_roast_type
     )
-    origin = hints.origin or normalize_origin(raw.get("origin"), name)
+    # Gate the hint origin through normalize_origin() too — a deterministic
+    # hint source (extract_woocommerce_origin, and any future platform
+    # extractor) must never be trusted verbatim into the origin dropdown.
+    # Canonical values ("Colombia", "Blend") pass through unchanged; anything
+    # unrecognized falls through to the LLM origin/name path rather than being
+    # stored raw (issue #106, same alias-gating reasoning as issue #14).
+    hint_origin = normalize_origin(hints.origin, name) if hints.origin else None
+    origin = hint_origin or normalize_origin(raw.get("origin"), name)
 
     # These heuristics catch LLM extraction failures specifically — they
     # don't apply when packaging came from variation_tiers (WooCommerce's own

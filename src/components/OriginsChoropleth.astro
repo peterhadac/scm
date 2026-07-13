@@ -1,0 +1,118 @@
+---
+// World choropleth of coffee counts per origin country (issue #87) —
+// pure build-time SVG: countries link to their origin landing page,
+// shade deepens with the number of coffees currently listed.
+import { buildChoropleth } from '../lib/originsMap';
+import { localizedOrigin, UI, type Lang } from '../lib/i18n';
+
+const lang: Lang = Astro.locals.starlightRoute.lang === 'sk' ? 'sk' : 'en';
+const t = UI[lang];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const { shapes, unmatched, width, height } = buildChoropleth();
+
+const T = {
+  en: {
+    label: 'World map of coffee origins, shaded by how many coffees are listed',
+    legend: 'Coffees per country:',
+    none: 'none',
+    unmatchedNote: 'Not shown on the map:',
+  },
+  sk: {
+    label: 'Mapa sveta s krajinami pôvodu, tieňovaná podľa počtu káv',
+    legend: 'Počet káv na krajinu:',
+    none: 'žiadne',
+    unmatchedNote: 'Mimo mapy:',
+  },
+}[lang];
+
+const displayName = (originKey: string | null, atlasName: string) =>
+  originKey ? localizedOrigin(originKey, lang) ?? originKey : atlasName;
+---
+
+<figure class="oc-wrap">
+  <svg
+    viewBox={`0 0 ${width} ${height}`}
+    role="img"
+    aria-label={T.label}
+    class="oc-map"
+  >
+    {shapes.map((s) =>
+      s.slug ? (
+        <a href={`${base}${lang === 'sk' ? '/sk' : ''}/origins/${s.slug}/`}>
+          <path class={`oc-shape ${s.bucket}`} d={s.d}>
+            <title>{`${displayName(s.originKey, s.name)}: ${t.coffeeCount(s.count)}`}</title>
+          </path>
+        </a>
+      ) : (
+        <path class={`oc-shape ${s.bucket}`} d={s.d} />
+      ),
+    )}
+  </svg>
+  <figcaption class="oc-legend">
+    <span>{T.legend}</span>
+    <span class="oc-swatch oc-none" aria-hidden="true"></span> {T.none}
+    <span class="oc-swatch oc-b1" aria-hidden="true"></span> 1–2
+    <span class="oc-swatch oc-b2" aria-hidden="true"></span> 3–9
+    <span class="oc-swatch oc-b3" aria-hidden="true"></span> 10–24
+    <span class="oc-swatch oc-b4" aria-hidden="true"></span> 25+
+  </figcaption>
+  {unmatched.length > 0 && (
+    <p class="oc-unmatched">
+      {T.unmatchedNote}{' '}
+      {unmatched.map((o, i) => (
+        <>
+          {i > 0 && ', '}
+          <a href={`${base}${lang === 'sk' ? '/sk' : ''}/origins/${o.slug}/`}>
+            {localizedOrigin(o.origin, lang) ?? o.origin}
+          </a>
+        </>
+      ))}
+    </p>
+  )}
+</figure>
+
+<style>
+  .oc-wrap {
+    margin: 1.5rem 0;
+  }
+  .oc-map {
+    width: 100%;
+    height: auto;
+  }
+  .oc-shape {
+    stroke: var(--md-sys-color-outline-variant);
+    stroke-width: 0.5;
+  }
+  a .oc-shape:hover {
+    stroke: var(--md-sys-color-on-surface);
+    stroke-width: 1;
+  }
+  /* Sequential fills of the brand primary over surface — adapts to light
+     and dark themes because both endpoints are theme tokens. */
+  .oc-none { fill: var(--md-sys-color-surface-container); }
+  .oc-b1 { fill: color-mix(in srgb, var(--md-sys-color-primary) 25%, var(--md-sys-color-surface)); }
+  .oc-b2 { fill: color-mix(in srgb, var(--md-sys-color-primary) 45%, var(--md-sys-color-surface)); }
+  .oc-b3 { fill: color-mix(in srgb, var(--md-sys-color-primary) 70%, var(--md-sys-color-surface)); }
+  .oc-b4 { fill: var(--md-sys-color-primary); }
+
+  .oc-legend {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4em;
+    font-size: var(--md-sys-typescale-label-small-size);
+    color: var(--md-sys-color-on-surface-variant);
+  }
+  .oc-swatch {
+    display: inline-block;
+    width: 0.9em;
+    height: 0.9em;
+    margin-left: 0.6em;
+    border-radius: 3px;
+    border: 1px solid var(--md-sys-color-outline-variant);
+  }
+  .oc-unmatched {
+    font-size: var(--md-sys-typescale-label-small-size);
+    color: var(--md-sys-color-outline);
+  }
+</style>

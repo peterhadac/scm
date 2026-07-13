@@ -1,0 +1,123 @@
+---
+// Leaflet map of roasters (issue #59): one circle marker per city, popup
+// lists that city's roasters with product counts. Data is computed at
+// build time and handed to the client script via a JSON script tag —
+// define:vars scripts are unprocessed and couldn't `import 'leaflet'`.
+import { buildMapData } from '../lib/mapData';
+import { safeUrl } from '../lib/coffees';
+import type { Lang } from '../lib/i18n';
+
+const lang: Lang = Astro.locals.starlightRoute.lang === 'sk' ? 'sk' : 'en';
+const { markers, unmapped } = buildMapData();
+
+const T = {
+  en: {
+    coffees: (n: number) => `${n} coffee${n !== 1 ? 's' : ''}`,
+    unmappedIntro:
+      'Not on the map yet (roastery town unknown):',
+  },
+  sk: {
+    coffees: (n: number) => `${n} ${n === 1 ? 'káva' : n < 5 ? 'kávy' : 'káv'}`,
+    unmappedIntro: 'Zatiaľ nie sú na mape (nepoznáme mesto pražiarne):',
+  },
+}[lang];
+
+// Popup HTML is assembled server-side from trusted-ish fields; urls still
+// go through safeUrl and names through text nodes on the client.
+const payload = {
+  markers: markers.map((m) => ({
+    city: m.city,
+    lat: m.lat,
+    lng: m.lng,
+    roasters: m.roasters.map((r) => ({
+      name: r.name,
+      url: safeUrl(r.url),
+      count: T.coffees(r.coffeeCount),
+    })),
+  })),
+};
+---
+
+<div id="roaster-map" class="roaster-map"></div>
+<script id="roaster-map-data" type="application/json" set:html={JSON.stringify(payload)} />
+
+{unmapped.length > 0 && (
+  <p class="roaster-map-unmapped">
+    {T.unmappedIntro}{' '}
+    {unmapped.map((r, i) => (
+      <>
+        {i > 0 && ', '}
+        <a href={safeUrl(r.url)} target="_blank" rel="noopener noreferrer">
+          {r.name}
+        </a>
+      </>
+    ))}
+  </p>
+)}
+
+<script>
+  import L from 'leaflet';
+  import 'leaflet/dist/leaflet.css';
+
+  const el = document.getElementById('roaster-map');
+  const dataEl = document.getElementById('roaster-map-data');
+  if (el && dataEl) {
+    const { markers } = JSON.parse(dataEl.textContent || '{"markers":[]}');
+    const map = L.map(el, { scrollWheelZoom: false }).setView([48.7, 19.1], 8);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    const accent =
+      getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-primary').trim() ||
+      '#FF6037';
+
+    for (const m of markers) {
+      const marker = L.circleMarker([m.lat, m.lng], {
+        radius: 7 + Math.min(m.roasters.length, 4),
+        color: accent,
+        fillColor: accent,
+        fillOpacity: 0.7,
+        weight: 2,
+      }).addTo(map);
+
+      // Build popup DOM with text nodes — roaster names are scraped-config
+      // strings and must not be interpolated as HTML.
+      const div = document.createElement('div');
+      const title = document.createElement('strong');
+      title.textContent = m.city;
+      div.appendChild(title);
+      const list = document.createElement('ul');
+      list.style.margin = '0.3em 0 0';
+      list.style.paddingLeft = '1.1em';
+      for (const r of m.roasters) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = r.url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.textContent = r.name;
+        li.appendChild(a);
+        li.appendChild(document.createTextNode(` (${r.count})`));
+        list.appendChild(li);
+      }
+      div.appendChild(list);
+      marker.bindPopup(div);
+    }
+  }
+</script>
+
+<style>
+  .roaster-map {
+    height: 480px;
+    border-radius: var(--md-sys-shape-corner-large, 16px);
+    /* Leaflet panes stack above Starlight's header without this cap. */
+    z-index: 0;
+  }
+  .roaster-map-unmapped {
+    margin-top: 1rem;
+    color: var(--md-sys-color-outline);
+    font-size: var(--md-sys-typescale-label-small-size, 0.8rem);
+  }
+</style>

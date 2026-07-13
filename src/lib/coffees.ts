@@ -41,6 +41,10 @@ interface ProductEntry {
   status: string;
   last_seen: string;
   packaging: ProductTier[];
+  // Present only on multi-origin blends (origin === "Blend", issue #91);
+  // blend_origins lists the component countries when the page stated them.
+  blend?: true;
+  blend_origins?: string[];
 }
 
 interface Roaster {
@@ -58,6 +62,10 @@ export interface CoffeeRow {
   weight_g: number;
   url: string;
   last_seen: string;
+  // Only set on blends (issue #93) — undefined keys are dropped by
+  // JSON.stringify, so coffees.json stays clean for single-origin rows.
+  blend?: true;
+  blend_origins?: string[];
 }
 
 function loadYaml<T>(relativePath: string): T {
@@ -94,6 +102,10 @@ export function flattenProducts(): CoffeeRow[] {
           weight_g: tier.weight_g,
           url: product.url,
           last_seen: product.last_seen,
+          ...(product.blend === true && {
+            blend: true as const,
+            ...(product.blend_origins?.length && { blend_origins: product.blend_origins }),
+          }),
         });
       }
     }

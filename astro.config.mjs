@@ -124,6 +124,7 @@ export default defineConfig({
             { label: 'All', translations: { sk: 'Všetky' }, link: '/coffees/' },
             { label: 'Filter coffees', translations: { sk: 'Filter kávy' }, link: '/coffees/filter/' },
             { label: 'Espresso coffees', translations: { sk: 'Espresso kávy' }, link: '/coffees/espresso/' },
+            { label: 'Blends', translations: { sk: 'Zmesi' }, link: '/coffees/blends/' },
             { label: 'Nespresso capsules', translations: { sk: 'Nespresso kapsuly' }, link: '/coffees/nespresso/' },
             { label: 'Drip bags', translations: { sk: 'Drip bagy' }, link: '/coffees/drip-bags/' },
             { label: 'By origin', translations: { sk: 'Podľa pôvodu' }, link: '/origins/' },

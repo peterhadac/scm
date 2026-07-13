@@ -73,6 +73,26 @@ test('table defaults to cheapest-first and the price header flips direction', as
   expect(asc).toEqual([...asc].sort((a, b) => a - b));
 });
 
+test('the Blends page shows only Blend rows (issue #92)', async ({ page }) => {
+  await gotoTable(page, '/scm/coffees/blends/');
+  const rows = visibleRows(page);
+  expect(await rows.count()).toBeGreaterThan(0);
+  for (const origin of await rows.evaluateAll((trs) => trs.map((tr) => (tr as HTMLElement).dataset.origin))) {
+    expect(origin).toBe('Blend');
+  }
+});
+
+test('the Filter and Espresso pages exclude blends (issue #92)', async ({ page }) => {
+  for (const path of ['/scm/coffees/filter/', '/scm/coffees/espresso/']) {
+    await gotoTable(page, path);
+    const origins = await visibleRows(page).evaluateAll((trs) =>
+      trs.map((tr) => (tr as HTMLElement).dataset.origin),
+    );
+    expect(origins.length).toBeGreaterThan(0);
+    expect(origins).not.toContain('Blend');
+  }
+});
+
 test('Slovak locale renders the table and filters still match on English keys', async ({ page }) => {
   await gotoTable(page, '/scm/sk/coffees/');
   await expect(page.locator('#coffee-table')).toBeVisible();

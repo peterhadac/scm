@@ -47,6 +47,8 @@ One object per (coffee, package size) with these fields:
 | `name` | Coffee name as published by the roaster |
 | `roaster` | Roaster display name |
 | `origin` | English country name, or `"Blend"` for multi-origin blends |
+| `blend` | `true` on multi-origin blends; absent otherwise |
+| `blend_origins` | For blends, the component countries when the roaster lists them (e.g. `["Brazil", "Honduras", "India"]`); absent otherwise |
 | `process` | `washed` / `natural` / `honey` / `wet-hulled` / `anaerobic` / `carbonic-maceration` / `other`, or `null` when unstated |
 | `roast_type` | `filter` / `espresso` / `nespresso` / `drip-bag` |
 | `weight_g` | Package size in grams |

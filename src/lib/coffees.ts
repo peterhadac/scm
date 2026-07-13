@@ -41,6 +41,10 @@ interface ProductEntry {
   status: string;
   last_seen: string;
   packaging: ProductTier[];
+  // issue #91/#93: blends carry a flag + component country list. Absent on
+  // single-origin coffees.
+  blend?: boolean;
+  blend_origins?: string[];
 }
 
 interface Roaster {
@@ -58,6 +62,11 @@ export interface CoffeeRow {
   weight_g: number;
   url: string;
   last_seen: string;
+  // Present only on blends (origin === 'Blend'); blend_origins is the
+  // display-only component country list (issue #93). Omitted otherwise so
+  // the coffees.json contract stays additive.
+  blend?: boolean;
+  blend_origins?: string[];
 }
 
 function loadYaml<T>(relativePath: string): T {
@@ -94,6 +103,10 @@ export function flattenProducts(): CoffeeRow[] {
           weight_g: tier.weight_g,
           url: product.url,
           last_seen: product.last_seen,
+          // Additive blend fields (issue #93) — only set on actual blends so
+          // single-origin rows/JSON stay byte-identical to before.
+          ...(product.blend ? { blend: true } : {}),
+          ...(product.blend_origins?.length ? { blend_origins: product.blend_origins } : {}),
         });
       }
     }

@@ -217,6 +217,14 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
             per100gNum <= bestPer100g + 0.001;
           const stale = isStale(c.last_seen);
           const originLabel = localizedOrigin(c.origin, lang);
+          // Blend composition (issue #93): append the localized component
+          // countries to the "Blend"/"Zmes" label, e.g. "Zmes (Brazília +
+          // Honduras + India)". data-origin stays "Blend" (filtering/sorting
+          // contract unchanged); this only affects the rendered cell text.
+          const blendComposition =
+            c.blend && c.blend_origins?.length
+              ? c.blend_origins.map((o) => localizedOrigin(o, lang) ?? o).join(' + ')
+              : null;
           const processLabel = localizedProcess(c.process, lang);
           // Sparkline/drop badge only with >=2 observations for THIS tier —
           // a single point draws nothing meaningful, and rows without
@@ -248,7 +256,12 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
                 </a>
               </td>
               <td>{c.roaster}</td>
-              <td class="ct-muted">{originLabel ?? '—'}</td>
+              <td class="ct-muted">
+                {blendComposition
+                  ? <span title={`${originLabel} (${blendComposition})`}>{originLabel} <span class="ct-blend-parts">({blendComposition})</span></span>
+                  : (originLabel ?? '—')
+                }
+              </td>
               <td>
                 {c.process
                   ? <span class={`ct-badge ct-badge--${PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other'}`} title={processLabel ?? undefined}>{processLabel}</span>
@@ -950,6 +963,14 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   .ct-muted   { color: var(--md-sys-color-outline); }
   .ct-muted-h { color: var(--md-sys-color-outline); }
+
+  /* Blend composition (issue #93): the "(Brazil + Honduras + …)" suffix
+     after the "Blend"/"Zmes" label — quieter than the label itself, and
+     allowed to wrap/truncate since it's supplementary. */
+  .ct-blend-parts {
+    color: var(--md-sys-color-outline-variant);
+    font-size: 0.9em;
+  }
   .ct-price   { font-weight: 600; color: var(--md-sys-color-on-surface); }
 
   /* ── Best value highlight ─────────────────────────────────── */

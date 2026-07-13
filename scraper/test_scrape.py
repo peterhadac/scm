@@ -1034,6 +1034,108 @@ def test_normalize_product_variation_tiers_same_price_is_not_a_collision():
     assert result["packaging"] == tiers
 
 
+# --- normalize_product: blend flag + composition (issue #91) -------------------
+
+
+def test_normalize_product_stamps_blend_on_origin_sentinel():
+    # Existing keyword path ("zmes" in the name) must now also carry the
+    # explicit flag, plus the normalized composition when the model lists it.
+    raw = {
+        "name": "Ranná zmes",
+        "roast_type": "Espresso",
+        "blend": True,
+        "blend_origins": ["Brazília", "Honduras", "India"],
+        "packaging": [{"weight": "250 g", "price": "12,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/ranna-zmes/", "2026-07-13")
+    assert result["status"] == "ok"
+    assert result["origin"] == "Blend"
+    assert result["blend"] is True
+    assert result["blend_origins"] == ["Brazil", "Honduras", "India"]
+
+
+def test_normalize_product_llm_blend_flag_heals_missing_origin():
+    # A blend recognized only from description text (no keyword in the
+    # name, no origin attribute) used to land origin: null → incomplete.
+    raw = {
+        "name": "Morning Ritual",
+        "roast_type": "Espresso",
+        "blend": True,
+        "packaging": [{"weight": "250 g", "price": "12,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/morning-ritual/", "2026-07-13")
+    assert result["status"] == "ok"
+    assert result["origin"] == "Blend"
+    assert result["blend"] is True
+    assert "blend_origins" not in result  # page listed no components
+
+
+def test_normalize_product_two_component_countries_imply_blend_without_flag():
+    raw = {
+        "name": "Duo",
+        "roast_type": "Filter",
+        "blend_origins": ["Brazília", "Nikaragua"],
+        "packaging": [{"weight": "250 g", "price": "12,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/duo/", "2026-07-13")
+    assert result["origin"] == "Blend"
+    assert result["blend_origins"] == ["Brazil", "Nicaragua"]
+
+
+def test_normalize_product_single_origin_gets_no_blend_keys():
+    raw = {
+        "name": "Colombia Huila",
+        "origin": "Colombia",
+        "roast_type": "Filter",
+        "blend": False,
+        "packaging": [{"weight": "250 g", "price": "12,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/colombia/", "2026-07-13")
+    assert result["origin"] == "Colombia"
+    assert "blend" not in result
+    assert "blend_origins" not in result
+
+
+def test_normalize_product_stated_country_wins_over_llm_blend_opinion():
+    # A stated origin (or WooCommerce hint) always beats the model's blend
+    # opinion — blend only ever FILLS a missing origin, never overrides.
+    raw = {
+        "name": "Fazenda Santa Ines",
+        "origin": "Brazília",
+        "roast_type": "Espresso",
+        "blend": True,  # model misfire
+        "blend_origins": ["Brazília"],
+        "packaging": [{"weight": "250 g", "price": "12,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/fazenda/", "2026-07-13")
+    assert result["origin"] == "Brazil"
+    assert "blend" not in result
+    assert "blend_origins" not in result
+
+
+def test_normalize_product_single_listed_component_does_not_imply_blend():
+    # One known component + no flag + no keywords is not enough evidence —
+    # the entry stays incomplete on origin rather than guessing Blend.
+    raw = {
+        "name": "Mystery Series No. 4",
+        "roast_type": "Filter",
+        "blend_origins": ["Brazília"],
+        "packaging": [{"weight": "250 g", "price": "12,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/mystery-4/", "2026-07-13")
+    assert result["status"] == "incomplete"
+    assert "origin" in result["missing_fields"]
+    assert "blend" not in result
+
+
+def test_normalize_blend_origins_dedupes_and_drops_unmatchable():
+    assert scrape.normalize_blend_origins(
+        ["Brazília", "brasil", "Yirgacheffe region", "Nikaragua", 42]
+    ) == ["Brazil", "Nicaragua"]
+    assert scrape.normalize_blend_origins(None) == []
+    assert scrape.normalize_blend_origins("Brazil") == []
+
+
 # --- normalize_product: incomplete status ------------------------------------
 
 

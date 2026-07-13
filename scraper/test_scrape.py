@@ -926,6 +926,85 @@ def test_normalize_product_none_when_claude_declined():
     assert scrape.normalize_product(None, "https://x.sk/kava/", "2026-07-04") is None
 
 
+# --- issue #91: first-class blend flag + blend_origins ------------------------
+
+def test_normalize_blend_origins_maps_countries_through_aliases():
+    # Slovak names + a country alias resolve to canonical English; order kept.
+    assert scrape.normalize_blend_origins(
+        ["Brazília", "Honduras", "India"]
+    ) == ["Brazil", "Honduras", "India"]
+
+
+def test_normalize_blend_origins_drops_unmatchable_and_dedupes():
+    assert scrape.normalize_blend_origins(
+        ["Brazil", "Fantasyland", "Brasil", None, 7]
+    ) == ["Brazil"]
+
+
+def test_normalize_blend_origins_empty_for_non_list():
+    assert scrape.normalize_blend_origins(None) == []
+    assert scrape.normalize_blend_origins("Brazil") == []
+
+
+def test_normalize_product_llm_reported_blend_carries_flag_and_composition():
+    raw = {
+        "name": "Morning Espresso",
+        "origin": "Blend",
+        "blend": True,
+        "blend_origins": ["Brazília", "Honduras", "India"],
+        "roast_type": "Espresso",
+        "packaging": [{"weight": "250 g", "price": "12,90 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/morning/", "2026-07-13")
+    assert result["status"] == "ok"
+    assert result["origin"] == "Blend"
+    assert result["blend"] is True
+    assert result["blend_origins"] == ["Brazil", "Honduras", "India"]
+
+
+def test_normalize_product_keyword_fallback_sets_blend_when_model_missed_it():
+    # Model reported neither blend nor a "Blend" origin, but the name says zmes.
+    raw = {
+        "name": "Ranná zmes",
+        "roast_type": "Espresso",
+        "packaging": [{"weight": "1 kg", "price": "30 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/ranna/", "2026-07-13")
+    assert result["origin"] == "Blend"
+    assert result["blend"] is True
+    assert "blend_origins" not in result  # no composition on the page
+
+
+def test_normalize_product_single_origin_has_no_blend_fields():
+    raw = {
+        "name": "Rwanda Kigali",
+        "origin": "Rwanda",
+        "roast_type": "Filter",
+        "packaging": [{"weight": "250 g", "price": "12,50 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/rwanda/", "2026-07-13")
+    assert result["origin"] == "Rwanda"
+    assert "blend" not in result
+    assert "blend_origins" not in result
+
+
+def test_normalize_product_blend_flag_forces_origin_blend_and_clears_missing():
+    # Model flagged a blend and listed components but left origin null — the
+    # flag forces origin "Blend", so origin is no longer a missing field.
+    raw = {
+        "name": "House Selection",
+        "origin": None,
+        "blend": True,
+        "blend_origins": ["Colombia", "Ethiopia"],
+        "roast_type": "Filter",
+        "packaging": [{"weight": "250 g", "price": "13 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/house/", "2026-07-13")
+    assert result["status"] == "ok"
+    assert result["origin"] == "Blend"
+    assert result["blend_origins"] == ["Colombia", "Ethiopia"]
+
+
 def test_normalize_product_uses_variation_tiers_when_provided():
     # LLM-guessed packaging is deliberately wrong here — variation_tiers,
     # sourced from WooCommerce's own JSON, must win.
@@ -1170,13 +1249,15 @@ def test_normalize_product_nulls_zero_weight_and_marks_incomplete():
 
 
 def test_normalize_product_incomplete_when_origin_whitespace_only():
+    # Non-blend name on purpose: a blend name (issue #91) would classify as a
+    # blend and fill origin with the "Blend" sentinel, defeating this test.
     raw = {
-        "name": "House Blend",
+        "name": "House Coffee",
         "origin": "   ",
         "roast_type": "filter",
         "packaging": [{"weight": "250 g", "price": "12,00 €"}],
     }
-    result = scrape.normalize_product(raw, "https://x.sk/house-blend/", "2026-07-04")
+    result = scrape.normalize_product(raw, "https://x.sk/house-coffee/", "2026-07-04")
     assert result["status"] == "incomplete"
     assert "origin" in result["missing_fields"]
     assert result["origin"] is None

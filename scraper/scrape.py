@@ -65,7 +65,7 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # different projections), so a stored hash from before the change would
 # never match again anyway, but bumping keeps the "why did this
 # re-extract" story consistent in one place instead of two.
-SCHEMA_VERSION = 19
+SCHEMA_VERSION = 20
 
 # Ordered extraction-model preference list (issue #42): extract_product
 # works through these left to right, so a deprecated/unavailable primary
@@ -376,6 +376,27 @@ EXTRACT_PRODUCT_TOOL = {
                     ),
                 },
                 "process": {"type": ["string", "null"]},
+                "blend": {
+                    "type": ["boolean", "null"],
+                    "description": (
+                        "True when this coffee is a multi-origin blend — the "
+                        "page markets it as a 'blend'/'zmes'/'mix', or its "
+                        "'country of origin' attribute lists two or more "
+                        "countries. False (or null) for a single-origin coffee. "
+                        "When true, set 'origin' to the literal string 'Blend'."
+                    ),
+                },
+                "blend_origins": {
+                    "type": ["array", "null"],
+                    "description": (
+                        "Only for a blend: the component source countries the "
+                        "page lists (e.g. 'Brazília, Honduras, India' -> "
+                        "['Brazil', 'Honduras', 'India']). Omit or leave empty "
+                        "when the page names no component countries, or for a "
+                        "single-origin coffee."
+                    ),
+                    "items": {"type": "string"},
+                },
                 "roast_type": {
                     "type": ["string", "null"],
                     "description": (
@@ -661,6 +682,34 @@ def normalize_origin(raw, name, aliases=None):
         if "balicek" in lowered and BUNDLE_MULTIPLIER_RE.search(lowered):
             return "Blend"
     return None
+
+
+def normalize_blend_origins(raw, aliases=None):
+    """Normalize a blend's component countries to canonical English names.
+
+    Each entry is resolved through the same COUNTRY_ALIASES table as
+    normalize_origin() — an unmatchable entry is dropped rather than stored
+    raw (same reasoning as issue #14: the composition should only ever hold
+    controlled-vocabulary country names, never one-off LLM free text or a
+    country not yet in coffee_origins.yaml). Order is preserved and
+    duplicates collapsed, so the display reads in the order the page listed
+    them. Returns a list (possibly empty); callers store it only when
+    non-empty.
+    """
+    aliases = COUNTRY_ALIASES if aliases is None else aliases
+    if not raw or not isinstance(raw, (list, tuple)):
+        return []
+    result = []
+    for item in raw:
+        if not isinstance(item, str):
+            continue
+        lowered = strip_diacritics(item.lower())
+        for alias, canonical in aliases.items():
+            if alias in lowered:
+                if canonical not in result:
+                    result.append(canonical)
+                break
+    return result
 
 
 # WooCommerce attribute-key substrings for a coffee's source-country
@@ -1650,6 +1699,23 @@ def normalize_product(raw, url, today, hints=None):
     )
     origin = hints.origin or normalize_origin(raw.get("origin"), name)
 
+    # Blend detection (issue #91): a first-class flag instead of overloading
+    # origin. The model reports `blend`, but the deterministic name/bundle
+    # heuristic (the same signals normalize_origin uses for the "Blend"
+    # sentinel) still sets it when the model missed it. origin == "Blend"
+    # stays the canonical filter key, so a blend always carries it.
+    blend = bool(raw.get("blend"))
+    name_lowered = strip_diacritics(name.lower())
+    if any(keyword in name_lowered for keyword in BLEND_KEYWORDS):
+        blend = True
+    if "balicek" in name_lowered and BUNDLE_MULTIPLIER_RE.search(name_lowered):
+        blend = True
+    if origin == "Blend":
+        blend = True
+    if blend:
+        origin = "Blend"
+    blend_origins = normalize_blend_origins(raw.get("blend_origins")) if blend else []
+
     # These heuristics catch LLM extraction failures specifically — they
     # don't apply when packaging came from variation_tiers (WooCommerce's own
     # structured data), where a real price collision (e.g. a promo, or 250g
@@ -1698,6 +1764,10 @@ def normalize_product(raw, url, today, hints=None):
         "packaging": packaging,
         "schema_version": SCHEMA_VERSION,
     }
+    if blend:
+        entry["blend"] = True
+        if blend_origins:
+            entry["blend_origins"] = blend_origins
     if missing_fields:
         entry["status"] = "incomplete"
         entry["missing_fields"] = missing_fields

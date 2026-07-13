@@ -1,0 +1,25 @@
+name: Site bug / Chyba na stránke
+description: Something on the site is broken (filters, sorting, layout, links…). / Niečo na stránke nefunguje (filtre, triedenie, vzhľad, odkazy…).
+title: "Bug: "
+labels: [bug]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page / Stránka
+      description: URL where it happened. / URL, kde sa to stalo.
+      placeholder: https://peterhadac.github.io/scm/…
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened? / Čo sa stalo?
+      description: What you did, what you expected, what happened instead. / Čo ste urobili, čo ste čakali a čo sa stalo namiesto toho.
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Browser & device / Prehliadač a zariadenie
+      placeholder: e.g. Safari on iPhone / napr. Safari na iPhone

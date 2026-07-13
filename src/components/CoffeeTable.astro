@@ -252,6 +252,22 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
                     <path d="M1.5 8.5L8.5 1.5M8.5 1.5H3.5M8.5 1.5V6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </a>
+                {/* One-click structured "this row is wrong" report (issue
+                    #85): GitHub issue forms prefill fields from query
+                    params keyed by field id, so the wrong-data template
+                    arrives with the coffee name + product URL filled in. */}
+                <a
+                  class="ct-report"
+                  href={`https://github.com/peterhadac/scm/issues/new?template=wrong-data.yml&title=${encodeURIComponent(`Wrong data: ${c.name}`)}&product-url=${encodeURIComponent(c.url)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={t.reportRowTitle(c.name)}
+                  aria-label={t.reportRowTitle(c.name)}
+                >
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                    <path d="M2 9V1.5M2 1.5h5.5L6 3.25 7.5 5H2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </a>
               </td>
               <td>{c.roaster}</td>
               <td class="ct-muted">{originLabel ?? '—'}</td>
@@ -1053,6 +1069,22 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
 
   .ct-link:hover .ct-ext-icon { opacity: 0.9; }
+
+  /* Per-row wrong-data flag (issue #85): deliberately near-invisible at
+     rest — a correction affordance, not a feature to advertise. */
+  .ct-report {
+    display: inline-flex;
+    margin-left: 6px;
+    color: var(--md-sys-color-outline);
+    opacity: 0.3;
+    vertical-align: middle;
+    transition: opacity var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+  }
+  .ct-report:hover,
+  .ct-report:focus-visible {
+    opacity: 1;
+    color: var(--md-sys-color-tertiary);
+  }
 
   /* ── Process badges — use MD3 role colors ─────────────────── */
   .ct-badge {

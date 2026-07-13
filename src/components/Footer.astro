@@ -37,6 +37,15 @@ const staleNote =
   <p class:list={['data-freshness', { 'data-freshness--stale': stale }]}>
     {label}
     {stale && staleNote}
+    {' · '}
+    <a
+      class="report-link"
+      href="https://github.com/peterhadac/scm/issues/new/choose"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {lang === 'sk' ? 'Nahlásiť problém' : 'Report a problem'}
+    </a>
   </p>
 )}
 
@@ -51,5 +60,10 @@ const staleNote =
   .data-freshness--stale {
     color: var(--md-sys-color-tertiary, var(--sl-color-orange));
     font-weight: 500;
+  }
+  .report-link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 </style>

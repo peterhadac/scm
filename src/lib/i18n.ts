@@ -50,6 +50,7 @@ export const UI = {
     discountCodeTitle: (code: string, note: string) =>
       `${note ? note + ' — ' : ''}use code ${code} at checkout (click to copy)`,
     discountCopied: 'copied!',
+    reportRow: 'Report wrong data for this coffee',
   },
   sk: {
     search: 'Hľadať',
@@ -85,6 +86,7 @@ export const UI = {
     discountCodeTitle: (code: string, note: string) =>
       `${note ? note + ' — ' : ''}pri objednávke použite kód ${code} (kliknutím skopírujete)`,
     discountCopied: 'skopírované!',
+    reportRow: 'Nahlásiť nesprávne údaje pri tejto káve',
   },
 } satisfies Record<Lang, Record<string, string | ((...args: never[]) => string)>>;
 

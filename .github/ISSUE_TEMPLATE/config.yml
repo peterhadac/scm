@@ -1,0 +1,9 @@
+# Nudge web visitors toward the structured forms above rather than a blank
+# issue (issue #85). Maintainer automation that opens issues via the API/gh
+# CLI (e.g. the roaster-health escalation in scrape.yml) is unaffected — this
+# only governs the "New issue" web UI.
+blank_issues_enabled: false
+contact_links:
+  - name: Question or something else
+    url: https://github.com/peterhadac/scm/issues
+    about: For anything that isn't wrong data or a site bug, browse or open an issue here.

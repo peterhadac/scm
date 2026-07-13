@@ -1,0 +1,46 @@
+name: Wrong coffee data
+description: A coffee's price, origin, roast type, or other detail is wrong or out of date.
+title: "[Data] "
+labels: ["data"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping keep the data accurate! If you clicked "report" from a
+        table row, the coffee name and product URL below are already filled in.
+  - type: input
+    id: coffee
+    attributes:
+      label: Coffee name
+      placeholder: e.g. Rwanda Kigali
+    validations:
+      required: false
+  - type: input
+    id: url
+    attributes:
+      label: Product URL
+      description: The roaster's product page for this coffee.
+      placeholder: https://roaster.sk/...
+    validations:
+      required: false
+  - type: dropdown
+    id: field
+    attributes:
+      label: What's wrong?
+      options:
+        - Price
+        - Origin
+        - Roast type
+        - Weight
+        - Process
+        - No longer available / out of stock
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: What does the site show, and what should it say instead?
+    validations:
+      required: true

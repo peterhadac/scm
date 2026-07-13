@@ -30,6 +30,10 @@ const staleNote =
   lang === 'sk'
     ? ' (staršie ako týždeň — aktualizácia mešká)'
     : ' (over a week old — update is overdue)';
+
+// "Report a problem" link (issue #85) → GitHub's issue-template chooser.
+const reportLabel = lang === 'sk' ? 'Nahlásiť problém' : 'Report a problem';
+const reportUrl = 'https://github.com/peterhadac/scm/issues/new/choose';
 ---
 
 <Default><slot /></Default>
@@ -39,6 +43,9 @@ const staleNote =
     {stale && staleNote}
   </p>
 )}
+<p class="report-problem">
+  <a href={reportUrl} target="_blank" rel="noopener noreferrer">{reportLabel}</a>
+</p>
 
 <style>
   .data-freshness {
@@ -51,5 +58,17 @@ const staleNote =
   .data-freshness--stale {
     color: var(--md-sys-color-tertiary, var(--sl-color-orange));
     font-weight: 500;
+  }
+  .report-problem {
+    margin: 0.25rem 0 0;
+    font-size: var(--md-sys-typescale-label-small-size, 0.75rem);
+  }
+  .report-problem a {
+    color: var(--md-sys-color-outline, var(--sl-color-gray-3));
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .report-problem a:hover {
+    color: var(--md-sys-color-primary, var(--sl-color-text-accent));
   }
 </style>

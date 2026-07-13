@@ -1,0 +1,64 @@
+---
+// Landing-page meme block (issue #83): image with a meme-style caption
+// bar and the license attribution the CC BY 4.0 photo requires. One
+// self-contained component so the whole joke is trivial to remove if it
+// ages badly.
+interface Props {
+  src: string;
+  alt: string;
+  caption: string;
+  credit: string;
+  creditHref: string;
+}
+const { src, alt, caption, credit, creditHref } = Astro.props;
+---
+
+<figure class="meme">
+  <div class="meme-frame">
+    <img src={src} alt={alt} loading="lazy" width="576" height="833" />
+    <figcaption class="meme-caption">{caption}</figcaption>
+  </div>
+  <p class="meme-credit">
+    <a href={creditHref} target="_blank" rel="noopener noreferrer">{credit}</a>
+  </p>
+</figure>
+
+<style>
+  .meme {
+    max-width: 22rem;
+    margin: 2.5rem auto 0;
+  }
+  .meme-frame {
+    position: relative;
+    border-radius: var(--md-sys-shape-corner-large, 16px);
+    overflow: hidden;
+    box-shadow: var(--sl-shadow-md, 0 4px 12px rgba(0, 0, 0, 0.15));
+  }
+  .meme-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .meme-caption {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 0.75rem 1rem;
+    background: color-mix(in srgb, var(--md-sys-color-scrim, #000) 72%, transparent);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--sl-text-lg);
+    line-height: 1.3;
+    text-align: center;
+    text-wrap: balance;
+  }
+  .meme-credit {
+    margin-top: 0.4rem;
+    font-size: var(--md-sys-typescale-label-small-size, 0.7rem);
+    color: var(--md-sys-color-outline, var(--sl-color-gray-3));
+    text-align: center;
+  }
+  .meme-credit a {
+    color: inherit;
+  }
+</style>

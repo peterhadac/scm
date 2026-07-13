@@ -6,6 +6,10 @@
 // never translated — they link out to the roaster's own untranslated page.
 export type Lang = 'en' | 'sk';
 
+// Ko-fi donation link (issue #86) — the same account the floating Ko-fi
+// widget uses (see astro.config.mjs).
+export const KOFI_URL = 'https://ko-fi.com/slovakcoffeemap';
+
 // Slovak nouns decline by count (1 / 2-4 / 0,5+) unlike English's simple
 // singular/plural — a shared helper so every counted phrase in the sk table
 // below applies the same rule instead of re-deriving it per word.
@@ -51,6 +55,7 @@ export const UI = {
       `${note ? note + ' — ' : ''}use code ${code} at checkout (click to copy)`,
     discountCopied: 'copied!',
     reportRow: 'Report wrong data for this coffee',
+    donate: 'Found a cheaper coffee here? Consider tipping the difference →',
   },
   sk: {
     search: 'Hľadať',
@@ -87,6 +92,7 @@ export const UI = {
       `${note ? note + ' — ' : ''}pri objednávke použite kód ${code} (kliknutím skopírujete)`,
     discountCopied: 'skopírované!',
     reportRow: 'Nahlásiť nesprávne údaje pri tejto káve',
+    donate: 'Našli ste tu lacnejšiu kávu? Zvážte, či rozdiel nepošlete ako tip →',
   },
 } satisfies Record<Lang, Record<string, string | ((...args: never[]) => string)>>;
 

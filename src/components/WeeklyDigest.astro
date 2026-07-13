@@ -4,6 +4,8 @@
 // in lib/i18n.ts — this component owns them and nothing else shares them.
 import { buildDigest } from '../lib/digest';
 import { safeUrl } from '../lib/coffees';
+import Comments from './Comments.astro';
+import { KOFI_URL } from '../lib/i18n';
 import type { Lang } from '../lib/i18n';
 
 const lang: Lang = Astro.locals.starlightRoute.lang === 'sk' ? 'sk' : 'en';
@@ -25,6 +27,7 @@ const T = {
     noRises: 'No price rises this week.',
     was: (p: string) => `was ${p}`,
     rss: 'Subscribe via RSS',
+    donate: 'Found a cheaper coffee here? Consider tipping the difference →',
   },
   sk: {
     noData:
@@ -40,6 +43,7 @@ const T = {
     noRises: 'Tento týždeň nič nezdraželo.',
     was: (p: string) => `predtým ${p}`,
     rss: 'Odoberať cez RSS',
+    donate: 'Našli ste tu lacnejšiu kávu? Zvážte, či rozdiel nepošlete ako tip →',
   },
 }[lang];
 
@@ -101,11 +105,34 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   </>
 )}
 
+<p class="wd-donate">
+  <a href={KOFI_URL} target="_blank" rel="noopener noreferrer">{T.donate}</a>
+</p>
+
 <p><a href={`${base}/digest.xml`}>{T.rss}</a></p>
+
+<Comments />
 
 <style>
   .wd-asof {
     color: var(--md-sys-color-outline);
     font-size: var(--md-sys-typescale-label-small-size);
+  }
+  /* Donation nudge (issue #86): a quiet, non-blocking one-liner — no popup,
+     no guilt-math. Secondary (Aqua Mist) role, per Design.md. */
+  .wd-donate {
+    margin-top: 1.5rem;
+    font-size: var(--md-sys-typescale-body-small-size, 0.85rem);
+  }
+  .wd-donate a {
+    color: var(--md-sys-color-on-secondary-container);
+    background: var(--md-sys-color-secondary-container);
+    padding: 0.35em 0.75em;
+    border-radius: var(--md-sys-shape-corner-full);
+    text-decoration: none;
+    display: inline-block;
+  }
+  .wd-donate a:hover {
+    background: color-mix(in srgb, var(--md-sys-color-secondary-container) 80%, var(--md-sys-color-secondary));
   }
 </style>

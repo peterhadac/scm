@@ -1,6 +1,6 @@
 ---
 import { flattenProducts, safeUrl, type RoastType } from '../lib/coffees';
-import { UI, localizedOrigin, localizedProcess, localizedRoastType, type Lang } from '../lib/i18n';
+import { UI, KOFI_URL, localizedOrigin, localizedProcess, localizedRoastType, type Lang } from '../lib/i18n';
 import { loadPriceHistory, historyKey, sparklinePoints } from '../lib/priceHistory';
 
 interface Props {
@@ -159,6 +159,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     <span class="ct-legend-sep" aria-hidden="true">·</span>
     <span class="ct-best" title={t.bestValueTitle}>{t.bestValue}</span>
     <span class="ct-legend-desc">{t.bestValueDesc}</span>
+    <span class="ct-legend-sep" aria-hidden="true">·</span>
+    <a class="ct-donate" href={KOFI_URL} target="_blank" rel="noopener noreferrer">{t.donate}</a>
   </div>
 
   <p id="empty-state" hidden class="ct-empty">{t.emptyFiltered}</p>
@@ -1280,6 +1282,15 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   /* Same 4.5:1 reasoning as .ct-legend-label above (issue #63). */
   .ct-legend-desc { color: var(--md-sys-color-on-surface-variant); }
+
+  /* Donation nudge in the legend (issue #86): a quiet inline link, not a
+     button — no popup, no guilt-math, just a sentence. */
+  .ct-donate {
+    color: var(--md-sys-color-on-surface-variant);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .ct-donate:hover { color: var(--md-sys-color-primary); }
 
   /* ── Empty state ──────────────────────────────────────────── */
   .ct-empty {

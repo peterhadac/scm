@@ -1,0 +1,49 @@
+---
+// giscus comments (issue #86) — GitHub Discussions-backed, so a static site
+// gets comments with no backend. Gated on build-time env vars: emits nothing
+// until the repo's Discussions tab and the giscus app are enabled and the
+// public repo/category IDs are provided (a human step), the same
+// off-by-default approach as GoatCounter (see astro.config.mjs). Used only on
+// the "This week" digest page — the one page with recurring editorial content
+// worth commenting on. Caveat: commenting needs a GitHub login.
+import type { Lang } from '../lib/i18n';
+
+const repo = 'peterhadac/scm';
+const repoId = process.env.GISCUS_REPO_ID;
+const category = process.env.GISCUS_CATEGORY ?? 'General';
+const categoryId = process.env.GISCUS_CATEGORY_ID;
+const enabled = Boolean(repoId && categoryId);
+
+const lang: Lang = Astro.locals.starlightRoute.lang === 'sk' ? 'sk' : 'en';
+const heading = lang === 'sk' ? 'Komentáre' : 'Comments';
+---
+
+{enabled && (
+  <section class="giscus-wrap" aria-label={heading}>
+    <h2>{heading}</h2>
+    <script
+      src="https://giscus.app/client.js"
+      data-repo={repo}
+      data-repo-id={repoId}
+      data-category={category}
+      data-category-id={categoryId}
+      data-mapping="pathname"
+      data-strict="1"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="preferred_color_scheme"
+      data-lang={lang}
+      crossorigin="anonymous"
+      async
+    ></script>
+  </section>
+)}
+
+<style>
+  .giscus-wrap {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--md-sys-color-outline-variant);
+  }
+</style>

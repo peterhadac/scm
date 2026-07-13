@@ -2,6 +2,7 @@
 // Origins index (issue #58): internal-linking hub for the per-origin
 // landing pages, ordered by catalogue size.
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import OriginsChoropleth from '../../components/OriginsChoropleth.astro';
 import { listOrigins } from '../../lib/origins';
 import { localizedOrigin } from '../../lib/i18n';
 
@@ -21,6 +22,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     coffees first. Each page lists the country's coffees with prices,
     refreshed weekly.
   </p>
+  <OriginsChoropleth />
   <ul>
     {origins.map((o) => (
       <li>

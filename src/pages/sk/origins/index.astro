@@ -1,6 +1,7 @@
 ---
 // Slovenský zoznam krajín pôvodu (issue #58).
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import OriginsChoropleth from '../../../components/OriginsChoropleth.astro';
 import { listOrigins } from '../../../lib/origins';
 import { localizedOrigin } from '../../../lib/i18n';
 
@@ -20,6 +21,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     kávy, zoradené podľa počtu káv. Každá stránka obsahuje kávy danej
     krajiny s cenami, obnovované každý týždeň.
   </p>
+  <OriginsChoropleth />
   <ul>
     {origins.map((o) => (
       <li>

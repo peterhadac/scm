@@ -46,6 +46,8 @@ export const UI = {
     priceDrop: 'price drop',
     priceDropTitle: (prev: string, date: string) => `Price dropped — was ${prev} on ${date}`,
     sparklineLabel: (from: string) => `Price history since ${from}`,
+    tipNudge: 'Found a cheaper coffee here? Consider tipping the difference:',
+    tipNudgeLink: 'Ko-fi',
   },
   sk: {
     search: 'Hľadať',
@@ -77,6 +79,8 @@ export const UI = {
     priceDrop: 'zľava',
     priceDropTitle: (prev: string, date: string) => `Cena klesla — predtým ${prev} (${date})`,
     sparklineLabel: (from: string) => `História ceny od ${from}`,
+    tipNudge: 'Našli ste tu lacnejšiu kávu? Zvážte, či rozdiel nepošlete ako tip:',
+    tipNudgeLink: 'Ko-fi',
   },
 } satisfies Record<Lang, Record<string, string | ((...args: never[]) => string)>>;
 

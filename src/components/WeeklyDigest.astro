@@ -25,6 +25,8 @@ const T = {
     noRises: 'No price rises this week.',
     was: (p: string) => `was ${p}`,
     rss: 'Subscribe via RSS',
+    tip: 'Did a price drop save you money this week? Consider tipping the difference to keep the map running →',
+    tipLink: 'Buy us a coffee on Ko-fi',
   },
   sk: {
     noData:
@@ -40,6 +42,8 @@ const T = {
     noRises: 'Tento týždeň nič nezdraželo.',
     was: (p: string) => `predtým ${p}`,
     rss: 'Odoberať cez RSS',
+    tip: 'Ušetrili ste tento týždeň vďaka zľave? Zvážte, či rozdiel nepošlete ako tip na chod mapy →',
+    tipLink: 'Kúpte nám kávu na Ko-fi',
   },
 }[lang];
 
@@ -66,6 +70,14 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
           </li>
         ))}
       </ul>
+    )}
+    {digest.drops.length > 0 && (
+      <p class="wd-tip">
+        {T.tip}{' '}
+        <a href="https://ko-fi.com/slovakcoffeemap" target="_blank" rel="noopener noreferrer">
+          {T.tipLink}
+        </a>
+      </p>
     )}
 
     <h2>{T.newHeading}</h2>
@@ -106,6 +118,11 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 <style>
   .wd-asof {
     color: var(--md-sys-color-outline);
+    font-size: var(--md-sys-typescale-label-small-size);
+  }
+  /* Donation nudge (issue #86): a quiet aside, not a banner. */
+  .wd-tip {
+    color: var(--md-sys-color-on-surface-variant);
     font-size: var(--md-sys-typescale-label-small-size);
   }
 </style>

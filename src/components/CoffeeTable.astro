@@ -13,9 +13,15 @@ interface Props {
   // pages, issue #58) — rows are pre-filtered to that canonical English
   // origin key.
   origin?: string;
+  // Blend split (issue #92): true → only multi-origin blends (the
+  // /coffees/blends/ page), false → single-origin only (the
+  // filter/espresso pages, so blends genuinely MOVE rather than
+  // duplicate), unset → no blend filtering ("All", origin pages).
+  // Keys off the canonical `origin === 'Blend'` sentinel.
+  blend?: boolean;
 }
 
-const { roastType, origin } = Astro.props;
+const { roastType, origin, blend } = Astro.props;
 
 // Starlight sets this from the `locales` config in astro.config.mjs — see
 // src/lib/i18n.ts for the EN/SK string tables this drives.
@@ -27,6 +33,7 @@ let coffees = roastType
   ? allCoffees.filter((c) => c.roast_type === roastType)
   : allCoffees;
 if (origin) coffees = coffees.filter((c) => c.origin === origin);
+if (blend !== undefined) coffees = coffees.filter((c) => (c.origin === 'Blend') === blend);
 
 // Price time series per (url, weight) from data/price_history.csv (issue
 // #54) — empty map until the scraper's first append (issue #41), in which

@@ -141,4 +141,26 @@ roasters:
     scrape_url: https://kaan.sk/kategoria/kava/
     metadata:
       city: Prešov
+  - name: Doraz
+    slug: doraz
+    url: https://doraz.sk/
+    scrape_url: https://doraz.sk/obchod/
+    metadata:
+      city: Košice
+  - name: Two Hands
+    slug: two-hands
+    url: https://www.twohands.sk/
+    scrape_url: https://www.twohands.sk/obchod/
+    metadata:
+      city: Prešov
+  - name: Spojka Roastery
+    slug: spojka-roastery
+    url: https://spojkaroastery.com/
+    scrape_url: https://shop.spojkaroastery.com/collections/all   # main site is a JS one-pager; the Shopify shop subdomain has the full static catalogue
+    roast_type_urls:   # Shopify product pages don't state roast type; the collection pages do
+      espresso: https://shop.spojkaroastery.com/collections/espresso
+      filter: https://shop.spojkaroastery.com/collections/filtrovana-kava
+      drip-bag: https://shop.spojkaroastery.com/collections/drip-bagy
+    metadata:
+      city: Prešov
 

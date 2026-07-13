@@ -255,7 +255,24 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
                   </svg>
                 </a>
               </td>
-              <td>{c.roaster}</td>
+              <td>
+                {c.roaster}
+                {c.referral && (
+                  <button
+                    type="button"
+                    class="ct-referral"
+                    data-code={c.referral.code}
+                    data-copied-label={t.discountCopied}
+                    title={t.discountCodeTitle(c.referral.code, c.referral.note ?? '')}
+                  >
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                      <path d="M7.5 2.5L2.5 7.5M4 3.2A0.9 0.9 0 118 3.2 0.9 0.9 0 014 3.2ZM6.2 8.4A0.9 0.9 0 1110 8.4 0.9 0.9 0 016.2 8.4Z" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+                    </svg>
+                    <span class="ct-referral-label">{t.discountCode}</span>
+                    <span class="ct-referral-code">{c.referral.code}</span>
+                  </button>
+                )}
+              </td>
               <td class="ct-muted">
                 {blendComposition
                   ? <span title={`${originLabel} (${blendComposition})`}>{originLabel} <span class="ct-blend-parts">({blendComposition})</span></span>
@@ -540,6 +557,29 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
       filtersToggle.open = false;
     }
   });
+
+  // ── Referral discount chips (issue #57): click to copy the code ──
+  for (const chip of Array.from(document.querySelectorAll<HTMLButtonElement>('.ct-referral'))) {
+    const code = chip.dataset.code;
+    if (!code) continue;
+    const codeEl = chip.querySelector<HTMLElement>('.ct-referral-code');
+    const original = codeEl ? codeEl.textContent : null;
+    const copiedLabel = chip.dataset.copiedLabel || 'copied!';
+    chip.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(code);
+      } catch {
+        return; // clipboard blocked (insecure context / denied) — no-op
+      }
+      if (!codeEl) return;
+      codeEl.textContent = copiedLabel;
+      chip.classList.add('ct-referral--copied');
+      setTimeout(() => {
+        codeEl.textContent = original;
+        chip.classList.remove('ct-referral--copied');
+      }, 1500);
+    });
+  }
 
   // Default sort: cheapest first, matching the previous price-asc behaviour.
   sortState = { key: 'price', dir: 'asc' };
@@ -1040,6 +1080,56 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     letter-spacing: 0;
     white-space: nowrap;
     cursor: help;
+  }
+
+  /* ── Referral discount chip (issue #57) ───────────────────────
+     Small copyable pill on a participating roaster's rows. Reuses the
+     primary (Toxic Orange) role — this is a call to action (save money),
+     so it earns the accent, unlike the muted stale/spark indicators. */
+  .ct-referral {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28em;
+    margin-left: 8px;
+    padding: 0.08em 0.55em;
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+    font-family: var(--font-sans);
+    font-size: var(--md-sys-typescale-label-small-size);
+    font-weight: 500;
+    line-height: 1.5;
+    cursor: pointer;
+    vertical-align: middle;
+    white-space: nowrap;
+    transition: background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+  }
+
+  .ct-referral:hover {
+    background: color-mix(in srgb, var(--md-sys-color-primary-container) 80%, var(--md-sys-color-primary));
+  }
+
+  .ct-referral:focus-visible {
+    outline: none;
+    box-shadow: var(--md3-focus-ring);
+  }
+
+  .ct-referral-label {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.85;
+  }
+
+  .ct-referral-code {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+
+  .ct-referral--copied {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    border-color: color-mix(in srgb, var(--md-sys-color-secondary) 40%, transparent);
   }
 
   /* ── Coffee link ──────────────────────────────────────────── */

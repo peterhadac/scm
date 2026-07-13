@@ -47,9 +47,18 @@ interface ProductEntry {
   blend_origins?: string[];
 }
 
+// A roaster referral partnership (issue #57): a discount code shown as a
+// copyable chip on that roaster's rows. `note` is optional context (e.g.
+// "10% off").
+export interface Referral {
+  code: string;
+  note?: string;
+}
+
 interface Roaster {
   name: string;
   slug: string;
+  referral?: Referral;
 }
 
 export interface CoffeeRow {
@@ -67,6 +76,8 @@ export interface CoffeeRow {
   // the coffees.json contract stays additive.
   blend?: boolean;
   blend_origins?: string[];
+  // Present only when the roaster has a referral partnership (issue #57).
+  referral?: Referral;
 }
 
 function loadYaml<T>(relativePath: string): T {
@@ -86,7 +97,9 @@ export function flattenProducts(): CoffeeRow[] {
   const seen = new Set<string>();
   const rows: CoffeeRow[] = [];
   for (const [slug, entries] of Object.entries(products)) {
-    const roasterName = roasterBySlug.get(slug)?.name ?? slug;
+    const roaster = roasterBySlug.get(slug);
+    const roasterName = roaster?.name ?? slug;
+    const referral = roaster?.referral;
     for (const product of entries) {
       if (product.status !== 'ok') continue;
       for (const tier of product.packaging ?? []) {
@@ -107,6 +120,8 @@ export function flattenProducts(): CoffeeRow[] {
           // single-origin rows/JSON stay byte-identical to before.
           ...(product.blend ? { blend: true } : {}),
           ...(product.blend_origins?.length ? { blend_origins: product.blend_origins } : {}),
+          // Referral chip data (issue #57) — only set for participating roasters.
+          ...(referral?.code ? { referral } : {}),
         });
       }
     }

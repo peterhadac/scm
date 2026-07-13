@@ -46,6 +46,10 @@ export const UI = {
     priceDrop: 'price drop',
     priceDropTitle: (prev: string, date: string) => `Price dropped — was ${prev} on ${date}`,
     sparklineLabel: (from: string) => `Price history since ${from}`,
+    discountCode: 'discount',
+    discountCodeTitle: (code: string, note: string) =>
+      `${note ? note + ' — ' : ''}use code ${code} at checkout (click to copy)`,
+    discountCopied: 'copied!',
   },
   sk: {
     search: 'Hľadať',
@@ -77,6 +81,10 @@ export const UI = {
     priceDrop: 'zľava',
     priceDropTitle: (prev: string, date: string) => `Cena klesla — predtým ${prev} (${date})`,
     sparklineLabel: (from: string) => `História ceny od ${from}`,
+    discountCode: 'zľava',
+    discountCodeTitle: (code: string, note: string) =>
+      `${note ? note + ' — ' : ''}pri objednávke použite kód ${code} (kliknutím skopírujete)`,
+    discountCopied: 'skopírované!',
   },
 } satisfies Record<Lang, Record<string, string | ((...args: never[]) => string)>>;
 

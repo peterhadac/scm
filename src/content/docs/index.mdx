@@ -1,18 +1,52 @@
 ---
 title: Slovak Coffee Map
-description: Weekly-updated catalogue of coffees available on the Slovak market.
+description: Heureka for specialty coffee — every coffee in stock at Slovak roasters, compared in one place and refreshed weekly.
 template: splash
 hero:
   image:
     html: '<svg width="200" height="220" viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 20 C63 20 34 49 34 86 C34 133 100 215 100 215 C100 215 166 133 166 86 C166 49 137 20 100 20Z" fill="color-mix(in oklch, var(--sl-color-accent) 12%, transparent)" stroke="var(--sl-color-accent)" stroke-width="2.5"/><ellipse cx="100" cy="86" rx="30" ry="37" fill="none" stroke="var(--sl-color-accent)" stroke-width="2.5"/><path d="M100 49 C88 61 88 73 100 86 C112 99 112 111 100 123" stroke="var(--sl-color-accent)" stroke-width="2" stroke-linecap="round" fill="none"/></svg>'
-  tagline: Every coffee currently in stock from Slovak roasters, in one filterable table.
+  tagline: Heureka for specialty coffee — every coffee currently in stock at Slovak roasters, compared in one filterable table and refreshed every Monday.
   actions:
     - text: Browse coffees
       link: /scm/coffees/
       icon: right-arrow
       variant: primary
-    - text: View on GitHub
-      link: https://github.com/peterhadac/scm
-      icon: external
+    - text: What changed this week
+      link: /scm/this-week/
       variant: secondary
 ---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import MemeCard from '../../components/MemeCard.astro';
+
+<CardGrid>
+  <Card title="Compare, don't tab-hop" icon="magnifier">
+    ~30 Slovak roasters and ~600 coffees in one table — filter by origin,
+    process, and roast, sort by price per 100 g, and buy directly from the
+    roaster. Nobody pays to be listed.
+  </Card>
+  <Card title="Fresh every Monday" icon="approve-check">
+    An automated scrape confirms every price and delisting weekly. Stale
+    data gets flagged, not hidden.
+  </Card>
+  <Card title="Catch the price drops" icon="star">
+    Price history per coffee, drop badges in the table, and a weekly
+    changes page with an RSS feed.
+  </Card>
+  <Card title="Explore by origin" icon="globe">
+    Landing pages and a world map for every origin country on the Slovak
+    market — from Brazil to Yemen.
+  </Card>
+</CardGrid>
+
+<MemeCard
+  src="/scm/kamenicky-2024.jpg"
+  alt="Ladislav Kamenický, Slovak Minister of Finance"
+  caption="Coffee got pricier? Wasn't us. Consolidation."
+  credit="Photo: © European Union, 2024 (Jennifer Jacquemart), CC BY 4.0, via Wikimedia Commons"
+  creditHref="https://commons.wikimedia.org/wiki/File:Ladislav_Kamenicky,_2024.jpg"
+/>
+
+At least here you can see exactly who raised which price, and when. The
+map is independent, free, and built for people who take their coffee —
+if not their fiscal policy — seriously.

@@ -22,7 +22,11 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: scraper/uv.lock
-      - run: uv sync --directory scraper
+      # --locked: fail the PR check if scraper/uv.lock has drifted from
+      # scraper/pyproject.toml, e.g. a Dependabot pin bump that didn't also
+      # update the lockfile (issue #114) — catches it here instead of it
+      # silently rewriting uv.lock on the next scheduled scrape run.
+      - run: uv sync --directory scraper --locked
       # No crawl4ai-setup here: the pytest suite covers pure parsing/normalization
       # logic and never launches a browser or hits the network.
       - run: uv run --directory scraper pytest test_scrape.py

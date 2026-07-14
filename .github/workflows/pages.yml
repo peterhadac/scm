@@ -43,6 +43,13 @@ jobs:
           # Actions -> Variables). Unset = analytics scripts not emitted
           # (issue #56) — the build works fine without it.
           GOATCOUNTER_CODE: ${{ vars.GOATCOUNTER_CODE }}
+          # giscus comments (issue #86) — public repo/category IDs, set as
+          # repository variables once Discussions + the giscus app are
+          # enabled. Unset = the comments section isn't emitted; the build
+          # works either way.
+          GISCUS_REPO_ID: ${{ vars.GISCUS_REPO_ID }}
+          GISCUS_CATEGORY: ${{ vars.GISCUS_CATEGORY }}
+          GISCUS_CATEGORY_ID: ${{ vars.GISCUS_CATEGORY_ID }}
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: dist/

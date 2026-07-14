@@ -5,6 +5,7 @@
 import { buildDigest } from '../lib/digest';
 import { safeUrl } from '../lib/coffees';
 import type { Lang } from '../lib/i18n';
+import Comments from './Comments.astro';
 
 const lang: Lang = Astro.locals.starlightRoute.lang === 'sk' ? 'sk' : 'en';
 const digest = buildDigest();
@@ -114,6 +115,10 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 )}
 
 <p><a href={`${base}/digest.xml`}>{T.rss}</a></p>
+
+{/* giscus comments (issue #86) — digest page only, and only once the
+    GISCUS_* repository variables are set (see Comments.astro). */}
+<Comments />
 
 <style>
   .wd-asof {

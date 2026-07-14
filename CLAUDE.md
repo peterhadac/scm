@@ -65,6 +65,13 @@ source language):
   marks it as a multi-origin blend (`"blend"` / `"zmes"` / `"mix"`) and that
   matches no single country gets the sentinel `"Blend"` instead of staying
   `null` — it genuinely has no one source country to report.
+- `blend` / `blend_origins` (issue #91): a multi-origin blend additionally
+  carries `blend: true` (present only on blends — absent means single-origin;
+  `origin` stays the canonical `"Blend"` filter key), and, when the page
+  states the composition, `blend_origins` — an array of canonical English
+  country names (each normalized through `coffee_origins.yaml`, unmatchable
+  entries dropped, same gating as `origin`). Display-only data for the table;
+  the origin dropdown/`data-origin` filter contract is unchanged.
 
 `price` is **EUR** as a JSON number with a `.` decimal. `last_seen` is the
 date of the last successful scrape that included this item; it stops

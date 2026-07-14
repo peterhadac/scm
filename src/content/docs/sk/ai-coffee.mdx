@@ -1,0 +1,42 @@
+---
+title: AI výber kávy
+description: Nechajte AI asistenta vybrať vašu ďalšiu kávu zo živých dát Slovak Coffee Map — inštalovateľné ako agent skill jedným príkazom.
+tableOfContents: false
+---
+
+Slovak Coffee Map je dostupná aj ako **agent skill**: nainštalujte si ju
+do Claude Code (alebo iného agenta podporujúceho
+[skills](https://github.com/vercel-labs/skills)) a váš asistent vám
+odporučí kávy, ktoré sú u slovenských pražiarní skladom práve teraz — so
+živými cenami, porovnaním €/100 g a priamymi odkazmi na nákup.
+
+## Inštalácia
+
+```bash
+npx skills add peterhadac/scm
+```
+
+To je všetko. Skill číta verejný dataset
+[`coffees.json`](/scm/coffees.json) tejto stránky (obnovovaný každý
+pondelok), takže odporúčania nikdy nepochádzajú z pamäte modelu — iba
+kávy, ktoré sú skutočne v ponuke, za ceny, ktoré pražiarne skutočne
+účtujú.
+
+## Potom sa stačí spýtať
+
+- *„Potrebujem zrná do moka kanvičky, čokoládové, do 10 €."*
+- *„Niečo ovocné do V60 — čo je teraz najvýhodnejšie?"*
+- *„Sú tento týždeň v zľave nejaké etiópske filter kávy?"*
+
+Skill namapuje váš spôsob prípravy na správny typ praženia, porovnáva
+cenu za 100 g namiesto ceny balenia, odporučí dve-tri kávy s odkazmi
+priamo do e-shopu pražiarne a povie vám, kedy boli dáta naposledy
+obnovené. Bez väzby na akúkoľvek pražiareň — ak sedí viacero káv rovnako,
+vyhráva lepšia cena za 100 g.
+
+## Čo skill vie
+
+Všetko z [tabuľky káv](/scm/sk/coffees/): ~600 káv od ~30 slovenských
+pražiarní — pôvod, spracovanie, typ praženia, veľkosti balení, ceny aj
+zloženie zmesí. Ako sa dáta zbierajú, popisuje stránka [O
+dátach](/scm/sk/about-data/).

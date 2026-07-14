@@ -28,7 +28,13 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: scraper/uv.lock
-      - run: uv sync --directory scraper
+      # --locked: fail loudly if scraper/uv.lock has drifted from
+      # scraper/pyproject.toml (issue #114 — a Dependabot pin bump that
+      # doesn't also touch uv.lock left them out of sync; without this flag
+      # uv silently rewrites uv.lock in place, which then surfaces several
+      # steps later as an unrelated "git pull --rebase" failure on the data
+      # commit instead of a clear error here).
+      - run: uv sync --directory scraper --locked
       - run: uv run --directory scraper crawl4ai-setup
       - run: uv run --directory scraper python scrape.py
         env:

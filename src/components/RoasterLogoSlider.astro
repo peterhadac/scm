@@ -1,0 +1,151 @@
+---
+// Auto-scrolling marquee of the roasters with the deepest current
+// catalogue (data/products.yaml, ok-status products only — see
+// topRoastersByCoffeeCount in lib/coffees.ts). No roaster logo images
+// exist in roasters.yaml, so each "logo" is a typographic chip built from
+// the roaster's own name, styled to the brand system rather than an
+// invented icon. The list is duplicated once for a seamless CSS loop; the
+// duplicate is aria-hidden + untabbable so screen readers and keyboard
+// users only ever see one copy.
+import { safeUrl, type RoasterCoffeeCount } from '../lib/coffees';
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  roasters: RoasterCoffeeCount[];
+  lang: Lang;
+}
+const { roasters, lang } = Astro.props;
+
+const T = {
+  en: { heading: 'Most stocked roasters', unit: (n: number) => `${n} coffees` },
+  sk: { heading: 'Pražiarne s najväčšou ponukou', unit: (n: number) => `${n} káv` },
+}[lang];
+---
+
+{
+  roasters.length > 0 && (
+    <section class="logo-slider" aria-labelledby="logo-slider-heading">
+      <h2 id="logo-slider-heading">{T.heading}</h2>
+      <div class="logo-slider-track">
+        <div class="logo-slider-scroll">
+          <ul class="logo-slider-list">
+            {roasters.map((r) => (
+              <li>
+                <a href={safeUrl(r.url)} target="_blank" rel="noopener noreferrer">
+                  <span class="logo-slider-name">{r.name}</span>
+                  <span class="logo-slider-count">{T.unit(r.count)}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <ul class="logo-slider-list" aria-hidden="true">
+            {roasters.map((r) => (
+              <li>
+                <a href={safeUrl(r.url)} tabindex="-1">
+                  <span class="logo-slider-name">{r.name}</span>
+                  <span class="logo-slider-count">{T.unit(r.count)}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .logo-slider {
+    margin: 3rem 0;
+  }
+
+  #logo-slider-heading {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .logo-slider-track {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  }
+
+  .logo-slider-scroll {
+    display: flex;
+    width: max-content;
+    animation: logo-scroll 36s linear infinite;
+  }
+
+  .logo-slider-track:hover .logo-slider-scroll,
+  .logo-slider-track:focus-within .logo-slider-scroll {
+    animation-play-state: paused;
+  }
+
+  .logo-slider-list {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0 0.5rem;
+  }
+
+  .logo-slider-list a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 9rem;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-large);
+    background: var(--md-sys-color-surface-container-low);
+    text-decoration: none;
+    transition:
+      border-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+      transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+  }
+
+  .logo-slider-list a:hover,
+  .logo-slider-list a:focus-visible {
+    border-color: var(--md-sys-color-primary);
+    transform: translateY(-2px);
+  }
+
+  .logo-slider-name {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--md-sys-color-on-surface);
+    white-space: nowrap;
+  }
+
+  .logo-slider-count {
+    font-family: var(--font-sans);
+    font-weight: 300;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  @keyframes logo-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo-slider-scroll {
+      animation: none;
+    }
+    .logo-slider-track {
+      overflow-x: auto;
+    }
+    .logo-slider-list[aria-hidden] {
+      display: none;
+    }
+  }
+</style>

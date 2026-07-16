@@ -6,6 +6,7 @@
 import '../styles/custom.css';
 import '../styles/tailwind.css';
 import Wordmark from '../components/Wordmark.astro';
+import LogoIcon from '../components/LogoIcon.astro';
 import FreshnessBadge from '../components/FreshnessBadge.astro';
 import { NAV, isNavGroup } from '../lib/nav';
 import { langFromPath, localePath } from '../lib/lang';
@@ -127,23 +128,35 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
   <body>
     <a href="#content" class="skip-link">{T.skipToContent}</a>
     <header class="site-header">
-      <div class="site-header-inner">
+      <div class="notch-bar">
+        <div class="notch-badge" aria-hidden="true">
+          <LogoIcon size={28} />
+        </div>
         <Wordmark href={`${base}${lang === 'sk' ? '/sk/' : '/'}`} />
         <nav class="site-nav" aria-label="Main">
           <ul>
-            {NAV.map((entry) =>
+            {NAV.map((entry, i) =>
               isNavGroup(entry) ? (
-                <li class="nav-group">
-                  <details>
-                    <summary>{entry[lang]}</summary>
-                    <ul>
-                      {entry.items.map((item) => (
-                        <li>
-                          <a href={`${base}${localePath(item.href, lang)}`}>{item[lang]}</a>
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
+                <li class="nav-dropdown">
+                  <button
+                    type="button"
+                    class="nav-dropdown-trigger"
+                    aria-haspopup="menu"
+                    aria-expanded="false"
+                    aria-controls={`nav-menu-${i}`}
+                  >
+                    {entry[lang]}
+                    <svg class="nav-dropdown-chevron" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true">
+                      <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </button>
+                  <ul class="nav-dropdown-menu" id={`nav-menu-${i}`} role="menu">
+                    {entry.items.map((item) => (
+                      <li role="none">
+                        <a role="menuitem" href={`${base}${localePath(item.href, lang)}`}>{item[lang]}</a>
+                      </li>
+                    ))}
+                  </ul>
                 </li>
               ) : (
                 <li>
@@ -227,6 +240,138 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
         }
       })();
     </script>
+
+    <script is:inline>
+      // Click-toggled dropdown menus for the nav-group entries, replacing
+      // the old <details>/<summary> disclosure. role="menu"/"menuitem" on
+      // the popup, aria-expanded reflected on the trigger, Escape and
+      // outside-click both close, and opening one closes any other that's
+      // open (only one nav dropdown makes sense open at a time).
+      (function () {
+        var dropdowns = Array.prototype.slice.call(document.querySelectorAll('.nav-dropdown'));
+        if (!dropdowns.length) return;
+
+        function closeAll(except) {
+          dropdowns.forEach(function (dd) {
+            if (dd === except) return;
+            dd.removeAttribute('data-open');
+            var t = dd.querySelector('.nav-dropdown-trigger');
+            if (t) t.setAttribute('aria-expanded', 'false');
+          });
+        }
+
+        dropdowns.forEach(function (dd) {
+          var trigger = dd.querySelector('.nav-dropdown-trigger');
+          if (!trigger) return;
+          trigger.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var willOpen = !dd.hasAttribute('data-open');
+            closeAll();
+            if (willOpen) {
+              dd.setAttribute('data-open', 'true');
+              trigger.setAttribute('aria-expanded', 'true');
+            }
+          });
+          dd.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && dd.hasAttribute('data-open')) {
+              closeAll();
+              trigger.focus();
+            }
+          });
+        });
+
+        document.addEventListener('click', function () {
+          closeAll();
+        });
+
+        document.addEventListener('focusout', function (e) {
+          dropdowns.forEach(function (dd) {
+            if (dd.hasAttribute('data-open') && !dd.contains(e.relatedTarget)) {
+              closeAll();
+            }
+          });
+        });
+      })();
+    </script>
+
+    <script is:inline>
+      // ASCII glitch transition on internal navigation. This is a plain
+      // multi-page site by design (no Astro ClientRouter/view-transitions —
+      // that would re-run every inline script, including the Ko-fi widget
+      // loader, on every navigation and risks duplicating it). Instead:
+      // intercept a same-origin, same-tab link click, play a brief
+      // ASCII-glitch overlay, then perform the real navigation — full page
+      // loads stay exactly as they were, just delayed by one animation.
+      (function () {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        var CHARS = '01#%&*+-/<>[]{}アイウエオカキクケコ';
+        var GLITCH_MS = 320;
+        var overlay = null;
+        var pre = null;
+        var scrambleTimer = null;
+
+        function randChar() {
+          return CHARS.charAt((Math.random() * CHARS.length) | 0);
+        }
+
+        function scramble() {
+          var cols = Math.max(1, (window.innerWidth / 9) | 0);
+          var rows = Math.max(1, (window.innerHeight / 16) | 0);
+          var lines = [];
+          for (var r = 0; r < rows; r++) {
+            var line = '';
+            for (var c = 0; c < cols; c++) line += randChar();
+            lines.push(line);
+          }
+          pre.textContent = lines.join('\n');
+        }
+
+        function ensureOverlay() {
+          if (overlay) return;
+          overlay = document.createElement('div');
+          overlay.id = 'scm-glitch-overlay';
+          overlay.setAttribute('aria-hidden', 'true');
+          pre = document.createElement('pre');
+          overlay.appendChild(pre);
+          document.body.appendChild(overlay);
+        }
+
+        function playGlitch(x, y, done) {
+          ensureOverlay();
+          overlay.style.setProperty('--gx', x + 'px');
+          overlay.style.setProperty('--gy', y + 'px');
+          scramble();
+          overlay.classList.add('scm-glitch-active');
+          scrambleTimer = window.setInterval(scramble, 45);
+          window.setTimeout(function () {
+            window.clearInterval(scrambleTimer);
+            overlay.classList.remove('scm-glitch-active');
+            done();
+          }, GLITCH_MS);
+        }
+
+        document.addEventListener('click', function (e) {
+          if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+          var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+          if (!a) return;
+          if (a.target && a.target !== '_self') return;
+          if (a.hasAttribute('download')) return;
+          var dest;
+          try {
+            dest = new URL(a.href, window.location.href);
+          } catch (err) {
+            return;
+          }
+          if (dest.origin !== window.location.origin) return;
+          if (dest.pathname === window.location.pathname && dest.hash) return; // same-page anchor jump
+          e.preventDefault();
+          playGlitch(e.clientX, e.clientY, function () {
+            window.location.href = a.href;
+          });
+        });
+      })();
+    </script>
   </body>
 </html>
 
@@ -251,18 +396,43 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
     font-family: var(--font-sans);
   }
 
+  /* Floating "notch" navbar: a rounded pill that sits clear of the viewport
+     edge, with the brand mark in a badge that pokes up through its top
+     edge. The badge's ring color matches the page background exactly (not
+     the bar's own fill) so it reads as a cutout in the bar regardless of
+     theme — see .notch-badge below. */
   .site-header {
-    border-bottom: 1px solid var(--md-sys-color-outline-variant);
-    background: var(--md-sys-color-surface);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    padding: 1rem 1.25rem 0;
   }
 
-  .site-header-inner {
+  .notch-bar {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 1.5rem;
     max-width: 72rem;
     margin: 0 auto;
-    padding: 0.75rem 1.25rem;
+    padding: 0.75rem 1.5rem 0.75rem 4.5rem;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    box-shadow: var(--md-sys-elevation-level2);
+  }
+
+  .notch-badge {
+    position: absolute;
+    top: -12px;
+    left: 24px;
+    line-height: 0;
+    border-radius: 22%;
+    box-shadow: 0 0 0 6px var(--md-sys-color-background), var(--md-sys-elevation-level2);
+  }
+
+  .site-header :global(.wordmark) {
+    flex-shrink: 0;
   }
 
   .site-nav {
@@ -273,7 +443,8 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
   .site-nav > ul {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem 1rem;
+    align-items: center;
+    gap: 0.25rem 1.25rem;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -289,16 +460,84 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
     color: var(--md-sys-color-primary);
   }
 
-  .nav-group summary {
-    cursor: pointer;
-    color: var(--md-sys-color-on-surface);
-    font-size: var(--md-sys-typescale-label-large-size);
+  /* ── Dropdown menus (replaces <details>/<summary>) ────────────────────── */
+  .nav-dropdown {
+    position: relative;
   }
 
-  .nav-group ul {
+  .nav-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--md-sys-color-on-surface);
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    font-size: var(--md-sys-typescale-label-large-size);
+    cursor: pointer;
+  }
+
+  .nav-dropdown-trigger:hover,
+  .nav-dropdown[data-open='true'] .nav-dropdown-trigger {
+    color: var(--md-sys-color-primary);
+  }
+
+  .nav-dropdown-chevron {
+    transition: transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+  }
+
+  .nav-dropdown[data-open='true'] .nav-dropdown-chevron {
+    transform: rotate(180deg);
+  }
+
+  .nav-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.75rem);
+    left: 50%;
+    transform: translate(-50%, -4px);
+    min-width: 12rem;
     list-style: none;
-    margin: 0.25rem 0 0;
-    padding-left: 1rem;
+    margin: 0;
+    padding: 0.4rem;
+    background: var(--md-sys-color-surface-container-high);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
+    box-shadow: var(--md-sys-elevation-level3);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+      transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+      visibility var(--md-sys-motion-duration-short3);
+  }
+
+  .nav-dropdown[data-open='true'] .nav-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate(-50%, 0);
+  }
+
+  .nav-dropdown-menu a {
+    display: block;
+    border-radius: var(--md-sys-shape-corner-small);
+    padding: 0.4rem 0.6rem;
+    font-size: var(--md-sys-typescale-body-medium-size);
+    white-space: nowrap;
+  }
+
+  .nav-dropdown-menu a:hover {
+    background: var(--md-sys-color-surface-container-highest);
+    color: var(--md-sys-color-primary);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-dropdown-menu,
+    .nav-dropdown-chevron {
+      transition: none;
+    }
   }
 
   .theme-toggle {
@@ -348,5 +587,64 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
 
   .site-footer-links a {
     color: var(--md-sys-color-on-surface-variant);
+  }
+
+  /* ── ASCII glitch navigation transition ──────────────────────────────────
+     Built by the click-interceptor script above; not present in the DOM
+     until the first internal link click. The ripple's origin (--gx/--gy)
+     is set per-click to the pointer position. Entirely absent under
+     prefers-reduced-motion since the script bails out before ever creating
+     the element. */
+  :global(#scm-glitch-overlay) {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--md-sys-color-background);
+  }
+
+  :global(#scm-glitch-overlay.scm-glitch-active) {
+    opacity: 1;
+    animation: scm-glitch-ripple 320ms ease-out;
+  }
+
+  :global(#scm-glitch-overlay pre) {
+    margin: 0;
+    padding: 0.5rem;
+    font-family: monospace;
+    font-size: 13px;
+    line-height: 16px;
+    color: var(--md-sys-color-primary);
+    white-space: pre;
+    text-shadow:
+      2px 0 var(--color-aqua-mist),
+      -2px 0 var(--color-garnet);
+    animation: scm-glitch-shift 90ms steps(2) infinite;
+  }
+
+  @keyframes scm-glitch-ripple {
+    0% {
+      clip-path: circle(0% at var(--gx, 50%) var(--gy, 50%));
+    }
+    65% {
+      clip-path: circle(85% at var(--gx, 50%) var(--gy, 50%));
+    }
+    100% {
+      clip-path: circle(130% at var(--gx, 50%) var(--gy, 50%));
+    }
+  }
+
+  @keyframes scm-glitch-shift {
+    0% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(-2px, 1px);
+    }
+    100% {
+      transform: translate(2px, -1px);
+    }
   }
 </style>

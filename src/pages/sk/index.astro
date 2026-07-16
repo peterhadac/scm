@@ -6,8 +6,12 @@ import Card from '../../components/Card.astro';
 import CardGrid from '../../components/CardGrid.astro';
 import MemeCard from '../../components/MemeCard.astro';
 import Button from '../../components/ui/Button.astro';
+import FluidBackground from '../../components/FluidBackground.astro';
+import RoasterLogoSlider from '../../components/RoasterLogoSlider.astro';
+import { topRoastersByCoffeeCount } from '../../lib/coffees';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const topRoasters = topRoastersByCoffeeCount();
 
 const heroSvg = `<svg width="200" height="220" viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 20 C63 20 34 49 34 86 C34 133 100 215 100 215 C100 215 166 133 166 86 C166 49 137 20 100 20Z" fill="color-mix(in oklch, var(--md-sys-color-primary) 12%, transparent)" stroke="var(--md-sys-color-primary)" stroke-width="2.5"/><ellipse cx="100" cy="86" rx="30" ry="37" fill="none" stroke="var(--md-sys-color-primary)" stroke-width="2.5"/><path d="M100 49 C88 61 88 73 100 86 C112 99 112 111 100 123" stroke="var(--md-sys-color-primary)" stroke-width="2" stroke-linecap="round" fill="none"/></svg>`;
 ---
@@ -17,6 +21,7 @@ const heroSvg = `<svg width="200" height="220" viewBox="0 0 200 220" fill="none"
   description="Heureka pre výberovú kávu — všetky kávy skladom u slovenských pražiarní, porovnané na jednom mieste a obnovované každý týždeň."
 >
   <section class="hero">
+    <FluidBackground />
     <div class="hero-image" set:html={heroSvg} />
     <h1>Slovak Coffee Map</h1>
     <p class="tagline">
@@ -29,6 +34,8 @@ const heroSvg = `<svg width="200" height="220" viewBox="0 0 200 220" fill="none"
       <Button href={`${base}/sk/this-week/`} variant="secondary">Čo sa zmenilo tento týždeň</Button>
     </div>
   </section>
+
+  <RoasterLogoSlider roasters={topRoasters} lang="sk" />
 
   <CardGrid>
     <Card title="Porovnávajte, nepreklikávajte">
@@ -67,6 +74,7 @@ const heroSvg = `<svg width="200" height="220" viewBox="0 0 200 220" fill="none"
 
 <style>
   .hero {
+    position: relative;
     text-align: center;
     padding: 2rem 0 3rem;
   }

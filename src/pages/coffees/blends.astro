@@ -1,0 +1,10 @@
+---
+// Migrated off Starlight (issue #121). SK mirror: src/pages/sk/coffees/blends.astro.
+import Layout from '../../layouts/Layout.astro';
+import CoffeeTable from '../../components/CoffeeTable.astro';
+---
+
+<Layout title="Blends" description="Browse multi-origin coffee blends currently in stock from Slovak roasters.">
+  <h1>Blends</h1>
+  <CoffeeTable lang="en" blend={true} />
+</Layout>

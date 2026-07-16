@@ -65,7 +65,8 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # different projections), so a stored hash from before the change would
 # never match again anyway, but bumping keeps the "why did this
 # re-extract" story consistent in one place instead of two.
-SCHEMA_VERSION = 20  # 20: first-class blend flag + blend_origins composition (issue #91)
+# v20: first-class blend flag + blend_origins composition (issue #91).
+SCHEMA_VERSION = 20
 
 # Ordered extraction-model preference list (issue #42): extract_product
 # works through these left to right, so a deprecated/unavailable primary
@@ -378,22 +379,22 @@ EXTRACT_PRODUCT_TOOL = {
                 "blend": {
                     "type": ["boolean", "null"],
                     "description": (
-                        "True if this is a multi-origin blend — the page markets "
-                        "it as a 'blend'/'zmes'/'mix', or lists several source "
-                        "countries with no single dominant origin. False or null "
-                        "for a single-origin coffee (including a blend of lots "
-                        "from ONE country, e.g. a 'Brazil espresso blend')."
+                        "True if this coffee is a multi-origin blend (a mix of "
+                        "beans from more than one country), whether the page "
+                        "says so via the origin attribute, the product name, or "
+                        "the description text. False for a single-origin "
+                        "coffee. Null if the page gives no way to tell."
                     ),
                 },
                 "blend_origins": {
                     "type": "array",
-                    "description": (
-                        "For a blend, the source countries the page lists, e.g. "
-                        "['Brazil', 'Honduras', 'India']. English country names. "
-                        "Omit or leave empty when the page doesn't state the "
-                        "blend's composition."
-                    ),
                     "items": {"type": "string"},
+                    "description": (
+                        "For a blend: the individual source countries the page "
+                        "lists (e.g. ['Brazília', 'Honduras', 'India']), in the "
+                        "page's own language. Empty/omitted when the page names "
+                        "no component countries or this isn't a blend."
+                    ),
                 },
                 "process": {"type": ["string", "null"]},
                 "roast_type": {
@@ -681,6 +682,29 @@ def normalize_origin(raw, name, aliases=None):
         if "balicek" in lowered and BUNDLE_MULTIPLIER_RE.search(lowered):
             return "Blend"
     return None
+
+
+def normalize_blend_origins(raw_list):
+    """Canonicalize a blend's component-country list (issue #91).
+
+    Each entry goes through the same country-alias table as `origin` —
+    anything unmatchable is dropped, never stored raw (same reasoning as
+    issue #14: this feeds rendered display text, and one-off LLM spellings
+    would leak through forever). Deduped, page order preserved. A country
+    genuinely missing from coffee_origins.yaml should be added there.
+    """
+    if not isinstance(raw_list, list):
+        return []
+    seen = set()
+    result = []
+    for item in raw_list:
+        if not isinstance(item, str):
+            continue
+        canonical = normalize_origin(item, None)
+        if canonical and canonical != "Blend" and canonical not in seen:
+            seen.add(canonical)
+            result.append(canonical)
+    return result
 
 
 # WooCommerce attribute-key substrings for a coffee's source-country
@@ -1677,25 +1701,16 @@ def normalize_product(raw, url, today, hints=None):
     hint_origin = normalize_origin(hints.origin, name) if hints.origin else None
     origin = hint_origin or normalize_origin(raw.get("origin"), name)
 
-    # Blend handling (issue #91). A coffee is a blend when the origin resolved
-    # to the "Blend" sentinel (BLEND_KEYWORDS/bundle heuristic or the LLM's own
-    # "Blend" origin) OR the model set the dedicated `blend` flag with no single
-    # source country found — a single resolved country still wins (a "Brazil
-    # espresso blend" is filed under Brazil, matching the origin precedence).
-    # `origin` stays the canonical "Blend" filter key; `blend_origins` is
-    # display-only composition data, each entry gated through the country-alias
-    # table (unmatchable entries dropped, never stored raw — issue #14).
-    if origin is None and raw.get("blend"):
+    # First-class blend marking (issue #91). The "Blend" origin sentinel
+    # stays the single canonical filter key; this adds a new healing path —
+    # a blend the model recognized from description text alone (raw
+    # `blend: true`, or a 2+-country composition) used to land as
+    # origin: null → incomplete, now becomes "Blend". Only fills a MISSING
+    # origin: a stated country (or a WooCommerce attribute hint) always
+    # wins over the model's blend opinion.
+    blend_origins = normalize_blend_origins(raw.get("blend_origins"))
+    if origin is None and (raw.get("blend") is True or len(blend_origins) >= 2):
         origin = "Blend"
-    blend = origin == "Blend"
-    blend_origins = []
-    if blend:
-        for country in raw.get("blend_origins") or []:
-            if not isinstance(country, str):
-                continue
-            canonical = normalize_origin(country, None)
-            if canonical and canonical != "Blend" and canonical not in blend_origins:
-                blend_origins.append(canonical)
 
     # These heuristics catch LLM extraction failures specifically — they
     # don't apply when packaging came from variation_tiers (WooCommerce's own
@@ -1745,10 +1760,12 @@ def normalize_product(raw, url, today, hints=None):
         "packaging": packaging,
         "schema_version": SCHEMA_VERSION,
     }
-    # Only stored on actual blends — a single-origin coffee stays free of the
-    # field (issue #91: "blend: false / absent"), keeping products.yaml diffs
-    # small. blend_origins only when the page actually stated the composition.
-    if blend:
+    # Stamped only on blends (issue #91) — `blend: false` on ~550
+    # single-origin entries would be pure diff noise. `blend_origins` is
+    # display-only composition data and only meaningful on a blend; a
+    # stated single-country origin with a stray composition list would be
+    # contradictory, so it's dropped there.
+    if origin == "Blend":
         entry["blend"] = True
         if blend_origins:
             entry["blend_origins"] = blend_origins

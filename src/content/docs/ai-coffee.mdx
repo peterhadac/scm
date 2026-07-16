@@ -1,0 +1,41 @@
+---
+title: AI Coffee choose
+description: Let your AI assistant pick your next coffee from live Slovak Coffee Map data — installable as an agent skill in one command.
+tableOfContents: false
+---
+
+Slovak Coffee Map ships as an **agent skill**: install it into Claude Code
+(or any agent that supports [skills](https://github.com/vercel-labs/skills))
+and your assistant can recommend coffees that are actually in stock at
+Slovak roasters right now — with live prices, €/100 g value comparison,
+and direct buy links.
+
+## Install
+
+```bash
+npx skills add peterhadac/scm
+```
+
+That's it. The skill reads this site's public
+[`coffees.json`](/scm/coffees.json) dataset (refreshed every Monday), so
+recommendations are never from the model's memory — only coffees that are
+really listed, at the prices roasters really charge.
+
+## Then just ask
+
+- *"I need beans for my moka pot, chocolatey, under €10."*
+- *"Something fruity for my V60 — what's the best value right now?"*
+- *"Any Ethiopian filter coffees on sale this week?"*
+
+The skill maps your brew method to the right roast type, compares price
+per 100 g rather than sticker price, recommends two or three fits with
+links to the roaster's own shop, and tells you when the data was last
+refreshed. No affiliation with any roaster — when several fit equally,
+the better €/100 g wins.
+
+## What it knows
+
+Everything in the [coffee table](/scm/coffees/): ~600 coffees from ~30
+Slovak roasters — origin, process, roast type, package sizes, prices, and
+blend composition. See [About the data](/scm/about-data/) for how the
+dataset is collected.

@@ -71,6 +71,24 @@ export default defineConfig({
                 'floating-chat.donateButton.background-color': '#ff5f5f',
                 'floating-chat.donateButton.text-color': '#fff',
               });
+              // Ko-fi injects its iframe without a title attribute — a real
+              // screen-reader gap and a weight-7 Lighthouse a11y audit
+              // (frame-title) that fails whenever the widget loads before
+              // the audit runs. Title it ourselves as soon as it appears;
+              // the observer disconnects once done.
+              var titleKofiFrames = function () {
+                var frames = document.querySelectorAll(
+                  '[id*="kofi"] iframe:not([title]), iframe[id*="kofi"]:not([title])'
+                );
+                frames.forEach(function (f) { f.title = 'Ko-fi donations widget'; });
+                return frames.length > 0;
+              };
+              if (!titleKofiFrames()) {
+                var observer = new MutationObserver(function () {
+                  if (titleKofiFrames()) observer.disconnect();
+                });
+                observer.observe(document.body, { childList: true, subtree: true });
+              }
             });
           `,
         },
@@ -117,6 +135,7 @@ export default defineConfig({
       ],
       sidebar: [
         { label: 'This week', translations: { sk: 'Tento týždeň' }, link: '/this-week/' },
+        { label: 'AI Coffee choose', translations: { sk: 'AI výber kávy' }, link: '/ai-coffee/' },
         { label: 'Roaster map', translations: { sk: 'Mapa pražiarní' }, link: '/map/' },
         {
           label: 'Roasted coffee',

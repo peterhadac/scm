@@ -30,6 +30,10 @@ export type RoastType = 'filter' | 'espresso' | 'nespresso' | 'drip-bag';
 interface ProductTier {
   weight_g: number;
   price: number;
+  // Present only when this product sells the same weight in more than one
+  // form (e.g. whole bean vs ground) — disambiguates such tiers from one
+  // another. Absent on every other tier.
+  variant?: string;
 }
 
 interface ProductEntry {
@@ -60,6 +64,10 @@ export interface CoffeeRow {
   roast_type: RoastType;
   price: number;
   weight_g: number;
+  // Present only when this row's weight collides with a sibling tier of
+  // the same product (e.g. whole bean vs ground) — undefined for every
+  // other row, dropped by JSON.stringify same as blend/blend_origins below.
+  variant?: string;
   url: string;
   last_seen: string;
   // Only set on blends (issue #93) — undefined keys are dropped by
@@ -89,7 +97,7 @@ export function flattenProducts(): CoffeeRow[] {
     for (const product of entries) {
       if (product.status !== 'ok') continue;
       for (const tier of product.packaging ?? []) {
-        const key = `${product.url}|${tier.weight_g}|${product.roast_type}`;
+        const key = `${product.url}|${tier.weight_g}|${product.roast_type}|${tier.variant ?? ''}`;
         if (seen.has(key)) continue;
         seen.add(key);
         rows.push({
@@ -100,6 +108,7 @@ export function flattenProducts(): CoffeeRow[] {
           roast_type: product.roast_type,
           price: tier.price,
           weight_g: tier.weight_g,
+          ...(tier.variant && { variant: tier.variant }),
           url: product.url,
           last_seen: product.last_seen,
           ...(product.blend === true && {

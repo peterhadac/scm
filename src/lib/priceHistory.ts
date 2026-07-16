@@ -1,10 +1,14 @@
 // Build-time reader for data/price_history.csv (issue #54) — the
 // append-only price time series the scraper maintains (issue #41, one row
-// per (date, roaster, url, weight_g) observation, appended only on
-// change). Returns one chronological series per (url, weight_g) so
-// CoffeeTable can draw sparklines and price-drop badges. The file not
-// existing yet (it appears with the first scrape after #50) — or any row
-// being malformed — must degrade to "no history", never break the build.
+// per (date, roaster, url, weight_g, variant) observation, appended only
+// on change). `variant` disambiguates two tiers that share a weight (e.g.
+// whole bean vs ground) — "" for rows without one, including every row
+// written before this column existed. Returns one chronological series per
+// (url, weight_g, variant) so CoffeeTable can draw sparklines and
+// price-drop badges without cross-contaminating unrelated same-weight
+// tiers. The file not existing yet (it appears with the first scrape after
+// #50) — or any row being malformed — must degrade to "no history", never
+// break the build.
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -44,8 +48,8 @@ export function splitCsvLine(line: string): string[] {
   return fields;
 }
 
-export function historyKey(url: string, weightG: number): string {
-  return `${url}|${weightG}`;
+export function historyKey(url: string, weightG: number, variant?: string | null): string {
+  return `${url}|${weightG}|${variant ?? ''}`;
 }
 
 export function loadPriceHistory(
@@ -57,14 +61,17 @@ export function loadPriceHistory(
 
   const lines = fs.readFileSync(file, 'utf8').split('\n');
   // Header order is a contract with the scraper's PRICE_HISTORY_COLUMNS:
-  // date,roaster,url,weight_g,price,name
+  // date,roaster,url,weight_g,price,name,variant — a row written before
+  // this column existed simply has no 7th field, so `variantRaw` comes
+  // back `undefined` and falls through to "" below, same as an explicitly
+  // blank variant.
   for (const line of lines.slice(1)) {
     if (!line.trim()) continue;
-    const [date, , url, weightRaw, priceRaw] = splitCsvLine(line);
+    const [date, , url, weightRaw, priceRaw, , variantRaw] = splitCsvLine(line);
     const weightG = Number.parseInt(weightRaw, 10);
     const price = Number.parseFloat(priceRaw);
     if (!date || !url || Number.isNaN(weightG) || Number.isNaN(price)) continue;
-    const key = historyKey(url, weightG);
+    const key = historyKey(url, weightG, variantRaw || '');
     const points = series.get(key);
     if (points) points.push({ date, price });
     else series.set(key, [{ date, price }]);

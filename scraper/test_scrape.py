@@ -311,9 +311,30 @@ def test_extract_woocommerce_variations_malformed_json_returns_raw_and_empty_tie
     assert tiers == []
 
 
-def test_extract_woocommerce_variations_dedupes_same_weight_first_wins():
-    # Same weight, different non-weight variant axis (e.g. roast type) —
-    # keep only the first-seen price for that weight rather than a duplicate tier.
+def test_extract_woocommerce_variations_keeps_distinct_tiers_for_a_second_variant_axis():
+    # Same weight, but a second attribute (grind) genuinely distinguishes
+    # the two variations — both tiers must survive, each tagged with its
+    # own variant label, instead of collapsing into one.
+    html = (
+        '<form data-product_variations="'
+        "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;,"
+        "&quot;attribute_pa_typ&quot;:&quot;zrnkova&quot;},"
+        "&quot;display_price&quot;:11,&quot;display_regular_price&quot;:11},"
+        "{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;,"
+        "&quot;attribute_pa_typ&quot;:&quot;mleta&quot;},"
+        "&quot;display_price&quot;:13,&quot;display_regular_price&quot;:13}]"
+        '"></form>'
+    )
+    _, tiers = scrape.extract_woocommerce_variations(_soup(html))
+    assert tiers == [
+        {"weight_g": 250, "price": 11.0, "variant": "zrnkova"},
+        {"weight_g": 250, "price": 13.0, "variant": "mleta"},
+    ]
+
+
+def test_extract_woocommerce_variations_dedupes_true_duplicate_first_wins():
+    # Same weight, no second axis at all — a genuine duplicate variation
+    # (e.g. a site glitch) still collapses to the first-seen price.
     html = (
         '<form data-product_variations="'
         "[{&quot;attributes&quot;:{&quot;attribute_pa_hmotnost&quot;:&quot;250-g&quot;},"
@@ -456,12 +477,14 @@ SHOPTET_RECORDS = {
 }
 
 
-def test_extract_shoptet_variations_collapses_grind_axis_to_unique_weights():
+def test_extract_shoptet_variations_keeps_distinct_grind_tiers_per_weight():
     raw, tiers = scrape.extract_shoptet_variations(_soup(_shoptet_html(SHOPTET_RECORDS)))
     assert raw  # non-empty, folded into the page hash
-    assert sorted(tiers, key=lambda t: t["weight_g"]) == [
-        {"weight_g": 500, "price": 17.0},
-        {"weight_g": 1000, "price": 34.0},
+    assert sorted(tiers, key=lambda t: (t["weight_g"], t["variant"])) == [
+        {"weight_g": 500, "price": 17.0, "variant": "Zomlieť kávu?: Mletá káva na zalievanie"},
+        {"weight_g": 500, "price": 17.0, "variant": "Zomlieť kávu?: Zrnková káva"},
+        {"weight_g": 1000, "price": 34.0, "variant": "Zomlieť kávu?: Mletá káva na frenchpress"},
+        {"weight_g": 1000, "price": 34.0, "variant": "Zomlieť kávu?: Zrnková káva"},
     ]
 
 
@@ -964,6 +987,46 @@ def test_normalize_product_multi_weight_packaging():
     assert result["packaging"] == [
         {"weight_g": 1000, "price": 44.0},
         {"weight_g": 250, "price": 12.5},
+    ]
+
+
+def test_normalize_product_keeps_distinct_same_weight_tiers_by_variant():
+    # Real-world shape (coffeeart.me): the same weight sold whole-bean and
+    # ground at different prices — both tiers must survive, each carrying
+    # its own variant label, not collide into one.
+    raw = {
+        "name": "9 Grams Coffee Ethiopia Yirgacheffe Grade 2 CO2 Decaf washed",
+        "origin": "Ethiopia",
+        "roast_type": "Filter",
+        "packaging": [
+            {"weight": "1000 g", "price": "34 €", "variant": "Whole bean"},
+            {"weight": "1000 g", "price": "48 €", "variant": "Ground"},
+        ],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/decaf/", "2026-07-04")
+    assert result["status"] == "ok"
+    assert result["packaging"] == [
+        {"weight_g": 1000, "price": 34.0, "variant": "Whole bean"},
+        {"weight_g": 1000, "price": 48.0, "variant": "Ground"},
+    ]
+
+
+def test_normalize_product_strips_and_omits_blank_variant():
+    raw = {
+        "name": "Kenya AA",
+        "origin": "Kenya",
+        "roast_type": "Filter",
+        "packaging": [
+            {"weight": "250 g", "price": "10 €", "variant": "  Whole bean  "},
+            {"weight": "500 g", "price": "18 €", "variant": ""},
+            {"weight": "1000 g", "price": "32 €", "variant": "   "},
+        ],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/kenya/", "2026-07-04")
+    assert result["packaging"] == [
+        {"weight_g": 250, "price": 10.0, "variant": "Whole bean"},
+        {"weight_g": 500, "price": 18.0},
+        {"weight_g": 1000, "price": 32.0},
     ]
 
 
@@ -1540,6 +1603,29 @@ def test_normalize_products_splits_by_distinct_tier_roast_type():
     ]
     assert by_roast_type["espresso"]["status"] == "ok"
     assert by_roast_type["filter"]["status"] == "ok"
+
+
+def test_normalize_products_variant_survives_roast_type_split():
+    # A tier's `variant` label must come through untouched when
+    # normalize_products() regroups raw packaging tiers by roast_type and
+    # delegates to normalize_product() per group.
+    raw = {
+        "name": "Colombia Jesus Barahona Buenavista",
+        "origin": "Colombia",
+        "process": "natural",
+        "packaging": [
+            {"weight": "250 g", "price": "11 €", "roast_type": "Espresso", "variant": "Whole bean"},
+            {"weight": "250 g", "price": "13 €", "roast_type": "Espresso", "variant": "Ground"},
+            {"weight": "250 g", "price": "10,50 €", "roast_type": "Filter"},
+        ],
+    }
+    result = scrape.normalize_products(raw, "https://x.sk/colombia/", "2026-07-04")
+    by_roast_type = {e["roast_type"]: e for e in result}
+    assert by_roast_type["espresso"]["packaging"] == [
+        {"weight_g": 250, "price": 11.0, "variant": "Whole bean"},
+        {"weight_g": 250, "price": 13.0, "variant": "Ground"},
+    ]
+    assert by_roast_type["filter"]["packaging"] == [{"weight_g": 250, "price": 10.5}]
 
 
 def test_normalize_products_no_split_when_all_tiers_share_one_roast_type():
@@ -2143,6 +2229,27 @@ async def test_extract_shopify_variations_parses_variant_prices():
     assert tiers == [
         {"weight_g": 250, "price": 11.50},
         {"weight_g": 1000, "price": 33.0},
+    ]
+
+
+@pytest.mark.asyncio
+async def test_extract_shopify_variations_keeps_distinct_tiers_for_a_second_option_axis():
+    # Shopify joins multiple option axes with " / " in a variant's title
+    # (e.g. weight crossed with grind) — both same-weight tiers must
+    # survive, each tagged with its own variant label.
+    variants_json = json.dumps(
+        {
+            "variants": [
+                {"title": "250g / Whole Bean", "price": 1200},
+                {"title": "250g / Ground", "price": 1300},
+            ]
+        }
+    )
+    crawler = FakeCrawler({"https://x.sk/products/decaf.js": fake_result(html=variants_json)})
+    tiers = await scrape.extract_shopify_variations(crawler, SHOPIFY_MARKER_HTML, "https://x.sk/products/decaf")
+    assert tiers == [
+        {"weight_g": 250, "price": 12.0, "variant": "Whole Bean"},
+        {"weight_g": 250, "price": 13.0, "variant": "Ground"},
     ]
 
 
@@ -4306,11 +4413,36 @@ def test_build_price_history_rows_records_every_ok_tier_on_first_run():
 
 def test_build_price_history_rows_appends_only_changed_prices():
     last = {
-        ("roaster-a", "https://a.sk/rwanda/", 250): 12.5,   # unchanged
-        ("roaster-a", "https://a.sk/rwanda/", 1000): 35.0,  # changed 35 -> 39
+        ("roaster-a", "https://a.sk/rwanda/", 250, ""): 12.5,   # unchanged
+        ("roaster-a", "https://a.sk/rwanda/", 1000, ""): 35.0,  # changed 35 -> 39
     }
     rows = scrape.build_price_history_rows(_history_products(), "2026-07-12", last)
     assert [(r["weight_g"], r["price"]) for r in rows] == [(1000, 39.0)]
+
+
+def test_build_price_history_rows_treats_distinct_variants_as_distinct_keys():
+    # Two tiers sharing a weight but with different `variant` labels (e.g.
+    # whole bean vs ground) must each get their own history key/row instead
+    # of colliding into one.
+    products = {
+        "roaster-a": [
+            {
+                "name": "Decaf",
+                "url": "https://a.sk/decaf/",
+                "status": "ok",
+                "packaging": [
+                    {"weight_g": 1000, "price": 34.0, "variant": "Whole bean"},
+                    {"weight_g": 1000, "price": 48.0, "variant": "Ground"},
+                ],
+            },
+        ],
+    }
+    last = {("roaster-a", "https://a.sk/decaf/", 1000, "Whole bean"): 34.0}
+    rows = scrape.build_price_history_rows(products, "2026-07-12", last)
+    # Only the ground tier is new/changed — the whole-bean tier's price is
+    # unchanged and must not be re-recorded just because a same-weight
+    # sibling tier exists.
+    assert [(r["price"], r["variant"]) for r in rows] == [(48.0, "Ground")]
 
 
 def test_price_history_round_trip_last_wins(tmp_path):
@@ -4327,9 +4459,40 @@ def test_price_history_round_trip_last_wins(tmp_path):
         ],
         path,
     )
-    assert path.read_text().splitlines()[0] == "date,roaster,url,weight_g,price,name"  # header once
+    assert path.read_text().splitlines()[0] == "date,roaster,url,weight_g,price,name,variant"  # header once
     last = scrape.load_last_known_prices(path)
-    assert last == {("r", "https://a.sk/x/", 250): 11.0}
+    assert last == {("r", "https://a.sk/x/", 250, ""): 11.0}
+
+
+def test_price_history_migrated_header_resolves_legacy_rows_to_blank_variant(tmp_path):
+    # A file written before this column existed has a 6-name header and
+    # 6-field rows; migrating just the header line (the only change this
+    # fix makes to the real committed file, no per-row backfill) must still
+    # let old rows load correctly, with their missing variant resolving to
+    # the same "" key new variant-less tiers use.
+    path = tmp_path / "price_history.csv"
+    path.write_text(
+        "date,roaster,url,weight_g,price,name,variant\n"
+        "2026-07-05,r,https://a.sk/x/,250,10.0,X\n"
+    )
+    assert scrape.load_last_known_prices(path) == {("r", "https://a.sk/x/", 250, ""): 10.0}
+
+
+def test_price_history_unmigrated_header_silently_drops_variant_not_crashes(tmp_path):
+    # Documents exactly why the header migration (old 6-name header ->
+    # 7-name header, done once as a pure text edit to the real committed
+    # file) is required rather than optional: appending a 7-field row under
+    # the OLD 6-name header doesn't raise — csv.DictReader stuffs the extra
+    # value under a `None` key instead — so the row's variant is silently
+    # lost (falls back to "", same as a genuinely variant-less tier) rather
+    # than the read failing loudly. Locks in this degrade-not-crash
+    # behavior so it isn't accidentally "fixed" into a KeyError later.
+    path = tmp_path / "price_history.csv"
+    path.write_text(
+        "date,roaster,url,weight_g,price,name\n"
+        "2026-07-05,r,https://a.sk/x/,1000,48.0,X,Ground\n"
+    )
+    assert scrape.load_last_known_prices(path) == {("r", "https://a.sk/x/", 1000, ""): 48.0}
 
 
 def test_append_price_history_no_rows_is_a_no_op(tmp_path):
@@ -4341,11 +4504,11 @@ def test_append_price_history_no_rows_is_a_no_op(tmp_path):
 def test_load_last_known_prices_skips_malformed_rows(tmp_path):
     path = tmp_path / "price_history.csv"
     path.write_text(
-        "date,roaster,url,weight_g,price,name\n"
-        "2026-07-05,r,https://a.sk/x/,250,10.0,X\n"
-        "2026-07-06,r,https://a.sk/x/,not-a-weight,11.0,X\n"
+        "date,roaster,url,weight_g,price,name,variant\n"
+        "2026-07-05,r,https://a.sk/x/,250,10.0,X,\n"
+        "2026-07-06,r,https://a.sk/x/,not-a-weight,11.0,X,\n"
     )
-    assert scrape.load_last_known_prices(path) == {("r", "https://a.sk/x/", 250): 10.0}
+    assert scrape.load_last_known_prices(path) == {("r", "https://a.sk/x/", 250, ""): 10.0}
 
 
 @pytest.mark.asyncio

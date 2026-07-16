@@ -17,7 +17,7 @@ scraper/
 data/
   products.yaml        ← per-product intermediate: fields, page_hash, status, packaging (see Architecture.md)
   scrape_status.yaml    ← per-roaster health: status + consecutive_non_ok streak, committed alongside products.yaml (see "Observability" below)
-  price_history.csv     ← append-only price time series (issue #41): one row per (date, roaster, url, weight_g), appended only when that tier's price is new or changed; a no-change week appends nothing
+  price_history.csv     ← append-only price time series (issue #41): one row per (date, roaster, url, weight_g, variant), appended only when that tier's price is new or changed; a no-change week appends nothing
 src/
   content/docs/index.mdx   ← Starlight page embedding the table component (+ sk/ mirror for Slovak)
   components/CoffeeTable.astro  ← filterable/sortable table UI
@@ -73,6 +73,12 @@ source language):
   English names via the same alias table; unmatchable entries dropped, issue
   #91). Absent on single-origin coffees.
 
+A `packaging` tier may also carry `variant`: a short, untranslated,
+free-text label (not a controlled vocabulary) distinguishing it from
+another tier that shares its `weight_g` for some reason other than roast
+type — e.g. whole bean vs ground. Present only when a page genuinely sells
+that weight in more than one form; absent on every other tier.
+
 `price` is **EUR** as a JSON number with a `.` decimal. `last_seen` is the
 date of the last successful scrape that included this item; it stops
 advancing while the roaster is `failed`/`needs_js`.
@@ -80,8 +86,8 @@ advancing while the roaster is `failed`/`needs_js`.
 The Astro build reads `data/products.yaml` + `roasters.yaml` directly at
 build time (see `src/lib/coffees.ts`, used by
 `src/components/CoffeeTable.astro`) and flattens each `ok`-status product's
-packaging tiers into one row per weight — there is no separate generated
-JSON file for the site to import.
+packaging tiers into one row per `(weight, roast_type, variant)` — there is
+no separate generated JSON file for the site to import.
 
 ## Roaster Config (`roasters.yaml`)
 

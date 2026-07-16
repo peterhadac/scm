@@ -235,7 +235,9 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
           // a single point draws nothing meaningful, and rows without
           // history (file absent, or product newer than the history file)
           // render exactly as before.
-          const series = c.weight_g ? priceHistory.get(historyKey(c.url, c.weight_g)) ?? [] : [];
+          const series = c.weight_g
+            ? priceHistory.get(historyKey(c.url, c.weight_g, c.variant)) ?? []
+            : [];
           const hasSpark = series.length >= 2;
           const prevPoint = hasSpark ? series[series.length - 2] : null;
           const dropped = prevPoint !== null && series[series.length - 1].price < prevPoint.price;
@@ -289,7 +291,9 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
                   : <span class="ct-muted">—</span>
                 }
               </td>
-              <td class="ct-num ct-muted">{c.weight_g ? `${c.weight_g} g` : '—'}</td>
+              <td class="ct-num ct-muted">
+                {c.weight_g ? `${c.weight_g} g${c.variant ? ` (${c.variant})` : ''}` : '—'}
+              </td>
               <td class="ct-num ct-price">
                 {hasSpark && (
                   <svg

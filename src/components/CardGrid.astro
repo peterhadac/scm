@@ -1,0 +1,17 @@
+---
+// Plain replacement for @astrojs/starlight/components' CardGrid (issue #121)
+// — used on pages migrated off Starlight so they don't keep depending on it.
+---
+
+<div class="card-grid">
+  <slot />
+</div>
+
+<style>
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+</style>

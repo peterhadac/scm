@@ -1,0 +1,283 @@
+---
+// Custom page shell replacing Starlight's docs-site chrome (issue #121 /
+// #82 spec option 1) for pages migrated off Starlight. Old, not-yet-migrated
+// pages keep rendering through Starlight untouched; this and Starlight
+// coexist until every route has moved (see issue #121's migration order).
+import '../styles/custom.css';
+import Wordmark from '../components/Wordmark.astro';
+import FreshnessBadge from '../components/FreshnessBadge.astro';
+import { NAV, isNavGroup } from '../lib/nav';
+import { langFromPath, localePath } from '../lib/lang';
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pathname = Astro.url.pathname;
+const lang: Lang = langFromPath(pathname);
+const pathWithoutBase = pathname.startsWith(base) ? pathname.slice(base.length) || '/' : pathname;
+const otherLang: Lang = lang === 'en' ? 'sk' : 'en';
+const otherLangHref = `${base}${localePath(pathWithoutBase, otherLang)}`;
+
+const T = {
+  en: { skipToContent: 'Skip to content', github: 'GitHub', switchTo: 'Slovensky' },
+  sk: { skipToContent: 'Preskočiť na obsah', github: 'GitHub', switchTo: 'English' },
+}[lang];
+
+const goatcounterCode = process.env.GOATCOUNTER_CODE;
+---
+
+<!doctype html>
+<html lang={lang} data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · Slovak Coffee Map</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="alternate" hreflang={otherLang} href={otherLangHref} />
+
+    {goatcounterCode && (
+      <script
+        is:inline
+        data-goatcounter={`https://${goatcounterCode}.goatcounter.com/count`}
+        async
+        src="//gc.zgo.at/count.js"
+      ></script>
+    )}
+    {goatcounterCode && (
+      <script is:inline>
+        document.addEventListener('click', function (e) {
+          var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+          if (!a) return;
+          var url;
+          try { url = new URL(a.href); } catch (err) { return; }
+          if (url.host === window.location.host) return;
+          if (window.goatcounter && window.goatcounter.count) {
+            window.goatcounter.count({
+              path: 'out:' + url.host + url.pathname,
+              title: (a.textContent || '').trim().slice(0, 100),
+              event: true,
+            });
+          }
+        });
+      </script>
+    )}
+
+    <script is:inline>
+      // Persists the visited locale (localStorage — no server for a cookie)
+      // and redirects to the stored locale's mirror of the current path on
+      // load, same behavior as the old Starlight-era script (see
+      // docs/superpowers/specs). Every page has a 1:1 /sk/ counterpart.
+      // Only writes localStorage on the very first visit or on an explicit
+      // .lang-switch click (mirroring the old script's change-event-only
+      // write) — writing on every load would make the switcher unusable
+      // once a preference is stored, since the destination page would just
+      // read the stale value and bounce straight back.
+      (function () {
+        var BASE = '/scm';
+        var KEY = 'scm-lang';
+        var skPrefix = BASE + '/sk';
+        var path = window.location.pathname;
+        var isSk = path === skPrefix || path.indexOf(skPrefix + '/') === 0;
+        var stored = null;
+        try { stored = localStorage.getItem(KEY); } catch (e) {}
+
+        if (stored === 'sk' && !isSk) {
+          window.location.replace(skPrefix + path.slice(BASE.length));
+          return;
+        }
+        if (stored === 'en' && isSk) {
+          var rest = path.slice(skPrefix.length);
+          window.location.replace(BASE + (rest || '/'));
+          return;
+        }
+        if (stored === null) {
+          try { localStorage.setItem(KEY, isSk ? 'sk' : 'en'); } catch (e2) {}
+        }
+
+        document.addEventListener('click', function (e) {
+          var a = e.target && e.target.closest ? e.target.closest('a.lang-switch') : null;
+          if (!a) return;
+          var newIsSk = a.getAttribute('hreflang') === 'sk';
+          try { localStorage.setItem(KEY, newIsSk ? 'sk' : 'en'); } catch (e3) {}
+        });
+      })();
+    </script>
+  </head>
+  <body>
+    <a href="#content" class="skip-link">{T.skipToContent}</a>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <Wordmark href={`${base}${lang === 'sk' ? '/sk/' : '/'}`} />
+        <nav class="site-nav" aria-label="Main">
+          <ul>
+            {NAV.map((entry) =>
+              isNavGroup(entry) ? (
+                <li class="nav-group">
+                  <details>
+                    <summary>{entry[lang]}</summary>
+                    <ul>
+                      {entry.items.map((item) => (
+                        <li>
+                          <a href={`${base}${localePath(item.href, lang)}`}>{item[lang]}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                </li>
+              ) : (
+                <li>
+                  <a href={`${base}${localePath(entry.href, lang)}`}>{entry[lang]}</a>
+                </li>
+              ),
+            )}
+          </ul>
+        </nav>
+        <a class="lang-switch" href={otherLangHref} hreflang={otherLang}>{T.switchTo}</a>
+      </div>
+    </header>
+    <main id="content">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <FreshnessBadge lang={lang} />
+      <p class="site-footer-links">
+        <a href="https://github.com/peterhadac/scm" target="_blank" rel="noopener noreferrer">{T.github}</a>
+      </p>
+    </footer>
+
+    <script is:inline src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"></script>
+    <script is:inline>
+      window.addEventListener('load', function () {
+        kofiWidgetOverlay.draw('slovakcoffeemap', {
+          type: 'floating-chat',
+          'floating-chat.donateButton.text': 'Donate',
+          'floating-chat.donateButton.background-color': '#ff5f5f',
+          'floating-chat.donateButton.text-color': '#fff',
+        });
+        var titleKofiFrames = function () {
+          var frames = document.querySelectorAll(
+            '[id*="kofi"] iframe:not([title]), iframe[id*="kofi"]:not([title])'
+          );
+          frames.forEach(function (f) { f.title = 'Ko-fi donations widget'; });
+          return frames.length > 0;
+        };
+        if (!titleKofiFrames()) {
+          var observer = new MutationObserver(function () {
+            if (titleKofiFrames()) observer.disconnect();
+          });
+          observer.observe(document.body, { childList: true, subtree: true });
+        }
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+    background: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
+    padding: 0.5rem 1rem;
+  }
+  .skip-link:focus {
+    left: 0;
+  }
+
+  body {
+    margin: 0;
+    background: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
+    font-family: var(--font-sans);
+  }
+
+  .site-header {
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    background: var(--md-sys-color-surface);
+  }
+
+  .site-header-inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0.75rem 1.25rem;
+  }
+
+  .site-nav {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .site-nav > ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .site-nav a {
+    color: var(--md-sys-color-on-surface);
+    text-decoration: none;
+    font-size: var(--md-sys-typescale-label-large-size);
+  }
+
+  .site-nav a:hover {
+    color: var(--md-sys-color-primary);
+  }
+
+  .nav-group summary {
+    cursor: pointer;
+    color: var(--md-sys-color-on-surface);
+    font-size: var(--md-sys-typescale-label-large-size);
+  }
+
+  .nav-group ul {
+    list-style: none;
+    margin: 0.25rem 0 0;
+    padding-left: 1rem;
+  }
+
+  .lang-switch {
+    flex-shrink: 0;
+    color: var(--md-sys-color-on-surface-variant);
+    text-decoration: none;
+    font-size: var(--md-sys-typescale-label-medium-size);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-full);
+    padding: 0.25rem 0.75rem;
+  }
+
+  .lang-switch:hover {
+    color: var(--md-sys-color-primary);
+    border-color: var(--md-sys-color-primary);
+  }
+
+  main {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 3rem;
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--md-sys-color-outline-variant);
+    padding: 1rem 1.25rem 2rem;
+    max-width: 72rem;
+    margin: 0 auto;
+  }
+
+  .site-footer-links a {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+</style>

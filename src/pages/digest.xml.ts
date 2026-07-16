@@ -22,22 +22,24 @@ export const GET: APIRoute = ({ site }) => {
 
   const items: string[] = [];
   for (const d of digest.drops) {
+    const weightText = `${d.row.weight_g} g${d.row.variant ? `, ${d.row.variant}` : ''}`;
     items.push(`    <item>
       <title>${esc(`↓ ${d.row.name} (${d.row.roaster}) — €${d.row.price.toFixed(2)}, was €${d.prevPrice.toFixed(2)}`)}</title>
       <link>${esc(d.row.url)}</link>
-      <guid isPermaLink="false">${esc(`${d.row.url}|${d.row.weight_g}|${digest.runDate}`)}</guid>
+      <guid isPermaLink="false">${esc(`${d.row.url}|${d.row.weight_g}|${d.row.variant ?? ''}|${digest.runDate}`)}</guid>
       <pubDate>${pubDate}</pubDate>
-      <description>${esc(`${d.row.name} (${d.row.roaster}, ${d.row.weight_g} g) dropped from €${d.prevPrice.toFixed(2)} to €${d.row.price.toFixed(2)}.`)}</description>
+      <description>${esc(`${d.row.name} (${d.row.roaster}, ${weightText}) dropped from €${d.prevPrice.toFixed(2)} to €${d.row.price.toFixed(2)}.`)}</description>
     </item>`);
   }
   if (!digest.isBaseline) {
     for (const c of digest.newCoffees) {
+      const weightText = `${c.weight_g} g${c.variant ? `, ${c.variant}` : ''}`;
       items.push(`    <item>
       <title>${esc(`NEW: ${c.name} (${c.roaster}) — €${c.price.toFixed(2)} / ${c.weight_g} g`)}</title>
       <link>${esc(c.url)}</link>
       <guid isPermaLink="false">${esc(`${c.url}|new|${digest.runDate}`)}</guid>
       <pubDate>${pubDate}</pubDate>
-      <description>${esc(`${c.name} by ${c.roaster} is newly listed at €${c.price.toFixed(2)} for ${c.weight_g} g (${c.origin}${c.process ? `, ${c.process}` : ''}, ${c.roast_type}).`)}</description>
+      <description>${esc(`${c.name} by ${c.roaster} is newly listed at €${c.price.toFixed(2)} for ${weightText} (${c.origin}${c.process ? `, ${c.process}` : ''}, ${c.roast_type}).`)}</description>
     </item>`);
     }
   }

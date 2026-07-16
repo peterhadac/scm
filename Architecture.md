@@ -67,7 +67,7 @@ If the page is a WooCommerce variable product, `extract_woocommerce_variations()
 - **Unchanged**, and previous `status` was `ok` or `not_a_product` → skip the Gemini call entirely, just bump `last_seen`.
 - **Changed** (or no prior hash) → call Gemini (`extract_product`) with the `extract_product` tool **not forced** (`tool_choice` left at the default `"auto"`). Forcing it was tried first and verified broken: the model fabricated a plausible-looking product from category pages, the homepage, and non-coffee pages that slipped past the discovery filter, because a forced tool call cannot decline. Leaving it optional lets the model reply in plain text (no `tool_use` block) for anything that isn't a single coffee product's page.
 
-`normalize_product()` turns a raw extraction into a `products.yaml` entry: drops it if the name fails `is_coffee()`, parses each `packaging` tier's price/weight (reusing `normalize_price`/`parse_weight`), and drops tiers with no parseable price. A product with zero valid tiers is treated as "not extractable" — same as an explicit decline.
+`normalize_product()` turns a raw extraction into a `products.yaml` entry: drops it if the name fails `is_coffee()`, parses each `packaging` tier's price/weight (reusing `normalize_price`/`parse_weight`), and drops tiers with no parseable price. A product with zero valid tiers is treated as "not extractable" — same as an explicit decline. A tier may also carry an optional `variant` label (e.g. "Whole bean" vs "Ground") distinguishing it from another tier at the same weight — passed through from the raw extraction (or from a structural extractor's own second axis) and stripped/dropped when blank, so it's only ever present when meaningful.
 
 Some pages (confirmed live: Suca Roastery, on the Upgates platform — no structured extractor exists for it, unlike WooCommerce/Shopify) sell the same coffee across **two independent selector axes** — roast type (Espresso/Filter) crossed with weight — rather than weight alone. Since `roast_type` is one field per entry, a single entry can't represent both roast types' pricing. `normalize_products()` (plural) wraps `normalize_product()`: the LLM tags each `packaging` tier with its own `roast_type` when a page has this shape (see `EXTRACT_PRODUCT_TOOL`), and if 2+ distinct tagged roast types appear across tiers, it groups them and calls `normalize_product()` once per group — producing multiple entries that share a `url`/`name` but each carry only their own roast type's tiers, never assuming the two roast types share a price. When tiers carry 0 or 1 distinct tag, this is exactly one `normalize_product()` call, identical to before. `variation_tiers` (WooCommerce/Shopify) is out of scope for this splitting — neither extractor produces a per-tier roast_type today.
 
@@ -92,7 +92,11 @@ controlled English vocabularies documented in `CLAUDE.md`, backed by
 with a `missing_fields` list, rather than being published with nulls or
 dropped outright — two tiers sharing a price across different weights (a
 sign the extraction didn't actually see distinct per-tier prices) marks the
-whole product incomplete rather than trusting any of its tiers. Every entry
+whole product incomplete rather than trusting any of its tiers. Two tiers
+sharing both weight *and* price is fine, though, when they carry distinct
+`variant` labels (e.g. a promo, or whole-bean and ground genuinely priced
+the same) — this heuristic only looks at distinct weights, so it never
+flags that case. Every entry
 is validated against `data/products.schema.yaml` (via `validate_entry()`)
 before being kept — a validation failure means a bug in this module, not bad
 website content.
@@ -115,8 +119,9 @@ identical, so any page change resets the budget) reaches the limit.
 ## Flatten / Build Step
 
 Exploding each `ok`-status product's `packaging` array into one flat row per
-`(product url, weight_g)`, deduped on that pair, and joining in the
-roaster's display `name` from `roasters.yaml` by `slug`, now happens in
+`(product url, weight_g, roast_type, variant)`, deduped on that key, and
+joining in the roaster's display `name` from `roasters.yaml` by `slug`, now
+happens in
 `src/components/CoffeeTable.astro`'s frontmatter at site-build time — there
 is no Python-side flatten step or generated `_data/coffees.json` file
 anymore. `incomplete`/`not_a_product` entries never reach the site.

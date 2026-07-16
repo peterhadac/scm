@@ -50,7 +50,7 @@ export function buildDigest(): Digest {
   const rises: PriceChange[] = [];
 
   for (const row of rows) {
-    const series = history.get(historyKey(row.url, row.weight_g));
+    const series = history.get(historyKey(row.url, row.weight_g, row.variant));
     if (!series || series.length === 0) continue;
     const last: PricePoint = series[series.length - 1];
 

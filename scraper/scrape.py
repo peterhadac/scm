@@ -67,7 +67,9 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # never match again anyway, but bumping keeps the "why did this
 # re-extract" story consistent in one place instead of two.
 # v20: first-class blend flag + blend_origins composition (issue #91).
-SCHEMA_VERSION = 20
+# v21: per-tier `variant` label disambiguates packaging tiers that share a
+# weight_g (e.g. whole bean vs ground) instead of colliding into one.
+SCHEMA_VERSION = 21
 
 # Ordered extraction-model preference list (issue #42): extract_product
 # works through these left to right, so a deprecated/unavailable primary
@@ -423,7 +425,11 @@ EXTRACT_PRODUCT_TOOL = {
                         "'Espresso' and 'Filter' buttons, each with their own "
                         "250g/500g choices — list ALL tiers from BOTH axes here "
                         "(don't collapse to one axis), and set each tier's own "
-                        "roast_type field so they can be told apart."
+                        "roast_type field so they can be told apart. Likewise, if "
+                        "the SAME weight is sold in more than one form for some "
+                        "OTHER reason (e.g. whole bean vs ground, or any other "
+                        "distinct option), list each as its own tier and set that "
+                        "tier's own variant field so they can be told apart too."
                     ),
                     "items": {
                         "type": "object",
@@ -448,6 +454,19 @@ EXTRACT_PRODUCT_TOOL = {
                                     "Leave null if the page only ever "
                                     "shows one roast type overall (the top-level "
                                     "roast_type field covers that case)."
+                                ),
+                            },
+                            "variant": {
+                                "type": ["string", "null"],
+                                "description": (
+                                    "Only needed when this page sells this SAME "
+                                    "weight in more than one form for a reason "
+                                    "OTHER than roast type (e.g. whole bean vs "
+                                    "ground, a different format/edition) — a "
+                                    "short label in the page's own words for "
+                                    "what makes THIS tier different (e.g. "
+                                    "'Whole bean', 'Ground'). Leave null when "
+                                    "every tier at this weight is identical."
                                 ),
                             },
                         },
@@ -530,19 +549,23 @@ def save_scrape_status(records, path=STATUS_PATH):
 
 
 # data/price_history.csv (issue #41): append-only price time series, one row
-# per (date, roaster, url, weight_g) observation, appended only when that
-# tier's price differs from the last row already recorded for it. Chosen
-# over reconstructing history from git commits of products.yaml: the CSV is
-# self-contained (survives history rewrites, needs no git at read time),
-# append-only (weekly diffs stay tiny — a no-change week appends nothing),
-# and directly loadable by pandas/a future chart component. Assortment
-# history isn't duplicated here — a product's first/last appearance is
-# already derivable from this file's first row / products.yaml's presence.
-PRICE_HISTORY_COLUMNS = ("date", "roaster", "url", "weight_g", "price", "name")
+# per (date, roaster, url, weight_g, variant) observation, appended only
+# when that tier's price differs from the last row already recorded for it.
+# `variant` disambiguates two tiers that legitimately share a weight (e.g.
+# whole bean vs ground) — "" for every tier that doesn't have one, so old
+# rows (written before this column existed) resolve to the same "" key via
+# `row.get("variant") or ""` below. Chosen over reconstructing history from
+# git commits of products.yaml: the CSV is self-contained (survives history
+# rewrites, needs no git at read time), append-only (weekly diffs stay tiny
+# — a no-change week appends nothing), and directly loadable by pandas/a
+# future chart component. Assortment history isn't duplicated here — a
+# product's first/last appearance is already derivable from this file's
+# first row / products.yaml's presence.
+PRICE_HISTORY_COLUMNS = ("date", "roaster", "url", "weight_g", "price", "name", "variant")
 
 
 def load_last_known_prices(path=HISTORY_PATH):
-    """Last recorded price per (roaster, url, weight_g) key — later rows win.
+    """Last recorded price per (roaster, url, weight_g, variant) key — later rows win.
 
     Malformed rows (hand-edited file, interrupted write) are skipped rather
     than fatal: worst case a price is re-recorded once, which a later read
@@ -554,7 +577,7 @@ def load_last_known_prices(path=HISTORY_PATH):
     with open(path, newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
             try:
-                key = (row["roaster"], row["url"], int(row["weight_g"]))
+                key = (row["roaster"], row["url"], int(row["weight_g"]), row.get("variant") or "")
                 last[key] = float(row["price"])
             except (KeyError, TypeError, ValueError):
                 continue
@@ -574,7 +597,8 @@ def build_price_history_rows(products, today, last_known):
             if entry.get("status") != "ok":
                 continue
             for tier in entry.get("packaging", []):
-                key = (slug, entry["url"], tier["weight_g"])
+                variant = tier.get("variant") or ""
+                key = (slug, entry["url"], tier["weight_g"], variant)
                 if last_known.get(key) == tier["price"]:
                     continue
                 rows.append(
@@ -585,6 +609,7 @@ def build_price_history_rows(products, today, last_known):
                         "weight_g": tier["weight_g"],
                         "price": tier["price"],
                         "name": entry.get("name", ""),
+                        "variant": variant,
                     }
                 )
     return rows
@@ -914,10 +939,11 @@ def extract_woocommerce_variations(soup):
     Returns (raw_json, tiers): `raw_json` is the attribute's exact string
     value (used by the caller to fold into the page hash so a price-only
     change still busts the cache), "" if this isn't a WooCommerce variable
-    product page. `tiers` is a list of {"weight_g": int, "price": float},
-    deduped by weight_g (first-seen wins — ponytail: a second variant axis,
-    e.g. roast type, sharing a weight would otherwise produce duplicate
-    tiers; revisit if a roaster's variations legitimately need >1 axis).
+    product page. `tiers` is a list of {"weight_g": int, "price": float,
+    "variant": str} (the last key omitted when there's no second axis),
+    deduped by (weight_g, variant) — first-seen wins for a true full
+    duplicate, but a second variant axis (e.g. grind) sharing a weight now
+    keeps its own tier instead of collapsing into one.
     """
     form = soup.find(attrs={"data-product_variations": True})
     if not form:
@@ -931,7 +957,7 @@ def extract_woocommerce_variations(soup):
         return raw_json, []
 
     tiers = []
-    seen_weights = set()
+    seen_tiers = set()
     for variation in variations:
         if not isinstance(variation, dict):
             continue
@@ -950,13 +976,30 @@ def extract_woocommerce_variations(soup):
                 None,
             )
             weight_g = parse_weight((weight_slug or "").replace("-", " "))
+            # Any other attribute value (the weight one already consumed
+            # above) is the second variant axis, if the page has one — e.g.
+            # a grind/type attribute alongside the weight one.
+            variant_label = next(
+                (
+                    v.replace("-", " ").strip()
+                    for k, v in attributes.items()
+                    if isinstance(v, str)
+                    and v != weight_slug
+                    and not any(keyword in k.lower() for keyword in WEIGHT_ATTRIBUTE_KEYWORDS)
+                ),
+                None,
+            )
             price = variation.get("display_price")
         except (AttributeError, TypeError):
             continue
-        if not is_valid_tier(weight_g, price) or weight_g in seen_weights:
+        tier_key = (weight_g, variant_label)
+        if not is_valid_tier(weight_g, price) or tier_key in seen_tiers:
             continue
-        seen_weights.add(weight_g)
-        tiers.append({"weight_g": weight_g, "price": float(price)})
+        seen_tiers.add(tier_key)
+        tier = {"weight_g": weight_g, "price": float(price)}
+        if variant_label:
+            tier["variant"] = variant_label
+        tiers.append(tier)
     return raw_json, tiers
 
 
@@ -980,9 +1023,11 @@ def extract_shoptet_variations(soup):
     JSON dump of just the own-product (variant, price) pairs, sorted — NOT
     the whole attribute, which would leak the related-products carousel
     into the page hash (issue #13's exact failure mode). Tiers are deduped
-    by weight_g (first-seen wins): a grind axis crossed with the weight
-    axis yields many records per weight, all at that weight's price, and
-    unique weights are exactly the packaging model.
+    by (weight_g, variant) — first-seen wins for a true full duplicate, but
+    a grind axis crossed with the weight axis (e.g. "Zrnková" vs "Mletá" at
+    the same weight) now keeps each combination as its own tier, tagged
+    with whichever comma-segment of the raw `variant` string isn't the
+    weight one.
     """
     script = soup.find("script", id="trackingScript")
     if not script or not script.has_attr("data-products"):
@@ -1013,13 +1058,22 @@ def extract_shoptet_variations(soup):
         pairs.append((str(record.get("variant") or ""), price))
 
     tiers = []
-    seen_weights = set()
+    seen_tiers = set()
     for variant, price in pairs:
         weight_g = parse_weight(variant)
-        if not is_valid_tier(weight_g, price) or weight_g in seen_weights:
+        # The weight lives in exactly one comma-segment (e.g. "Hmotnosť:
+        # 500g"); any other segment(s) (e.g. "Zomlieť kávu?: Zrnková
+        # káva") name a second axis — join them as this tier's label.
+        segments = [s.strip() for s in variant.split(",")]
+        variant_label = ", ".join(s for s in segments if parse_weight(s) is None) or None
+        tier_key = (weight_g, variant_label)
+        if not is_valid_tier(weight_g, price) or tier_key in seen_tiers:
             continue
-        seen_weights.add(weight_g)
-        tiers.append({"weight_g": weight_g, "price": price})
+        seen_tiers.add(tier_key)
+        tier = {"weight_g": weight_g, "price": price}
+        if variant_label:
+            tier["variant"] = variant_label
+        tiers.append(tier)
     raw_projection = json.dumps(sorted(pairs), ensure_ascii=False) if pairs else ""
     return raw_projection, tiers
 
@@ -1218,9 +1272,13 @@ async def extract_shopify_variations(crawler, html, product_url, throttle=None):
     already-fetched product page — avoids a wasted request on every
     non-Shopify roaster's every product).
 
-    Returns a list of {"weight_g": int, "price": float} tiers (deduped by
-    weight_g, first-seen wins), or [] if this isn't a Shopify product page
-    or the endpoint didn't return usable data.
+    Returns a list of {"weight_g": int, "price": float, "variant": str}
+    tiers (the last key omitted when there's no second axis), deduped by
+    (weight_g, variant) — first-seen wins for a true full duplicate. A
+    variant's `title` follows Shopify's own "250g / Whole Bean" convention
+    when a product has more than one option axis; whichever segment isn't
+    the weight one becomes this tier's `variant` label. Returns [] if this
+    isn't a Shopify product page or the endpoint didn't return usable data.
 
     `throttle` (issue #27), when passed, is shared with every other fetch
     made for this roaster — see `_politeness_wait`. This extra `.js` fetch
@@ -1245,16 +1303,26 @@ async def extract_shopify_variations(crawler, html, product_url, throttle=None):
         return []
 
     tiers = []
-    seen_weights = set()
+    seen_tiers = set()
     for variant in data.get("variants") or []:
         if not isinstance(variant, dict):
             continue
-        weight_g = parse_weight(str(variant.get("title") or ""))
+        title = str(variant.get("title") or "")
+        weight_g = parse_weight(title)
+        # Shopify joins multiple option axes with " / " (e.g. "250g / Whole
+        # Bean"); the segment(s) that aren't the weight one name a second
+        # axis, if the product has one.
+        segments = [s.strip() for s in title.split("/")]
+        variant_label = ", ".join(s for s in segments if parse_weight(s) is None) or None
         price_cents = variant.get("price")
-        if not is_valid_tier(weight_g, price_cents) or weight_g in seen_weights:
+        tier_key = (weight_g, variant_label)
+        if not is_valid_tier(weight_g, price_cents) or tier_key in seen_tiers:
             continue
-        seen_weights.add(weight_g)
-        tiers.append({"weight_g": weight_g, "price": round(price_cents / 100, 2)})
+        seen_tiers.add(tier_key)
+        tier = {"weight_g": weight_g, "price": round(price_cents / 100, 2)}
+        if variant_label:
+            tier["variant"] = variant_label
+        tiers.append(tier)
     return tiers
 
 
@@ -1631,7 +1699,9 @@ class Hints:
     `normalize_products()` → `normalize_product()` — a new platform
     extractor adds a field here instead of widening both signatures.
 
-    `variation_tiers` ([{"weight_g", "price"}, ...]), from
+    `variation_tiers` ([{"weight_g", "price", "variant"}, ...], "variant"
+    present only on a tier that shares its weight with another tier for
+    some other reason, e.g. grind), from
     `extract_woocommerce_variations()`, `extract_shopify_variations()`, or
     `extract_shoptet_variations()`,
     is trusted over the LLM's own packaging guess when non-empty —
@@ -1693,7 +1763,11 @@ def normalize_product(raw, url, today, hints=None):
             weight_g = parse_weight(tier.get("weight") or "")
             if weight_g is not None and weight_g <= 0:
                 weight_g = None
-            packaging.append({"weight_g": weight_g, "price": price})
+            built = {"weight_g": weight_g, "price": price}
+            variant = tier.get("variant")
+            if isinstance(variant, str):
+                built["variant"] = variant
+            packaging.append(built)
 
         # A single-tier product often states its weight in the name rather than
         # next to that one price ("Colombia Huila 200 g") — safe to fall back to
@@ -1705,6 +1779,19 @@ def normalize_product(raw, url, today, hints=None):
 
     if not packaging:
         return None
+
+    # Centralized cleanup so every source (plain-LLM tiers above, or
+    # variation_tiers from a structural extractor) ends up with the same
+    # "variant present only when meaningful" contract — strip whitespace,
+    # and drop the key entirely once it's empty rather than storing "".
+    for tier in packaging:
+        variant = tier.get("variant")
+        if isinstance(variant, str):
+            variant = variant.strip()
+        if variant:
+            tier["variant"] = variant
+        else:
+            tier.pop("variant", None)
 
     process = normalize_process(raw.get("process"))
     roast_type = hints.roast_type or normalize_roast_type(

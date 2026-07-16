@@ -12,6 +12,10 @@ definitions:
     properties:
       weight_g: {type: integer, exclusiveMinimum: 0}
       price: {type: number, exclusiveMinimum: 0}
+      # Present only when a product sells this same weight in more than one
+      # form (e.g. whole bean vs ground) — distinguishes such tiers from one
+      # another. Absent, never null, on every other tier.
+      variant: {type: string, minLength: 1}
 
   incomplete_packaging_tier:
     type: object
@@ -19,6 +23,7 @@ definitions:
     properties:
       weight_g: {type: [integer, "null"], exclusiveMinimum: 0}
       price: {type: [number, "null"], exclusiveMinimum: 0}
+      variant: {type: string, minLength: 1}
 
   ok_product:
     type: object

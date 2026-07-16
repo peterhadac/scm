@@ -4,6 +4,7 @@ import re
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
+import jsonschema
 import openai
 import pytest
 import yaml
@@ -107,6 +108,53 @@ def test_load_products_coerces_yaml_date_back_to_string(tmp_path):
     data = scrape.load_products(path)
     assert data["roaster"][0]["last_seen"] == "2026-07-04"
     assert isinstance(data["roaster"][0]["last_seen"], str)
+
+
+# --- load_roasters (roasters.schema.yaml validation) -------------------------
+
+
+def test_load_roasters_accepts_well_formed_entry(tmp_path):
+    path = tmp_path / "roasters.yaml"
+    path.write_text(
+        "roasters:\n"
+        "  - name: Example\n"
+        "    slug: example\n"
+        "    url: https://example.sk/\n"
+        "    scrape_url: https://example.sk/\n"
+        "    metadata:\n"
+        "      city: Bratislava\n"
+    )
+    roasters = scrape.load_roasters(path)
+    assert roasters[0]["metadata"]["city"] == "Bratislava"
+
+
+def test_load_roasters_rejects_entry_missing_city(tmp_path):
+    # metadata.city is required (issue: roasters without it silently fell
+    # into the map's "not on the map yet" list instead of failing the run).
+    path = tmp_path / "roasters.yaml"
+    path.write_text(
+        "roasters:\n"
+        "  - name: Example\n"
+        "    slug: example\n"
+        "    url: https://example.sk/\n"
+        "    scrape_url: https://example.sk/\n"
+        "    metadata: {}\n"
+    )
+    with pytest.raises(jsonschema.ValidationError):
+        scrape.load_roasters(path)
+
+
+def test_load_roasters_rejects_entry_missing_metadata(tmp_path):
+    path = tmp_path / "roasters.yaml"
+    path.write_text(
+        "roasters:\n"
+        "  - name: Example\n"
+        "    slug: example\n"
+        "    url: https://example.sk/\n"
+        "    scrape_url: https://example.sk/\n"
+    )
+    with pytest.raises(jsonschema.ValidationError):
+        scrape.load_roasters(path)
 
 
 def test_normalize_price_comma_decimal():
@@ -3485,9 +3533,9 @@ class FakeWebCrawler:
 
 def three_roasters():
     return [
-        {"name": "Roaster One", "slug": "roaster-one", "url": "https://a.sk/", "scrape_url": "https://a.sk/"},
-        {"name": "Roaster Two", "slug": "roaster-two", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
-        {"name": "Roaster Three", "slug": "roaster-three", "url": "https://c.sk/", "scrape_url": "https://c.sk/"},
+        {"name": "Roaster One", "slug": "roaster-one", "url": "https://a.sk/", "scrape_url": "https://a.sk/", "metadata": {"city": "Bratislava"}},
+        {"name": "Roaster Two", "slug": "roaster-two", "url": "https://b.sk/", "scrape_url": "https://b.sk/", "metadata": {"city": "Bratislava"}},
+        {"name": "Roaster Three", "slug": "roaster-three", "url": "https://c.sk/", "scrape_url": "https://c.sk/", "metadata": {"city": "Bratislava"}},
     ]
 
 
@@ -3596,7 +3644,7 @@ async def test_run_preserves_prior_roaster_entries_when_it_later_raises(monkeypa
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
     monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
     roasters = [
-        {"name": "Roaster Two", "slug": "roaster-two", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
+        {"name": "Roaster Two", "slug": "roaster-two", "url": "https://b.sk/", "scrape_url": "https://b.sk/", "metadata": {"city": "Bratislava"}},
     ]
     roasters_path = tmp_path / "roasters.yaml"
     write_roasters_yaml(roasters_path, roasters)
@@ -3731,7 +3779,7 @@ async def test_run_respects_cross_roaster_concurrency_limit(monkeypatch, tmp_pat
     # real asyncio.sleep so this test's own sleep(0) actually yields.
     monkeypatch.setattr(scrape.asyncio, "sleep", _REAL_ASYNCIO_SLEEP)
     roasters = [
-        {"name": f"Roaster {i}", "slug": f"roaster-{i}", "url": f"https://r{i}.sk/", "scrape_url": f"https://r{i}.sk/"}
+        {"name": f"Roaster {i}", "slug": f"roaster-{i}", "url": f"https://r{i}.sk/", "scrape_url": f"https://r{i}.sk/", "metadata": {"city": "Bratislava"}}
         for i in range(scrape.CROSS_ROASTER_CONCURRENCY * 2)
     ]
     roasters_path = tmp_path / "roasters.yaml"
@@ -4110,8 +4158,8 @@ async def test_run_persists_scrape_status_with_consecutive_non_ok_tracking(monke
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
     monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
     roasters = [
-        {"name": "Broken Roaster", "slug": "broken-roaster", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
-        {"name": "Good Roaster", "slug": "good-roaster", "url": "https://g.sk/", "scrape_url": "https://g.sk/"},
+        {"name": "Broken Roaster", "slug": "broken-roaster", "url": "https://b.sk/", "scrape_url": "https://b.sk/", "metadata": {"city": "Bratislava"}},
+        {"name": "Good Roaster", "slug": "good-roaster", "url": "https://g.sk/", "scrape_url": "https://g.sk/", "metadata": {"city": "Bratislava"}},
     ]
     roasters_path = tmp_path / "roasters.yaml"
     write_roasters_yaml(roasters_path, roasters)
@@ -4147,7 +4195,7 @@ async def test_run_resets_consecutive_non_ok_when_roaster_recovers(monkeypatch, 
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
     monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
     roasters = [
-        {"name": "Flaky Roaster", "slug": "flaky-roaster", "url": "https://f.sk/", "scrape_url": "https://f.sk/"},
+        {"name": "Flaky Roaster", "slug": "flaky-roaster", "url": "https://f.sk/", "scrape_url": "https://f.sk/", "metadata": {"city": "Bratislava"}},
     ]
     roasters_path = tmp_path / "roasters.yaml"
     write_roasters_yaml(roasters_path, roasters)
@@ -4180,7 +4228,7 @@ async def test_run_emits_warning_and_writes_step_summary_for_non_ok_roaster(monk
     monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(tmp_path / "step_summary.md"))
     monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
     roasters = [
-        {"name": "Broken Roaster", "slug": "broken-roaster", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
+        {"name": "Broken Roaster", "slug": "broken-roaster", "url": "https://b.sk/", "scrape_url": "https://b.sk/", "metadata": {"city": "Bratislava"}},
     ]
     roasters_path = tmp_path / "roasters.yaml"
     write_roasters_yaml(roasters_path, roasters)
@@ -4207,7 +4255,7 @@ async def test_run_escalates_after_three_consecutive_non_ok_runs(monkeypatch, tm
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
     monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
     roasters = [
-        {"name": "Broken Roaster", "slug": "broken-roaster", "url": "https://b.sk/", "scrape_url": "https://b.sk/"},
+        {"name": "Broken Roaster", "slug": "broken-roaster", "url": "https://b.sk/", "scrape_url": "https://b.sk/", "metadata": {"city": "Bratislava"}},
     ]
     roasters_path = tmp_path / "roasters.yaml"
     write_roasters_yaml(roasters_path, roasters)
@@ -4305,7 +4353,7 @@ async def test_run_appends_price_history_for_ok_products(monkeypatch, tmp_path):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
     monkeypatch.setattr(scrape, "AsyncWebCrawler", FakeWebCrawler)
     roasters = [
-        {"name": "Roaster A", "slug": "roaster-a", "url": "https://a.sk/", "scrape_url": "https://a.sk/"},
+        {"name": "Roaster A", "slug": "roaster-a", "url": "https://a.sk/", "scrape_url": "https://a.sk/", "metadata": {"city": "Bratislava"}},
     ]
     roasters_path = tmp_path / "roasters.yaml"
     write_roasters_yaml(roasters_path, roasters)

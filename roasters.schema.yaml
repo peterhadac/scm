@@ -1,0 +1,28 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+title: roasters.yaml entry
+type: object
+required: [name, slug, url, scrape_url, metadata]
+properties:
+  name: {type: string, minLength: 1}
+  slug: {type: string, pattern: "^[a-z0-9]+(-[a-z0-9]+)*$"}
+  url: {type: string, minLength: 1}
+  scrape_url: {type: string, minLength: 1}
+  scraper: {enum: [playwright]}
+  roast_type_urls:
+    type: object
+    minProperties: 1
+    additionalProperties: false
+    properties:
+      espresso: {type: string, minLength: 1}
+      filter: {type: string, minLength: 1}
+      nespresso: {type: string, minLength: 1}
+      drip-bag: {type: string, minLength: 1}
+  # city is required so every roaster can be placed on the roaster map
+  # (src/components/RoasterMap.astro / src/lib/mapData.ts) — a roaster
+  # missing it used to silently fall into the "not on the map yet" list
+  # instead of failing the scrape run.
+  metadata:
+    type: object
+    required: [city]
+    properties:
+      city: {type: string, minLength: 1}

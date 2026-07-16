@@ -30,6 +30,12 @@
       "sourceType": "github",
       "skillPath": "skills/redesign-skill/SKILL.md",
       "computedHash": "b405eee0e0e80fc243f731d9aa368bca307e356db7e6157d27101d369dac6726"
+    },
+    "slovak-coffee-map": {
+      "source": "peterhadac/scm",
+      "sourceType": "github",
+      "skillPath": "skills/slovak-coffee-map/SKILL.md",
+      "computedHash": "d924bcc800d151a66d4a7ff25032eb04b0156d23fb22043bb4d22cac97a9a72f"
     }
   }
 }

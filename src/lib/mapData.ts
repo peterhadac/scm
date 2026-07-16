@@ -11,16 +11,24 @@ import yaml from 'js-yaml';
 import { flattenProducts } from './coffees';
 
 export const CITY_COORDS: Record<string, { lat: number; lng: number }> = {
+  Bošany: { lat: 48.5833, lng: 18.2833 },
   Bratislava: { lat: 48.1486, lng: 17.1077 },
+  'Dolná Súča': { lat: 48.958, lng: 18.0331 },
   'Dubnica nad Váhom': { lat: 48.96, lng: 18.1708 },
+  'Dunajská Lužná': { lat: 48.0835, lng: 17.2607 },
   Golianovo: { lat: 48.2436, lng: 18.1874 },
   Komárno: { lat: 47.7633, lng: 18.1283 },
+  Košice: { lat: 48.7164, lng: 21.2611 },
   'Liptovský Mikuláš': { lat: 49.0842, lng: 19.6122 },
   'Nové Mesto nad Váhom': { lat: 48.757, lng: 17.831 },
   Piešťany: { lat: 48.5905, lng: 17.8271 },
   Prešov: { lat: 48.9986, lng: 21.2339 },
+  Ružomberok: { lat: 49.0816, lng: 19.3034 },
+  Šahy: { lat: 48.0741, lng: 18.9495 },
   Topoľčany: { lat: 48.5613, lng: 18.1704 },
+  Trnava: { lat: 48.3709, lng: 17.5872 },
   'Veľké Zálužie': { lat: 48.2986, lng: 17.9767 },
+  'Vranov nad Topľou': { lat: 48.8884, lng: 21.6848 },
   Žilina: { lat: 49.2231, lng: 18.7394 },
 };
 

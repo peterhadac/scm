@@ -34,12 +34,13 @@ There is deliberately **no separate `data/index.yaml`**. An earlier design persi
 
 | File | Owner | Committed |
 |---|---|---|
-| `roasters.yaml` | Human-edited | yes |
+| `roasters.yaml` | Human-edited, validated against `roasters.schema.yaml` on every scrape | yes |
+| `roasters.schema.yaml` | Human-edited (JSON Schema for `roasters.yaml`) | yes |
 | `data/coffee_origins.yaml` | Human-edited (country list for origin normalization) | yes |
 | `data/products.schema.yaml` | Human-edited (JSON Schema, validated on every scrape) | yes |
 | `data/products.yaml` | Generated, sole scraped artifact | yes — must be committed so the *next* run can diff/hash-gate against it, and so the Astro build can read it directly |
 
-`roasters.yaml` is the sole authority for roaster identity: `name` (display), `slug` (stable key `data/products.yaml` is keyed on), `url` (crawl entry point), optional `scraper: playwright` override, optional `metadata` (e.g. `city`). `data/products.yaml` never defines roaster identity itself.
+`roasters.yaml` is the sole authority for roaster identity: `name` (display), `slug` (stable key `data/products.yaml` is keyed on), `url` (crawl entry point), `scrape_url` (discovery entry point), `metadata.city` (required — the roaster map's only way to place a roaster), optional `scraper: playwright` override, optional `roast_type_urls`. `load_roasters()` validates every entry against `roasters.schema.yaml` via `jsonschema.validate`, the same pattern `data/products.schema.yaml` uses for scraped entries. `data/products.yaml` never defines roaster identity itself.
 
 ## Discovery (`discover_product_urls`)
 
@@ -132,8 +133,8 @@ No per-domain rate limiting/delay exists yet — roasters are still processed se
 
 ## Adding a Roaster
 
-1. Add an entry to `roasters.yaml`: `name`, `slug` (lowercase-kebab of the name), `url`, optional `scraper: playwright`, optional `metadata`.
-2. Run the scraper locally — it discovers product URLs and fetches detail into `data/products.yaml`; the Astro build reads that directly, no separate regeneration step needed.
+1. Add an entry to `roasters.yaml`: `name`, `slug` (lowercase-kebab of the name), `url`, `scrape_url`, `metadata.city` (required by `roasters.schema.yaml`), optional `scraper: playwright`.
+2. Run the scraper locally — it validates the new entry against `roasters.schema.yaml`, discovers product URLs, and fetches detail into `data/products.yaml`; the Astro build reads that directly, no separate regeneration step needed.
 3. If discovery finds nothing, add `scraper: playwright` and re-test.
 4. Commit `roasters.yaml` — the next cron run picks it up.
 

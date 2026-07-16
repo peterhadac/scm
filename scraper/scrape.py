@@ -30,6 +30,7 @@ from crawl4ai.async_crawler_strategy import AsyncHTTPCrawlerStrategy
 
 ROOT = Path(__file__).resolve().parent.parent
 ROASTERS_PATH = ROOT / "roasters.yaml"
+ROASTERS_SCHEMA_PATH = ROOT / "roasters.schema.yaml"
 PRODUCTS_PATH = ROOT / "data" / "products.yaml"
 SCHEMA_PATH = ROOT / "data" / "products.schema.yaml"
 COUNTRIES_PATH = ROOT / "data" / "coffee_origins.yaml"
@@ -460,8 +461,25 @@ EXTRACT_PRODUCT_TOOL = {
 }
 
 
+def load_roasters_schema(path=ROASTERS_SCHEMA_PATH):
+    return yaml.safe_load(path.read_text())
+
+
+ROASTERS_SCHEMA = load_roasters_schema()
+
+
 def load_roasters(path=ROASTERS_PATH):
-    return yaml.safe_load(path.read_text())["roasters"]
+    """Load and validate roasters.yaml against roasters.schema.yaml.
+
+    roasters.yaml is hand-edited config, not scraped data, so a malformed
+    entry (most commonly a new roaster added without metadata.city, which
+    would otherwise silently fall into the map's "not on the map yet" list)
+    fails the run immediately rather than limping through with bad data.
+    """
+    roasters = yaml.safe_load(path.read_text())["roasters"]
+    for roaster in roasters:
+        jsonschema.validate(roaster, ROASTERS_SCHEMA)
+    return roasters
 
 
 def load_products(path=PRODUCTS_PATH):

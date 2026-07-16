@@ -1,0 +1,15 @@
+---
+// Migrated off Starlight (issue #121). Thin wrapper reading the existing
+// MDX content collection entry so prose/tables/RecipeCard usage don't need
+// hand-conversion.
+import Layout from '../../layouts/Layout.astro';
+import { getEntry, render } from 'astro:content';
+
+const entry = await getEntry('docs', 'drinks/french-press');
+const { Content } = await render(entry);
+---
+
+<Layout title={entry.data.title} description={entry.data.description}>
+  <h1>{entry.data.title}</h1>
+  <Content />
+</Layout>

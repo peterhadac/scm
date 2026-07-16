@@ -8,13 +8,20 @@
 // worth commenting on. Caveat: commenting needs a GitHub login.
 import type { Lang } from '../lib/i18n';
 
+interface Props {
+  // Explicit lang (issue #121), for pages rendered outside Starlight. Falls
+  // back to Starlight's own routing-derived lang when omitted.
+  lang?: Lang;
+}
+const { lang: langProp } = Astro.props;
+
 const repo = 'peterhadac/scm';
 const repoId = process.env.GISCUS_REPO_ID;
 const category = process.env.GISCUS_CATEGORY ?? 'General';
 const categoryId = process.env.GISCUS_CATEGORY_ID;
 const enabled = Boolean(repoId && categoryId);
 
-const lang: Lang = Astro.locals.starlightRoute.lang === 'sk' ? 'sk' : 'en';
+const lang: Lang = langProp ?? (Astro.locals.starlightRoute?.lang === 'sk' ? 'sk' : 'en');
 const heading = lang === 'sk' ? 'Komentáre' : 'Comments';
 ---
 

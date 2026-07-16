@@ -1,6 +1,6 @@
 ---
-// Slovenský zoznam krajín pôvodu (issue #58).
-import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+// SK mirror of src/pages/origins/index.astro (issue #121).
+import Layout from '../../../layouts/Layout.astro';
 import OriginsChoropleth from '../../../components/OriginsChoropleth.astro';
 import { listOrigins } from '../../../lib/origins';
 import { localizedOrigin } from '../../../lib/i18n';
@@ -9,19 +9,14 @@ const origins = listOrigins();
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<StarlightPage
-  frontmatter={{
-    title: 'Káva podľa pôvodu',
-    description: 'Prehliadajte kávy dostupné na Slovensku podľa krajiny pôvodu.',
-    tableOfContents: false,
-  }}
->
+<Layout title="Káva podľa pôvodu" description="Prehliadajte kávy dostupné na Slovensku podľa krajiny pôvodu.">
+  <h1>Káva podľa pôvodu</h1>
   <p>
     Všetky krajiny pôvodu aktuálne zastúpené na slovenskom trhu výberovej
     kávy, zoradené podľa počtu káv. Každá stránka obsahuje kávy danej
     krajiny s cenami, obnovované každý týždeň.
   </p>
-  <OriginsChoropleth />
+  <OriginsChoropleth lang="sk" />
   <ul>
     {origins.map((o) => (
       <li>
@@ -32,4 +27,4 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       </li>
     ))}
   </ul>
-</StarlightPage>
+</Layout>

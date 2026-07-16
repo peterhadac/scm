@@ -1,0 +1,10 @@
+---
+// Migrated off Starlight (issue #121). SK mirror: src/pages/sk/coffees/filter.astro.
+import Layout from '../../layouts/Layout.astro';
+import CoffeeTable from '../../components/CoffeeTable.astro';
+---
+
+<Layout title="Filter coffees" description="Browse filter (drip) roast coffees currently in stock from Slovak roasters.">
+  <h1>Filter coffees</h1>
+  <CoffeeTable lang="en" roastType="filter" blend={false} />
+</Layout>

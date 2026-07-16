@@ -7,12 +7,15 @@ import type { Lang } from '../lib/i18n';
 
 interface Props {
   method: keyof typeof RECIPES | string;
+  // Explicit lang (issue #121), for pages rendered outside Starlight. Falls
+  // back to Starlight's own routing-derived lang when omitted.
+  lang?: Lang;
 }
-const { method } = Astro.props;
+const { method, lang: langProp } = Astro.props;
 const recipe = RECIPES[method];
 if (!recipe) throw new Error(`RecipeCard: unknown method "${method}"`);
 
-const lang: Lang = Astro.locals.starlightRoute.lang === 'sk' ? 'sk' : 'en';
+const lang: Lang = langProp ?? (Astro.locals.starlightRoute?.lang === 'sk' ? 'sk' : 'en');
 
 const T = {
   en: {

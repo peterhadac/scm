@@ -1,8 +1,6 @@
 # Slovak Coffee Map
 
-Weekly-updated catalogue of coffees available on the Slovak market, scraped from roaster websites, stored as JSON, and published via GitHub Pages (Astro + [Starlight](https://starlight.astro.build/)).
-
-> ponytail: Starlight is a docs framework; for one filterable table, plain Astro (no Starlight) is lighter. Keeping Starlight as requested for theme/chrome — drop it for `@astrojs` base if the docs sidebar/search become noise.
+Weekly-updated catalogue of coffees available on the Slovak market, scraped from roaster websites, stored as JSON, and published via GitHub Pages (plain Astro, custom layout — see [issue #82](https://github.com/peterhadac/scm/issues/82)/[#121](https://github.com/peterhadac/scm/issues/121)).
 
 > See [`Architecture.md`](./Architecture.md) for the full scraping pipeline: crawl4ai-based per-product discovery, hash-gated extraction, and normalization into the `data/products.yaml` artifact below.
 
@@ -19,12 +17,16 @@ data/
   scrape_status.yaml    ← per-roaster health: status + consecutive_non_ok streak, committed alongside products.yaml (see "Observability" below)
   price_history.csv     ← append-only price time series (issue #41): one row per (date, roaster, url, weight_g), appended only when that tier's price is new or changed; a no-change week appends nothing
 src/
-  content/docs/index.mdx   ← Starlight page embedding the table component (+ sk/ mirror for Slovak)
+  layouts/Layout.astro   ← page shell: header/nav/lang-switcher/theme-toggle/footer (issue #121, no Starlight)
+  pages/coffees.mdx      ← (removed) — coffees.mdx etc. now hand-written .astro pages, see "Astro Site" below
+  content/docs/          ← MDX for the remaining thin-wrapper pages only (drinks, brew-methods, ai-coffee, about-data)
   components/CoffeeTable.astro  ← filterable/sortable table UI
   lib/coffees.ts       ← build-time data layer: reads data/products.yaml + roasters.yaml, flattens to table rows
   lib/i18n.ts           ← EN/SK UI string table + origin/process/roast_type display-label maps
-astro.config.mjs       ← Astro + Starlight config (site + base for project Pages, locales for EN/SK)
-package.json           ← astro, @astrojs/starlight, starlight-theme-md3 (pnpm)
+  lib/lang.ts           ← lang-from-URL-path helper (issue #121, replaces Starlight's locale routing)
+  lib/nav.ts            ← header nav data (EN/SK label pairs + hrefs)
+astro.config.mjs       ← Astro config (site + base for project Pages; @astrojs/mdx + @astrojs/sitemap integrations)
+package.json           ← astro, @astrojs/mdx, @astrojs/sitemap (pnpm)
 .github/workflows/
   scrape.yml           ← weekly cron, commits products.yaml (its push does NOT trigger pages.yml — see below)
   pages.yml            ← build Astro + deploy to Pages on push to main / scrape.yml completion / manual
@@ -233,22 +235,53 @@ The `build` job additionally guards `if: github.event_name != 'workflow_run' || 
 
 Steps: checkout → setup-node → `npm ci` → `npm run build` → `actions/upload-pages-artifact` (path `dist/`) → `actions/deploy-pages`. Set Pages source to "GitHub Actions" in repo settings.
 
-## Astro + Starlight Site
+## Astro Site (custom layout, no Starlight)
 
-- **Framework**: [Astro](https://astro.build/) with the [Starlight](https://starlight.astro.build/) integration for theme/chrome.
-- **Theme**: [`starlight-theme-md3`](https://axiaobo7788.github.io/starlight-material-design-theme/) (Material Design 3 / Material You), added as a Starlight **plugin** in `astro.config.mjs`:
-  ```js
-  import starlight from '@astrojs/starlight';
-  import md3Theme from 'starlight-theme-md3';
-  // ...
-  starlight({
-    title: 'Slovak Coffee Map',
-    plugins: [md3Theme({ seed: '#FF6037', variant: 'tonalSpot' })],  // seed = Toxic Orange, brand accent
-  })
-  ```
-  Brand palette (also applied as MD3 token overrides in `src/styles/custom.css`, light + dark): Morning Snow `#F5F4ED`, Amazon Mist `#ECECDC`, Black Kite `#351E1C`, Aqua Mist `#A0C9CB`, Toxic Orange `#FF6037`, Garnet `#733635`.
-- **Data source**: `src/lib/coffees.ts` reads `data/products.yaml` + `roasters.yaml` directly at build time (via `js-yaml`) and flattens them into table rows consumed by `CoffeeTable.astro` — no separate generated JSON file, and local dev uses the same real data. A new scrape requires a rebuild (handled by `pages.yml`).
-- **`astro.config.mjs`**: set `site: 'https://<user>.github.io'` and `base: '/scm'` for a project Pages site, or links 404.
+Originally built on [Starlight](https://starlight.astro.build/) (a docs
+framework); dropped in favor of a hand-rolled `Layout.astro` (issue #82 →
+#121, Phase A) since a filterable data table plus a handful of content
+pages don't need a docs-site shell. Every page renders through
+`src/layouts/Layout.astro` — header/nav/language-switcher/theme-toggle/
+footer — no framework beyond plain Astro.
+
+- **Pages**: two kinds, both under `src/pages/` (+ `src/pages/sk/` mirrors):
+  - **Hand-written `.astro` pages** for anything with bespoke UI: landing
+    (`index.astro`), the coffee-table variants (`coffees/*.astro`), origins
+    (`origins/index.astro` + dynamic `origins/[slug].astro`), the roaster
+    map (`map.astro`), and the weekly digest (`this-week.astro`).
+  - **Thin wrapper pages** for plain prose content (`drinks/*.astro`,
+    `brew-methods/*.astro`, `ai-coffee.astro`, `about-data.astro`): each
+    reads its MDX source from the `docs` content collection
+    (`src/content/docs/**/*.mdx`, schema in `src/content.config.ts` — a
+    plain `glob()` loader + Zod schema, not Starlight's `docsLoader`/
+    `docsSchema`) via `getEntry()`/`render()` and drops the result into
+    `Layout.astro`. Kept this pages' Markdown/table content out of hand-JSX
+    conversion; the `@astrojs/mdx` integration handles the compile step.
+- **Theme**: Material Design 3 token *names* (`--md-sys-color-*`,
+  `--md-sys-typescale-*`, `--md-sys-shape-*`, etc.) are kept as the styling
+  vocabulary, but the values are now static, hand-maintained CSS custom
+  properties in `src/styles/custom.css` (light + dark blocks) rather than
+  generated live by the `starlight-theme-md3` plugin — that plugin (and
+  `@astrojs/starlight` itself) is no longer a dependency. The color roles
+  not already brand-overridden (primary/error/inverse/scrim) were
+  snapshotted from the plugin's last real output (seed `#FF6037`,
+  `tonalSpot`) so removing it was a visual no-op; shape/typescale/motion
+  tokens are spec-constant and were copied as-is. Reworking these values
+  into a real design system (rather than a frozen snapshot) is Phase B.
+  Brand palette: Morning Snow `#F5F4ED`, Amazon Mist `#ECECDC`, Black Kite
+  `#351E1C`, Aqua Mist `#A0C9CB`, Toxic Orange `#FF6037`, Garnet `#733635`.
+  A minimal baseline prose stylesheet (headings/tables/lists/code, scoped
+  with `:where()` so component styles always win) covers the thin-wrapper
+  content pages, which have no other typography of their own.
+- **Data source**: `src/lib/coffees.ts` reads `data/products.yaml` +
+  `roasters.yaml` directly at build time (via `js-yaml`) and flattens them
+  into table rows consumed by `CoffeeTable.astro` — no separate generated
+  JSON file, and local dev uses the same real data. A new scrape requires a
+  rebuild (handled by `pages.yml`).
+- **`astro.config.mjs`**: set `site: 'https://<user>.github.io'` and
+  `base: '/scm'` for a project Pages site, or links 404. Integrations are
+  just `@astrojs/mdx` (content-collection MDX) and `@astrojs/sitemap`
+  (bundled automatically by Starlight before; now explicit).
 - **UI**: filterable/sortable table
   - Dropdowns: roaster, origin, process
   - Sort: price (asc/desc)
@@ -259,38 +292,46 @@ Steps: checkout → setup-node → `npm ci` → `npm run build` → `actions/upl
     muted warning icon next to its price (`.ct-stale`, reusing the tertiary
     / Garnet role already used for the "natural" process badge — no new
     color) with a title/aria-label explaining the price may be outdated.
-- **Internationalization (English + Slovak)**: uses Starlight's built-in
-  i18n rather than a bespoke toggle — `locales: { root: { lang: 'en' }, sk:
-  { lang: 'sk' } }` in `astro.config.mjs` gives URL-based routing
-  (`/scm/sk/...`), a translated sidebar, and a language picker for free.
-  Starlight's own chrome (search, pagination, 404, "skip to content"...)
-  already ships a complete Slovak translation
-  (`@astrojs/starlight/translations/sk.json`) and needs no extra work.
-  - **Content pages**: every page under `src/content/docs/` has a 1:1
-    mirror under `src/content/docs/sk/` with hand-written Slovak prose
-    (internal links inside those pages point at the `/scm/sk/...` path).
-    Sidebar item labels are translated via each item's `translations: {
-    sk: '...' }` key in `astro.config.mjs`; the `link` itself stays
-    unprefixed — Starlight injects the current locale automatically.
+- **Internationalization (English + Slovak)**: fully custom (issue #121) —
+  no framework i18n integration, since routing was already hand-managed
+  via content collections and dynamic routes even under Starlight.
+  `src/lib/lang.ts`'s `langFromPath()`/`localePath()` derive/rewrite the
+  locale from the URL's `/sk` prefix; `src/lib/nav.ts` holds the nav data
+  (EN/SK label pairs + hrefs) `Layout.astro` renders as the header nav.
+  - **Content pages**: every page has a 1:1 mirror under `/sk/` (both the
+    hand-written `.astro` pages and the `src/content/docs/sk/` MDX mirrors
+    for the thin-wrapper pages), with hand-written Slovak prose/labels.
   - **`CoffeeTable.astro` UI strings and data-field display translation**:
     `src/lib/i18n.ts` holds the EN/SK string table (`UI`) plus display-label
     maps for the controlled-vocabulary fields (`ORIGIN_LABELS`,
     `PROCESS_LABELS`, `ROAST_TYPE_LABELS`, keyed by the canonical English
-    value from `data/products.yaml`). The component reads the active locale
-    from `Astro.locals.starlightRoute.lang` server-side and from
-    `document.documentElement.lang` in its client `<script>` (both set by
-    Starlight). Only the *rendered* text changes with language — every
+    value from `data/products.yaml`). Components take an explicit `lang`
+    prop from their page (falling back to `Astro.locals.starlightRoute?.lang`
+    only as a dead-but-harmless legacy path); the client `<script>` still
+    reads `document.documentElement.lang` (set by `Layout.astro`). Only the
+    *rendered* text changes with language — every
     `data-origin`/`data-process`/`data-roast` attribute (and the filter
     `<select>` option **values**) stays the stable English key from
     `products.yaml`, so switching language never changes which rows match a
     filter. Coffee `name` and `roaster` are never translated — they're
     scraped proper nouns linking out to the roaster's own untranslated page.
-  - **Persistence**: Starlight's language picker is purely URL-based with no
-    memory of its own, so a small inline script (in `astro.config.mjs`'s
-    `head` array) stores the chosen language in `localStorage` and, on any
-    page load, redirects to that language's mirror of the current path if
-    it doesn't already match — safe because every page has a 1:1 `/sk`
-    counterpart, so the redirect is just a path-segment swap.
+  - **Persistence**: an inline script in `Layout.astro`'s `<head>` stores the
+    chosen language in `localStorage` on first visit or on an explicit
+    `.lang-switch` click, and redirects to that language's mirror of the
+    current path on any other load if it doesn't already match — safe
+    because every page has a 1:1 `/sk` counterpart, so the redirect is just
+    a path-segment swap. (Writing on *every* load instead of just those two
+    triggers was tried and breaks the switcher — the destination page would
+    immediately read back its own just-visited language and bounce.)
+- **Light/dark theme**: a three-state toggle (`auto` → `light` → `dark` →
+  `auto`) in `Layout.astro`'s header, persisted in `localStorage`
+  (`scm-theme`) and applied via `data-theme` on `<html>` — absence of the
+  attribute means "auto" (follows `prefers-color-scheme`), matching
+  `custom.css`'s selectors. A separate pre-paint inline script in `<head>`
+  applies any stored preference before first render (no flash); the
+  click-handler script itself must run *after* the button exists in the
+  DOM (i.e. from the end of `<body>`, not `<head>` like the lang-persistence
+  script) since it uses `getElementById` rather than event delegation.
 
 ## Brand & Design System
 

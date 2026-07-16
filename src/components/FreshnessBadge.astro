@@ -1,0 +1,66 @@
+---
+// Freshness badge (issue #61): "data updated <date>" — computed at build
+// time from the newest last_seen across all ok products. Turns into the
+// tertiary (warning) role once the newest data is older than 8 days (one
+// missed weekly cycle). Extracted from Footer.astro (issue #121) so both
+// the Starlight footer and the new Layout.astro footer render it identically.
+import { flattenProducts } from '../lib/coffees';
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const lastUpdated = flattenProducts().reduce(
+  (max, c) => (c.last_seen && c.last_seen > max ? c.last_seen : max),
+  '',
+);
+const STALE_AFTER_DAYS = 8;
+const ageDays = lastUpdated
+  ? (Date.now() - new Date(lastUpdated).getTime()) / (1000 * 60 * 60 * 24)
+  : Infinity;
+const stale = ageDays > STALE_AFTER_DAYS;
+
+const label =
+  lang === 'sk'
+    ? `Dáta aktualizované ${lastUpdated || '—'}`
+    : `Data updated ${lastUpdated || '—'}`;
+const staleNote =
+  lang === 'sk'
+    ? ' (staršie ako týždeň — aktualizácia mešká)'
+    : ' (over a week old — update is overdue)';
+---
+
+{lastUpdated && (
+  <p class:list={['data-freshness', { 'data-freshness--stale': stale }]}>
+    {label}
+    {stale && staleNote}
+    {' · '}
+    <a
+      class="report-link"
+      href="https://github.com/peterhadac/scm/issues/new/choose"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {lang === 'sk' ? 'Nahlásiť problém' : 'Report a problem'}
+    </a>
+  </p>
+)}
+
+<style>
+  .data-freshness {
+    margin: 0.5rem 0 0;
+    font-size: var(--md-sys-typescale-label-small-size, 0.75rem);
+    color: var(--md-sys-color-outline, var(--sl-color-gray-3));
+  }
+  .data-freshness--stale {
+    color: var(--md-sys-color-tertiary, var(--sl-color-orange));
+    font-weight: 500;
+  }
+  .report-link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>

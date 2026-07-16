@@ -1,0 +1,10 @@
+---
+// SK mirror of src/pages/coffees/blends.astro (issue #121).
+import Layout from '../../../layouts/Layout.astro';
+import CoffeeTable from '../../../components/CoffeeTable.astro';
+---
+
+<Layout title="Zmesi" description="Prehliadajte kávové zmesi z viacerých krajín aktuálne skladom od slovenských pražiarní.">
+  <h1>Zmesi</h1>
+  <CoffeeTable lang="sk" blend={true} />
+</Layout>

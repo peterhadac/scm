@@ -73,6 +73,131 @@ h1#_top,
   --md-sys-color-surface-container:         #eaeae3 !important;
   --md-sys-color-surface-container-high:    #e4e4dd !important;
   --md-sys-color-surface-container-highest: #dfdfd8 !important;
+
+  /* Primary/error/inverse/scrim (seed #FF6037, tonalSpot) — snapshotted
+     from starlight-theme-md3's own generated output (issue #121) so pages
+     migrated off Starlight's per-request injection keep the same colors. */
+  --md-sys-color-primary:                   #b32a01 !important;
+  --md-sys-color-on-primary:                #ffffff !important;
+  --md-sys-color-primary-container:         #ffdbd2 !important;
+  --md-sys-color-on-primary-container:      #3c0800 !important;
+  --md-sys-color-error:                     #ba1a1a !important;
+  --md-sys-color-on-error:                  #ffffff !important;
+  --md-sys-color-error-container:           #ffdad6 !important;
+  --md-sys-color-on-error-container:        #410002 !important;
+  --md-sys-color-inverse-surface:           #362f2d !important;
+  --md-sys-color-inverse-on-surface:        #fbeeeb !important;
+  --md-sys-color-inverse-primary:           #ffb4a2 !important;
+  --md-sys-color-scrim:                     #000000 !important;
+  --md-sys-elevation-level1: 0 1px 2px hsl(190 18% 13% / 0.08);
+  --md-sys-elevation-level2: 0 2px 8px hsl(190 18% 13% / 0.1);
+  --md-sys-elevation-level3: 0 10px 28px hsl(190 18% 13% / 0.14);
+  --md-sys-elevation-level4: 0 14px 36px hsl(190 18% 13% / 0.16);
+  --md-sys-elevation-level5: 0 20px 48px hsl(190 18% 13% / 0.2);
+
+  /* Shape/typescale/motion/state-opacity are spec-constant (not seed-derived) —
+     copied as-is from node_modules/starlight-theme-md3/dist/css/tokens.css. */
+  --md-sys-shape-corner-extra-small: 0.25rem;
+  --md-sys-shape-corner-small: 0.5rem;
+  --md-sys-shape-corner-medium: 0.75rem;
+  --md-sys-shape-corner-large: 1rem;
+  --md-sys-shape-corner-extra-large: 1.5rem;
+  --md-sys-shape-corner-full: 999rem;
+  --md-sys-elevation-level0: none;
+
+  --md-sys-typescale-display-large-size: 3.5625rem;
+  --md-sys-typescale-display-large-line-height: 4rem;
+  --md-sys-typescale-display-large-weight: 400;
+  --md-sys-typescale-display-large-tracking: 0;
+  --md-sys-typescale-display-medium-size: 2.8125rem;
+  --md-sys-typescale-display-medium-line-height: 3.25rem;
+  --md-sys-typescale-display-medium-weight: 400;
+  --md-sys-typescale-display-medium-tracking: 0;
+  --md-sys-typescale-display-small-size: 2.25rem;
+  --md-sys-typescale-display-small-line-height: 2.75rem;
+  --md-sys-typescale-display-small-weight: 400;
+  --md-sys-typescale-display-small-tracking: 0;
+  --md-sys-typescale-headline-large-size: 2rem;
+  --md-sys-typescale-headline-large-line-height: 2.5rem;
+  --md-sys-typescale-headline-large-weight: 400;
+  --md-sys-typescale-headline-large-tracking: 0;
+  --md-sys-typescale-headline-medium-size: 1.75rem;
+  --md-sys-typescale-headline-medium-line-height: 2.25rem;
+  --md-sys-typescale-headline-medium-weight: 400;
+  --md-sys-typescale-headline-medium-tracking: 0;
+  --md-sys-typescale-headline-small-size: 1.5rem;
+  --md-sys-typescale-headline-small-line-height: 2rem;
+  --md-sys-typescale-headline-small-weight: 400;
+  --md-sys-typescale-headline-small-tracking: 0;
+  --md-sys-typescale-title-large-size: 1.375rem;
+  --md-sys-typescale-title-large-line-height: 1.75rem;
+  --md-sys-typescale-title-large-weight: 400;
+  --md-sys-typescale-title-large-tracking: 0;
+  --md-sys-typescale-title-medium-size: 1rem;
+  --md-sys-typescale-title-medium-line-height: 1.5rem;
+  --md-sys-typescale-title-medium-weight: 500;
+  --md-sys-typescale-title-medium-tracking: 0;
+  --md-sys-typescale-title-small-size: 0.875rem;
+  --md-sys-typescale-title-small-line-height: 1.25rem;
+  --md-sys-typescale-title-small-weight: 500;
+  --md-sys-typescale-title-small-tracking: 0;
+  --md-sys-typescale-label-large-size: 0.875rem;
+  --md-sys-typescale-label-large-line-height: 1.25rem;
+  --md-sys-typescale-label-large-weight: 500;
+  --md-sys-typescale-label-large-tracking: 0;
+  --md-sys-typescale-label-medium-size: 0.75rem;
+  --md-sys-typescale-label-medium-line-height: 1rem;
+  --md-sys-typescale-label-medium-weight: 500;
+  --md-sys-typescale-label-medium-tracking: 0;
+  --md-sys-typescale-label-small-size: 0.6875rem;
+  --md-sys-typescale-label-small-line-height: 1rem;
+  --md-sys-typescale-label-small-weight: 500;
+  --md-sys-typescale-label-small-tracking: 0;
+  --md-sys-typescale-body-large-size: 1rem;
+  --md-sys-typescale-body-large-line-height: 1.5rem;
+  --md-sys-typescale-body-large-weight: 400;
+  --md-sys-typescale-body-large-tracking: 0;
+  --md-sys-typescale-body-medium-size: 0.875rem;
+  --md-sys-typescale-body-medium-line-height: 1.25rem;
+  --md-sys-typescale-body-medium-weight: 400;
+  --md-sys-typescale-body-medium-tracking: 0;
+  --md-sys-typescale-body-small-size: 0.75rem;
+  --md-sys-typescale-body-small-line-height: 1rem;
+  --md-sys-typescale-body-small-weight: 400;
+  --md-sys-typescale-body-small-tracking: 0;
+  --md-sys-typescale-line-height-body: 1.75;
+  --md-sys-typescale-line-height-heading: 1.18;
+
+  --md-sys-motion-duration-short1: 50ms;
+  --md-sys-motion-duration-short2: 100ms;
+  --md-sys-motion-duration-short3: 150ms;
+  --md-sys-motion-duration-short4: 200ms;
+  --md-sys-motion-duration-medium1: 250ms;
+  --md-sys-motion-duration-medium2: 300ms;
+  --md-sys-motion-duration-medium3: 350ms;
+  --md-sys-motion-duration-medium4: 400ms;
+  --md-sys-motion-duration-long1: 450ms;
+  --md-sys-motion-duration-long2: 500ms;
+  --md-sys-motion-duration-long3: 550ms;
+  --md-sys-motion-duration-long4: 600ms;
+  --md-sys-motion-duration-short: var(--md-sys-motion-duration-short3);
+  --md-sys-motion-duration-medium: var(--md-sys-motion-duration-medium2);
+  --md-sys-motion-duration-long: var(--md-sys-motion-duration-long2);
+  --md-sys-motion-easing-linear: cubic-bezier(0, 0, 1, 1);
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --md-sys-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+  --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --md3-motion-duration-state: var(--md-sys-motion-duration-short3);
+
+  --md-sys-state-hover-opacity: 0.08;
+  --md-sys-state-focus-opacity: 0.12;
+  --md-sys-state-pressed-opacity: 0.12;
+  --md-sys-state-dragged-opacity: 0.16;
+  --md-sys-state-disabled-container-opacity: 0.12;
+  --md-sys-state-disabled-label-opacity: 0.38;
 }
 
 /* ── Dark tokens — prefers-color-scheme ──────────────────────────────────── */
@@ -104,6 +229,24 @@ h1#_top,
     --md-sys-color-surface-container:         #281a18 !important;
     --md-sys-color-surface-container-high:    #321f1e !important;
     --md-sys-color-surface-container-highest: #3d2927 !important;
+
+    /* Primary/error/inverse/scrim (dark) — see the light :root block above. */
+    --md-sys-color-primary:                   #ffb4a2 !important;
+    --md-sys-color-on-primary:                #611200 !important;
+    --md-sys-color-primary-container:         #891e00 !important;
+    --md-sys-color-on-primary-container:      #ffdbd2 !important;
+    --md-sys-color-error:                     #ffb4ab !important;
+    --md-sys-color-on-error:                  #690005 !important;
+    --md-sys-color-error-container:           #93000a !important;
+    --md-sys-color-on-error-container:        #ffb4ab !important;
+    --md-sys-color-inverse-surface:           #ede0dd !important;
+    --md-sys-color-inverse-on-surface:        #362f2d !important;
+    --md-sys-color-inverse-primary:           #b32a01 !important;
+    --md-sys-elevation-level1: 0 1px 2px hsl(200 50% 2% / 0.26);
+    --md-sys-elevation-level2: 0 2px 6px hsl(200 50% 2% / 0.24);
+    --md-sys-elevation-level3: 0 8px 24px hsl(200 50% 2% / 0.28);
+    --md-sys-elevation-level4: 0 12px 32px hsl(200 50% 2% / 0.3);
+    --md-sys-elevation-level5: 0 18px 44px hsl(200 50% 2% / 0.34);
   }
 }
 
@@ -135,6 +278,24 @@ html[data-theme="dark"] {
   --md-sys-color-surface-container:         #281a18 !important;
   --md-sys-color-surface-container-high:    #321f1e !important;
   --md-sys-color-surface-container-highest: #3d2927 !important;
+
+  /* Primary/error/inverse/scrim (dark) — see the light :root block above. */
+  --md-sys-color-primary:                   #ffb4a2 !important;
+  --md-sys-color-on-primary:                #611200 !important;
+  --md-sys-color-primary-container:         #891e00 !important;
+  --md-sys-color-on-primary-container:      #ffdbd2 !important;
+  --md-sys-color-error:                     #ffb4ab !important;
+  --md-sys-color-on-error:                  #690005 !important;
+  --md-sys-color-error-container:           #93000a !important;
+  --md-sys-color-on-error-container:        #ffb4ab !important;
+  --md-sys-color-inverse-surface:           #ede0dd !important;
+  --md-sys-color-inverse-on-surface:        #362f2d !important;
+  --md-sys-color-inverse-primary:           #b32a01 !important;
+  --md-sys-elevation-level1: 0 1px 2px hsl(200 50% 2% / 0.26);
+  --md-sys-elevation-level2: 0 2px 6px hsl(200 50% 2% / 0.24);
+  --md-sys-elevation-level3: 0 8px 24px hsl(200 50% 2% / 0.28);
+  --md-sys-elevation-level4: 0 12px 32px hsl(200 50% 2% / 0.3);
+  --md-sys-elevation-level5: 0 18px 44px hsl(200 50% 2% / 0.34);
 }
 
 /* ── Splash page hero ─────────────────────────────────────────────────────── */
@@ -175,7 +336,58 @@ html[data-theme="dark"] {
   filter: drop-shadow(0 8px 32px color-mix(in oklch, #ff6037 22%, transparent));
 }
 
-/* ── Starlight content container ─────────────────────────────────────────── */
-.sl-container {
-  background: none !important;
+/* ── Baseline prose (issue #121) ──────────────────────────────────────────
+   Starlight ships default typographic styling for docs content (heading
+   rhythm, table borders, code blocks...). Pages migrated onto Layout.astro
+   render raw MDX with none of that, so plain content elements under <main>
+   get a minimal baseline here — :where() keeps specificity at zero so any
+   component's own styling (CoffeeTable's <table>, Card, etc.) always wins
+   without needing !important. Not a design system (that's Phase B) — just
+   enough that migrated content pages don't look broken. */
+main :where(h2, h3, h4) {
+  font-family: var(--font-serif);
+  margin: 2rem 0 0.75rem;
+  line-height: var(--md-sys-typescale-line-height-heading, 1.2);
+}
+
+main :where(p, ul, ol) {
+  line-height: var(--md-sys-typescale-line-height-body, 1.6);
+  color: var(--md-sys-color-on-surface);
+}
+
+main :where(ul, ol) {
+  padding-left: 1.5rem;
+}
+
+main :where(a) {
+  color: var(--md-sys-color-primary);
+}
+
+main :where(table) {
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+main :where(th, td) {
+  border: 1px solid var(--md-sys-color-outline-variant);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+main :where(th) {
+  background: var(--md-sys-color-surface-container-low);
+}
+
+main :where(code) {
+  font-family: monospace;
+  background: var(--md-sys-color-surface-container-low);
+  border-radius: var(--md-sys-shape-corner-extra-small, 4px);
+  padding: 0.15em 0.4em;
+}
+
+main :where(blockquote) {
+  margin: 1rem 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--md-sys-color-outline-variant);
+  color: var(--md-sys-color-on-surface-variant);
 }

@@ -19,13 +19,15 @@ interface Props {
   // duplicate), unset → no blend filtering ("All", origin pages).
   // Keys off the canonical `origin === 'Blend'` sentinel.
   blend?: boolean;
+  // Explicit lang (issue #121), for pages rendered outside Starlight. Falls
+  // back to Starlight's own routing-derived lang when omitted, so the
+  // still-Starlight callers of this component are unaffected.
+  lang?: Lang;
 }
 
-const { roastType, origin, blend } = Astro.props;
+const { roastType, origin, blend, lang: langProp } = Astro.props;
 
-// Starlight sets this from the `locales` config in astro.config.mjs — see
-// src/lib/i18n.ts for the EN/SK string tables this drives.
-const lang: Lang = Astro.locals.starlightRoute.lang === 'sk' ? 'sk' : 'en';
+const lang: Lang = langProp ?? (Astro.locals.starlightRoute?.lang === 'sk' ? 'sk' : 'en');
 const t = UI[lang];
 
 const allCoffees = flattenProducts();

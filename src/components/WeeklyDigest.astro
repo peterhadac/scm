@@ -7,7 +7,13 @@ import { safeUrl } from '../lib/coffees';
 import type { Lang } from '../lib/i18n';
 import Comments from './Comments.astro';
 
-const lang: Lang = Astro.locals.starlightRoute.lang === 'sk' ? 'sk' : 'en';
+interface Props {
+  // Explicit lang (issue #121), for pages rendered outside Starlight. Falls
+  // back to Starlight's own routing-derived lang when omitted.
+  lang?: Lang;
+}
+const { lang: langProp } = Astro.props;
+const lang: Lang = langProp ?? (Astro.locals.starlightRoute?.lang === 'sk' ? 'sk' : 'en');
 const digest = buildDigest();
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -118,7 +124,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
 {/* giscus comments (issue #86) — digest page only, and only once the
     GISCUS_* repository variables are set (see Comments.astro). */}
-<Comments />
+<Comments lang={lang} />
 
 <style>
   .wd-asof {

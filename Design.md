@@ -53,7 +53,7 @@ No other colour combinations are permitted.
 
 No other brand colours. Do not introduce greys, blues, greens, or off-palette neutrals.
 
-MD3 seed token for `starlight-theme-md3`: `seed: '#FF6037'`, `variant: 'tonalSpot'` — already set in `astro.config.mjs`.
+MD3 token values (`--md-sys-color-*` etc., seed `#FF6037`/`tonalSpot`) are now a static snapshot in `src/styles/custom.css` rather than generated live by a Starlight plugin (issue #121) — see CLAUDE.md's "Astro Site" section.
 
 ## Typography
 

@@ -1,0 +1,10 @@
+---
+// SK mirror of src/pages/coffees/filter.astro (issue #121).
+import Layout from '../../../layouts/Layout.astro';
+import CoffeeTable from '../../../components/CoffeeTable.astro';
+---
+
+<Layout title="Filter kávy" description="Prehliadajte filter (prekvapkávané) kávy aktuálne skladom od slovenských pražiarní.">
+  <h1>Filter kávy</h1>
+  <CoffeeTable lang="sk" roastType="filter" blend={false} />
+</Layout>

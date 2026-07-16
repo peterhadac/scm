@@ -1,0 +1,133 @@
+---
+// SK mirror of src/pages/index.astro (issue #121). Content ported verbatim
+// from the old src/content/docs/sk/index.mdx (now unused by this route).
+import Layout from '../../layouts/Layout.astro';
+import Card from '../../components/Card.astro';
+import CardGrid from '../../components/CardGrid.astro';
+import MemeCard from '../../components/MemeCard.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const heroSvg = `<svg width="200" height="220" viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 20 C63 20 34 49 34 86 C34 133 100 215 100 215 C100 215 166 133 166 86 C166 49 137 20 100 20Z" fill="color-mix(in oklch, var(--md-sys-color-primary) 12%, transparent)" stroke="var(--md-sys-color-primary)" stroke-width="2.5"/><ellipse cx="100" cy="86" rx="30" ry="37" fill="none" stroke="var(--md-sys-color-primary)" stroke-width="2.5"/><path d="M100 49 C88 61 88 73 100 86 C112 99 112 111 100 123" stroke="var(--md-sys-color-primary)" stroke-width="2" stroke-linecap="round" fill="none"/></svg>`;
+---
+
+<Layout
+  title="Slovak Coffee Map"
+  description="Heureka pre výberovú kávu — všetky kávy skladom u slovenských pražiarní, porovnané na jednom mieste a obnovované každý týždeň."
+>
+  <section class="hero">
+    <div class="hero-image" set:html={heroSvg} />
+    <h1>Slovak Coffee Map</h1>
+    <p class="tagline">
+      Heureka pre výberovú kávu — všetky kávy aktuálne skladom u slovenských
+      pražiarní, porovnané v jednej filtrovateľnej tabuľke a obnovované
+      každý pondelok.
+    </p>
+    <div class="hero-actions">
+      <a class="action primary" href={`${base}/sk/coffees/`}>Prehliadať kávy →</a>
+      <a class="action secondary" href={`${base}/sk/this-week/`}>Čo sa zmenilo tento týždeň</a>
+    </div>
+  </section>
+
+  <CardGrid>
+    <Card title="Porovnávajte, nepreklikávajte">
+      ~30 slovenských pražiarní a ~600 káv v jednej tabuľke — filtrujte podľa
+      pôvodu, spracovania a praženia, zoraďte podľa ceny za 100 g a nakúpte
+      priamo u pražiarne. Nikto neplatí za zaradenie.
+    </Card>
+    <Card title="Čerstvé každý pondelok">
+      Automatický scraper týždenne overí každú cenu aj vyradenie z ponuky.
+      Zastarané dáta označíme, neskrývame.
+    </Card>
+    <Card title="Chyťte zľavy včas">
+      História cien pri každej káve, odznaky zliav v tabuľke a týždenný
+      prehľad zmien s RSS feedom.
+    </Card>
+    <Card title="Objavujte podľa pôvodu">
+      Stránky a mapa sveta pre každú krajinu pôvodu na slovenskom trhu — od
+      Brazílie po Jemen.
+    </Card>
+  </CardGrid>
+
+  <MemeCard
+    src={`${base}/kamenicky-2024.jpg`}
+    alt="Ladislav Kamenický, minister financií SR"
+    caption="Káva zdražela? To nie my. Konsolidácia."
+    credit="Foto: © Európska únia, 2024 (Jennifer Jacquemart), CC BY 4.0, cez Wikimedia Commons"
+    creditHref="https://commons.wikimedia.org/wiki/File:Ladislav_Kamenicky,_2024.jpg"
+  />
+
+  <p class="closing">
+    Aspoň tu presne vidíte, kto ktorú cenu zdvihol a kedy. Mapa je nezávislá,
+    zadarmo a pre ľudí, ktorí berú svoju kávu — ak už nie fiškálnu politiku —
+    vážne.
+  </p>
+</Layout>
+
+<style>
+  .hero {
+    text-align: center;
+    padding: 2rem 0 3rem;
+  }
+
+  .hero-image {
+    margin: 0 auto 1rem;
+    width: 10rem;
+    filter: drop-shadow(0 8px 32px color-mix(in oklch, #ff6037 22%, transparent));
+  }
+
+  .hero h1 {
+    font-family: var(--font-serif);
+    font-size: var(--md-sys-typescale-display-small-size);
+    letter-spacing: var(--md-sys-typescale-display-small-tracking);
+    margin: 0 0 1rem;
+  }
+
+  .tagline {
+    max-width: 40rem;
+    margin: 0 auto 1.5rem;
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: var(--md-sys-typescale-title-medium-size);
+  }
+
+  .hero-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .action {
+    display: inline-block;
+    padding: 0.625rem 1.5rem;
+    border-radius: var(--md-sys-shape-corner-full);
+    font-weight: var(--md-sys-typescale-label-large-weight);
+    text-decoration: none;
+    transition: background var(--md3-motion-duration-state, 150ms) var(--md-sys-motion-easing-standard);
+  }
+
+  .action.primary {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+  }
+
+  .action.primary:hover {
+    background: color-mix(in srgb, var(--md-sys-color-primary) 88%, var(--md-sys-color-on-primary));
+  }
+
+  .action.secondary {
+    border: 1px solid var(--md-sys-color-outline);
+    color: var(--md-sys-color-primary);
+  }
+
+  .action.secondary:hover {
+    background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
+  }
+
+  .closing {
+    max-width: 40rem;
+    margin: 2rem auto 0;
+    text-align: center;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+</style>

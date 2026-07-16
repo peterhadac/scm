@@ -1,19 +1,15 @@
 ---
 // Roaster map page, EN (issue #59). SK mirror: src/pages/sk/map.astro.
-import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+// Migrated off Starlight (issue #121).
+import Layout from '../layouts/Layout.astro';
 import RoasterMap from '../components/RoasterMap.astro';
 ---
 
-<StarlightPage
-  frontmatter={{
-    title: 'Roaster map',
-    description: 'Where Slovak specialty coffee roasters are based.',
-    tableOfContents: false,
-  }}
->
+<Layout title="Roaster map" description="Where Slovak specialty coffee roasters are based.">
+  <h1>Roaster map</h1>
   <p>
     Every roastery on the map is scraped weekly for the coffee table. Click
     a town to see who roasts there.
   </p>
-  <RoasterMap />
-</StarlightPage>
+  <RoasterMap lang="en" />
+</Layout>

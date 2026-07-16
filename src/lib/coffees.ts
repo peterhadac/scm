@@ -50,6 +50,10 @@ interface ProductEntry {
 interface Roaster {
   name: string;
   slug: string;
+  // Referral partnership (issue #57): when a roaster agrees to a discount
+  // code, add `referral: {code: "..."}` to their roasters.yaml entry and
+  // their rows grow a copyable code chip. Absent for everyone else.
+  referral?: { code?: string };
 }
 
 export interface CoffeeRow {
@@ -62,6 +66,7 @@ export interface CoffeeRow {
   weight_g: number;
   url: string;
   last_seen: string;
+  referralCode: string | null;
   // Only set on blends (issue #93) — undefined keys are dropped by
   // JSON.stringify, so coffees.json stays clean for single-origin rows.
   blend?: true;
@@ -85,7 +90,9 @@ export function flattenProducts(): CoffeeRow[] {
   const seen = new Set<string>();
   const rows: CoffeeRow[] = [];
   for (const [slug, entries] of Object.entries(products)) {
-    const roasterName = roasterBySlug.get(slug)?.name ?? slug;
+    const roaster = roasterBySlug.get(slug);
+    const roasterName = roaster?.name ?? slug;
+    const referralCode = roaster?.referral?.code ?? null;
     for (const product of entries) {
       if (product.status !== 'ok') continue;
       for (const tier of product.packaging ?? []) {
@@ -102,6 +109,7 @@ export function flattenProducts(): CoffeeRow[] {
           weight_g: tier.weight_g,
           url: product.url,
           last_seen: product.last_seen,
+          referralCode,
           ...(product.blend === true && {
             blend: true as const,
             ...(product.blend_origins?.length && { blend_origins: product.blend_origins }),

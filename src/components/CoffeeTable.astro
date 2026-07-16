@@ -260,7 +260,19 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
                   </svg>
                 </a>
               </td>
-              <td>{c.roaster}</td>
+              <td>
+                {c.roaster}
+                {c.referralCode && (
+                  <button
+                    type="button"
+                    class="ct-ref"
+                    data-refcode={c.referralCode}
+                    title={t.referralTitle(c.referralCode)}
+                  >
+                    {c.referralCode}
+                  </button>
+                )}
+              </td>
               <td class="ct-muted">
                 {originLabel ?? '—'}
                 {blendComposition && (
@@ -544,6 +556,21 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     if (filtersToggle.open && !filtersToggle.contains(e.target as Node)) {
       filtersToggle.open = false;
     }
+  });
+
+  // Referral-code chips (issue #57): click to copy, brief inline
+  // confirmation, then restore. Delegated so sorting (which re-appends
+  // rows) can't detach listeners.
+  tbody.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.ct-ref');
+    if (!btn || !btn.dataset.refcode) return;
+    navigator.clipboard?.writeText(btn.dataset.refcode).then(() => {
+      const original = btn.textContent;
+      btn.textContent = t.referralCopied;
+      setTimeout(() => {
+        btn.textContent = original;
+      }, 1200);
+    });
   });
 
   // Default sort: cheapest first, matching the previous price-asc behaviour.
@@ -1048,6 +1075,23 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     letter-spacing: 0;
     white-space: nowrap;
     cursor: help;
+  }
+
+  /* Referral discount-code chip (issue #57): quiet outline chip in the
+     roaster cell — informational, not a call to action; secondary
+     container role, no new color per Design.md. */
+  .ct-ref {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 0.05em 0.5em;
+    border: none;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    font-family: var(--font-mono, monospace);
+    font-size: var(--md-sys-typescale-label-small-size);
+    letter-spacing: 0.03em;
+    cursor: copy;
   }
 
   /* ── Coffee link ──────────────────────────────────────────── */

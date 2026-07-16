@@ -48,6 +48,8 @@ export const UI = {
     sparklineLabel: (from: string) => `Price history since ${from}`,
     tipNudge: 'Found a cheaper coffee here? Consider tipping the difference:',
     tipNudgeLink: 'Ko-fi',
+    referralTitle: (code: string) => `Discount code ${code} at this roaster (click to copy)`,
+    referralCopied: 'copied!',
   },
   sk: {
     search: 'Hľadať',
@@ -81,6 +83,8 @@ export const UI = {
     sparklineLabel: (from: string) => `História ceny od ${from}`,
     tipNudge: 'Našli ste tu lacnejšiu kávu? Zvážte, či rozdiel nepošlete ako tip:',
     tipNudgeLink: 'Ko-fi',
+    referralTitle: (code: string) => `Zľavový kód ${code} u tejto pražiarne (kliknutím skopírujete)`,
+    referralCopied: 'skopírované!',
   },
 } satisfies Record<Lang, Record<string, string | ((...args: never[]) => string)>>;
 

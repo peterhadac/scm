@@ -224,6 +224,13 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
           const stale = isStale(c.last_seen);
           const originLabel = localizedOrigin(c.origin, lang);
           const processLabel = localizedProcess(c.process, lang);
+          // Blend composition (issue #93): component countries shown after
+          // the "Blend"/"Zmes" label, localized through the same map as
+          // the label itself. Only the rendered text — data-origin stays
+          // the canonical "Blend" key, so filters/sorting are untouched.
+          const blendComposition = (c.blend_origins ?? [])
+            .map((country) => localizedOrigin(country, lang) ?? country)
+            .join(' + ');
           // Sparkline/drop badge only with >=2 observations for THIS tier —
           // a single point draws nothing meaningful, and rows without
           // history (file absent, or product newer than the history file)
@@ -266,7 +273,12 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
                   </button>
                 )}
               </td>
-              <td class="ct-muted">{originLabel ?? '—'}</td>
+              <td class="ct-muted">
+                {originLabel ?? '—'}
+                {blendComposition && (
+                  <span class="ct-blend-comp">({blendComposition})</span>
+                )}
+              </td>
               <td>
                 {c.process
                   ? <span class={`ct-badge ct-badge--${PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other'}`} title={processLabel ?? undefined}>{processLabel}</span>
@@ -1026,6 +1038,17 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     opacity: 0.75;
     vertical-align: middle;
     cursor: help;
+  }
+
+  /* Blend composition (issue #93): the component countries after the
+     Blend label. Real text (not a hover tooltip) so it works on touch and
+     for screen readers; label-small + outline role keeps it subordinate
+     to the label, per Design.md's existing muted-annotation pattern. */
+  .ct-blend-comp {
+    margin-left: 4px;
+    font-size: var(--md-sys-typescale-label-small-size);
+    color: var(--md-sys-color-outline);
+    white-space: normal;
   }
 
   /* Price history sparkline (issue #54): quiet context, not a call to

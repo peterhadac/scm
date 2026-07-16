@@ -1,0 +1,175 @@
+---
+// Recipe card for brew-method pages (issue #88): parameter grid, a
+// generated grind-size scale (SVG — consistent and license-free, unlike
+// sourced photos), grinder click ranges, steps, and the upstream credit.
+import { RECIPES } from '../lib/recipes';
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  method: keyof typeof RECIPES | string;
+}
+const { method } = Astro.props;
+const recipe = RECIPES[method];
+if (!recipe) throw new Error(`RecipeCard: unknown method "${method}"`);
+
+const lang: Lang = Astro.locals.starlightRoute.lang === 'sk' ? 'sk' : 'en';
+
+const T = {
+  en: {
+    dose: 'Coffee',
+    water: 'Water',
+    ratio: 'Ratio',
+    temp: 'Temperature',
+    time: 'Time',
+    grind: 'Grind',
+    fine: 'fine',
+    coarse: 'coarse',
+    clicks: 'Grinder clicks (from fully closed):',
+    clicksNote: 'Starting ranges — burr zero points vary between units; adjust to taste.',
+    basedOn: 'Based on',
+  },
+  sk: {
+    dose: 'Káva',
+    water: 'Voda',
+    ratio: 'Pomer',
+    temp: 'Teplota',
+    time: 'Čas',
+    grind: 'Mletie',
+    fine: 'jemné',
+    coarse: 'hrubé',
+    clicks: 'Kliky na mlynčeku (od úplne zatvoreného):',
+    clicksNote: 'Orientačné rozsahy — nulové body sa medzi kusmi líšia; dolaďte podľa chuti.',
+    basedOn: 'Podľa',
+  },
+}[lang];
+
+// Grind scale: dots grow fine→coarse; the recipe's band is highlighted.
+const W = 300;
+const H = 30;
+const DOTS = 24;
+const [bandStart, bandEnd] = recipe.grindBand;
+const dots = Array.from({ length: DOTS }, (_, i) => {
+  const p = i / (DOTS - 1);
+  return { cx: 8 + p * (W - 16), cy: H / 2, r: 1.2 + p * 4.2, active: p >= bandStart && p <= bandEnd };
+});
+---
+
+<aside class="rc">
+  <dl class="rc-params">
+    <div><dt>{T.dose}</dt><dd>{recipe.dose}</dd></div>
+    <div><dt>{T.water}</dt><dd>{recipe.water}</dd></div>
+    <div><dt>{T.ratio}</dt><dd>{recipe.ratio}</dd></div>
+    <div><dt>{T.temp}</dt><dd>{recipe.temp}</dd></div>
+    <div><dt>{T.time}</dt><dd>{recipe.time}</dd></div>
+    <div><dt>{T.grind}</dt><dd>{recipe.grindLabel[lang]}</dd></div>
+  </dl>
+
+  <div class="rc-grind">
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      role="img"
+      aria-label={`${T.grind}: ${recipe.grindLabel[lang]}`}
+      class="rc-grind-svg"
+    >
+      <rect
+        x={8 + bandStart * (W - 16) - 6}
+        y="2"
+        width={(bandEnd - bandStart) * (W - 16) + 12}
+        height={H - 4}
+        rx="8"
+        class="rc-band"
+      />
+      {dots.map((d) => (
+        <circle cx={d.cx} cy={d.cy} r={d.r} class={d.active ? 'rc-dot rc-dot--active' : 'rc-dot'} />
+      ))}
+    </svg>
+    <div class="rc-grind-ends" aria-hidden="true">
+      <span>{T.fine}</span>
+      <span>{T.coarse}</span>
+    </div>
+  </div>
+
+  <p class="rc-clicks">
+    {T.clicks} <strong>Comandante C40: {recipe.c40}</strong> · <strong>Timemore C2: {recipe.c2}</strong>
+    <br />
+    <span class="rc-clicks-note">{T.clicksNote}</span>
+  </p>
+
+  <ol class="rc-steps">
+    {recipe.steps[lang].map((step) => (
+      <li>{step}</li>
+    ))}
+  </ol>
+
+  <p class="rc-credit">
+    {T.basedOn}{' '}
+    <a href={recipe.basedOn.href} target="_blank" rel="noopener noreferrer">
+      {recipe.basedOn.label[lang]}
+    </a>
+  </p>
+</aside>
+
+<style>
+  .rc {
+    margin: 1.5rem 0;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--md-sys-color-outline-variant, var(--sl-color-gray-5));
+    border-radius: var(--md-sys-shape-corner-large, 16px);
+    background: var(--md-sys-color-surface-container-low, var(--sl-color-gray-6));
+  }
+  .rc-params {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: 0.75rem 1rem;
+    margin: 0;
+  }
+  .rc-params dt {
+    font-size: var(--md-sys-typescale-label-small-size, 0.7rem);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+  .rc-params dd {
+    margin: 0;
+    font-weight: 600;
+  }
+  .rc-grind {
+    max-width: 22rem;
+    margin-top: 1rem;
+  }
+  .rc-grind-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .rc-band {
+    fill: color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent);
+    stroke: var(--md-sys-color-primary);
+    stroke-width: 1;
+  }
+  .rc-dot { fill: var(--md-sys-color-outline-variant); }
+  .rc-dot--active { fill: var(--md-sys-color-primary); }
+  .rc-grind-ends {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--md-sys-typescale-label-small-size, 0.7rem);
+    color: var(--md-sys-color-on-surface-variant);
+  }
+  .rc-clicks {
+    margin: 1rem 0 0;
+  }
+  .rc-clicks-note {
+    font-size: var(--md-sys-typescale-label-small-size, 0.75rem);
+    color: var(--md-sys-color-on-surface-variant);
+  }
+  .rc-steps {
+    margin: 1rem 0 0;
+    padding-left: 1.25rem;
+  }
+  .rc-credit {
+    margin: 0.75rem 0 0;
+    font-size: var(--md-sys-typescale-label-small-size, 0.75rem);
+    color: var(--md-sys-color-outline);
+  }
+  .rc-credit a { color: inherit; }
+</style>

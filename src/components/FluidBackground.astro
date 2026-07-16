@@ -1,0 +1,100 @@
+---
+// Soft, slowly-morphing color wash behind the homepage hero. Pure CSS
+// (radial blurred shapes animating border-radius + position) — no canvas,
+// no JS, no new dependency. Brand colors only, per Design.md's six-token
+// palette. Decorative: aria-hidden, clipped to the parent's own box
+// (overflow hidden, inset: 0) so it can never push the page into
+// horizontal scroll, and frozen to a static shape under
+// prefers-reduced-motion.
+---
+
+<div class="fluid-bg" aria-hidden="true">
+  <span class="fluid-blob fluid-blob--a"></span>
+  <span class="fluid-blob fluid-blob--b"></span>
+  <span class="fluid-blob fluid-blob--c"></span>
+</div>
+
+<style>
+  .fluid-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .fluid-blob {
+    position: absolute;
+    width: 24rem;
+    height: 24rem;
+    filter: blur(60px);
+    opacity: var(--fluid-opacity, 0.28);
+    animation: fluid-morph 26s ease-in-out infinite;
+    will-change: transform, border-radius;
+  }
+
+  .fluid-blob--a {
+    top: -8rem;
+    left: -6rem;
+    background: var(--color-toxic-orange);
+    animation-duration: 24s;
+  }
+
+  .fluid-blob--b {
+    top: -4rem;
+    right: -8rem;
+    background: var(--color-aqua-mist);
+    animation-duration: 30s;
+    animation-delay: -9s;
+  }
+
+  .fluid-blob--c {
+    bottom: -10rem;
+    left: 28%;
+    width: 20rem;
+    height: 20rem;
+    background: var(--color-garnet);
+    animation-duration: 27s;
+    animation-delay: -15s;
+    opacity: var(--fluid-opacity-tertiary, 0.18);
+  }
+
+  @keyframes fluid-morph {
+    0%,
+    100% {
+      border-radius: 42% 58% 65% 35% / 45% 45% 55% 55%;
+      transform: translate(0, 0) scale(1);
+    }
+    25% {
+      border-radius: 58% 42% 35% 65% / 55% 65% 35% 45%;
+      transform: translate(3%, 4%) scale(1.08);
+    }
+    50% {
+      border-radius: 65% 35% 45% 55% / 40% 60% 40% 60%;
+      transform: translate(-2%, 6%) scale(0.95);
+    }
+    75% {
+      border-radius: 40% 60% 55% 45% / 60% 40% 60% 40%;
+      transform: translate(-4%, -3%) scale(1.05);
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme='light']) .fluid-bg {
+      --fluid-opacity: 0.4;
+      --fluid-opacity-tertiary: 0.26;
+    }
+  }
+
+  html[data-theme='dark'] .fluid-bg {
+    --fluid-opacity: 0.4;
+    --fluid-opacity-tertiary: 0.26;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fluid-blob {
+      animation: none;
+      border-radius: 48% 52% 60% 40% / 50% 50% 50% 50%;
+    }
+  }
+</style>

@@ -54,6 +54,7 @@ interface ProductEntry {
 interface Roaster {
   name: string;
   slug: string;
+  url: string;
 }
 
 export interface CoffeeRow {
@@ -120,4 +121,30 @@ export function flattenProducts(): CoffeeRow[] {
     }
   }
   return rows;
+}
+
+export interface RoasterCoffeeCount {
+  name: string;
+  slug: string;
+  url: string;
+  count: number;
+}
+
+// Counts ok-status products (not packaging tiers, so a coffee sold in
+// several weights only counts once) per roaster — used by the homepage
+// logo slider to feature the roasters with the deepest current catalogue.
+export function topRoastersByCoffeeCount(limit = 12): RoasterCoffeeCount[] {
+  const roasterList = loadYaml<{ roasters: Roaster[] }>('roasters.yaml').roasters;
+  const products = loadYaml<Record<string, ProductEntry[]>>('data/products.yaml');
+
+  return roasterList
+    .map((r) => ({
+      name: r.name,
+      slug: r.slug,
+      url: r.url,
+      count: (products[r.slug] ?? []).filter((p) => p.status === 'ok').length,
+    }))
+    .filter((r) => r.count > 0)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, limit);
 }

@@ -24,15 +24,15 @@ const otherLang: Lang = lang === 'en' ? 'sk' : 'en';
 const otherLangHref = `${base}${localePath(pathWithoutBase, otherLang)}`;
 
 const T = {
-  en: { skipToContent: 'Skip to content', github: 'GitHub', switchTo: 'Slovensky' },
-  sk: { skipToContent: 'Preskočiť na obsah', github: 'GitHub', switchTo: 'English' },
+  en: { skipToContent: 'Skip to content', github: 'GitHub', switchTo: 'Slovensky', theme: 'Theme' },
+  sk: { skipToContent: 'Preskočiť na obsah', github: 'GitHub', switchTo: 'English', theme: 'Téma' },
 }[lang];
 
 const goatcounterCode = process.env.GOATCOUNTER_CODE;
 ---
 
 <!doctype html>
-<html lang={lang} data-theme="auto">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -40,6 +40,20 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
     <meta name="description" content={description} />
     <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
     <link rel="alternate" hreflang={otherLang} href={otherLangHref} />
+
+    <script is:inline>
+      // Applies a stored theme preference before first paint (no FOUC).
+      // Absence of data-theme means "auto" (follows prefers-color-scheme),
+      // matching custom.css's selectors.
+      (function () {
+        try {
+          var stored = localStorage.getItem('scm-theme');
+          if (stored === 'light' || stored === 'dark') {
+            document.documentElement.dataset.theme = stored;
+          }
+        } catch (e) {}
+      })();
+    </script>
 
     {goatcounterCode && (
       <script
@@ -138,6 +152,9 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
             )}
           </ul>
         </nav>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label={T.theme}>
+          <span data-theme-label>Auto</span>
+        </button>
         <a class="lang-switch" href={otherLangHref} hreflang={otherLang}>{T.switchTo}</a>
       </div>
     </header>
@@ -174,6 +191,40 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
           observer.observe(document.body, { childList: true, subtree: true });
         }
       });
+    </script>
+
+    <script is:inline>
+      // Three-state theme toggle (auto → light → dark → auto), replacing
+      // Starlight's own theme select. "Auto" is the absence of data-theme.
+      // Placed after the button (unlike the head's pre-paint script) so
+      // getElementById finds it — the head script only sets the initial
+      // attribute to avoid a flash, it doesn't wire up the click handler.
+      (function () {
+        var THEME_KEY = 'scm-theme';
+        var LABELS = { auto: 'Auto', light: 'Light', dark: 'Dark' };
+        function current() {
+          var t = document.documentElement.dataset.theme;
+          return t === 'light' || t === 'dark' ? t : 'auto';
+        }
+        var btn = document.getElementById('theme-toggle');
+        var labelEl = btn && btn.querySelector('[data-theme-label]');
+        function apply(theme) {
+          if (theme === 'auto') {
+            delete document.documentElement.dataset.theme;
+          } else {
+            document.documentElement.dataset.theme = theme;
+          }
+          if (labelEl) labelEl.textContent = LABELS[theme];
+        }
+        if (labelEl) labelEl.textContent = LABELS[current()];
+        if (btn) {
+          btn.addEventListener('click', function () {
+            var next = current() === 'auto' ? 'light' : current() === 'light' ? 'dark' : 'auto';
+            try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+            apply(next);
+          });
+        }
+      })();
     </script>
   </body>
 </html>
@@ -247,6 +298,23 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
     list-style: none;
     margin: 0.25rem 0 0;
     padding-left: 1rem;
+  }
+
+  .theme-toggle {
+    flex-shrink: 0;
+    color: var(--md-sys-color-on-surface-variant);
+    background: none;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-full);
+    padding: 0.25rem 0.75rem;
+    font: inherit;
+    font-size: var(--md-sys-typescale-label-medium-size);
+    cursor: pointer;
+  }
+
+  .theme-toggle:hover {
+    color: var(--md-sys-color-primary);
+    border-color: var(--md-sys-color-primary);
   }
 
   .lang-switch {

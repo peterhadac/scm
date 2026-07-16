@@ -21,6 +21,12 @@ updates:
     groups:
       npm-minor-patch:
         update-types: [minor, patch]
+    ignore:
+      # js-yaml 5.x drops the default export; Starlight itself is pinned to
+      # js-yaml ^4 and default-imports it internally, so a major bump here
+      # breaks the build regardless of changes on our side (PR #71).
+      - dependency-name: "js-yaml"
+        update-types: ["version-update:semver-major"]
 
   # Scraper: crawl4ai / openai / bs4 etc. (uv-managed pyproject + uv.lock —
   # Dependabot's pip ecosystem supports uv lockfiles).

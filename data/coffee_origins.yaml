@@ -1,10 +1,14 @@
-# Canonical coffee-producing country -> alias list (casings + Slovak spellings)
-# used to translate a stated origin to English and, when origin is null, to
-# scan the product name for a country mention. Region names (Yirgacheffe,
-# Huila, etc.) are deliberately NOT included — literal country matches only.
+# Canonical coffee-producing country -> alias list (casings + Slovak/Czech
+# spellings) used to translate a stated origin to English and, when origin is
+# null, to scan the product name for a country mention. Generic region names
+# that don't pin one country (e.g. Yirgacheffe) are deliberately NOT included.
+# A region that unambiguously belongs to exactly one country IS listed as an
+# alias of that country (e.g. Huila/Tolima -> Colombia, Blue Mountain ->
+# Jamaica, Sumatra -> Indonesia), so a page stating only the region still
+# resolves to its country instead of falling to null (issue #106).
 Ethiopia: [ethiopia, etiópia, etiopia]
 Brazil: [brazil, brazília, brazilia, brasil]
-Colombia: [colombia, kolumbia]
+Colombia: [colombia, kolumbia, huila, tolima]
 Kenya: [kenya, keňa, kena]
 Guatemala: [guatemala]
 Rwanda: [rwanda]
@@ -19,7 +23,7 @@ El Salvador: [el salvador, salvador]
 Bolivia: [bolivia]
 Ecuador: [ecuador, ekvador]
 Vietnam: [vietnam]
-Indonesia: [indonesia, indonézia, indonezia, sumatra]
+Indonesia: [indonesia, indonézia, indonezia, indonézie, indonezie, sumatra]
 India: [india]
 Yemen: [yemen, jemen]
 China: [china, čína, cina]
@@ -31,7 +35,7 @@ Papua New Guinea: [papua new guinea, papua nova guinea]
 Democratic Republic of the Congo: [congo, kongo]
 Ivory Coast: [ivory coast, pobrežie slonoviny]
 Dominican Republic: [dominican republic, dominikánska republika]
-Jamaica: [jamaica, jamajka]
+Jamaica: [jamaica, jamajka, blue mountain]
 Cuba: [cuba, kuba]
 Haiti: [haiti]
 Philippines: [philippines, filipíny, filipiny]

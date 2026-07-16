@@ -28,6 +28,13 @@ definitions:
       name: {type: string, minLength: 1}
       url: {type: string}
       origin: {type: string, minLength: 1}
+      # Blend metadata (issue #91): present only on multi-origin blends, whose
+      # `origin` stays the canonical "Blend" sentinel. blend_origins is the
+      # display-only composition, each entry a canonical country name.
+      blend: {const: true}
+      blend_origins:
+        type: array
+        items: {type: string, minLength: 1}
       process: {enum: [washed, natural, honey, wet-hulled, anaerobic, carbonic-maceration, other, null]}
       roast_type: {enum: [filter, espresso, nespresso, drip-bag]}
       packaging:
@@ -59,6 +66,10 @@ definitions:
       name: {type: string}
       url: {type: string}
       origin: {type: [string, "null"]}
+      blend: {const: true}
+      blend_origins:
+        type: array
+        items: {type: string, minLength: 1}
       process: {enum: [washed, natural, honey, wet-hulled, anaerobic, carbonic-maceration, other, null]}
       roast_type: {type: [string, "null"]}
       packaging:

@@ -806,6 +806,28 @@ def test_normalize_origin_none_for_whitespace_only_raw():
     assert scrape.normalize_origin("   ", "some name") is None
 
 
+@pytest.mark.parametrize(
+    "raw, expected",
+    [
+        # Unambiguous single-country regions heal to their country (issue #106)
+        # rather than being stored raw as "Huila"/"Tolima"/"Blue Mountain".
+        ("Huila", "Colombia"),
+        ("Tolima", "Colombia"),
+        ("Blue Mountain", "Jamaica"),
+        # Czech spelling of a country name.
+        ("Indonézie", "Indonesia"),
+    ],
+)
+def test_normalize_origin_heals_region_and_foreign_country_aliases(raw, expected):
+    assert scrape.normalize_origin(raw, None) == expected
+
+
+def test_normalize_origin_svet_world_is_not_a_country():
+    # "Svet" (Slovak/Czech for "world") pins no source country — stays null
+    # rather than leaking into the origin dropdown (issue #106).
+    assert scrape.normalize_origin("Svet", None) is None
+
+
 # --- normalize_origin blend fallback ------------------------------------------
 
 
@@ -970,6 +992,22 @@ def test_normalize_product_origin_hint_wins_over_llm_guess():
     )
     assert result["status"] == "ok"
     assert result["origin"] == "Blend"
+
+
+def test_normalize_product_unrecognized_origin_hint_falls_through_to_llm():
+    # A hint source must never store raw text verbatim (issue #106): an
+    # unrecognized hint origin is discarded and the LLM's own (recognized)
+    # origin is used instead, rather than "Fantasyland" reaching products.yaml.
+    raw = {
+        "name": "Kolumbia Excelso",
+        "origin": "Colombia",
+        "roast_type": "Filter",
+        "packaging": [{"weight": "250 g", "price": "10,00 €"}],
+    }
+    result = scrape.normalize_product(
+        raw, "https://x.sk/kolumbia/", "2026-07-13", hints=scrape.Hints(origin="Fantasyland")
+    )
+    assert result["origin"] == "Colombia"
 
 
 def test_normalize_product_roast_type_attribute_hint_wins_over_llm_guess():
@@ -1323,6 +1361,103 @@ def test_normalize_product_ok_does_not_false_positive_on_weight_as_price():
     assert result["status"] == "ok"
     result["page_hash"] = "deadbeef"
     scrape.validate_entry(result)
+
+
+# --- normalize_product: blend flag + composition (issue #91) -----------------
+
+
+def test_normalize_product_llm_blend_with_composition():
+    # Model flags the blend and lists its source countries — origin stays the
+    # canonical "Blend" filter key, composition is carried as display data.
+    raw = {
+        "name": "Espresso Zmes",
+        "origin": "Blend",
+        "roast_type": "espresso",
+        "blend": True,
+        "blend_origins": ["Brazília", "Honduras", "India", "Nikaragua"],
+        "packaging": [{"weight": "250 g", "price": "12,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/espresso-zmes/", "2026-07-13")
+    assert result["status"] == "ok"
+    assert result["origin"] == "Blend"
+    assert result["blend"] is True
+    # Slovak aliases normalized to canonical English country names.
+    assert result["blend_origins"] == ["Brazil", "Honduras", "India", "Nicaragua"]
+    result["page_hash"] = "deadbeef"
+    scrape.validate_entry(result)
+
+
+def test_normalize_product_keyword_fallback_sets_blend_without_llm_flag():
+    # No `blend` flag from the model, but the name reads as a blend — the
+    # existing "Blend" origin heuristic still marks it, composition just absent.
+    raw = {
+        "name": "House Blend",
+        "roast_type": "espresso",
+        "packaging": [{"weight": "250 g", "price": "10,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/house-blend/", "2026-07-13")
+    assert result["origin"] == "Blend"
+    assert result["blend"] is True
+    assert "blend_origins" not in result
+
+
+def test_normalize_product_blend_origins_drops_unmatchable_and_dedupes():
+    raw = {
+        "name": "Zmes",
+        "origin": "Blend",
+        "roast_type": "filter",
+        "blend": True,
+        "blend_origins": ["Brazília", "Fantasyland", "brazil", "Etiópia"],
+        "packaging": [{"weight": "250 g", "price": "11,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/zmes/", "2026-07-13")
+    # "Fantasyland" dropped (never stored raw, issue #14); "brazil" deduped.
+    assert result["blend_origins"] == ["Brazil", "Ethiopia"]
+
+
+def test_normalize_product_blend_flag_without_composition_uses_sentinel_origin():
+    # Model flags a blend but states no single country and no composition — the
+    # honest origin is the "Blend" sentinel rather than null.
+    raw = {
+        "name": "Mystery Espresso",
+        "roast_type": "espresso",
+        "blend": True,
+        "packaging": [{"weight": "250 g", "price": "9,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/mystery/", "2026-07-13")
+    assert result["origin"] == "Blend"
+    assert result["blend"] is True
+    assert "blend_origins" not in result
+
+
+def test_normalize_product_single_country_wins_over_blend_flag():
+    # A blend of lots from ONE country (e.g. "Brazil espresso blend") is filed
+    # under that country — a resolved single origin beats the blend flag, so
+    # neither the sentinel origin nor the blend field is applied.
+    raw = {
+        "name": "Brazil Espresso Blend",
+        "origin": "Brazil",
+        "roast_type": "espresso",
+        "blend": True,
+        "blend_origins": ["Brazil"],
+        "packaging": [{"weight": "250 g", "price": "10,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/brazil-blend/", "2026-07-13")
+    assert result["origin"] == "Brazil"
+    assert "blend" not in result
+    assert "blend_origins" not in result
+
+
+def test_normalize_product_single_origin_has_no_blend_fields():
+    raw = {
+        "name": "Kenya AA",
+        "origin": "Kenya",
+        "roast_type": "filter",
+        "packaging": [{"weight": "250 g", "price": "13,00 €"}],
+    }
+    result = scrape.normalize_product(raw, "https://x.sk/kenya/", "2026-07-13")
+    assert "blend" not in result
+    assert "blend_origins" not in result
 
 
 # --- normalize_products (roast-type-axis packaging split) --------------------

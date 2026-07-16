@@ -340,3 +340,59 @@ html[data-theme="dark"] {
 .sl-container {
   background: none !important;
 }
+
+/* ── Baseline prose (issue #121) ──────────────────────────────────────────
+   Starlight ships default typographic styling for docs content (heading
+   rhythm, table borders, code blocks...). Pages migrated onto Layout.astro
+   render raw MDX with none of that, so plain content elements under <main>
+   get a minimal baseline here — :where() keeps specificity at zero so any
+   component's own styling (CoffeeTable's <table>, Card, etc.) always wins
+   without needing !important. Not a design system (that's Phase B) — just
+   enough that migrated content pages don't look broken. */
+main :where(h2, h3, h4) {
+  font-family: var(--font-serif);
+  margin: 2rem 0 0.75rem;
+  line-height: var(--md-sys-typescale-line-height-heading, 1.2);
+}
+
+main :where(p, ul, ol) {
+  line-height: var(--md-sys-typescale-line-height-body, 1.6);
+  color: var(--md-sys-color-on-surface);
+}
+
+main :where(ul, ol) {
+  padding-left: 1.5rem;
+}
+
+main :where(a) {
+  color: var(--md-sys-color-primary);
+}
+
+main :where(table) {
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+main :where(th, td) {
+  border: 1px solid var(--md-sys-color-outline-variant);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+main :where(th) {
+  background: var(--md-sys-color-surface-container-low);
+}
+
+main :where(code) {
+  font-family: monospace;
+  background: var(--md-sys-color-surface-container-low);
+  border-radius: var(--md-sys-shape-corner-extra-small, 4px);
+  padding: 0.15em 0.4em;
+}
+
+main :where(blockquote) {
+  margin: 1rem 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--md-sys-color-outline-variant);
+  color: var(--md-sys-color-on-surface-variant);
+}

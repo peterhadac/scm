@@ -2,6 +2,7 @@
 import { flattenProducts, safeUrl, type RoastType } from '../lib/coffees';
 import { UI, localizedOrigin, localizedProcess, localizedRoastType, type Lang } from '../lib/i18n';
 import { loadPriceHistory, historyKey, sparklinePoints } from '../lib/priceHistory';
+import Badge from './ui/Badge.astro';
 
 interface Props {
   // When set, page is locked to one roast profile: the Roast dropdown is
@@ -156,9 +157,9 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   <div class="ct-legend" aria-label={t.processColourKey}>
     <span class="ct-legend-label">{t.processLegendLabel}</span>
-    <span class="ct-badge ct-badge--washed">{localizedProcess('washed', lang)}</span>
-    <span class="ct-badge ct-badge--honey">{localizedProcess('honey', lang)}</span>
-    <span class="ct-badge ct-badge--natural">{localizedProcess('natural', lang)}</span>
+    <Badge variant="washed" class="text-[9px] px-[0.5em] py-[0.05em]">{localizedProcess('washed', lang)}</Badge>
+    <Badge variant="honey" class="text-[9px] px-[0.5em] py-[0.05em]">{localizedProcess('honey', lang)}</Badge>
+    <Badge variant="natural" class="text-[9px] px-[0.5em] py-[0.05em]">{localizedProcess('natural', lang)}</Badge>
     <span class="ct-legend-sep" aria-hidden="true">·</span>
     <span class="ct-best" title={t.bestValueTitle}>{t.bestValue}</span>
     <span class="ct-legend-desc">{t.bestValueDesc}</span>
@@ -289,7 +290,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               </td>
               <td>
                 {c.process
-                  ? <span class={`ct-badge ct-badge--${PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other'}`} title={processLabel ?? undefined}>{processLabel}</span>
+                  ? <Badge variant={(PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other') as 'washed' | 'honey' | 'natural' | 'other'} title={processLabel ?? undefined}>{processLabel}</Badge>
                   : <span class="ct-muted">—</span>
                 }
               </td>
@@ -565,6 +566,15 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   document.addEventListener('click', (e) => {
     if (filtersToggle.open && !filtersToggle.contains(e.target as Node)) {
       filtersToggle.open = false;
+    }
+  });
+
+  // Close on Escape and return focus to the trigger (design-audit item:
+  // the popover previously had no keyboard dismissal at all).
+  filtersToggle.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && filtersToggle.open) {
+      filtersToggle.open = false;
+      filtersToggle.querySelector('summary')?.focus();
     }
   });
 
@@ -1115,49 +1125,9 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     color: var(--md-sys-color-tertiary);
   }
 
-  /* ── Process badges — use MD3 role colors ─────────────────── */
-  .ct-badge {
-    display: inline-flex;
-    align-items: center;
-    max-width: 14rem;
-    padding: 0.18em 0.65em;
-    border-radius: var(--md-sys-shape-corner-full);
-    font-family: var(--font-sans);
-    font-size: var(--md-sys-typescale-label-small-size);
-    font-weight: 500;
-    letter-spacing: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    border: 1px solid transparent;
-  }
-
-  /* washed → secondary role (Aqua Mist — clean water) */
-  .ct-badge--washed {
-    background: var(--md-sys-color-secondary-container);
-    color: var(--md-sys-color-on-secondary-container);
-    border-color: color-mix(in srgb, var(--md-sys-color-secondary) 32%, transparent);
-  }
-
-  /* natural → tertiary role (Garnet — earthy / dry) */
-  .ct-badge--natural {
-    background: var(--md-sys-color-tertiary-container);
-    color: var(--md-sys-color-on-tertiary-container);
-    border-color: color-mix(in srgb, var(--md-sys-color-tertiary) 32%, transparent);
-  }
-
-  /* honey → primary role (Toxic Orange — warm / amber) */
-  .ct-badge--honey {
-    background: var(--md-sys-color-primary-container);
-    color: var(--md-sys-color-on-primary-container);
-    border-color: color-mix(in srgb, var(--md-sys-color-primary) 32%, transparent);
-  }
-
-  .ct-badge--other {
-    background: var(--md-sys-color-surface-container-high);
-    color: var(--md-sys-color-on-surface-variant);
-    border-color: var(--md-sys-color-outline-variant);
-  }
+  /* Process badges are now the shared <Badge> component
+     (src/components/ui/Badge.astro) — the four --washed/--natural/--honey/
+     --other variants used to be duplicated here as separate CSS blocks. */
 
   /* ── Process legend ──────────────────────────────────────── */
   .ct-legend {
@@ -1168,11 +1138,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     font-size: 0.7rem;
     color: var(--md-sys-color-outline);
     opacity: 0.85;
-  }
-
-  .ct-legend .ct-badge {
-    padding: 0.05em 0.5em;
-    font-size: 0.68rem;
   }
 
   .ct-legend .ct-best {

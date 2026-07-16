@@ -1,0 +1,42 @@
+---
+// shadcn-shaped Button, re-themed to Design.md's six brand tokens (not
+// shadcn's default palette). Replaces the hand-rolled `.action.primary` /
+// `.action.secondary` pill buttons — see docs/design-audit-followups.md.
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '../../lib/utils';
+
+const buttonVariants = cva(
+  'inline-flex items-center justify-center rounded-full font-sans font-medium transition-colors duration-150 disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+  {
+    variants: {
+      variant: {
+        primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        secondary: 'border border-border text-primary hover:bg-primary/8',
+      },
+      size: {
+        default: 'px-6 py-2.5 text-sm',
+        sm: 'px-4 py-1.5 text-xs',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'default',
+    },
+  },
+);
+
+interface Props extends VariantProps<typeof buttonVariants> {
+  href?: string;
+  class?: string;
+  target?: string;
+  rel?: string;
+}
+
+const { href, variant, size, class: className, target, rel } = Astro.props;
+const classes = cn(buttonVariants({ variant, size }), className);
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag class={classes} href={href} target={target} rel={rel} type={href ? undefined : 'button'}>
+  <slot />
+</Tag>

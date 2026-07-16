@@ -1,0 +1,39 @@
+---
+// shadcn-shaped Badge, re-themed to Design.md's six brand tokens. Replaces
+// the four near-duplicate `.ct-badge--washed/--honey/--natural/--other`
+// CSS blocks in CoffeeTable.astro with one typed variant — see
+// docs/design-audit-followups.md.
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '../../lib/utils';
+
+const badgeVariants = cva(
+  'inline-flex max-w-[14rem] items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-full border px-[0.65em] py-[0.18em] font-sans text-[11px] font-medium',
+  {
+    variants: {
+      // washed → secondary role (Aqua Mist, clean water)
+      // honey  → primary role (Toxic Orange, warm/amber)
+      // natural→ tertiary role (Garnet, earthy/dry)
+      variant: {
+        washed: 'border-secondary/40 bg-secondary/20 text-foreground',
+        honey: 'border-primary/40 bg-primary/15 text-foreground',
+        natural: 'border-tertiary/40 bg-tertiary/15 text-foreground',
+        other: 'border-border bg-muted text-muted-foreground',
+      },
+    },
+    defaultVariants: {
+      variant: 'other',
+    },
+  },
+);
+
+interface Props extends VariantProps<typeof badgeVariants> {
+  class?: string;
+  title?: string;
+}
+
+const { variant, class: className, title } = Astro.props;
+---
+
+<span class={cn(badgeVariants({ variant }), className)} title={title}>
+  <slot />
+</span>

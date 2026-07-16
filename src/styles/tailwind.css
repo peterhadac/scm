@@ -1,0 +1,41 @@
+/* Tailwind CSS, scoped to shadcn-style UI components only (src/components/ui).
+   Preflight is intentionally NOT imported — see the comment in
+   astro.config.mjs. This site still has Starlight-rendered docs pages and
+   ~150 MD3 tokens (custom.css) that a global CSS reset would visibly break.
+   Only the theme layer (design tokens) and utilities layer are loaded. */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/* Six-color palette, exact hex per Design.md — do not add a color here that
+   isn't already in Design.md's Colour Palette section. */
+@theme {
+  --color-toxic-orange: #ff6037;
+  --color-black-kite: #351e1c;
+  --color-garnet: #733635;
+  --color-morning-snow: #f5f4ed;
+  --color-amazon-mist: #ececdc;
+  --color-aqua-mist: #a0c9cb;
+
+  /* shadcn-shaped semantic roles, re-themed to the six tokens above instead
+     of shadcn's default zinc/slate palette (design-audit item: "Tailwind
+     theme = Design.md, not shadcn defaults" — see
+     docs/design-audit-followups.md). */
+  --color-background: var(--color-morning-snow);
+  --color-foreground: var(--color-black-kite);
+  --color-surface: #ffffff;
+  --color-primary: var(--color-toxic-orange);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--color-aqua-mist);
+  --color-secondary-foreground: var(--color-black-kite);
+  --color-tertiary: var(--color-garnet);
+  --color-tertiary-foreground: #ffffff;
+  --color-muted: var(--color-amazon-mist);
+  --color-muted-foreground: #6b5a56;
+  --color-border: #ded9c9;
+  --color-ring: var(--color-toxic-orange);
+
+  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+
+  --radius-full: 999px;
+}

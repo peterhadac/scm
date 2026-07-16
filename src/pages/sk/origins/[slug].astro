@@ -1,7 +1,8 @@
 ---
 // Slovak mirror of the per-origin landing page (issue #58) — same slugs
-// (canonical English origin keys), Slovak prose and labels.
-import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+// (canonical English origin keys), Slovak prose and labels. Migrated off
+// Starlight (issue #121).
+import Layout from '../../../layouts/Layout.astro';
 import CoffeeTable from '../../../components/CoffeeTable.astro';
 import { listOrigins, originJsonLd } from '../../../lib/origins';
 import { localizedOrigin } from '../../../lib/i18n';
@@ -21,8 +22,9 @@ const intro =
     : `Všetky kávy z krajiny ${label} aktuálne dostupné u slovenských výberových pražiarní — ${summary.coffeeCount} káv od ${summary.roasterCount} pražiarní, obnovované každý týždeň.`;
 ---
 
-<StarlightPage frontmatter={{ title, description: intro, tableOfContents: false }}>
+<Layout title={title} description={intro}>
   <script type="application/ld+json" set:html={jsonLd} />
+  <h1>{title}</h1>
   <p>{intro}</p>
-  <CoffeeTable origin={summary.origin} />
-</StarlightPage>
+  <CoffeeTable lang="sk" origin={summary.origin} />
+</Layout>

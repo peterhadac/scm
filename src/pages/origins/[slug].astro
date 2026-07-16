@@ -2,8 +2,9 @@
 // English per-origin landing page (issue #58): /scm/origins/<slug>/ —
 // targets long-tail searches ("Ethiopian coffee Slovakia") with a short
 // intro, the origin-filtered table, and Product/AggregateOffer JSON-LD.
-// The SK mirror lives at src/pages/sk/origins/[slug].astro.
-import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+// Migrated off Starlight (issue #121). SK mirror:
+// src/pages/sk/origins/[slug].astro.
+import Layout from '../../layouts/Layout.astro';
 import CoffeeTable from '../../components/CoffeeTable.astro';
 import { listOrigins, originJsonLd } from '../../lib/origins';
 import { localizedOrigin } from '../../lib/i18n';
@@ -23,8 +24,9 @@ const intro =
     : `Every coffee from ${label} currently available from Slovak specialty roasters — ${summary.coffeeCount} coffees from ${summary.roasterCount} roasters, refreshed weekly.`;
 ---
 
-<StarlightPage frontmatter={{ title, description: intro, tableOfContents: false }}>
+<Layout title={title} description={intro}>
   <script type="application/ld+json" set:html={jsonLd} />
+  <h1>{title}</h1>
   <p>{intro}</p>
-  <CoffeeTable origin={summary.origin} />
-</StarlightPage>
+  <CoffeeTable lang="en" origin={summary.origin} />
+</Layout>

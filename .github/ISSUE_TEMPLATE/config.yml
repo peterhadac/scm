@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Browse the coffee table / Tabuľka káv
+    url: https://peterhadac.github.io/scm/coffees/
+    about: The site this repository builds. / Stránka, ktorú tento repozitár generuje.

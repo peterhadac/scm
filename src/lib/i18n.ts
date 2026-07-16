@@ -48,6 +48,7 @@ export const UI = {
     sparklineLabel: (from: string) => `Price history since ${from}`,
     tipNudge: 'Found a cheaper coffee here? Consider tipping the difference:',
     tipNudgeLink: 'Ko-fi',
+    reportRowTitle: (name: string) => `Report wrong data for ${name}`,
   },
   sk: {
     search: 'Hľadať',
@@ -81,6 +82,7 @@ export const UI = {
     sparklineLabel: (from: string) => `História ceny od ${from}`,
     tipNudge: 'Našli ste tu lacnejšiu kávu? Zvážte, či rozdiel nepošlete ako tip:',
     tipNudgeLink: 'Ko-fi',
+    reportRowTitle: (name: string) => `Nahlásiť nesprávne údaje pre ${name}`,
   },
 } satisfies Record<Lang, Record<string, string | ((...args: never[]) => string)>>;
 

@@ -1,0 +1,34 @@
+name: Wrong coffee data / Nesprávne údaje o káve
+description: A price, origin, weight, or availability on the site doesn't match the roaster's page. / Cena, pôvod, hmotnosť alebo dostupnosť na stránke nesedí s e-shopom pražiarne.
+title: "Wrong data: "
+labels: [data]
+body:
+  - type: input
+    id: product-url
+    attributes:
+      label: Product URL / Odkaz na produkt
+      description: The roaster's product page (the link the coffee's name points to). / Produktová stránka pražiarne (odkaz, na ktorý ukazuje názov kávy).
+      placeholder: https://…
+    validations:
+      required: true
+  - type: dropdown
+    id: field
+    attributes:
+      label: What is wrong? / Čo nesedí?
+      options:
+        - Price / Cena
+        - Origin / Pôvod
+        - Weight / Hmotnosť
+        - Process / Spracovanie
+        - Roast type / Typ praženia
+        - Coffee no longer sold / Káva sa už nepredáva
+        - Something else / Iné
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: What should it be? / Ako to má byť správne?
+      description: What the site shows vs. what the roaster's page shows. / Čo zobrazuje stránka vs. čo uvádza pražiareň.
+    validations:
+      required: true

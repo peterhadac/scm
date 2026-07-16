@@ -1,0 +1,13 @@
+---
+// SK mirror of src/pages/about-data.astro (issue #121).
+import Layout from '../../layouts/Layout.astro';
+import { getEntry, render } from 'astro:content';
+
+const entry = await getEntry('docs', 'sk/about-data');
+const { Content } = await render(entry);
+---
+
+<Layout title={entry.data.title} description={entry.data.description}>
+  <h1>{entry.data.title}</h1>
+  <Content />
+</Layout>

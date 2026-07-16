@@ -91,11 +91,15 @@ roasters:
     slug: kavoholik
     url: https://kavoholik.sk/
     scrape_url: https://kavoholik.sk/
+    metadata:
+      city: Bratislava
   - name: Coffeein
     slug: coffeein
     url: https://www.coffeein.sk/
     scrape_url: https://www.coffeein.sk/
     scraper: playwright   # opt-in for JS-heavy sites
+    metadata:
+      city: Šahy
   - name: Ready After
     slug: ready-after
     url: https://www.readyafter.sk/
@@ -103,11 +107,13 @@ roasters:
     roast_type_urls:   # site never states roast_type on the product page itself
       espresso: https://www.readyafter.sk/espresso-zmesi/
       filter: https://www.readyafter.sk/kava-filter/
+    metadata:
+      city: Bošany
 ```
 
 (See the real [`roasters.yaml`](./roasters.yaml) ~30 lines below this file for the full, current list — this snippet only illustrates the optional keys.)
 
-`slug` is the stable key `data/products.yaml` is keyed on (lowercase-kebab of the name). `url` is the roaster's canonical site link; `scrape_url` is the discovery entry point the scraper crawls for product links — usually the same page, but point it at the actual shop/listing page when the homepage doesn't link to every product. `metadata` is optional, added as roaster details are gathered — not required for the scraper to run; currently just `{city: <string>}` (the roaster's Slovak town/city), not read by the scraper itself. Add `scraper: playwright` to any roaster that requires JavaScript rendering (selects crawl4ai's browser-backed crawler instead of the HTTP one). `roast_type_urls` (optional, mapping of `roast_type` value → category URL, e.g. `{espresso: <url>, filter: <url>}` — `nespresso`/`drip-bag` keys work too) is for sites (Shopify collections, Shoptet category pages) that only reveal a product's roast type through which category page links to it, never on the product page itself — the scraper crawls each configured category and uses it as a last-resort `roast_type` fallback (see `discover_roast_type_hints()` in `scraper/scrape.py`).
+Every entry is validated against [`roasters.schema.yaml`](./roasters.schema.yaml) (via `jsonschema.validate` in `load_roasters()`, `scraper/scrape.py`) — a malformed entry raises immediately rather than being scraped with bad config. `slug` is the stable key `data/products.yaml` is keyed on (lowercase-kebab of the name). `url` is the roaster's canonical site link; `scrape_url` is the discovery entry point the scraper crawls for product links — usually the same page, but point it at the actual shop/listing page when the homepage doesn't link to every product. `metadata.city` (the roaster's Slovak town/city) is **required** — it's not read by the scraper itself, but the roaster map (`src/components/RoasterMap.astro` / `src/lib/mapData.ts`) needs it to place every roaster; a roaster missing it used to silently fall into the map's "not on the map yet" list instead of failing the scrape run (issue: `roasters.yaml` accumulated 16 such roasters before the schema made it required). If the city isn't already in `CITY_COORDS` (`src/lib/mapData.ts`), add its coordinates there too. Add `scraper: playwright` to any roaster that requires JavaScript rendering (selects crawl4ai's browser-backed crawler instead of the HTTP one). `roast_type_urls` (optional, mapping of `roast_type` value → category URL, e.g. `{espresso: <url>, filter: <url>}` — `nespresso`/`drip-bag` keys work too) is for sites (Shopify collections, Shoptet category pages) that only reveal a product's roast type through which category page links to it, never on the product page itself — the scraper crawls each configured category and uses it as a last-resort `roast_type` fallback (see `discover_roast_type_hints()` in `scraper/scrape.py`).
 
 ## Scraper (`scraper/scrape.py`)
 
@@ -363,7 +369,8 @@ pnpm dev             # astro dev server with live reload
 
 ## Adding a New Roaster
 
-1. Add entry to `roasters.yaml` (`name`, `slug`, `url`)
-2. Run scraper locally to verify extraction works
-3. If output is empty, add `scraper: playwright` and re-test
-4. Commit `roasters.yaml` — next cron run picks it up
+1. Add entry to `roasters.yaml` (`name`, `slug`, `url`, `scrape_url`, and `metadata.city` — the roastery's Slovak town, required by [`roasters.schema.yaml`](./roasters.schema.yaml) so the roaster shows up on the map)
+2. If `metadata.city` names a town not already in `CITY_COORDS` (`src/lib/mapData.ts`), add its coordinates there too
+3. Run scraper locally to verify extraction works — this also validates the new entry against `roasters.schema.yaml`
+4. If output is empty, add `scraper: playwright` and re-test
+5. Commit `roasters.yaml` — next cron run picks it up

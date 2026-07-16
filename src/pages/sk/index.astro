@@ -5,6 +5,7 @@ import Layout from '../../layouts/Layout.astro';
 import Card from '../../components/Card.astro';
 import CardGrid from '../../components/CardGrid.astro';
 import MemeCard from '../../components/MemeCard.astro';
+import Button from '../../components/ui/Button.astro';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -24,8 +25,8 @@ const heroSvg = `<svg width="200" height="220" viewBox="0 0 200 220" fill="none"
       každý pondelok.
     </p>
     <div class="hero-actions">
-      <a class="action primary" href={`${base}/sk/coffees/`}>Prehliadať kávy →</a>
-      <a class="action secondary" href={`${base}/sk/this-week/`}>Čo sa zmenilo tento týždeň</a>
+      <Button href={`${base}/sk/coffees/`} variant="primary">Prehliadať kávy →</Button>
+      <Button href={`${base}/sk/this-week/`} variant="secondary">Čo sa zmenilo tento týždeň</Button>
     </div>
   </section>
 
@@ -73,7 +74,8 @@ const heroSvg = `<svg width="200" height="220" viewBox="0 0 200 220" fill="none"
   .hero-image {
     margin: 0 auto 1rem;
     width: 10rem;
-    filter: drop-shadow(0 8px 32px color-mix(in oklch, #ff6037 22%, transparent));
+    /* Drop-shadow filter lives on the global `.hero-image svg` rule in
+       custom.css, not here — this rule used to duplicate it verbatim. */
   }
 
   .hero h1 {
@@ -95,33 +97,6 @@ const heroSvg = `<svg width="200" height="220" viewBox="0 0 200 220" fill="none"
     justify-content: center;
     flex-wrap: wrap;
     gap: 0.75rem;
-  }
-
-  .action {
-    display: inline-block;
-    padding: 0.625rem 1.5rem;
-    border-radius: var(--md-sys-shape-corner-full);
-    font-weight: var(--md-sys-typescale-label-large-weight);
-    text-decoration: none;
-    transition: background var(--md3-motion-duration-state, 150ms) var(--md-sys-motion-easing-standard);
-  }
-
-  .action.primary {
-    background: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
-  }
-
-  .action.primary:hover {
-    background: color-mix(in srgb, var(--md-sys-color-primary) 88%, var(--md-sys-color-on-primary));
-  }
-
-  .action.secondary {
-    border: 1px solid var(--md-sys-color-outline);
-    color: var(--md-sys-color-primary);
-  }
-
-  .action.secondary:hover {
-    background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
   }
 
   .closing {

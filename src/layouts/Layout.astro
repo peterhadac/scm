@@ -4,6 +4,7 @@
 // pages keep rendering through Starlight untouched; this and Starlight
 // coexist until every route has moved (see issue #121's migration order).
 import '../styles/custom.css';
+import '../styles/tailwind.css';
 import Wordmark from '../components/Wordmark.astro';
 import FreshnessBadge from '../components/FreshnessBadge.astro';
 import { NAV, isNavGroup } from '../lib/nav';
@@ -153,7 +154,7 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
           </ul>
         </nav>
         <button id="theme-toggle" class="theme-toggle" type="button" aria-label={T.theme}>
-          <span data-theme-label>Auto</span>
+          <span data-theme-label aria-live="polite">Auto</span>
         </button>
         <a class="lang-switch" href={otherLangHref} hreflang={otherLang}>{T.switchTo}</a>
       </div>

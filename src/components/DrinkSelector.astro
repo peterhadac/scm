@@ -1,0 +1,419 @@
+---
+// DrinkSelector — a faithful reproduction of a bean-to-cup machine's
+// touchscreen drink-selection panel: brushed stainless fascia, inset dark
+// bezel, white LCD with an info icon, "Select your drink" title, settings
+// gear, and a row of five drink illustrations (Americano · Café Crema ·
+// Latte · Flat White · Cappuccino) with a finger pressing "Latte".
+//
+// The steel greys / skin tones here are pictorial content (the machine and
+// hand being depicted), not UI chrome — the same way scraped product photos
+// aren't limited to the brand palette. Interactive text uses DM Sans.
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  lang?: Lang;
+  /** Render the pointing hand overlay (on by default, matches the photo). */
+  hand?: boolean;
+}
+const { lang = 'en', hand = true } = Astro.props;
+
+const T = {
+  en: { title: 'Select your drink', info: 'Info', settings: 'Settings' },
+  sk: { title: 'Vyberte si nápoj', info: 'Informácie', settings: 'Nastavenia' },
+}[lang];
+---
+
+<figure class="ds" aria-label={T.title}>
+  <div class="ds-fascia">
+    <div class="ds-seam ds-seam--left" aria-hidden="true"></div>
+    <div class="ds-seam ds-seam--right" aria-hidden="true"></div>
+
+    <div class="ds-bezel">
+      <div class="ds-lcd">
+        <header class="ds-bar">
+          <button class="ds-icon-btn ds-info" type="button" aria-label={T.info}>i</button>
+          <span class="ds-title">{T.title}</span>
+          <button class="ds-icon-btn" type="button" aria-label={T.settings}>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M12 8.4a3.6 3.6 0 1 0 0 7.2 3.6 3.6 0 0 0 0-7.2Zm8.94 3.6c0-.53-.05-1.04-.13-1.54l2.03-1.58-2-3.46-2.39.96a7.9 7.9 0 0 0-2.67-1.55L15.4 2.3h-4l-.38 2.53a7.9 7.9 0 0 0-2.67 1.55l-2.39-.96-2 3.46 2.03 1.58a8.2 8.2 0 0 0 0 3.08l-2.03 1.58 2 3.46 2.39-.96c.78.68 1.69 1.21 2.67 1.55l.38 2.53h4l.38-2.53a7.9 7.9 0 0 0 2.67-1.55l2.39.96 2-3.46-2.03-1.58c.08-.5.13-1.01.13-1.54Z"
+              />
+            </svg>
+          </button>
+        </header>
+
+        <div class="ds-viewport">
+          <div class="ds-row" role="group" aria-label={T.title}>
+            <!-- Americano — tall glass, black coffee, thin crema ring -->
+            <button class="ds-drink" type="button" data-drink="americano">
+              <svg viewBox="0 0 96 112" aria-hidden="true">
+                <defs>
+                  <linearGradient id="ds-am-glass" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0" stop-color="#e9e9e9" />
+                    <stop offset=".12" stop-color="#fbfbfb" />
+                    <stop offset=".5" stop-color="#f1f1f1" />
+                    <stop offset=".88" stop-color="#e2e2e2" />
+                    <stop offset="1" stop-color="#d7d7d7" />
+                  </linearGradient>
+                  <linearGradient id="ds-am-coffee" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0" stop-color="#33201a" />
+                    <stop offset=".5" stop-color="#1d100c" />
+                    <stop offset="1" stop-color="#2a1712" />
+                  </linearGradient>
+                </defs>
+                <ellipse cx="48" cy="106" rx="26" ry="4" fill="#000" opacity=".12" />
+                <path
+                  d="M27 8h42l-3 92a6 6 0 0 1-6 5.6H36a6 6 0 0 1-6-5.6Z"
+                  fill="url(#ds-am-glass)"
+                  stroke="#c9c9c9"
+                  stroke-width="1"
+                />
+                <path d="M31.5 24h33l-2.1 74a4.5 4.5 0 0 1-4.5 4H38.1a4.5 4.5 0 0 1-4.5-4Z" fill="url(#ds-am-coffee)" />
+                <path d="M31.9 24h32.2l-.25 6H32.15Z" fill="#a3703f" />
+                <path d="M34 30 l-1.6 66 a4 4 0 0 0 2.8 4" fill="none" stroke="#ffffff" stroke-opacity=".28" stroke-width="3" stroke-linecap="round" />
+              </svg>
+              <span class="ds-label">Americano</span>
+            </button>
+
+            <!-- Café Crema — double-walled glass, espresso + thick crema -->
+            <button class="ds-drink" type="button" data-drink="cafe-crema">
+              <svg viewBox="0 0 96 112" aria-hidden="true">
+                <defs>
+                  <linearGradient id="ds-cc-glass" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0" stop-color="#ececec" />
+                    <stop offset=".15" stop-color="#fcfcfc" />
+                    <stop offset=".5" stop-color="#f3f3f3" />
+                    <stop offset=".9" stop-color="#dfdfdf" />
+                    <stop offset="1" stop-color="#d4d4d4" />
+                  </linearGradient>
+                  <linearGradient id="ds-cc-coffee" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#3a221a" />
+                    <stop offset="1" stop-color="#20110c" />
+                  </linearGradient>
+                  <linearGradient id="ds-cc-crema" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#d7a562" />
+                    <stop offset="1" stop-color="#b27c42" />
+                  </linearGradient>
+                </defs>
+                <ellipse cx="48" cy="106" rx="27" ry="4" fill="#000" opacity=".12" />
+                <path
+                  d="M24 22c0-4 3-7 7-7h34c4 0 7 3 7 7v58c0 14-10 25-24 25S24 94 24 80Z"
+                  fill="url(#ds-cc-glass)"
+                  stroke="#c7c7c7"
+                  stroke-width="1"
+                />
+                <path d="M31 46c0-3 2.5-5 5.5-5h23c3 0 5.5 2 5.5 5v32c0 10-7.4 18-17 18s-17-8-17-18Z" fill="url(#ds-cc-coffee)" />
+                <path d="M31 46c0-3 2.5-5 5.5-5h23c3 0 5.5 2 5.5 5v10H31Z" fill="url(#ds-cc-crema)" />
+                <path d="M30 26 v52 a18 18 0 0 0 6 13" fill="none" stroke="#ffffff" stroke-opacity=".45" stroke-width="3" stroke-linecap="round" />
+              </svg>
+              <span class="ds-label">Café Crema</span>
+            </button>
+
+            <!-- Latte — tall tulip glass, milky coffee, foam cap -->
+            <button class="ds-drink is-selected" type="button" data-drink="latte" aria-pressed="true">
+              <svg viewBox="0 0 96 112" aria-hidden="true">
+                <defs>
+                  <linearGradient id="ds-la-body" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#c8a97e" />
+                    <stop offset=".55" stop-color="#b08a5c" />
+                    <stop offset="1" stop-color="#96714a" />
+                  </linearGradient>
+                  <linearGradient id="ds-la-foam" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#f6ecdd" />
+                    <stop offset="1" stop-color="#e3d0b4" />
+                  </linearGradient>
+                </defs>
+                <ellipse cx="48" cy="106" rx="24" ry="4" fill="#000" opacity=".12" />
+                <path
+                  d="M29 8h38l-2.5 90a6.5 6.5 0 0 1-6.5 6H38a6.5 6.5 0 0 1-6.5-6Z"
+                  fill="url(#ds-la-body)"
+                  stroke="#c4a175"
+                  stroke-width="1"
+                />
+                <path d="M29.2 8h37.6l-.5 17H29.7Z" fill="url(#ds-la-foam)" />
+                <path d="M29.7 25h36.6l-.2 5H29.85Z" fill="#d9b98b" />
+                <path d="M33.5 30 l-1.8 66 a4.5 4.5 0 0 0 2.8 4.4" fill="none" stroke="#ffffff" stroke-opacity=".35" stroke-width="3" stroke-linecap="round" />
+              </svg>
+              <span class="ds-label">Latte</span>
+            </button>
+
+            <!-- Flat White — white cup + saucer, rosetta latte art -->
+            <button class="ds-drink" type="button" data-drink="flat-white">
+              <svg viewBox="0 0 96 112" aria-hidden="true">
+                <defs>
+                  <linearGradient id="ds-fw-cup" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#ffffff" />
+                    <stop offset="1" stop-color="#dcdcdc" />
+                  </linearGradient>
+                  <radialGradient id="ds-fw-coffee" cx=".5" cy=".45" r=".65">
+                    <stop offset="0" stop-color="#c08e58" />
+                    <stop offset="1" stop-color="#9c6c3e" />
+                  </radialGradient>
+                </defs>
+                <ellipse cx="46" cy="102" rx="34" ry="6" fill="#000" opacity=".1" />
+                <ellipse cx="46" cy="98" rx="32" ry="7" fill="url(#ds-fw-cup)" stroke="#cfcfcf" stroke-width="1" />
+                <path d="M74 62c8-1 13 3 13 9s-6 11-14 10l.6-4.5c5 .8 8.9-2 8.9-5.5s-3.2-5.7-8-5Z" fill="url(#ds-fw-cup)" stroke="#cfcfcf" stroke-width="1" />
+                <path d="M16 58h60l-3.4 30a10 10 0 0 1-10 8.6H29.4a10 10 0 0 1-10-8.6Z" fill="url(#ds-fw-cup)" stroke="#cfcfcf" stroke-width="1" />
+                <ellipse cx="46" cy="58" rx="30" ry="9" fill="#ffffff" stroke="#d6d6d6" stroke-width="1" />
+                <ellipse cx="46" cy="58" rx="25" ry="6.8" fill="url(#ds-fw-coffee)" />
+                <g fill="none" stroke="#f3e7d6" stroke-width="2.4" stroke-linecap="round">
+                  <path d="M46 52.6v10" />
+                  <path d="M46 54.4c-4-.6-7-.2-9.5 1.4M46 54.4c4-.6 7-.2 9.5 1.4" />
+                  <path d="M46 57c-3.4-.5-6-.1-8 1.2M46 57c3.4-.5 6-.1 8 1.2" />
+                  <path d="M46 59.6c-2.6-.4-4.4 0-6 .9M46 59.6c2.6-.4 4.4 0 6 .9" />
+                </g>
+              </svg>
+              <span class="ds-label">Flat White</span>
+            </button>
+
+            <!-- Cappuccino — garnet mug, foam top -->
+            <button class="ds-drink" type="button" data-drink="cappuccino">
+              <svg viewBox="0 0 96 112" aria-hidden="true">
+                <defs>
+                  <linearGradient id="ds-ca-mug" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0" stop-color="#7d403c" />
+                    <stop offset=".2" stop-color="#8f4c45" />
+                    <stop offset=".6" stop-color="#5f2b28" />
+                    <stop offset="1" stop-color="#48201e" />
+                  </linearGradient>
+                  <linearGradient id="ds-ca-foam" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#f8f1e4" />
+                    <stop offset="1" stop-color="#e8d8bd" />
+                  </linearGradient>
+                </defs>
+                <ellipse cx="48" cy="106" rx="27" ry="4" fill="#000" opacity=".12" />
+                <path
+                  d="M22 26c0-4 3-7 7-7h38c4 0 7 3 7 7v56c0 11-8 20-19 20H41c-11 0-19-9-19-20Z"
+                  fill="url(#ds-ca-mug)"
+                />
+                <ellipse cx="48" cy="26" rx="26" ry="8" fill="url(#ds-ca-foam)" stroke="#d9c5a4" stroke-width="1" />
+                <ellipse cx="41" cy="24.6" rx="9" ry="3.4" fill="#ffffff" opacity=".7" />
+                <path d="M27 34 v48 a15 15 0 0 0 6 12" fill="none" stroke="#ffffff" stroke-opacity=".18" stroke-width="4" stroke-linecap="round" />
+              </svg>
+              <span class="ds-label">Cappuccino</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {hand && (
+      <svg class="ds-hand" viewBox="0 0 220 300" aria-hidden="true">
+        <defs>
+          <linearGradient id="ds-skin" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#efc3a4" />
+            <stop offset=".6" stop-color="#e2ab87" />
+            <stop offset="1" stop-color="#cf9270" />
+          </linearGradient>
+        </defs>
+        <!-- forearm + palm mass -->
+        <path
+          d="M52 300c-4-52 2-96 14-124 8-19 20-28 34-30l14-2 46 10c22 6 36 20 40 42l6 104Z"
+          fill="url(#ds-skin)"
+        />
+        <!-- index finger, pressing up-left -->
+        <path
+          d="M84 152 66 44c-2-12 4-22 15-24s19 5 21 17l18 106c1 8-4 14-12 16-9 2-16-2-19-11Z"
+          fill="url(#ds-skin)"
+        />
+        <!-- fingernail -->
+        <ellipse cx="76" cy="36" rx="8.5" ry="11" fill="#f6dcc8" opacity=".85" transform="rotate(-10 76 36)" />
+        <!-- curled fingers: three knuckle bumps -->
+        <path
+          d="M104 148c2-14 12-22 26-20s22 12 20 26l-2 12-46-6Z"
+          fill="url(#ds-skin)"
+        />
+        <path
+          d="M136 152c2-12 11-19 23-17s19 11 17 23l-2 10-40-6Z"
+          fill="url(#ds-skin)"
+        />
+        <path
+          d="M164 160c2-10 9-16 19-14s16 9 14 19l-2 9-33-5Z"
+          fill="url(#ds-skin)"
+        />
+        <!-- knuckle creases -->
+        <g fill="none" stroke="#b97e5f" stroke-opacity=".5" stroke-width="2.5" stroke-linecap="round">
+          <path d="M104 150c6-9 15-13 25-12" />
+          <path d="M138 154c5-8 13-11 21-10" />
+          <path d="M166 161c4-6 10-9 16-8" />
+          <path d="M86 140l16 4" />
+        </g>
+      </svg>
+    )}
+  </div>
+</figure>
+
+<style>
+  .ds {
+    margin: 0 auto;
+    max-width: 640px;
+    container-type: inline-size;
+  }
+
+  /* Brushed stainless fascia */
+  .ds-fascia {
+    position: relative;
+    padding: 12.5% 8% 22%;
+    border-radius: 4px;
+    background:
+      repeating-linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.06) 0 1px,
+        rgba(0, 0, 0, 0.03) 1px 2px,
+        rgba(255, 255, 255, 0) 2px 3px
+      ),
+      linear-gradient(180deg, #e7e8ea 0%, #cfd1d4 18%, #babcc0 45%, #c6c8cc 72%, #9fa1a6 100%);
+    box-shadow:
+      inset 0 2px 3px rgba(255, 255, 255, 0.8),
+      inset 0 -3px 6px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+  }
+  .ds-seam {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.28), rgba(255, 255, 255, 0.5));
+  }
+  .ds-seam--left {
+    left: 3.5%;
+  }
+  .ds-seam--right {
+    right: 3.5%;
+  }
+
+  /* Dark screen bezel, inset into the steel */
+  .ds-bezel {
+    position: relative;
+    border-radius: 10px;
+    padding: 2.4%;
+    background: linear-gradient(180deg, #2c2c2e, #131314 55%, #060607);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.55),
+      0 10px 24px rgba(0, 0, 0, 0.38),
+      inset 0 1px 2px rgba(255, 255, 255, 0.12);
+  }
+
+  .ds-lcd {
+    border-radius: 6px;
+    background: #f7f7f5;
+    overflow: hidden;
+    box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.08);
+  }
+
+  .ds-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    border-bottom: 1px solid #d9d9d4;
+  }
+  .ds-title {
+    font-family: var(--font-sans, 'DM Sans', sans-serif);
+    font-weight: 500;
+    font-size: clamp(0.85rem, 3.4cqi, 1.15rem);
+    color: #1f1d1b;
+    letter-spacing: 0.01em;
+  }
+  .ds-icon-btn {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #4a4844;
+    cursor: pointer;
+    font-family: var(--font-serif, 'DM Serif Display', serif);
+    font-style: italic;
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+  .ds-icon-btn:hover {
+    background: rgba(0, 0, 0, 0.06);
+  }
+  .ds-info {
+    color: #1f1d1b;
+  }
+
+  /* Drink row — wider than the LCD so the edge drinks clip like the photo */
+  .ds-viewport {
+    overflow: hidden;
+    padding: 4.5% 0 5.5%;
+  }
+  .ds-row {
+    display: flex;
+    justify-content: center;
+    gap: 2cqi;
+    width: 114%;
+    margin-left: -7%;
+  }
+
+  .ds-drink {
+    flex: 0 0 auto;
+    width: 19.5cqi;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 0 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: transform 120ms ease;
+  }
+  .ds-drink svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .ds-drink:hover {
+    transform: translateY(-2px);
+  }
+  .ds-drink.is-selected {
+    transform: scale(0.97);
+  }
+  .ds-label {
+    font-family: var(--font-sans, 'DM Sans', sans-serif);
+    font-weight: 500;
+    font-size: clamp(0.7rem, 2.6cqi, 0.95rem);
+    color: #1f1d1b;
+    white-space: nowrap;
+  }
+
+  /* Pointing hand overlay — reaches up from below to press "Latte" */
+  .ds-hand {
+    position: absolute;
+    left: 31%;
+    bottom: -2%;
+    width: 34%;
+    height: auto;
+    filter: drop-shadow(-6px 10px 14px rgba(0, 0, 0, 0.35));
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-drink {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // Vanilla selection toggle, same no-island pattern as CoffeeTable.astro.
+  document.querySelectorAll('.ds').forEach((root) => {
+    const drinks = root.querySelectorAll<HTMLButtonElement>('.ds-drink');
+    drinks.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        drinks.forEach((d) => {
+          d.classList.toggle('is-selected', d === btn);
+          d.setAttribute('aria-pressed', d === btn ? 'true' : 'false');
+        });
+      });
+    });
+  });
+</script>

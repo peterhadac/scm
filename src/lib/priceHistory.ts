@@ -81,6 +81,29 @@ export function loadPriceHistory(
   for (const points of series.values()) {
     points.sort((a, b) => a.date.localeCompare(b.date));
   }
+  // Rows written before the variant column existed collapse same-weight
+  // variants into one key, leaving several observations with the same date
+  // but different prices (e.g. a 1000 g whole-bean/ground pair recorded as
+  // two `url|1000|` rows per run). Every read of such a series is poisoned
+  // — the digest reported them as price "rises" from a price to itself,
+  // and a sparkline would zigzag between the variants — so drop the whole
+  // series rather than guess which observation belongs to which tier.
+  // Exact same-date same-price duplicates (a hand-edit or merge artifact)
+  // are collapsed first and don't disqualify a series.
+  for (const [key, points] of series) {
+    const seen = new Set<string>();
+    const deduped = points.filter((p) => {
+      const id = `${p.date}|${p.price}`;
+      if (seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+    if (new Set(deduped.map((p) => p.date)).size !== deduped.length) {
+      series.delete(key);
+    } else if (deduped.length !== points.length) {
+      series.set(key, deduped);
+    }
+  }
   return series;
 }
 

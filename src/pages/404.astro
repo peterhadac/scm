@@ -1,0 +1,100 @@
+---
+// Custom 404 (GitHub Pages serves dist/404.html for any unknown path).
+// Before this the site fell back to GitHub's own unbranded 404 with no way
+// back in — and the Starlight-era 404 went away with the #121/#127
+// migration. One page serves both locales: GitHub Pages only knows a
+// single 404.html, so the body carries EN + SK together and a tiny inline
+// script flips which one leads when the missed path was under /sk/.
+import Layout from '../layouts/Layout.astro';
+import Button from '../components/ui/Button.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout
+  title="Page not found"
+  description="This page doesn't exist — but the coffee does. Browse every coffee in stock at Slovak roasters."
+>
+  <section class="nf">
+    <p class="nf-code" aria-hidden="true">404</p>
+    <h1 data-lang-en>Page not found</h1>
+    <h1 data-lang-sk hidden>Stránka neexistuje</h1>
+    <p class="nf-tagline" data-lang-en>
+      This page doesn't exist — maybe it was delisted, like a sold-out
+      microlot. The coffee itself is still here:
+    </p>
+    <p class="nf-tagline" data-lang-sk hidden>
+      Táto stránka neexistuje — možno bola vyradená ako vypredaný mikrolot.
+      Káva samotná tu ale stále je:
+    </p>
+    <div class="nf-actions">
+      <Button href={`${base}/coffees/`} variant="primary">
+        <span data-lang-en>Browse coffees →</span>
+        <span data-lang-sk hidden>Prezrieť kávy →</span>
+      </Button>
+      <Button href={`${base}/`} variant="secondary">
+        <span data-lang-en>Back to the homepage</span>
+        <span data-lang-sk hidden>Späť na úvod</span>
+      </Button>
+    </div>
+  </section>
+
+  <script is:inline>
+    // If the missed URL was under the Slovak locale, lead with Slovak and
+    // point the buttons at the /sk/ mirrors. Static swap — no reload.
+    (function () {
+      var base = '/scm';
+      var path = window.location.pathname;
+      var isSk = path === base + '/sk' || path.indexOf(base + '/sk/') === 0;
+      if (!isSk) return;
+      document.querySelectorAll('[data-lang-en]').forEach(function (el) {
+        el.hidden = true;
+      });
+      document.querySelectorAll('[data-lang-sk]').forEach(function (el) {
+        el.hidden = false;
+      });
+      // Button.astro doesn't forward data-* props, so target the two
+      // action links positionally: [coffees, homepage].
+      var links = document.querySelectorAll('.nf-actions a');
+      if (links[0]) links[0].setAttribute('href', base + '/sk/coffees/');
+      if (links[1]) links[1].setAttribute('href', base + '/sk/');
+    })();
+  </script>
+</Layout>
+
+<style>
+  .nf {
+    text-align: center;
+    padding: 3rem 0 4rem;
+  }
+
+  .nf-code {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(5rem, 16vw, 9rem);
+    line-height: 1;
+    color: var(--md-sys-color-primary);
+    opacity: 0.25;
+  }
+
+  .nf h1 {
+    font-family: var(--font-serif);
+    font-size: var(--md-sys-typescale-display-small-size);
+    letter-spacing: var(--md-sys-typescale-display-small-tracking);
+    margin: 0.5rem 0 1rem;
+  }
+
+  .nf-tagline {
+    max-width: 34rem;
+    margin: 0 auto 1.5rem;
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: var(--md-sys-typescale-title-medium-size);
+  }
+
+  .nf-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+</style>

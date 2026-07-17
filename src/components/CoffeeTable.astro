@@ -71,10 +71,16 @@ const lastUpdated = coffees.reduce(
 );
 
 // Lowest €/100g across items that state a weight → "best value" highlight.
+// Suppressed below 3 rows: "best value" out of one or two options isn't a
+// comparison, and the badge/legend just add noise to an already-thin
+// filtered view (e.g. nespresso: 1 row, drip-bags: 5 rows sits above the
+// threshold and keeps the badge).
+const MIN_ROWS_FOR_BEST_VALUE = 3;
 const per100gValues = coffees
   .filter((c) => c.weight_g)
   .map((c) => (c.price / (c.weight_g as number)) * 100);
-const bestPer100g = per100gValues.length ? Math.min(...per100gValues) : null;
+const bestPer100g =
+  per100gValues.length && total >= MIN_ROWS_FOR_BEST_VALUE ? Math.min(...per100gValues) : null;
 
 const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 ---
@@ -160,9 +166,13 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     <Badge variant="washed" class="text-[9px] px-[0.5em] py-[0.05em]">{localizedProcess('washed', lang)}</Badge>
     <Badge variant="honey" class="text-[9px] px-[0.5em] py-[0.05em]">{localizedProcess('honey', lang)}</Badge>
     <Badge variant="natural" class="text-[9px] px-[0.5em] py-[0.05em]">{localizedProcess('natural', lang)}</Badge>
-    <span class="ct-legend-sep" aria-hidden="true">·</span>
-    <span class="ct-best" title={t.bestValueTitle}>{t.bestValue}</span>
-    <span class="ct-legend-desc">{t.bestValueDesc}</span>
+    {bestPer100g !== null && (
+      <>
+        <span class="ct-legend-sep" aria-hidden="true">·</span>
+        <span class="ct-best" title={t.bestValueTitle}>{t.bestValue}</span>
+        <span class="ct-legend-desc">{t.bestValueDesc}</span>
+      </>
+    )}
     <span class="ct-legend-sep" aria-hidden="true">·</span>
     <span class="ct-legend-desc">
       {t.tipNudge}{' '}
@@ -285,7 +295,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               <td class="ct-muted">
                 {originLabel ?? '—'}
                 {blendComposition && (
-                  <span class="ct-blend-comp">({blendComposition})</span>
+                  <span class="ct-blend-comp">&nbsp;({blendComposition})</span>
                 )}
               </td>
               <td>

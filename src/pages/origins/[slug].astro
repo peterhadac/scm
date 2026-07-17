@@ -7,21 +7,26 @@
 import Layout from '../../layouts/Layout.astro';
 import CoffeeTable from '../../components/CoffeeTable.astro';
 import { listOrigins, originJsonLd } from '../../lib/origins';
-import { localizedOrigin } from '../../lib/i18n';
+import { localizedOrigin, UI } from '../../lib/i18n';
 
 export function getStaticPaths() {
   return listOrigins().map((o) => ({ params: { slug: o.slug }, props: { summary: o } }));
 }
 
 const { summary } = Astro.props;
+const T = UI.en;
 const label = localizedOrigin(summary.origin, 'en') ?? summary.origin;
 const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
 const jsonLd = originJsonLd(summary.origin, pageUrl);
 const title = summary.origin === 'Blend' ? 'Coffee blends' : `Coffee from ${label}`;
+// coffeeCount (distinct products) and tierCount (packaging-tier rows, what
+// the table below actually lists a row per) can differ — say which is
+// which instead of two unlabeled "coffees" numbers on the same page.
+const packNote = summary.tierCount !== summary.coffeeCount ? ` (${summary.tierCount} pack sizes)` : '';
 const intro =
   summary.origin === 'Blend'
-    ? `All multi-origin blends currently available from Slovak specialty roasters — ${summary.coffeeCount} coffees from ${summary.roasterCount} roasters, refreshed weekly.`
-    : `Every coffee from ${label} currently available from Slovak specialty roasters — ${summary.coffeeCount} coffees from ${summary.roasterCount} roasters, refreshed weekly.`;
+    ? `All multi-origin blends currently available from Slovak specialty roasters — ${T.coffeeCount(summary.coffeeCount)}${packNote} from ${T.roasterCount(summary.roasterCount)}, refreshed weekly.`
+    : `Every coffee from ${label} currently available from Slovak specialty roasters — ${T.coffeeCount(summary.coffeeCount)}${packNote} from ${T.roasterCount(summary.roasterCount)}, refreshed weekly.`;
 ---
 
 <Layout title={title} description={intro}>

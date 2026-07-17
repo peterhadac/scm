@@ -5,21 +5,38 @@
 import Layout from '../../../layouts/Layout.astro';
 import CoffeeTable from '../../../components/CoffeeTable.astro';
 import { listOrigins, originJsonLd } from '../../../lib/origins';
-import { localizedOrigin } from '../../../lib/i18n';
+import { localizedOrigin, UI } from '../../../lib/i18n';
 
 export function getStaticPaths() {
   return listOrigins().map((o) => ({ params: { slug: o.slug }, props: { summary: o } }));
 }
 
 const { summary } = Astro.props;
+const T = UI.sk;
 const label = localizedOrigin(summary.origin, 'sk') ?? summary.origin;
 const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
 const jsonLd = originJsonLd(summary.origin, pageUrl);
 const title = summary.origin === 'Blend' ? 'Kávové zmesi' : `Káva z krajiny ${label}`;
+// coffeeCount (distinct products) vs tierCount (packaging-tier rows, what
+// the table below actually lists a row per) can differ — say which is
+// which instead of two unlabeled counts on the same page. The parenthetical
+// uses the invariant genitive-plural form ("veľkostí") rather than full
+// numeral agreement — a secondary annotation, not the main clause.
+//
+// Deliberately no "od" (from) before the roaster count: "od" governs the
+// genitive case, but T.roasterCount()'s 2-4 form ("pražiarne") is the bare
+// *nominative* counting form the stat line uses standalone — correct there,
+// but "od 3 pražiarne" is wrong (genitive singular "pražiarne" only applies
+// to n=1; n>=2 after "od" needs genitive plural "pražiarní" throughout,
+// collapsing the 2-4/5+ distinction). Rather than add an unreviewed
+// genitive-declension helper, this drops "od" for a plain apposition list —
+// the same bare nominative-counting register as the stat line — so the
+// existing, already-correct helper applies without a case mismatch.
+const packNote = summary.tierCount !== summary.coffeeCount ? ` (${summary.tierCount} veľkostí balenia)` : '';
 const intro =
   summary.origin === 'Blend'
-    ? `Všetky zmesi z viacerých krajín aktuálne dostupné u slovenských výberových pražiarní — ${summary.coffeeCount} káv od ${summary.roasterCount} pražiarní, obnovované každý týždeň.`
-    : `Všetky kávy z krajiny ${label} aktuálne dostupné u slovenských výberových pražiarní — ${summary.coffeeCount} káv od ${summary.roasterCount} pražiarní, obnovované každý týždeň.`;
+    ? `Všetky zmesi z viacerých krajín aktuálne dostupné u slovenských výberových pražiarní — ${T.coffeeCount(summary.coffeeCount)}${packNote}, ${T.roasterCount(summary.roasterCount)}, obnovované každý týždeň.`
+    : `Všetky kávy z krajiny ${label} aktuálne dostupné u slovenských výberových pražiarní — ${T.coffeeCount(summary.coffeeCount)}${packNote}, ${T.roasterCount(summary.roasterCount)}, obnovované každý týždeň.`;
 ---
 
 <Layout title={title} description={intro}>

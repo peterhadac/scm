@@ -133,7 +133,20 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
           <LogoIcon size={28} />
         </div>
         <Wordmark href={`${base}${lang === 'sk' ? '/sk/' : '/'}`} />
-        <nav class="site-nav" aria-label="Main">
+        <button
+          type="button"
+          id="nav-toggle"
+          class="nav-toggle"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="site-nav"
+          aria-label="Main"
+        >
+          <svg width="18" height="14" viewBox="0 0 18 14" aria-hidden="true">
+            <path d="M0 1h18M0 7h18M0 13h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+        </button>
+        <nav id="site-nav" class="site-nav" aria-label="Main">
           <ul>
             {NAV.map((entry, i) =>
               isNavGroup(entry) ? (
@@ -313,6 +326,52 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
               closeAll();
             }
           });
+        });
+      })();
+    </script>
+
+    <script is:inline>
+      // Mobile nav toggle — same open/close semantics as the .nav-dropdown
+      // menus above (aria-expanded, outside-click, Escape), but for the
+      // whole nav list rather than one submenu.
+      (function () {
+        var toggle = document.getElementById('nav-toggle');
+        var nav = document.getElementById('site-nav');
+        if (!toggle || !nav) return;
+
+        function close() {
+          nav.removeAttribute('data-open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+
+        toggle.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var willOpen = !nav.hasAttribute('data-open');
+          if (willOpen) {
+            nav.setAttribute('data-open', 'true');
+            toggle.setAttribute('aria-expanded', 'true');
+          } else {
+            close();
+          }
+        });
+
+        nav.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && nav.hasAttribute('data-open')) {
+            close();
+            toggle.focus();
+          }
+        });
+
+        document.addEventListener('click', function (e) {
+          if (nav.hasAttribute('data-open') && !nav.contains(e.target) && e.target !== toggle) {
+            close();
+          }
+        });
+
+        // A link inside the panel was followed — no reason to leave it
+        // open for the next page's back-navigation.
+        nav.addEventListener('click', function (e) {
+          if (e.target.tagName === 'A') close();
         });
       })();
     </script>
@@ -514,6 +573,118 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
   .lang-switch:hover {
     color: var(--md-sys-color-primary);
     border-color: var(--md-sys-color-primary);
+  }
+
+  /* ── Mobile nav toggle ─────────────────────────────────────────────────
+     Hidden on desktop; the notch-bar's nav row has no room to wrap past
+     ~860px (7 items + theme/lang toggles) without the pill growing tall
+     and its right-aligned controls colliding with the wrapped nav text. */
+  .nav-toggle {
+    display: none;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    color: var(--md-sys-color-on-surface);
+    background: none;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-full);
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .nav-toggle:hover,
+  .nav-toggle[aria-expanded='true'] {
+    color: var(--md-sys-color-primary);
+    border-color: var(--md-sys-color-primary);
+  }
+
+  @media (max-width: 860px) {
+    .notch-bar {
+      gap: 0.75rem;
+      padding-inline: 1rem;
+    }
+
+    .nav-toggle {
+      display: inline-flex;
+    }
+
+    .site-nav {
+      flex: 0 0 auto;
+      order: 10;
+    }
+
+    /* Collapsed by default; the toggle button flips this to a full-width
+       panel that drops below the notch-bar, same open/close semantics
+       (aria-expanded, outside-click, Escape) as the .nav-dropdown menus. */
+    .site-nav > ul {
+      display: none;
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 0.5rem;
+      background: var(--md-sys-color-surface-container-high);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-large);
+      box-shadow: var(--md-sys-elevation-level3);
+    }
+
+    .site-nav[data-open='true'] > ul {
+      display: flex;
+    }
+
+    .site-nav > ul > li {
+      width: 100%;
+    }
+
+    .site-nav a {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 0.6rem 0.5rem;
+      border-radius: var(--md-sys-shape-corner-small);
+    }
+
+    .nav-dropdown-trigger {
+      display: flex;
+      width: 100%;
+      text-align: left;
+      justify-content: space-between;
+      padding: 0.6rem 0.5rem;
+      border-radius: var(--md-sys-shape-corner-small);
+    }
+
+    .site-nav a:hover,
+    .nav-dropdown-trigger:hover {
+      background: var(--md-sys-color-surface-container-highest);
+    }
+
+    /* Sub-menus become inline expansion instead of a floating popover —
+       a popover positioned relative to a full-width trigger would either
+       overflow the viewport or need its own repositioning logic. Closed
+       submenus must not reserve layout space: the base rule only sets
+       visibility:hidden (needed for the desktop fade), which — unlike
+       display:none — still occupies its static-flow height here. */
+    .nav-dropdown-menu {
+      display: none;
+      position: static;
+      transform: none;
+      min-width: 0;
+      margin-top: 0.25rem;
+      box-shadow: none;
+      border: none;
+      background: none;
+      padding-left: 0.75rem;
+    }
+
+    .nav-dropdown[data-open='true'] .nav-dropdown-menu {
+      display: block;
+    }
   }
 
   main {

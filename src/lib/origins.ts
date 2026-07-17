@@ -13,19 +13,26 @@ export interface OriginSummary {
   slug: string;
   coffeeCount: number; // distinct products, not tiers
   roasterCount: number;
+  // Packaging-tier rows (weight/roast_type/variant flattened) — what the
+  // CoffeeTable on this same page actually lists a row per. Exposed
+  // separately from coffeeCount so the intro sentence can say which number
+  // it means instead of "58 coffees" one line above a table that reads
+  // "105 coffees" for the same origin (origin-page count mismatch).
+  tierCount: number;
 }
 
 export function listOrigins(): OriginSummary[] {
-  const byOrigin = new Map<string, { urls: Set<string>; roasters: Set<string> }>();
+  const byOrigin = new Map<string, { urls: Set<string>; roasters: Set<string>; tiers: number }>();
   for (const row of flattenProducts()) {
     if (!row.origin) continue;
     let entry = byOrigin.get(row.origin);
     if (!entry) {
-      entry = { urls: new Set(), roasters: new Set() };
+      entry = { urls: new Set(), roasters: new Set(), tiers: 0 };
       byOrigin.set(row.origin, entry);
     }
     entry.urls.add(row.url);
     entry.roasters.add(row.roaster);
+    entry.tiers += 1;
   }
   return [...byOrigin.entries()]
     .map(([origin, e]) => ({
@@ -33,6 +40,7 @@ export function listOrigins(): OriginSummary[] {
       slug: originSlug(origin),
       coffeeCount: e.urls.size,
       roasterCount: e.roasters.size,
+      tierCount: e.tiers,
     }))
     .sort((a, b) => b.coffeeCount - a.coffeeCount || a.origin.localeCompare(b.origin));
 }

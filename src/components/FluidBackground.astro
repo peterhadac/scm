@@ -1,17 +1,32 @@
 ---
-// Soft, slowly-morphing color wash behind the homepage hero. Pure CSS
-// (radial blurred shapes animating border-radius + position) — no canvas,
-// no JS, no new dependency. Brand colors only, per Design.md's six-token
+// Soft, slowly-morphing color wash behind the homepage hero. Ported from
+// vengenceui.com's "Fluid Morph Background" registry component (React +
+// Framer Motion, animating SVG path `d` between two shape states in a
+// mirrored loop) into pure CSS — this site has no React/Framer Motion
+// runtime (see CLAUDE.md: vanilla-JS islands only). The SVG `d` geometry
+// property has been natively CSS-animatable since ~2023 (Chrome 109+,
+// Safari 16.4+, Firefox 113+); each <path> also carries a static `d`
+// attribute as its state-A shape so older browsers still render a (static)
+// blob instead of nothing. Brand colors only, per Design.md's six-token
 // palette. Decorative: aria-hidden, clipped to the parent's own box
 // (overflow hidden, inset: 0) so it can never push the page into
 // horizontal scroll, and frozen to a static shape under
 // prefers-reduced-motion.
+
+const BLOB_A_STATE_A =
+  'M440.0,120.0 C437.5,172.7 374.1,222.2 330.8,270.8 C287.4,319.3 232.1,409.4 180.0,411.2 C127.9,413.0 63.7,330.3 18.2,281.8 C-27.3,233.3 -96.1,170.9 -93.0,120.0 C-89.9,69.1 -8.9,26.4 36.6,-23.4 C82.1,-73.2 128.5,-175.3 180.0,-179.0 C231.5,-182.7 302.1,-95.3 345.5,-45.5 C388.8,4.4 442.5,67.3 440.0,120.0 Z';
+const BLOB_B_STATE_A =
+  'M1458.9,224.1 C1438.4,279.9 1405.6,367.3 1359.2,384.6 C1312.8,401.9 1236.0,352.9 1180.6,327.9 C1125.1,302.9 1048.2,280.8 1026.5,234.7 C1004.7,188.6 1028.4,109.6 1050.0,51.2 C1071.6,-7.2 1108.5,-100.3 1156.2,-115.8 C1204.0,-131.2 1282.3,-68.9 1336.6,-41.3 C1391.0,-13.7 1462.0,5.5 1482.4,49.8 C1502.8,94.0 1479.5,168.3 1458.9,224.1 Z';
+const BLOB_C_STATE_A =
+  'M703.6,800.9 C665.4,827.9 591.3,813.1 538.6,805.8 C486.0,798.4 416.9,791.5 387.7,756.8 C358.4,722.0 360.1,652.3 363.3,597.4 C366.5,542.4 370.6,453.1 406.8,427.0 C443.1,400.9 524.7,432.8 580.6,440.8 C636.6,448.8 711.5,441.2 742.7,475.0 C773.8,508.9 774.1,589.6 767.6,643.9 C761.1,698.2 741.8,774.0 703.6,800.9 Z';
 ---
 
 <div class="fluid-bg" aria-hidden="true">
-  <span class="fluid-blob fluid-blob--a"></span>
-  <span class="fluid-blob fluid-blob--b"></span>
-  <span class="fluid-blob fluid-blob--c"></span>
+  <svg class="fluid-svg" viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice">
+    <path class="fluid-path fluid-path--a" d={BLOB_A_STATE_A} />
+    <path class="fluid-path fluid-path--b" d={BLOB_B_STATE_A} />
+    <path class="fluid-path fluid-path--c" d={BLOB_C_STATE_A} />
+  </svg>
 </div>
 
 <style>
@@ -23,59 +38,55 @@
     pointer-events: none;
   }
 
-  .fluid-blob {
-    position: absolute;
-    width: 24rem;
-    height: 24rem;
-    filter: blur(60px);
+  .fluid-svg {
+    width: 100%;
+    height: 100%;
+    filter: blur(50px);
+  }
+
+  .fluid-path {
     opacity: var(--fluid-opacity, 0.28);
-    animation: fluid-morph 26s ease-in-out infinite;
-    will-change: transform, border-radius;
   }
 
-  .fluid-blob--a {
-    top: -8rem;
-    left: -6rem;
-    background: var(--color-toxic-orange);
-    animation-duration: 24s;
+  .fluid-path--a {
+    fill: var(--color-toxic-orange);
+    animation: fluid-morph-a 24s ease-in-out infinite alternate;
   }
 
-  .fluid-blob--b {
-    top: -4rem;
-    right: -8rem;
-    background: var(--color-aqua-mist);
-    animation-duration: 30s;
+  .fluid-path--b {
+    fill: var(--color-aqua-mist);
+    animation: fluid-morph-b 30s ease-in-out infinite alternate;
     animation-delay: -9s;
   }
 
-  .fluid-blob--c {
-    bottom: -10rem;
-    left: 28%;
-    width: 20rem;
-    height: 20rem;
-    background: var(--color-garnet);
-    animation-duration: 27s;
-    animation-delay: -15s;
+  .fluid-path--c {
+    fill: var(--color-garnet);
     opacity: var(--fluid-opacity-tertiary, 0.18);
+    animation: fluid-morph-c 27s ease-in-out infinite alternate;
+    animation-delay: -15s;
   }
 
-  @keyframes fluid-morph {
-    0%,
-    100% {
-      border-radius: 42% 58% 65% 35% / 45% 45% 55% 55%;
-      transform: translate(0, 0) scale(1);
+  @keyframes fluid-morph-a {
+    to {
+      d: path(
+        'M401.0,120.0 C400.4,188.0 419.1,287.6 382.2,322.2 C345.4,356.9 248.9,326.5 180.0,328.0 C111.1,329.5 4.1,366.1 -31.4,331.4 C-67.0,296.8 -35.3,188.3 -33.2,120.0 C-31.1,51.7 -54.1,-41.3 -18.6,-78.6 C17.0,-115.8 112.6,-102.4 180.0,-103.6 C247.4,-104.8 349.1,-123.2 385.9,-85.9 C422.7,-48.6 401.6,52.0 401.0,120.0 Z'
+      );
     }
-    25% {
-      border-radius: 58% 42% 35% 65% / 55% 65% 35% 45%;
-      transform: translate(3%, 4%) scale(1.08);
+  }
+
+  @keyframes fluid-morph-b {
+    to {
+      d: path(
+        'M1503.2,242.8 C1482.6,287.8 1394.7,304.9 1336.7,329.0 C1278.7,353.2 1197.8,407.1 1155.3,387.6 C1112.9,368.1 1105.2,270.6 1082.1,212.2 C1059.0,153.8 1000.0,80.7 1016.8,37.2 C1033.7,-6.3 1126.0,-26.4 1183.3,-49.0 C1240.7,-71.7 1314.8,-116.7 1360.9,-98.7 C1407.1,-80.8 1436.5,1.9 1460.2,58.8 C1483.9,115.7 1523.7,197.8 1503.2,242.8 Z'
+      );
     }
-    50% {
-      border-radius: 65% 35% 45% 55% / 40% 60% 40% 60%;
-      transform: translate(-2%, 6%) scale(0.95);
-    }
-    75% {
-      border-radius: 40% 60% 55% 45% / 60% 40% 60% 40%;
-      transform: translate(-4%, -3%) scale(1.05);
+  }
+
+  @keyframes fluid-morph-c {
+    to {
+      d: path(
+        'M680.3,771.7 C637.6,806.6 576.4,862.6 532.8,856.0 C489.2,849.5 454.2,776.1 418.7,732.1 C383.1,688.2 315.4,635.4 319.6,592.3 C323.8,549.2 398.9,510.8 443.8,473.5 C488.6,436.2 546.6,362.5 588.9,368.7 C631.3,374.8 664.4,464.3 697.9,510.6 C731.3,556.9 792.4,602.9 789.5,646.4 C786.6,689.9 723.1,736.7 680.3,771.7 Z'
+      );
     }
   }
 
@@ -92,9 +103,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .fluid-blob {
+    .fluid-path {
       animation: none;
-      border-radius: 48% 52% 60% 40% / 50% 50% 50% 50%;
     }
   }
 </style>

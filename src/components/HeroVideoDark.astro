@@ -1,0 +1,284 @@
+---
+// Adapted from a "Hero 17 / HeroVideoDark" block template into a
+// Design.md-compliant homepage hero. Two changes from the source template:
+//   1. Its own pill-nav/hamburger/full-screen overlay menu was dropped —
+//      the site already has a sticky notch header with real nav, lang
+//      switch, and theme toggle (src/layouts/Layout.astro); rendering both
+//      would put two menus on one page.
+//   2. `bgImage` (a photo this repo has no asset for) was replaced with
+//      <FluidBackground /> — the brand-colored SVG blob-morph already
+//      built for the previous hero — and every color/spacing/type value
+//      was conformed to Design.md's six-token palette, 8px grid, and
+//      DM Serif/DM Sans type roles instead of the template's own
+//      arbitrary values. The panel is intentionally always dark (Black
+//      Kite), independent of the site's light/dark toggle — a fixed-mood
+//      hero, same idea as the template's name.
+import FluidBackground from './FluidBackground.astro';
+import Button from './ui/Button.astro';
+
+interface HeroButton {
+  label: string;
+  href?: string;
+  variant?: 'primary' | 'secondary';
+}
+interface Logo {
+  label: string;
+  icon?: string;
+}
+interface Props {
+  headingMuted?: string;
+  headingBright: string;
+  body?: string;
+  buttons?: HeroButton[];
+  trustedLabel?: string;
+  logos?: Logo[];
+}
+const { headingMuted, headingBright, body, buttons = [], trustedLabel, logos = [] } = Astro.props;
+
+// The secondary Button.astro variant reads the site's theme-reactive
+// --md-sys-color-surface token, so on the site's dark theme it renders as
+// a near-black pill on this always-dark panel (barely visible against the
+// hero background). Rendered here as a fixed morning-snow outline instead
+// — same pill shape/weight as Button.astro, colors pinned so it stays
+// legible regardless of the page's own light/dark toggle.
+
+// Same coffee-cherry silhouette as LogoIcon.astro / public/favicon.svg —
+// Design.md: "Never introduce a second icon/symbol mark alongside or
+// instead of the coffee-cherry mark."
+const cherrySvg = `<svg viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M100 20 C63 20 34 49 34 86 C34 133 100 215 100 215 C100 215 166 133 166 86 C166 49 137 20 100 20Z" fill="color-mix(in oklch, var(--color-toxic-orange) 14%, transparent)" stroke="var(--color-toxic-orange)" stroke-width="3"/><ellipse cx="100" cy="86" rx="30" ry="37" fill="none" stroke="var(--color-toxic-orange)" stroke-width="3"/><path d="M100 49 C88 61 88 73 100 86 C112 99 112 111 100 123" stroke="var(--color-toxic-orange)" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>`;
+
+const ICONS: Record<string, string> = {
+  company:
+    '<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/>',
+  agency: '<circle cx="9" cy="12" r="5"/><circle cx="16" cy="12" r="5" opacity="0.55"/>',
+  venture: '<path d="M12 3l8 4.6v8.8L12 21l-8-4.6V7.6z"/>',
+};
+---
+
+<section class="hvd">
+  <div class="hvd__panel">
+    <FluidBackground />
+    <div class="hvd__scrim"></div>
+
+    <div class="hvd__inner">
+      <div class="hvd__body">
+        <span class="hvd__icon" set:html={cherrySvg} />
+        <h1 class="hvd__title">
+          {headingMuted && <span class="hvd__muted">{headingMuted} </span>}<span class="hvd__bright"
+            >{headingBright}</span
+          >
+        </h1>
+        {body && <p class="hvd__lead">{body}</p>}
+        {
+          buttons.length > 0 && (
+            <div class="hvd__buttons">
+              {buttons.map((b) =>
+                b.variant === 'secondary' ? (
+                  <a class="hvd__btn-outline" href={b.href || '#'}>
+                    {b.label}
+                  </a>
+                ) : (
+                  <Button href={b.href || '#'} variant="primary">
+                    {b.label}
+                  </Button>
+                ),
+              )}
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </div>
+
+  {
+    (trustedLabel || logos.length > 0) && (
+      <div class="hvd__trusted">
+        {trustedLabel && <span class="hvd__trusted-label">{trustedLabel}</span>}
+        <ul class="hvd__logos">
+          {logos.map((lg) => (
+            <li class="hvd__logo">
+              <svg
+                viewBox="0 0 24 24"
+                width="22"
+                height="22"
+                fill="currentColor"
+                aria-hidden="true"
+                set:html={ICONS[lg.icon || ''] || ICONS.company}
+              />
+              <span>{lg.label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .hvd {
+    /* Pulls the panel up behind the floating notch header, same technique
+       and --site-header-h var as the previous hero (Layout.astro). */
+    --hero-header-offset: calc(var(--site-header-h, 4.75rem) + 1.5rem);
+    position: relative;
+    left: 50%;
+    width: 100vw;
+    margin-left: -50vw;
+    margin-top: calc(-1 * var(--hero-header-offset));
+  }
+
+  .hvd__panel {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: var(--md-sys-shape-corner-extra-large);
+    min-height: min(60vh, 36rem);
+    display: flex;
+    flex-direction: column;
+    background: var(--color-black-kite);
+    color: var(--color-morning-snow);
+  }
+
+  .hvd__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--color-black-kite) 55%, transparent) 0%,
+      color-mix(in oklch, var(--color-black-kite) 75%, transparent) 65%,
+      var(--color-black-kite) 100%
+    );
+  }
+
+  .hvd__inner {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  .hvd__body {
+    margin-top: auto;
+    padding-block: 4rem 3rem;
+    max-width: 34rem;
+  }
+
+  .hvd__icon {
+    display: inline-block;
+    width: 3rem;
+    margin-bottom: 1rem;
+  }
+  .hvd__icon :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+
+  .hvd__title {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(var(--md-sys-typescale-headline-large-size), 5vw, var(--md-sys-typescale-display-large-size));
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-weight: var(--md-sys-typescale-display-large-weight);
+  }
+
+  .hvd__muted {
+    color: color-mix(in oklch, var(--color-morning-snow) 50%, transparent);
+  }
+
+  .hvd__bright {
+    color: var(--color-morning-snow);
+  }
+
+  .hvd__lead {
+    margin: 1.5rem 0 0;
+    max-width: 40ch;
+    font-size: var(--md-sys-typescale-title-medium-size);
+    line-height: 1.5;
+    color: color-mix(in oklch, var(--color-morning-snow) 72%, transparent);
+  }
+
+  .hvd__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  /* Fixed-appearance twin of Button.astro's secondary variant — see the
+     comment above where it's used for why the theme-reactive original
+     doesn't work here. */
+  .hvd__btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--md-sys-shape-corner-full);
+    border: 1px solid color-mix(in oklch, var(--color-morning-snow) 40%, transparent);
+    padding: 0.625rem 1.5rem;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: var(--color-morning-snow);
+    text-decoration: none;
+    transition:
+      background-color 150ms,
+      border-color 150ms;
+  }
+
+  .hvd__btn-outline:hover {
+    background: color-mix(in oklch, var(--color-morning-snow) 12%, transparent);
+    border-color: var(--color-morning-snow);
+  }
+
+  /* trusted-by */
+  .hvd__trusted {
+    max-width: 72rem;
+    margin-inline: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 1.5rem 0.5rem;
+    color: var(--md-sys-color-on-surface);
+  }
+  .hvd__trusted-label {
+    max-width: 16ch;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+  .hvd__logos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .hvd__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface);
+  }
+
+  @media (max-width: 720px) {
+    .hvd__panel {
+      min-height: min(70vh, 28rem);
+    }
+    .hvd__body {
+      padding-block: 3rem 2rem;
+    }
+    .hvd__title {
+      font-size: clamp(var(--md-sys-typescale-headline-medium-size), 8vw, var(--md-sys-typescale-headline-large-size));
+    }
+  }
+</style>

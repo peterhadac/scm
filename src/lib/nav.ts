@@ -21,7 +21,7 @@ export function isNavGroup(entry: NavEntry): entry is NavGroup {
 
 export const NAV: NavEntry[] = [
   { en: 'This week', sk: 'Tento týždeň', href: '/this-week/' },
-  { en: 'AI Coffee choose', sk: 'AI výber kávy', href: '/ai-coffee/' },
+  { en: 'AI Coffee Picker', sk: 'AI výber kávy', href: '/ai-coffee/' },
   { en: 'Roaster map', sk: 'Mapa pražiarní', href: '/map/' },
   {
     en: 'Roasted coffee',

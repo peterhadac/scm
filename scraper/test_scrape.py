@@ -4621,3 +4621,25 @@ def test_run_canary_warns_on_decline(capsys):
     client.chat.completions.create.return_value = fake_completion(content="not a product page")
     assert scrape.run_canary(client) is False
     assert "::warning::LLM canary: model declined" in capsys.readouterr().out
+
+
+# ── Data integrity: stored origins stay canonical (see also issue #14) ──────
+# normalize_origin() gates new extractions through coffee_origins.yaml, but
+# entries written before that gating existed kept raw LLM text forever
+# (hash-gating never re-extracts an unchanged page) — "Huila", "Svet",
+# "Indonézie" and friends each became a bogus origin filter option and a
+# mangled landing-page slug (/origins/indon-zie/). Guard the artifact
+# itself so a regression from any cause fails CI, not just the normalizer.
+
+
+def test_products_yaml_origins_are_canonical():
+    products = scrape.load_products()
+    canonical = set(scrape.load_country_aliases().values()) | {"Blend"}
+    bad = [
+        (slug, entry.get("name"), value)
+        for slug, entries in products.items()
+        for entry in entries
+        for value in [entry.get("origin"), *(entry.get("blend_origins") or [])]
+        if value is not None and value not in canonical
+    ]
+    assert bad == [], f"non-canonical origins stored in products.yaml: {bad}"

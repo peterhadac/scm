@@ -142,6 +142,7 @@ export const ORIGIN_LABELS: Record<string, Record<Lang, string>> = {
   Malawi: { en: 'Malawi', sk: 'Malawi' },
   Zambia: { en: 'Zambia', sk: 'Zambia' },
   'Papua New Guinea': { en: 'Papua New Guinea', sk: 'Papua Nová Guinea' },
+  'South Africa': { en: 'South Africa', sk: 'Južná Afrika' },
   'Democratic Republic of the Congo': { en: 'Democratic Republic of the Congo', sk: 'Konžská demokratická republika' },
   'Ivory Coast': { en: 'Ivory Coast', sk: 'Pobrežie Slonoviny' },
   'Dominican Republic': { en: 'Dominican Republic', sk: 'Dominikánska republika' },

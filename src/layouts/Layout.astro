@@ -242,6 +242,29 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
     </script>
 
     <script is:inline>
+      // Publishes the sticky header's real occupied height as
+      // --site-header-h, so sticky elements further down the page (the
+      // coffee table's toolbar and column headers) can offset themselves
+      // below it. Not a constant: the nav wraps to extra rows on mid-width
+      // viewports. (CoffeeTable used to anchor to Starlight's
+      // --sl-nav-height, which no longer exists post-migration — leaving
+      // its toolbar half-hidden under this header.)
+      (function () {
+        var header = document.querySelector('.site-header');
+        if (!header) return;
+        var set = function () {
+          document.documentElement.style.setProperty('--site-header-h', header.offsetHeight + 'px');
+        };
+        set();
+        if ('ResizeObserver' in window) {
+          new ResizeObserver(set).observe(header);
+        } else {
+          window.addEventListener('resize', set);
+        }
+      })();
+    </script>
+
+    <script is:inline>
       // Click-toggled dropdown menus for the nav-group entries, replacing
       // the old <details>/<summary> disclosure. role="menu"/"menuitem" on
       // the popup, aria-expanded reflected on the trigger, Escape and

@@ -39,3 +39,42 @@
 
   --radius-full: 999px;
 }
+
+/* ── Dark theme ──────────────────────────────────────────────────────────
+   The semantic roles above are light-only literals; without these
+   overrides every Tailwind-styled component kept light-theme colors in
+   dark mode (e.g. the process badges' text-foreground = Black Kite —
+   dark-on-dark, unreadable). Rather than duplicating hexes, each role is
+   re-pointed at the MD3 token (custom.css) that already carries the
+   correct dark value; the selectors mirror custom.css's own theme switch
+   (absence of data-theme = follow prefers-color-scheme). These rules are
+   unlayered, so they win over the @layer(theme) declarations above.
+   --color-primary/-foreground and --color-ring stay the brand's Toxic
+   Orange + white in both themes, same as the light block. */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) {
+    --color-background: var(--md-sys-color-background);
+    --color-foreground: var(--md-sys-color-on-surface);
+    --color-surface: var(--md-sys-color-surface-container-low);
+    --color-secondary: var(--md-sys-color-secondary);
+    --color-secondary-foreground: var(--md-sys-color-on-secondary);
+    --color-tertiary: var(--md-sys-color-tertiary);
+    --color-tertiary-foreground: var(--md-sys-color-on-tertiary);
+    --color-muted: var(--md-sys-color-surface-container-highest);
+    --color-muted-foreground: var(--md-sys-color-on-surface-variant);
+    --color-border: var(--md-sys-color-outline-variant);
+  }
+}
+
+html[data-theme='dark'] {
+  --color-background: var(--md-sys-color-background);
+  --color-foreground: var(--md-sys-color-on-surface);
+  --color-surface: var(--md-sys-color-surface-container-low);
+  --color-secondary: var(--md-sys-color-secondary);
+  --color-secondary-foreground: var(--md-sys-color-on-secondary);
+  --color-tertiary: var(--md-sys-color-tertiary);
+  --color-tertiary-foreground: var(--md-sys-color-on-tertiary);
+  --color-muted: var(--md-sys-color-surface-container-highest);
+  --color-muted-foreground: var(--md-sys-color-on-surface-variant);
+  --color-border: var(--md-sys-color-outline-variant);
+}

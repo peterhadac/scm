@@ -2,7 +2,7 @@ roasters:
   - name: Kavoholik
     slug: kavoholik
     url: https://kavoholik.sk/
-    scrape_url: https://kavoholik.sk/
+    scrape_url: https://kavoholik.sk/750-cerstvo-prazena-zrnkova-kava   # homepage only links PrestaShop category pages (product sliders are JS); this category statically lists all coffees with paginated links
     metadata:
       city: Bratislava
   - name: Ready After
@@ -120,7 +120,8 @@ roasters:
   - name: Casa del Caffe
     slug: casa-del-caffe
     url: https://casadelcaffe.sk/
-    scrape_url: https://casadelcaffe.sk/shop/
+    scrape_url: https://casadelcaffe.sk/kategoria-produktu/kava/   # coffee-only category; Woodmart theme renders the product grid client-side (zero /produkt/ links in static HTML), hence playwright
+    scraper: playwright
     metadata:
       city: Bratislava
   - name: Pražiareň Veľké Zálužie
@@ -147,12 +148,16 @@ roasters:
     scrape_url: https://simplecoffee.sk/kategorie/zrnkova-kava/
     metadata:
       city: Bratislava
-  - name: Sedmitchka Coffee Roasters
-    slug: sedmitchka-coffee-roasters
-    url: https://sedmitchka.coffee/
-    scrape_url: https://sedmitchka.coffee/en/collections/kava-1
-    metadata:
-      city: Dubnica nad Váhom
+  # Sedmitchka: Shopify storefront is password-locked as of 2026-07-17
+  # (https://sedmitchka.coffee/en/collections/kava-1 → 302 → /en/password),
+  # so there is nothing to scrape. Re-enable once the shop reopens — see the
+  # "Roaster health: Sedmitchka Coffee Roasters" tracking issue.
+  # - name: Sedmitchka Coffee Roasters
+  #   slug: sedmitchka-coffee-roasters
+  #   url: https://sedmitchka.coffee/
+  #   scrape_url: https://sedmitchka.coffee/en/collections/kava-1
+  #   metadata:
+  #     city: Dubnica nad Váhom
   - name: Incuple
     slug: incuple
     url: https://incuple.sk/

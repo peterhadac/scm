@@ -4349,7 +4349,7 @@ green-plantation:
   url: https://www.gpkava.sk/odklepavace
 - last_seen: '2026-07-10'
   name: Simon Lévelt BIO GAYO BLUE MOUNTAIN zrnková káva 1 kg - bio
-  origin: Blue Mountain
+  origin: Jamaica
   packaging:
   - price: 39.4
     weight_g: 1000
@@ -4770,9 +4770,10 @@ green-plantation:
   page_hash: 963d96648ba8e5f1439823aa537c07d3bc7362ab2d410570d3283f691d495f54
   status: not_a_product
   url: https://www.gpkava.sk/salky-na-kavu
-- last_seen: '2026-07-10'
+- blend: true
+  last_seen: '2026-07-10'
   name: Tupinamba Natural Milenium zrnková káva 3,5 kg - 100% Arabica
-  origin: Svet
+  origin: Blend
   packaging:
   - price: 111.8
     weight_g: 3500
@@ -5451,7 +5452,7 @@ green-plantation:
   missing_fields:
   - roast_type
   name: Rooibos
-  origin: Južná Afrika
+  origin: South Africa
   packaging:
   - price: 5.9
     weight_g: 1000
@@ -5532,7 +5533,7 @@ green-plantation:
   url: https://www.gpkava.sk/refraktometre-na-kavu
 - last_seen: '2026-07-10'
   name: Indonézia Barokah Kerinci Espresso
-  origin: Indonézie
+  origin: Indonesia
   packaging:
   - price: 18.2
     weight_g: 250
@@ -7254,7 +7255,7 @@ praziaren-velke-zaluzie:
   missing_fields:
   - price
   name: PAPUA NOVÁ GUINEA
-  origin: Papua-Nová Guinea
+  origin: Papua New Guinea
   packaging:
   - price: 16.0
     weight_g: 500
@@ -7403,7 +7404,7 @@ praziaren-velke-zaluzie:
   - weight_g
   - price
   name: INDONESIA
-  origin: Bali
+  origin: Indonesia
   packaging:
   - price: 16.0
     weight_g: 500
@@ -8990,7 +8991,7 @@ suca-roastery:
   url: https://www.sucaroastery.sk/o-nasej-praziarni-ako-to-cele-vzniklo
 - last_seen: '2026-07-10'
   name: Colombia Jesus Barahona Buenavista
-  origin: Huila
+  origin: Colombia
   packaging:
   - price: 11.0
     weight_g: 250
@@ -9004,7 +9005,7 @@ suca-roastery:
   url: https://www.sucaroastery.sk/p/colombia-jesus-barahona-buenavista
 - last_seen: '2026-07-10'
   name: Colombia Jesus Barahona Buenavista
-  origin: Huila
+  origin: Colombia
   packaging:
   - price: 11.0
     weight_g: 250
@@ -9358,7 +9359,7 @@ suca-roastery:
   url: https://www.sucaroastery.sk/sitemap
 - last_seen: '2026-07-09'
   name: Colombia Ombligon sugarcane decaf
-  origin: Huila
+  origin: Colombia
   packaging:
   - price: 15.9
     weight_g: 250

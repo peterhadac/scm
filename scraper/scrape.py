@@ -1784,6 +1784,27 @@ class Hints:
     weight_g: int | None = None
 
 
+def _deduplicate_packaging(packaging: list[dict]) -> list[dict]:
+    """Deduplicate packaging tiers: keep one entry per (weight_g, price) pair.
+
+    When multiple tiers share both weight_g AND price (e.g. 250g listed twice
+    at 8.90 EUR), keep only the first — they represent the same offering.
+    Tiers with different variants (whole bean / ground) are kept separately
+    because different (weight, price, variant) triplets are always distinct.
+    """
+    seen: set[tuple] = set()
+    result: list[dict] = []
+    for tier in packaging:
+        weight = tier.get("weight_g")
+        price = tier.get("price")
+        variant = tier.get("variant") or ""
+        key = (weight, price, variant)
+        if key not in seen:
+            seen.add(key)
+            result.append(tier)
+    return result
+
+
 def normalize_product(raw, url, today, hints=None):
     """Turn a raw Gemini extraction into a products.yaml entry, or None if unusable.
 
@@ -1905,6 +1926,7 @@ def normalize_product(raw, url, today, hints=None):
     if price_collision or weight_as_price or price_decreasing:
         missing_fields.append("price")
 
+    packaging = _deduplicate_packaging(packaging)
     entry = {
         "name": name,
         "url": url,

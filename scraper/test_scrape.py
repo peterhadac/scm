@@ -4695,3 +4695,61 @@ def test_is_non_coffee_url_no_false_positive_on_longer_segments():
     # (segment matching only matches exact path segments)
     assert scrape._is_non_coffee_url("https://example.sk/some-cajik-product") is False
     assert scrape._is_non_coffee_url("https://example.sk/moje-caj-kava") is False
+
+
+# ── Issue #144: deduplicate packaging tiers with same weight + price ──────
+
+
+def test_deduplicate_packaging_preserves_different_weights():
+    packaging = [
+        {"weight_g": 250, "price": 8.90, "variant": "Whole bean"},
+        {"weight_g": 500, "price": 15.90, "variant": "Ground"},
+    ]
+    result = scrape._deduplicate_packaging(packaging)
+    assert len(result) == 2
+
+
+def test_deduplicate_packaging_removes_exact_duplicates():
+    packaging = [
+        {"weight_g": 250, "price": 8.90, "variant": "Whole bean"},
+        {"weight_g": 250, "price": 8.90, "variant": "Ground"},  # different variant → both kept
+    ]
+    result = scrape._deduplicate_packaging(packaging)
+    assert len(result) == 2
+
+
+def test_deduplicate_packaging_removes_identical_tiers():
+    packaging = [
+        {"weight_g": 250, "price": 8.90},
+        {"weight_g": 250, "price": 8.90},  # exact duplicate
+    ]
+    result = scrape._deduplicate_packaging(packaging)
+    assert len(result) == 1
+
+
+def test_deduplicate_packaging_different_prices_different_weights():
+    packaging = [
+        {"weight_g": 250, "price": 8.90},
+        {"weight_g": 250, "price": 9.50},  # same weight, diff price → different triplet → both kept
+    ]
+    result = scrape._deduplicate_packaging(packaging)
+    assert len(result) == 2
+
+
+def test_deduplicate_packaging_empty():
+    result = scrape._deduplicate_packaging([])
+    assert result == []
+
+
+def test_deduplicate_packaging_single_entry():
+    result = scrape._deduplicate_packaging([{"weight_g": 250, "price": 8.90}])
+    assert len(result) == 1
+
+
+def test_deduplicate_packaging_null_weights():
+    packaging = [
+        {"weight_g": None, "price": 5.00},
+        {"weight_g": None, "price": 5.00},  # both null → same key → dedup
+    ]
+    result = scrape._deduplicate_packaging(packaging)
+    assert len(result) == 1

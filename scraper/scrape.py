@@ -71,7 +71,54 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # weight_g (e.g. whole bean vs ground) instead of colliding into one.
 SCHEMA_VERSION = 21
 
-# Ordered extraction-model preference list (issue #42): extract_product
+# Default processing methods per origin (issue #145):
+# When model extraction returns null/missing process, use the country's
+# dominant processing method as a fallback.  Keys are canonical country names
+# (as stored after normalize_origin).
+_ORIGIN_PROCESS_MAP: dict[str, str] = {
+    "brazil": "natural",
+    "colombia": "washed",
+    "ethiopia": "natural",
+    "kenya": "washed",
+    "guatemala": "washed",
+    "costa-rica": "honey",
+    "peru": "washed",
+    "bolivia": "washed",
+    "indonesia": "wet-hulled",
+    "madagascar": "natural",
+    "rwanda": "washed",
+    "burundi": "natural",
+    "tanzania": "washed",
+    "uganda": "washed",
+    "panama": "washed",
+    "nicaragua": "washed",
+    "el-salvador": "washed",
+    "honduras": "washed",
+    "vietnam": "washed",
+    "india": "washed",
+    "papua-new-guinea": "washed",
+}
+
+# # Process hints found in product names (case-insensitive).  Evaluated
+# in order, first match wins (issue #145).
+_PROCESS_NAME_PATTERNS: list[tuple[str, str]] = [
+    ("natural", "natural"),
+    (r"[^\w]?anaerobic[a-z]?", "anaerobic"),
+    ("carbonic.?maceration", "carbonic-maceration"),
+    (r"dry\s*proce\w+", "natural"),
+    (r"washed\b", "washed"),
+    (r"honey\s*proce\w+", "honey"),
+    ("ferment", "anaerobic"),
+    ("macerat", "carbonic-maceration"),
+    # Slovak patterns (matched against diacritic-stripped name):
+    # spracovanÃ¡ (spracovanÃ¡ = processed â washed)
+    (r"spracovan", "washed"),
+    # fermentovanÃ¡ (fermentovanÃ¡ = fermented â anaerobic)
+    (r"fermentovan", "anaerobic"),
+
+]
+
+# # Ordered extraction-model preference list (issue #42): extract_product
 # works through these left to right, so a deprecated/unavailable primary
 # degrades to the next model instead of failing the whole weekly run.
 # Overridable without a code change via OPENROUTER_MODELS (comma-separated
@@ -1804,6 +1851,33 @@ def _deduplicate_packaging(packaging: list[dict]) -> list[dict]:
             result.append(tier)
     return result
 
+def _lookup_origin_process(origin: str) -> str:
+    """Look up the dominant processing method for an origin country."""
+    return _ORIGIN_PROCESS_MAP.get(origin, "null")
+
+
+def _infer_process(name: str, origin: str | None) -> str:
+    """Infer process from name patterns or origin when extraction returned null.
+
+    Only called when the extracted `process` is missing or `null`.  The caller
+    decides whether to apply this inference.
+    """
+    if not name or not origin:
+        return None
+    name_lower = strip_diacritics(name).lower()
+
+    # 1. Name pattern matching (more specific than origin)
+    for pattern, value in _PROCESS_NAME_PATTERNS:
+        if re.search(pattern, name_lower):
+            return value
+
+    # 2. Origin-based fallback
+    val = _lookup_origin_process(origin)
+    return None if val == "null" else val
+
+
+# ---------------------------------------------------------------------------
+
 
 def normalize_product(raw, url, today, hints=None):
     """Turn a raw Gemini extraction into a products.yaml entry, or None if unusable.
@@ -1877,6 +1951,10 @@ def normalize_product(raw, url, today, hints=None):
     # stored raw (issue #106, same alias-gating reasoning as issue #14).
     hint_origin = normalize_origin(hints.origin, name) if hints.origin else None
     origin = hint_origin or normalize_origin(raw.get("origin"), name)
+
+    # Infer process from origin/name when extraction returned null (issue #145)
+    if process in (None, "null"):
+        process = _infer_process(name, origin)
 
     # First-class blend marking (issue #91). The "Blend" origin sentinel
     # stays the single canonical filter key; this adds a new healing path —

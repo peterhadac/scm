@@ -4753,3 +4753,39 @@ def test_deduplicate_packaging_null_weights():
     ]
     result = scrape._deduplicate_packaging(packaging)
     assert len(result) == 1
+
+
+# ── Issue #145: infer missing process from origin/name ──────────────────────
+
+
+def test_infer_process_from_origin():
+    assert scrape._infer_process("Test Coffee", "brazil") == "natural"
+    assert scrape._infer_process("Test Coffee", "colombia") == "washed"
+    assert scrape._infer_process("Test Coffee", "indonesia") == "wet-hulled"
+    assert scrape._infer_process("Test Coffee", "kenya") == "washed"
+    assert scrape._infer_process("Test Coffee", "costa-rica") == "honey"
+
+
+def test_infer_process_from_name():
+    assert scrape._infer_process("Natural Process Ethiopia 250g", "colombia") == "natural"
+    assert scrape._infer_process("Anaerobic Washed Arabica", "colombia") == "anaerobic"
+    assert scrape._infer_process("Washed Filter Coffee", "kenya") == "washed"
+    assert scrape._infer_process("Honey Process Brazil", "brazil") == "honey"
+
+
+def test_infer_process_name_takes_precedence():
+    # When both name and origin hint, name pattern should win
+    assert scrape._infer_process("Washed Ethiopian Coffee", "brazil") == "washed"
+
+
+def test_infer_process_returns_null_no_match():
+    assert scrape._infer_process("Random Product", "somalia") is None
+
+
+def test_infer_process_empty_name_or_origin():
+    assert scrape._infer_process("", "brazil") is None
+    assert scrape._infer_process("Some Product", None) is None
+
+
+def test_infer_process_slovak_patterns():
+    assert scrape._infer_process("Káva spracovaná 250g", "brazil") == "washed"

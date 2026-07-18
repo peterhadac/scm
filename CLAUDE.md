@@ -395,6 +395,8 @@ workflow, a new site section).
 
 - `OPENROUTER_API_KEY` — required by scraper (OpenRouter, models `google/gemini-2.5-flash-lite` → `google/gemini-2.5-flash` fallback), stored as GitHub Actions secret
 - `OPENROUTER_MODELS` — optional comma-separated ordered override of the extraction model list (issue #42)
+- `OPENROUTER_BASE_URL` — optional override of the extraction endpoint; any OpenAI-compatible `/chat/completions` server works (e.g. a self-hosted vLLM instance — which must be launched with `--enable-auto-tool-choice` and the model-appropriate `--tool-call-parser`, e.g. `qwen3_xml` for Qwen3-family). When overridden away from the OpenRouter default, a missing `OPENROUTER_API_KEY` no longer aborts the run (self-hosted servers typically don't check credentials); pair with `OPENROUTER_MODELS` naming a model that server serves
+- `OPENROUTER_DISABLE_THINKING` — optional (`1`/`true`); sends vLLM's `chat_template_kwargs: {enable_thinking: false}` on every extraction call. Required for self-hosted reasoning models (Qwen3-family), which otherwise burn the whole `max_tokens` budget thinking and fail every extraction with `finish_reason=length`. Leave unset against OpenRouter
 - `GOATCOUNTER_CODE` — optional GoatCounter site code (issue #56), stored as a GitHub Actions **repository variable** (not a secret) and passed to `pnpm build` by `pages.yml`. When unset (local dev, forks) the analytics scripts are simply not emitted. Enables pageviews + `out:<host><path>` outbound-click events on roaster links — the numbers behind referral conversations.
 
 ## Development

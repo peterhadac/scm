@@ -4643,3 +4643,55 @@ def test_products_yaml_origins_are_canonical():
         if value is not None and value not in canonical
     ]
     assert bad == [], f"non-canonical origins stored in products.yaml: {bad}"
+
+
+# ── Issue #143: non-coffee URL path & keyword filters ──────────────────────
+
+
+def test_non_coffee_keywords_include_tea_and_accessories():
+    assert "cajik" in scrape.NON_COFFEE_KEYWORDS
+    assert "caj" in scrape.NON_COFFEE_KEYWORDS
+    assert "čaj" in scrape.NON_COFFEE_KEYWORDS
+    assert "zaváralo" in scrape.NON_COFFEE_KEYWORDS
+    assert "termoska" in scrape.NON_COFFEE_KEYWORDS
+    assert "použité" in scrape.NON_COFFEE_KEYWORDS
+    assert "second hand" in scrape.NON_COFFEE_KEYWORDS
+    assert "setkačka" in scrape.NON_COFFEE_KEYWORDS
+    assert "káviar" in scrape.NON_COFFEE_KEYWORDS
+    assert "kávica" in scrape.NON_COFFEE_KEYWORDS
+
+
+def test_is_non_coffee_url_detects_teapots():
+    assert scrape._is_non_coffee_url("https://example.sk/zaváralo/thermos") is True
+    assert scrape._is_non_coffee_url("https://example.sk/termoska/classic") is True
+    assert scrape._is_non_coffee_url("https://example.sk/príslušenstvo/filter") is True
+    assert scrape._is_non_coffee_url("https://example.sk/accessories/mug") is True
+    assert scrape._is_non_coffee_url("https://example.sk/gear/pump") is True
+
+
+def test_is_non_coffee_url_detects_accessories():
+    assert scrape._is_non_coffee_url("https://example.sk/kávovar/drip") is True
+    assert scrape._is_non_coffee_url("https://example.sk/mlynok/ceramic") is True
+    assert scrape._is_non_coffee_url("https://example.sk/kávovar/v4") is True
+    assert scrape._is_non_coffee_url("https://example.sk/mlynky/burgr") is True
+
+
+def test_is_non_coffee_url_detects_segment_match():
+    # segment-based: "cajik" / "čaj" as path component
+    assert scrape._is_non_coffee_url("https://example.sk/cajik/abc") is True
+    assert scrape._is_non_coffee_url("https://example.sk/čaj/premium") is True
+    assert scrape._is_non_coffee_url("https://example.sk/caj/blend") is True
+
+
+def test_is_non_coffee_url_allows_coffee():
+    assert scrape._is_non_coffee_url("https://example.sk/capsules/espresso") is False
+    assert scrape._is_non_coffee_url("https://example.sk/brand/ethiopia-natural") is False
+    assert scrape._is_non_coffee_url("https://example.sk/kava-espresso-roast") is False
+    assert scrape._is_non_coffee_url("https://example.sk/drip-bag/brazil") is False
+
+
+def test_is_non_coffee_url_no_false_positive_on_longer_segments():
+    # A product slug containing "caj" or "cajik" as substring should NOT match
+    # (segment matching only matches exact path segments)
+    assert scrape._is_non_coffee_url("https://example.sk/some-cajik-product") is False
+    assert scrape._is_non_coffee_url("https://example.sk/moje-caj-kava") is False

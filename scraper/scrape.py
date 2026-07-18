@@ -266,6 +266,19 @@ NON_COFFEE_KEYWORDS = (
     "nálepka",
     "nalepka",
     "sticker",
+    # tea / beverages (Slovak)
+    "cajik",
+    "caj",
+    "čaj",
+    "zaváralo",
+    "termoska",
+    # used goods / gift sets
+    "použité",
+    "second hand",
+    "setkačka",
+    # accessories / sundries
+    "káviar",
+    "kávica",
 )
 
 # URL path segments that mark a discovered link as site plumbing (cart,
@@ -1178,7 +1191,7 @@ async def _crawl_listing_links(crawler, start_url, max_pages=MAX_PAGES, throttle
                 continue
             if parsed_href.netloc != page_domain:
                 continue
-            if looks_like_product_link(href) and is_coffee(text):
+            if looks_like_product_link(href) and not _is_non_coffee_url(href) and is_coffee(text):
                 discovered.add(href)
 
         current_url = str(result.redirected_url or result.url or url)
@@ -1515,6 +1528,44 @@ def parse_weight(text):
         return int(round(value))
 
     return None
+
+
+_NON_COFFEE_URL_PATHS_RAW = (
+    "/zaváralo/", "/zaväralo/", "/termoska/", "/kávovar/", "/mlynok/",
+    "/príslušenstvo/", "/accessories/", "/gear/",
+    "/kávovary/", "/mlynky/",
+    "/káviar/", "/kávica/",  # accessories
+)
+# Normalized copy — compared against diacritic-stripped URL paths
+_NON_COFFEE_URL_PATHS_NORM = frozenset(
+    strip_diacritics(p.lower()) for p in _NON_COFFEE_URL_PATHS_RAW
+)
+
+_NON_COFFEE_URL_SEGMENTS = frozenset(("cajik", "čaj", "caj"))
+
+
+def _is_non_coffee_url(url: str) -> bool:
+    """True if URL path/segments suggest a non-coffee product page.
+
+    This is a cheap pre-filter (no model call needed). Combined with the
+    text-based is_coffee() check it catches teas, equipment, accessories
+    that may slip past the keyword-based heuristics.
+
+    Uses strip_diacritics() so URLs with Slovak diacritics in any form
+    (e.g. /zavÃ¡ralo/ vs /zavÃ¤ralo/) still match.
+    """
+    from urllib.parse import urlparse
+    path_norm = strip_diacritics(urlparse(url).path.lower())
+    if any(p in path_norm for p in _NON_COFFEE_URL_PATHS_NORM):
+        return True
+    # segment-based: check each path component (not substring, to avoid
+    # false-positives on slugs like "/ethiopia-cajik/" — unlikely but just
+    # in case future roasters use "cajik" in a product slug).
+    for segment in path_norm.strip("/").split("/"):
+        if segment in _NON_COFFEE_URL_SEGMENTS:
+            return True
+    return False
+
 
 
 def is_coffee(name):

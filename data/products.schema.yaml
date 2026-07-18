@@ -41,7 +41,47 @@ definitions:
         type: array
         items: {type: string, minLength: 1}
       process: {enum: [washed, natural, honey, wet-hulled, anaerobic, carbonic-maceration, other, null]}
-      roast_type: {enum: [filter, espresso, nespresso, drip-bag]}
+      roast_type: {enum: [filter, espresso, nespresso, drip-bag, decaf]}
+      # Decaffeinated flag (issue #139)
+      is_decaffeinated:
+        type: [boolean, "null"]
+      # Price range (issue #89)
+      price_from:
+        type: [number, "null"]
+        exclusiveMinimum: 0
+      price_to:
+        type: [number, "null"]
+        exclusiveMinimum: 0
+      quantity:
+        type: [integer, "null"]
+        minimum: 0
+      # Sensory ratings (issue #141)
+      sweetness:
+        type: [integer, "null"]
+        minimum: 0
+        maximum: 10
+      acidity:
+        type: [integer, "null"]
+        minimum: 0
+        maximum: 10
+      body:
+        type: [integer, "null"]
+        minimum: 0
+        maximum: 10
+      bitterness:
+        type: [integer, "null"]
+        minimum: 0
+        maximum: 10
+      # Tasting notes (issue #138)
+      tasting_notes:
+        type: [string, "null"]
+      # Brewing recommendations (issue #140)
+      brewing_recommendations:
+        type: [string, "null"]
+      # Stock status (issue #142)
+      stock_status:
+        type: [string, "null"]
+        enum: [in-stock, out-of-stock, pre-order, null]
       packaging:
         type: array
         minItems: 1
@@ -77,6 +117,37 @@ definitions:
         items: {type: string, minLength: 1}
       process: {enum: [washed, natural, honey, wet-hulled, anaerobic, carbonic-maceration, other, null]}
       roast_type: {type: [string, "null"]}
+      is_decaffeinated:
+        type: [boolean, "null"]
+      price_from:
+        type: [number, "null"]
+      price_to:
+        type: [number, "null"]
+      quantity:
+        type: [integer, "null"]
+      sweetness:
+        type: [integer, "null"]
+        minimum: 0
+        maximum: 10
+      acidity:
+        type: [integer, "null"]
+        minimum: 0
+        maximum: 10
+      body:
+        type: [integer, "null"]
+        minimum: 0
+        maximum: 10
+      bitterness:
+        type: [integer, "null"]
+        minimum: 0
+        maximum: 10
+      tasting_notes:
+        type: [string, "null"]
+      brewing_recommendations:
+        type: [string, "null"]
+      stock_status:
+        type: [string, "null"]
+        enum: [in-stock, out-of-stock, pre-order, null]
       packaging:
         type: array
         items: {$ref: "#/definitions/incomplete_packaging_tier"}

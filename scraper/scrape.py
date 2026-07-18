@@ -66,10 +66,13 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # different projections), so a stored hash from before the change would
 # never match again anyway, but bumping keeps the "why did this
 # re-extract" story consistent in one place instead of two.
-# v20: first-class blend flag + blend_origins composition (issue #91).
+# v22: adds decaf roast_type, is_decaffeinated, price_from/to, quantity,
+#   sweetness/acidity/body/bitterness, tasting_notes, brewing_recommendations,
+#   stock_status (issues #89, #139, #141, #138, #140, #142).
+# v21: per-tier `variant` label disambiguates packaging tiers that share a
 # v21: per-tier `variant` label disambiguates packaging tiers that share a
 # weight_g (e.g. whole bean vs ground) instead of colliding into one.
-SCHEMA_VERSION = 21
+SCHEMA_VERSION = 22
 
 # Default processing methods per origin (issue #145):
 # When model extraction returns null/missing process, use the country's
@@ -529,9 +532,62 @@ EXTRACT_PRODUCT_TOOL = {
                                     "every tier at this weight is identical."
                                 ),
                             },
-                        },
+                    },
                         "required": ["price"],
                     },
+                },
+                "is_decaffeinated": {
+                    "type": ["boolean", "null"],
+                    "description": "Whether this coffee is decaffeinated.",
+                },
+                "price_from": {
+                    "type": ["number", "null"],
+                    "description": "From-price as stated on the product page (e.g. 'od 8,90€').",
+                },
+                "price_to": {
+                    "type": ["number", "null"],
+                    "description": "To-price as stated on the product page.",
+                },
+                "quantity": {
+                    "type": ["integer", "null"],
+                    "description": "Stock quantity as stated on the product page, if available.",
+                },
+                "sweetness": {
+                    "type": ["integer", "null"],
+                    "minimum": 0,
+                    "maximum": 10,
+                    "description": "Sweetness rating 0-10.",
+                },
+                "acidity": {
+                    "type": ["integer", "null"],
+                    "minimum": 0,
+                    "maximum": 10,
+                    "description": "Acidity rating 0-10.",
+                },
+                "body": {
+                    "type": ["integer", "null"],
+                    "minimum": 0,
+                    "maximum": 10,
+                    "description": "Body rating 0-10.",
+                },
+                "bitterness": {
+                    "type": ["integer", "null"],
+                    "minimum": 0,
+                    "maximum": 10,
+                    "description": "Bitterness rating 0-10.",
+                },
+                "tasting_notes": {
+                    "type": ["string", "null"],
+                    "description": "Tasting notes / flavor profile string from the product page.",
+                },
+                "brewing_recommendations": {
+                    "type": ["string", "null"],
+                    "description": "Recommended brewing methods from the product page.",
+                },
+                "stock_status": {
+                    "type": ["string", "null"],
+                    "enum": ["in-stock", "out-of-stock", "pre-order"],
+                    "description": "Stock availability on the product page.",
                 },
             },
             "required": ["name", "packaging"],
@@ -1831,6 +1887,7 @@ class Hints:
     weight_g: int | None = None
 
 
+<<<<<<< HEAD
 def _deduplicate_packaging(packaging: list[dict]) -> list[dict]:
     """Deduplicate packaging tiers: keep one entry per (weight_g, price) pair.
 
@@ -1877,6 +1934,17 @@ def _infer_process(name: str, origin: str | None) -> str:
 
 
 # ---------------------------------------------------------------------------
+=======
+def _clamp_rating(v):
+    """Normalize a sensor rating to int in [0, 10], or None if absent."""
+    if v is None:
+        return None
+    try:
+        v = int(float(v))
+        return max(0, min(10, v))
+    except (ValueError, TypeError):
+        return None
+>>>>>>> 2fa6871 (feat: schema v22 — decaf, sensory, tasting, brew recs, stock_status Fixes #89, #139, #141, #138, #140, #142)
 
 
 def normalize_product(raw, url, today, hints=None):
@@ -2015,6 +2083,18 @@ def normalize_product(raw, url, today, hints=None):
         "page_hash": None,  # filled in by the caller once the page hash is known
         "packaging": packaging,
         "schema_version": SCHEMA_VERSION,
+        # New optional fields (issues #89, #139, #141, #138, #140, #142)
+        "is_decaffeinated": raw.get("is_decaffeinated") if raw.get("is_decaffeinated") is not None else None,
+        "price_from": raw.get("price_from"),
+        "price_to": raw.get("price_to"),
+        "quantity": raw.get("quantity"),
+        "sweetness": _clamp_rating(raw.get("sweetness")),
+        "acidity": _clamp_rating(raw.get("acidity")),
+        "body": _clamp_rating(raw.get("body")),
+        "bitterness": _clamp_rating(raw.get("bitterness")),
+        "tasting_notes": raw.get("tasting_notes"),
+        "brewing_recommendations": raw.get("brewing_recommendations"),
+        "stock_status": raw.get("stock_status"),
     }
     # Stamped only on blends (issue #91) — `blend: false` on ~550
     # single-origin entries would be pure diff noise. `blend_origins` is

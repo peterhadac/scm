@@ -26,3 +26,6 @@ venv/
 # Playwright
 test-results/
 playwright-report/
+
+# Worktrees (isolated dev branches)
+.worktrees/

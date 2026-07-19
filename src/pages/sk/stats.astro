@@ -1,0 +1,19 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Štatistiky" lang="sk">
+  <h1>Štatistiky</h1>
+  <pre id="stats" style="white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 0.9em; background: var(--color-back, #f5f5f5); padding: 16px; border-radius: 8px;"></pre>
+  
+  <script is:inline>
+    fetch('/api/stats.json')
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('stats')!.textContent = JSON.stringify(data, null, 2);
+      })
+      .catch(() => {
+        document.getElementById('stats')!.textContent = 'Chyba pri načítaní štatistík';
+      });
+  </script>
+</Layout>

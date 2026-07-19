@@ -27,6 +27,9 @@ venv/
 test-results/
 playwright-report/
 
+# Worktrees (isolated dev branches)
+.worktrees/
+
 # graphify — machine-local state (interpreter path, scan root, extraction cache)
 graphify-out/.graphify_python
 graphify-out/.graphify_root

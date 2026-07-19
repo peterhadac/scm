@@ -142,8 +142,8 @@ export function flattenProducts(): CoffeeRow[] {
           }),
           is_decaffeinated: product.is_decaffeinated,
           stock_status: product.stock_status,
-          discount_code: roaster.discount_code,
-          referral_url: roaster.referral_url,
+          discount_code: roasterBySlug.get(slug)?.discount_code,
+          referral_url: roasterBySlug.get(slug)?.referral_url,
         });
       }
     }

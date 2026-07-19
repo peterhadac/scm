@@ -26,3 +26,8 @@ venv/
 # Playwright
 test-results/
 playwright-report/
+
+# graphify — machine-local state (interpreter path, scan root, extraction cache)
+graphify-out/.graphify_python
+graphify-out/.graphify_root
+graphify-out/cache/

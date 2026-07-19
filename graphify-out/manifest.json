@@ -1,0 +1,787 @@
+{
+  ".lighthouseci/assertion-results.json": {
+    "mtime": 1784364051.791156,
+    "ast_hash": "d751713988987e9331980363e24189ce",
+    "semantic_hash": "d751713988987e9331980363e24189ce"
+  },
+  ".lighthouseci/lhr-1783882915218.json": {
+    "mtime": 1784364051.7971895,
+    "ast_hash": "01f3d2c0114de3eed3e0cf317978b9be",
+    "semantic_hash": "01f3d2c0114de3eed3e0cf317978b9be"
+  },
+  ".lighthouseci/links.json": {
+    "mtime": 1784364051.7981267,
+    "ast_hash": "059410e243a69376eb8ac396a4f36244",
+    "semantic_hash": "059410e243a69376eb8ac396a4f36244"
+  },
+  ".lighthouserc.json": {
+    "mtime": 1784364051.7987545,
+    "ast_hash": "e364789b06755ac4ee004b5f4716d2c7",
+    "semantic_hash": "e364789b06755ac4ee004b5f4716d2c7"
+  },
+  "astro.config.mjs": {
+    "mtime": 1784364051.8015993,
+    "ast_hash": "0a4d8b61376dee1b0c9ed22e90e14835",
+    "semantic_hash": "0a4d8b61376dee1b0c9ed22e90e14835"
+  },
+  "e2e/a11y.spec.ts": {
+    "mtime": 1784364051.8066118,
+    "ast_hash": "cda5c3be18ad4a27e33f9c3e62cfa9b1",
+    "semantic_hash": "cda5c3be18ad4a27e33f9c3e62cfa9b1"
+  },
+  "e2e/blends.spec.ts": {
+    "mtime": 1784364051.8070061,
+    "ast_hash": "7b7d38e58dafe96e5082be99f644967c",
+    "semantic_hash": "7b7d38e58dafe96e5082be99f644967c"
+  },
+  "e2e/coffee-table.spec.ts": {
+    "mtime": 1784364051.8072848,
+    "ast_hash": "98951b4b5044b161a6a54e2ce9964109",
+    "semantic_hash": "98951b4b5044b161a6a54e2ce9964109"
+  },
+  "e2e/map.spec.ts": {
+    "mtime": 1784364051.807631,
+    "ast_hash": "400a30c1a48252d96b716734bbba6494",
+    "semantic_hash": "400a30c1a48252d96b716734bbba6494"
+  },
+  "package.json": {
+    "mtime": 1784364051.8078687,
+    "ast_hash": "c0966780a12406b44d220e9a373140cf",
+    "semantic_hash": "c0966780a12406b44d220e9a373140cf"
+  },
+  "playwright.config.ts": {
+    "mtime": 1784364051.8082008,
+    "ast_hash": "4e24f1fddec4a62b93c9b617e08e4df3",
+    "semantic_hash": "4e24f1fddec4a62b93c9b617e08e4df3"
+  },
+  "scraper/pyproject.toml": {
+    "mtime": 1784364051.8131382,
+    "ast_hash": "bbe2ceca9709f7a37361006421c5c2c2",
+    "semantic_hash": "bbe2ceca9709f7a37361006421c5c2c2"
+  },
+  "scraper/scrape.py": {
+    "mtime": 1784364051.8137639,
+    "ast_hash": "8a7be70e89d25118bdbe9ac8ede0effd",
+    "semantic_hash": "8a7be70e89d25118bdbe9ac8ede0effd"
+  },
+  "scraper/test_scrape.py": {
+    "mtime": 1784364051.8145099,
+    "ast_hash": "ad05ae4e12670187c69b587a0a10f4e7",
+    "semantic_hash": "ad05ae4e12670187c69b587a0a10f4e7"
+  },
+  "skills-lock.json": {
+    "mtime": 1784364051.8181162,
+    "ast_hash": "fd9c0af2485cbdb2aee485a6bf7685c0",
+    "semantic_hash": "fd9c0af2485cbdb2aee485a6bf7685c0"
+  },
+  "src/components/Card.astro": {
+    "mtime": 1784364051.819708,
+    "ast_hash": "6574205946ad4dfbf48d4d3adbc6deb7",
+    "semantic_hash": "6574205946ad4dfbf48d4d3adbc6deb7"
+  },
+  "src/components/CardGrid.astro": {
+    "mtime": 1784364051.8200092,
+    "ast_hash": "18d7107e6be2ff83192500053aeb8675",
+    "semantic_hash": "18d7107e6be2ff83192500053aeb8675"
+  },
+  "src/components/CoffeeTable.astro": {
+    "mtime": 1784364051.8209217,
+    "ast_hash": "164d752baa4ddce536dab6ce21c0cdd8",
+    "semantic_hash": "164d752baa4ddce536dab6ce21c0cdd8"
+  },
+  "src/components/Comments.astro": {
+    "mtime": 1784364051.8211854,
+    "ast_hash": "d1da631b2e228eae80bfbbb010f99b44",
+    "semantic_hash": "d1da631b2e228eae80bfbbb010f99b44"
+  },
+  "src/components/FluidBackground.astro": {
+    "mtime": 1784364051.8216789,
+    "ast_hash": "9fdbba9c729dabc426eebd9ea8aad2f0",
+    "semantic_hash": "9fdbba9c729dabc426eebd9ea8aad2f0"
+  },
+  "src/components/FreshnessBadge.astro": {
+    "mtime": 1784364051.82185,
+    "ast_hash": "f08bbdb5dba068a2289f3121e4fbb816",
+    "semantic_hash": "f08bbdb5dba068a2289f3121e4fbb816"
+  },
+  "src/components/HeroVideoDark.astro": {
+    "mtime": 1784364051.8221478,
+    "ast_hash": "90250599b14059d3c93026bb20f9540b",
+    "semantic_hash": "90250599b14059d3c93026bb20f9540b"
+  },
+  "src/components/LogoIcon.astro": {
+    "mtime": 1784364051.8226051,
+    "ast_hash": "7712658ac33fef4545d3843498806ff4",
+    "semantic_hash": "7712658ac33fef4545d3843498806ff4"
+  },
+  "src/components/MemeCard.astro": {
+    "mtime": 1784364051.822894,
+    "ast_hash": "b93ea49b642c9718401dcc522dbde0a7",
+    "semantic_hash": "b93ea49b642c9718401dcc522dbde0a7"
+  },
+  "src/components/OriginsChoropleth.astro": {
+    "mtime": 1784364051.8234096,
+    "ast_hash": "d7312608db4dc4eb7bd1e81d49941695",
+    "semantic_hash": "d7312608db4dc4eb7bd1e81d49941695"
+  },
+  "src/components/RecipeCard.astro": {
+    "mtime": 1784364051.8240921,
+    "ast_hash": "4f0a717c535c367417a97a9b6e592d6f",
+    "semantic_hash": "4f0a717c535c367417a97a9b6e592d6f"
+  },
+  "src/components/RoasterLogoSlider.astro": {
+    "mtime": 1784364051.8246498,
+    "ast_hash": "38dc687d60fb2464bc56046361d1af04",
+    "semantic_hash": "38dc687d60fb2464bc56046361d1af04"
+  },
+  "src/components/RoasterMap.astro": {
+    "mtime": 1784364051.824959,
+    "ast_hash": "f23f471bafa2d1968265f411c168e582",
+    "semantic_hash": "f23f471bafa2d1968265f411c168e582"
+  },
+  "src/components/WeeklyDigest.astro": {
+    "mtime": 1784364051.8255122,
+    "ast_hash": "154190fab40af5a6949a779cb043d917",
+    "semantic_hash": "154190fab40af5a6949a779cb043d917"
+  },
+  "src/components/Wordmark.astro": {
+    "mtime": 1784364051.8257906,
+    "ast_hash": "c7bac75bfa4f130cd170a2496d8fe708",
+    "semantic_hash": "c7bac75bfa4f130cd170a2496d8fe708"
+  },
+  "src/components/ui/Badge.astro": {
+    "mtime": 1784364051.8261507,
+    "ast_hash": "c6a3922d750053c2c6e031d022b5a5b9",
+    "semantic_hash": "c6a3922d750053c2c6e031d022b5a5b9"
+  },
+  "src/components/ui/Button.astro": {
+    "mtime": 1784364051.8264687,
+    "ast_hash": "6efedd00d0184b417abcbad20c9324c0",
+    "semantic_hash": "6efedd00d0184b417abcbad20c9324c0"
+  },
+  "src/content.config.ts": {
+    "mtime": 1784364051.8267374,
+    "ast_hash": "e529389b56ce8fc3289b1d5b0723aa1b",
+    "semantic_hash": "e529389b56ce8fc3289b1d5b0723aa1b"
+  },
+  "src/layouts/Layout.astro": {
+    "mtime": 1784364051.8348086,
+    "ast_hash": "9b082944c0bf355216b2744936218223",
+    "semantic_hash": "9b082944c0bf355216b2744936218223"
+  },
+  "src/lib/coffees.ts": {
+    "mtime": 1784364051.835156,
+    "ast_hash": "0fd8b3249dc3039d6ce21b49de583db2",
+    "semantic_hash": "0fd8b3249dc3039d6ce21b49de583db2"
+  },
+  "src/lib/digest.ts": {
+    "mtime": 1784364051.8354943,
+    "ast_hash": "7eb3e97c4c0704e7ee4c8143b814d196",
+    "semantic_hash": "7eb3e97c4c0704e7ee4c8143b814d196"
+  },
+  "src/lib/i18n.ts": {
+    "mtime": 1784364051.8357525,
+    "ast_hash": "aeea30c9e591fddd814c53944db5b45d",
+    "semantic_hash": "aeea30c9e591fddd814c53944db5b45d"
+  },
+  "src/lib/lang.ts": {
+    "mtime": 1784364051.8359275,
+    "ast_hash": "3f2f2793efa20df749fb9b0b2eca4c1c",
+    "semantic_hash": "3f2f2793efa20df749fb9b0b2eca4c1c"
+  },
+  "src/lib/mapData.ts": {
+    "mtime": 1784364051.8363938,
+    "ast_hash": "60e99be1b275bd99bb19f7fa767259b0",
+    "semantic_hash": "60e99be1b275bd99bb19f7fa767259b0"
+  },
+  "src/lib/nav.ts": {
+    "mtime": 1784364051.8366427,
+    "ast_hash": "94b95f776d6b6a9a842f737e455b8197",
+    "semantic_hash": "94b95f776d6b6a9a842f737e455b8197"
+  },
+  "src/lib/origins.ts": {
+    "mtime": 1784364051.83688,
+    "ast_hash": "a654dc4e84b130e33df8560d705630bd",
+    "semantic_hash": "a654dc4e84b130e33df8560d705630bd"
+  },
+  "src/lib/originsMap.ts": {
+    "mtime": 1784364051.8372297,
+    "ast_hash": "aefc504fc7574d52e51ccb55500a4fbb",
+    "semantic_hash": "aefc504fc7574d52e51ccb55500a4fbb"
+  },
+  "src/lib/priceHistory.ts": {
+    "mtime": 1784364051.8374753,
+    "ast_hash": "8ca61d63d4c36141cc17dd1e16df7415",
+    "semantic_hash": "8ca61d63d4c36141cc17dd1e16df7415"
+  },
+  "src/lib/recipes.ts": {
+    "mtime": 1784364051.8377566,
+    "ast_hash": "32a74e14859af08233de0e742e07f5a4",
+    "semantic_hash": "32a74e14859af08233de0e742e07f5a4"
+  },
+  "src/lib/utils.ts": {
+    "mtime": 1784364051.8381705,
+    "ast_hash": "b3942a2f5bdd0c1b523540f82276ac09",
+    "semantic_hash": "b3942a2f5bdd0c1b523540f82276ac09"
+  },
+  "src/pages/404.astro": {
+    "mtime": 1784364051.8384583,
+    "ast_hash": "0f7cb21e6181f62af61937df97de749f",
+    "semantic_hash": "0f7cb21e6181f62af61937df97de749f"
+  },
+  "src/pages/about-data.astro": {
+    "mtime": 1784364051.8386948,
+    "ast_hash": "01e33e67d827f6d58372d17ea238beb9",
+    "semantic_hash": "01e33e67d827f6d58372d17ea238beb9"
+  },
+  "src/pages/ai-coffee.astro": {
+    "mtime": 1784364051.838847,
+    "ast_hash": "fc09f5b35a5fe8691dd3ec15b39f339a",
+    "semantic_hash": "fc09f5b35a5fe8691dd3ec15b39f339a"
+  },
+  "src/pages/brew-methods/aeropress.astro": {
+    "mtime": 1784364051.83915,
+    "ast_hash": "67d7e660cd2ea797774c636a6a9f9e59",
+    "semantic_hash": "67d7e660cd2ea797774c636a6a9f9e59"
+  },
+  "src/pages/brew-methods/cold-brew.astro": {
+    "mtime": 1784364051.8393004,
+    "ast_hash": "ca4dd01003f96e12c5fcd2a7f727284b",
+    "semantic_hash": "ca4dd01003f96e12c5fcd2a7f727284b"
+  },
+  "src/pages/brew-methods/french-press.astro": {
+    "mtime": 1784364051.8394606,
+    "ast_hash": "6f6b5301750aae8df08fa5c51a8c9ebf",
+    "semantic_hash": "6f6b5301750aae8df08fa5c51a8c9ebf"
+  },
+  "src/pages/brew-methods/v60.astro": {
+    "mtime": 1784364051.8396306,
+    "ast_hash": "efb4b8b989ca828a9162c008c3244130",
+    "semantic_hash": "efb4b8b989ca828a9162c008c3244130"
+  },
+  "src/pages/coffees.json.ts": {
+    "mtime": 1784364051.8399422,
+    "ast_hash": "aaf84a6f079993f6f7339fb43b5f33b9",
+    "semantic_hash": "aaf84a6f079993f6f7339fb43b5f33b9"
+  },
+  "src/pages/coffees/blends.astro": {
+    "mtime": 1784364051.8403456,
+    "ast_hash": "72f00ffa9c4163c2e0b43229fc966936",
+    "semantic_hash": "72f00ffa9c4163c2e0b43229fc966936"
+  },
+  "src/pages/coffees/drip-bags.astro": {
+    "mtime": 1784364051.8405795,
+    "ast_hash": "4a4ec31d43d292458adeac066c1721af",
+    "semantic_hash": "4a4ec31d43d292458adeac066c1721af"
+  },
+  "src/pages/coffees/espresso.astro": {
+    "mtime": 1784364051.8411639,
+    "ast_hash": "959077c6cb378a7f102a90fc40569896",
+    "semantic_hash": "959077c6cb378a7f102a90fc40569896"
+  },
+  "src/pages/coffees/filter.astro": {
+    "mtime": 1784364051.8413322,
+    "ast_hash": "cbec44d7ae2365c4d10c399a154e021b",
+    "semantic_hash": "cbec44d7ae2365c4d10c399a154e021b"
+  },
+  "src/pages/coffees/index.astro": {
+    "mtime": 1784364051.841583,
+    "ast_hash": "4cde358ad1a4508a0360a9c1d8047769",
+    "semantic_hash": "4cde358ad1a4508a0360a9c1d8047769"
+  },
+  "src/pages/coffees/nespresso.astro": {
+    "mtime": 1784364051.8417382,
+    "ast_hash": "223f9faf99cea77138c5c11e9298d006",
+    "semantic_hash": "223f9faf99cea77138c5c11e9298d006"
+  },
+  "src/pages/digest.xml.ts": {
+    "mtime": 1784364051.8419673,
+    "ast_hash": "2f91ac31013d9bcf72213afa13f7a7b5",
+    "semantic_hash": "2f91ac31013d9bcf72213afa13f7a7b5"
+  },
+  "src/pages/drinks/espresso-cube-cappuccino.astro": {
+    "mtime": 1784364051.8421664,
+    "ast_hash": "9a443e8eca5e7c98352e98929bd1f9b5",
+    "semantic_hash": "9a443e8eca5e7c98352e98929bd1f9b5"
+  },
+  "src/pages/drinks/espresso-cube-tonic.astro": {
+    "mtime": 1784364051.8423145,
+    "ast_hash": "ce17c00205f87859c88a5c6d44669e2a",
+    "semantic_hash": "ce17c00205f87859c88a5c6d44669e2a"
+  },
+  "src/pages/drinks/filter-ice-cappuccino.astro": {
+    "mtime": 1784364051.8425484,
+    "ast_hash": "1074fe737d54e6a2ae43bec7f5b10cf7",
+    "semantic_hash": "1074fe737d54e6a2ae43bec7f5b10cf7"
+  },
+  "src/pages/drinks/filterccino.astro": {
+    "mtime": 1784364051.8427851,
+    "ast_hash": "ab3cb8181087c21680a3bed55df0be28",
+    "semantic_hash": "ab3cb8181087c21680a3bed55df0be28"
+  },
+  "src/pages/drinks/french-press.astro": {
+    "mtime": 1784364051.8432102,
+    "ast_hash": "5a935f8073d0eabdf7c302f03a1646c3",
+    "semantic_hash": "5a935f8073d0eabdf7c302f03a1646c3"
+  },
+  "src/pages/index.astro": {
+    "mtime": 1784364051.84352,
+    "ast_hash": "2696b831b7c29691e4e81b62597e693c",
+    "semantic_hash": "2696b831b7c29691e4e81b62597e693c"
+  },
+  "src/pages/map.astro": {
+    "mtime": 1784364051.8437428,
+    "ast_hash": "15471986c6aa7a2fd2ab85d46da9b63e",
+    "semantic_hash": "15471986c6aa7a2fd2ab85d46da9b63e"
+  },
+  "src/pages/origins/[slug].astro": {
+    "mtime": 1784364051.844022,
+    "ast_hash": "120d86824d1f13acd296668aa4008d8b",
+    "semantic_hash": "120d86824d1f13acd296668aa4008d8b"
+  },
+  "src/pages/origins/index.astro": {
+    "mtime": 1784364051.8442914,
+    "ast_hash": "e0411f67a2c1ab74a250aa2ac950b337",
+    "semantic_hash": "e0411f67a2c1ab74a250aa2ac950b337"
+  },
+  "src/pages/sk/about-data.astro": {
+    "mtime": 1784364051.8445733,
+    "ast_hash": "b2cf294f685b4fe6b3857a6c2e6af60b",
+    "semantic_hash": "b2cf294f685b4fe6b3857a6c2e6af60b"
+  },
+  "src/pages/sk/ai-coffee.astro": {
+    "mtime": 1784364051.8447306,
+    "ast_hash": "82a74a1631f5677b4ceb8011e86f4c56",
+    "semantic_hash": "82a74a1631f5677b4ceb8011e86f4c56"
+  },
+  "src/pages/sk/brew-methods/aeropress.astro": {
+    "mtime": 1784364051.8450525,
+    "ast_hash": "381a275735f788ee9d4c4072fdb622a3",
+    "semantic_hash": "381a275735f788ee9d4c4072fdb622a3"
+  },
+  "src/pages/sk/brew-methods/cold-brew.astro": {
+    "mtime": 1784364051.8451912,
+    "ast_hash": "1d519452584332512eb37fce8a0f574d",
+    "semantic_hash": "1d519452584332512eb37fce8a0f574d"
+  },
+  "src/pages/sk/brew-methods/french-press.astro": {
+    "mtime": 1784364051.8453326,
+    "ast_hash": "b922cecf389c3065205a132b9eefe9ce",
+    "semantic_hash": "b922cecf389c3065205a132b9eefe9ce"
+  },
+  "src/pages/sk/brew-methods/v60.astro": {
+    "mtime": 1784364051.8455527,
+    "ast_hash": "82f33534a383e60f8d6f0378c51c1f95",
+    "semantic_hash": "82f33534a383e60f8d6f0378c51c1f95"
+  },
+  "src/pages/sk/coffees/blends.astro": {
+    "mtime": 1784364051.8457358,
+    "ast_hash": "0ce863d19c8b10f51b5b8140564c55e0",
+    "semantic_hash": "0ce863d19c8b10f51b5b8140564c55e0"
+  },
+  "src/pages/sk/coffees/drip-bags.astro": {
+    "mtime": 1784364051.8458772,
+    "ast_hash": "ffc35e0b3fd8e3673df1fc039930971f",
+    "semantic_hash": "ffc35e0b3fd8e3673df1fc039930971f"
+  },
+  "src/pages/sk/coffees/espresso.astro": {
+    "mtime": 1784364051.846026,
+    "ast_hash": "35d06af860500c67c42b1a80421212c6",
+    "semantic_hash": "35d06af860500c67c42b1a80421212c6"
+  },
+  "src/pages/sk/coffees/filter.astro": {
+    "mtime": 1784364051.8461776,
+    "ast_hash": "c9f1e383c84df67aaf1f066067af7015",
+    "semantic_hash": "c9f1e383c84df67aaf1f066067af7015"
+  },
+  "src/pages/sk/coffees/index.astro": {
+    "mtime": 1784364051.8463485,
+    "ast_hash": "e12a3bd993ddb6282db1a6d4bf7e526d",
+    "semantic_hash": "e12a3bd993ddb6282db1a6d4bf7e526d"
+  },
+  "src/pages/sk/coffees/nespresso.astro": {
+    "mtime": 1784364051.8465264,
+    "ast_hash": "ad55d7c2a68561364ae0b745ea7f9936",
+    "semantic_hash": "ad55d7c2a68561364ae0b745ea7f9936"
+  },
+  "src/pages/sk/drinks/espresso-cube-cappuccino.astro": {
+    "mtime": 1784364051.84682,
+    "ast_hash": "d47cb93737f21f7c915d52884d2a8e4e",
+    "semantic_hash": "d47cb93737f21f7c915d52884d2a8e4e"
+  },
+  "src/pages/sk/drinks/espresso-cube-tonic.astro": {
+    "mtime": 1784364051.8472395,
+    "ast_hash": "6c7613de1248842368c95c094504e0ed",
+    "semantic_hash": "6c7613de1248842368c95c094504e0ed"
+  },
+  "src/pages/sk/drinks/filter-ice-cappuccino.astro": {
+    "mtime": 1784364051.8474052,
+    "ast_hash": "2671820354a46395a291baa89a6dac29",
+    "semantic_hash": "2671820354a46395a291baa89a6dac29"
+  },
+  "src/pages/sk/drinks/filterccino.astro": {
+    "mtime": 1784364051.847711,
+    "ast_hash": "fbfc0a8ebade59a9113df0d3a7b65aba",
+    "semantic_hash": "fbfc0a8ebade59a9113df0d3a7b65aba"
+  },
+  "src/pages/sk/drinks/french-press.astro": {
+    "mtime": 1784364051.847913,
+    "ast_hash": "68febe591e730e39e69392f7094eb244",
+    "semantic_hash": "68febe591e730e39e69392f7094eb244"
+  },
+  "src/pages/sk/index.astro": {
+    "mtime": 1784364051.8482838,
+    "ast_hash": "55d91008dceb046913990d4becb71efd",
+    "semantic_hash": "55d91008dceb046913990d4becb71efd"
+  },
+  "src/pages/sk/map.astro": {
+    "mtime": 1784364051.8486645,
+    "ast_hash": "2dff0e272640003ba13b07aa3e714c1a",
+    "semantic_hash": "2dff0e272640003ba13b07aa3e714c1a"
+  },
+  "src/pages/sk/origins/[slug].astro": {
+    "mtime": 1784364051.8490705,
+    "ast_hash": "197397526eab37fbe82d87f257dce443",
+    "semantic_hash": "197397526eab37fbe82d87f257dce443"
+  },
+  "src/pages/sk/origins/index.astro": {
+    "mtime": 1784364051.8494983,
+    "ast_hash": "5d696f6c4c32f052443dd2f585ac5692",
+    "semantic_hash": "5d696f6c4c32f052443dd2f585ac5692"
+  },
+  "src/pages/sk/this-week.astro": {
+    "mtime": 1784364051.8497705,
+    "ast_hash": "66cff2daeef13345d9fbc7d7bb09bffd",
+    "semantic_hash": "66cff2daeef13345d9fbc7d7bb09bffd"
+  },
+  "src/pages/this-week.astro": {
+    "mtime": 1784364051.8499985,
+    "ast_hash": "c90c9be2fb6e92968ba9f6172ec05cee",
+    "semantic_hash": "c90c9be2fb6e92968ba9f6172ec05cee"
+  },
+  "tsconfig.json": {
+    "mtime": 1784364051.8509586,
+    "ast_hash": "2468ad4201072028f1f60c1591299ac9",
+    "semantic_hash": "2468ad4201072028f1f60c1591299ac9"
+  },
+  ".claude/skills/design-taste-frontend/SKILL.md": {
+    "mtime": 1784364051.7855537,
+    "ast_hash": "6f73606d20cd948b471b1ce1767aab50",
+    "semantic_hash": "6f73606d20cd948b471b1ce1767aab50"
+  },
+  ".claude/skills/gpt-taste/SKILL.md": {
+    "mtime": 1784364051.7857568,
+    "ast_hash": "0968d17fda872b36dc35e6bcc0c9af36",
+    "semantic_hash": "0968d17fda872b36dc35e6bcc0c9af36"
+  },
+  ".claude/skills/high-end-visual-design/SKILL.md": {
+    "mtime": 1784364051.7859142,
+    "ast_hash": "269e37851b3a17693d8052f5f8002cfc",
+    "semantic_hash": "269e37851b3a17693d8052f5f8002cfc"
+  },
+  ".claude/skills/minimalist-ui/SKILL.md": {
+    "mtime": 1784364051.7860518,
+    "ast_hash": "c7f814d7df4b1b0e3eebf706a6d74adf",
+    "semantic_hash": "c7f814d7df4b1b0e3eebf706a6d74adf"
+  },
+  ".claude/skills/redesign-existing-projects/SKILL.md": {
+    "mtime": 1784364051.7863553,
+    "ast_hash": "31d802d02ccb9f5da82d99156af36317",
+    "semantic_hash": "31d802d02ccb9f5da82d99156af36317"
+  },
+  ".github/ISSUE_TEMPLATE/bug-report.yml": {
+    "mtime": 1784364051.786874,
+    "ast_hash": "63d3c082083c6d02b385f15717aedcb1",
+    "semantic_hash": "63d3c082083c6d02b385f15717aedcb1"
+  },
+  ".github/ISSUE_TEMPLATE/config.yml": {
+    "mtime": 1784364051.7872217,
+    "ast_hash": "bb8655a4f97841e531c092e7211258c5",
+    "semantic_hash": "bb8655a4f97841e531c092e7211258c5"
+  },
+  ".github/ISSUE_TEMPLATE/wrong-data.yml": {
+    "mtime": 1784364051.78819,
+    "ast_hash": "7d10b52736abdfbb605797aeea8d5044",
+    "semantic_hash": "7d10b52736abdfbb605797aeea8d5044"
+  },
+  ".github/dependabot.yml": {
+    "mtime": 1784364051.7884796,
+    "ast_hash": "b1a3d94786b422d32f73866a633a75ad",
+    "semantic_hash": "b1a3d94786b422d32f73866a633a75ad"
+  },
+  ".github/workflows/ci.yml": {
+    "mtime": 1784364051.788944,
+    "ast_hash": "e0cdb0b94f7849097a94f29a9b8c6970",
+    "semantic_hash": "e0cdb0b94f7849097a94f29a9b8c6970"
+  },
+  ".github/workflows/e2e.yml": {
+    "mtime": 1784364051.7893875,
+    "ast_hash": "a11c4b5a7b83a4ffa25738d04fd2bdad",
+    "semantic_hash": "a11c4b5a7b83a4ffa25738d04fd2bdad"
+  },
+  ".github/workflows/pages.yml": {
+    "mtime": 1784364051.7900639,
+    "ast_hash": "4d267c871c82f0af6f5185e84e5ed26f",
+    "semantic_hash": "4d267c871c82f0af6f5185e84e5ed26f"
+  },
+  ".github/workflows/scrape.yml": {
+    "mtime": 1784364051.7904167,
+    "ast_hash": "3858ecc5efb1e40c1d806565d5df1851",
+    "semantic_hash": "3858ecc5efb1e40c1d806565d5df1851"
+  },
+  ".lighthouseci/lhr-1783882915218.html": {
+    "mtime": 1784364051.7942598,
+    "ast_hash": "33cec1c0c4d353ff88fda0f619103d16",
+    "semantic_hash": "33cec1c0c4d353ff88fda0f619103d16"
+  },
+  "Architecture.md": {
+    "mtime": 1784364051.7997112,
+    "ast_hash": "e299215781780b1c442a3bc448948b7c",
+    "semantic_hash": "e299215781780b1c442a3bc448948b7c"
+  },
+  "CLAUDE.md": {
+    "mtime": 1784364051.8002338,
+    "ast_hash": "58ee07608089fd53cf185ff26bdf2365",
+    "semantic_hash": "58ee07608089fd53cf185ff26bdf2365"
+  },
+  "Design.md": {
+    "mtime": 1784364051.8006318,
+    "ast_hash": "f0f8e01b28e3bd90e7156bb480ccb6e9",
+    "semantic_hash": "f0f8e01b28e3bd90e7156bb480ccb6e9"
+  },
+  "PRODUCT.md": {
+    "mtime": 1784364051.8009772,
+    "ast_hash": "43259d556578de31bf12f7fa450384c2",
+    "semantic_hash": "43259d556578de31bf12f7fa450384c2"
+  },
+  "README.md": {
+    "mtime": 1784364051.8011174,
+    "ast_hash": "881d0cbc88ae664a6b8cb3137fcc09bb",
+    "semantic_hash": "881d0cbc88ae664a6b8cb3137fcc09bb"
+  },
+  "data/coffee_origins.yaml": {
+    "mtime": 1784364051.8019533,
+    "ast_hash": "923cb5683095c41f73b2b75062db33f8",
+    "semantic_hash": "923cb5683095c41f73b2b75062db33f8"
+  },
+  "data/products.schema.yaml": {
+    "mtime": 1784364051.8027606,
+    "ast_hash": "f578cb77f7b737505bcc63cef1556671",
+    "semantic_hash": "f578cb77f7b737505bcc63cef1556671"
+  },
+  "data/products.yaml": {
+    "mtime": 1784364051.803712,
+    "ast_hash": "094491ea48576549d468b5a497f793d6",
+    "semantic_hash": "094491ea48576549d468b5a497f793d6"
+  },
+  "data/scrape_status.yaml": {
+    "mtime": 1784364051.8041627,
+    "ast_hash": "41d6bb4359015fc006ff7591a4586373",
+    "semantic_hash": "41d6bb4359015fc006ff7591a4586373"
+  },
+  "docs/design-audit-followups.md": {
+    "mtime": 1784364051.8045778,
+    "ast_hash": "e720910994333c813db0a712af51fa2c",
+    "semantic_hash": "e720910994333c813db0a712af51fa2c"
+  },
+  "docs/superpowers/plans/2026-06-30-astro-starlight-site.md": {
+    "mtime": 1784364051.8050802,
+    "ast_hash": "055a54abe998a46398cd1d2a3bb42360",
+    "semantic_hash": "055a54abe998a46398cd1d2a3bb42360"
+  },
+  "docs/superpowers/plans/2026-06-30-ci-workflows.md": {
+    "mtime": 1784364051.8052313,
+    "ast_hash": "e430f087fd9be67d424327db3a962f9b",
+    "semantic_hash": "e430f087fd9be67d424327db3a962f9b"
+  },
+  "docs/superpowers/plans/2026-07-05-products-schema-migration.md": {
+    "mtime": 1784364051.805423,
+    "ast_hash": "206552230f93778a7896708834d57667",
+    "semantic_hash": "206552230f93778a7896708834d57667"
+  },
+  "docs/superpowers/plans/2026-07-08-woocommerce-variation-pricing.md": {
+    "mtime": 1784364051.8055508,
+    "ast_hash": "701280603884326b6838ea8d9660e622",
+    "semantic_hash": "701280603884326b6838ea8d9660e622"
+  },
+  "docs/superpowers/plans/2026-07-11-i18n-en-sk.md": {
+    "mtime": 1784364051.8056653,
+    "ast_hash": "f75601d29930f006816c902774392883",
+    "semantic_hash": "f75601d29930f006816c902774392883"
+  },
+  "docs/superpowers/specs/2026-06-30-astro-starlight-site-design.md": {
+    "mtime": 1784364051.8058286,
+    "ast_hash": "2f48a8397f513e87f05bf1c7e331ad45",
+    "semantic_hash": "2f48a8397f513e87f05bf1c7e331ad45"
+  },
+  "docs/superpowers/specs/2026-06-30-ci-workflows-design.md": {
+    "mtime": 1784364051.8059416,
+    "ast_hash": "11e352718612c7fdf476d282787317a4",
+    "semantic_hash": "11e352718612c7fdf476d282787317a4"
+  },
+  "docs/superpowers/specs/2026-07-05-products-schema-migration-design.md": {
+    "mtime": 1784364051.806126,
+    "ast_hash": "1e4e7b4c644cf72d815ffc044117aab6",
+    "semantic_hash": "1e4e7b4c644cf72d815ffc044117aab6"
+  },
+  "docs/superpowers/specs/2026-07-11-i18n-en-sk-design.md": {
+    "mtime": 1784364051.806239,
+    "ast_hash": "575f794b99b203013ca0a442ae06e861",
+    "semantic_hash": "575f794b99b203013ca0a442ae06e861"
+  },
+  "roasters.schema.yaml": {
+    "mtime": 1784364051.8123531,
+    "ast_hash": "4b389e8179c07a89f64d8fbffdcbbdb6",
+    "semantic_hash": "4b389e8179c07a89f64d8fbffdcbbdb6"
+  },
+  "roasters.yaml": {
+    "mtime": 1784364051.812624,
+    "ast_hash": "4ce61abf45fe975e54a15696819b2c59",
+    "semantic_hash": "4ce61abf45fe975e54a15696819b2c59"
+  },
+  "scraper/canary_page.md": {
+    "mtime": 1784364051.8129075,
+    "ast_hash": "735f5d4e543c7dd7d8637f91b9dbd021",
+    "semantic_hash": "735f5d4e543c7dd7d8637f91b9dbd021"
+  },
+  "skills/slovak-coffee-map/SKILL.md": {
+    "mtime": 1784364051.8192153,
+    "ast_hash": "35f6d270209863cda85ec843294094f8",
+    "semantic_hash": "35f6d270209863cda85ec843294094f8"
+  },
+  "src/content/docs/about-data.mdx": {
+    "mtime": 1784364051.8274102,
+    "ast_hash": "ac809f1375fdc0d4ca670e092bbdc63c",
+    "semantic_hash": "ac809f1375fdc0d4ca670e092bbdc63c"
+  },
+  "src/content/docs/ai-coffee.mdx": {
+    "mtime": 1784364051.8277447,
+    "ast_hash": "c6d252b6777f213e870388eefa4f6452",
+    "semantic_hash": "c6d252b6777f213e870388eefa4f6452"
+  },
+  "src/content/docs/brew-methods/aeropress.mdx": {
+    "mtime": 1784364051.8280451,
+    "ast_hash": "a814fadc1c68a6ea39ca5ea3fc49e7ce",
+    "semantic_hash": "a814fadc1c68a6ea39ca5ea3fc49e7ce"
+  },
+  "src/content/docs/brew-methods/cold-brew.mdx": {
+    "mtime": 1784364051.828312,
+    "ast_hash": "e23e47b403392dae9fe14639ba553c6f",
+    "semantic_hash": "e23e47b403392dae9fe14639ba553c6f"
+  },
+  "src/content/docs/brew-methods/french-press.mdx": {
+    "mtime": 1784364051.8285837,
+    "ast_hash": "9fcdf9c67ef368c1f469194f350d8de4",
+    "semantic_hash": "9fcdf9c67ef368c1f469194f350d8de4"
+  },
+  "src/content/docs/brew-methods/v60.mdx": {
+    "mtime": 1784364051.8292792,
+    "ast_hash": "e562fe9b47addf5e077b8495fc21e1f0",
+    "semantic_hash": "e562fe9b47addf5e077b8495fc21e1f0"
+  },
+  "src/content/docs/drinks/espresso-cube-cappuccino.mdx": {
+    "mtime": 1784364051.8297446,
+    "ast_hash": "33529988eeffe549da4ea91095addcef",
+    "semantic_hash": "33529988eeffe549da4ea91095addcef"
+  },
+  "src/content/docs/drinks/espresso-cube-tonic.mdx": {
+    "mtime": 1784364051.8300695,
+    "ast_hash": "953a13cdff95df47cd8c69718aa3cd17",
+    "semantic_hash": "953a13cdff95df47cd8c69718aa3cd17"
+  },
+  "src/content/docs/drinks/filter-ice-cappuccino.mdx": {
+    "mtime": 1784364051.8303978,
+    "ast_hash": "a92aa9363b548dd5073e01087de2807f",
+    "semantic_hash": "a92aa9363b548dd5073e01087de2807f"
+  },
+  "src/content/docs/drinks/filterccino.mdx": {
+    "mtime": 1784364051.8307178,
+    "ast_hash": "5f05fb10ff607d2929243f55518e5555",
+    "semantic_hash": "5f05fb10ff607d2929243f55518e5555"
+  },
+  "src/content/docs/drinks/french-press.mdx": {
+    "mtime": 1784364051.8310559,
+    "ast_hash": "a20f7080236e6465bc9d5f35512bc79b",
+    "semantic_hash": "a20f7080236e6465bc9d5f35512bc79b"
+  },
+  "src/content/docs/sk/about-data.mdx": {
+    "mtime": 1784364051.8314724,
+    "ast_hash": "944f663346e47ea7a46e2710015971ba",
+    "semantic_hash": "944f663346e47ea7a46e2710015971ba"
+  },
+  "src/content/docs/sk/ai-coffee.mdx": {
+    "mtime": 1784364051.8319044,
+    "ast_hash": "87c08769fad4e293762eed560dc49151",
+    "semantic_hash": "87c08769fad4e293762eed560dc49151"
+  },
+  "src/content/docs/sk/brew-methods/aeropress.mdx": {
+    "mtime": 1784364051.8324325,
+    "ast_hash": "a92230a6a5872f8b33a3c1f7fdb0239f",
+    "semantic_hash": "a92230a6a5872f8b33a3c1f7fdb0239f"
+  },
+  "src/content/docs/sk/brew-methods/cold-brew.mdx": {
+    "mtime": 1784364051.8326883,
+    "ast_hash": "8d0046c6914d8633e6c4e43331a864e6",
+    "semantic_hash": "8d0046c6914d8633e6c4e43331a864e6"
+  },
+  "src/content/docs/sk/brew-methods/french-press.mdx": {
+    "mtime": 1784364051.8329298,
+    "ast_hash": "9745debee2b13d5d2aeac2bafcd13252",
+    "semantic_hash": "9745debee2b13d5d2aeac2bafcd13252"
+  },
+  "src/content/docs/sk/brew-methods/v60.mdx": {
+    "mtime": 1784364051.8339443,
+    "ast_hash": "b96a3d350e27a833f6d105ee36494c95",
+    "semantic_hash": "b96a3d350e27a833f6d105ee36494c95"
+  },
+  "src/content/docs/sk/drinks/espresso-cube-cappuccino.mdx": {
+    "mtime": 1784364051.8341165,
+    "ast_hash": "0ead53dc06c5ce906d30572bcac66125",
+    "semantic_hash": "0ead53dc06c5ce906d30572bcac66125"
+  },
+  "src/content/docs/sk/drinks/espresso-cube-tonic.mdx": {
+    "mtime": 1784364051.834204,
+    "ast_hash": "9bc0917d1286f3ff3e4eb8706833c007",
+    "semantic_hash": "9bc0917d1286f3ff3e4eb8706833c007"
+  },
+  "src/content/docs/sk/drinks/filter-ice-cappuccino.mdx": {
+    "mtime": 1784364051.8342812,
+    "ast_hash": "54cfef46c2177c4cc41faac609608002",
+    "semantic_hash": "54cfef46c2177c4cc41faac609608002"
+  },
+  "src/content/docs/sk/drinks/filterccino.mdx": {
+    "mtime": 1784364051.8343508,
+    "ast_hash": "ba88f2952012fda25e9276a718d09be5",
+    "semantic_hash": "ba88f2952012fda25e9276a718d09be5"
+  },
+  "src/content/docs/sk/drinks/french-press.mdx": {
+    "mtime": 1784364051.834419,
+    "ast_hash": "d6920dfa09736c26f887aaba6e89ff4f",
+    "semantic_hash": "d6920dfa09736c26f887aaba6e89ff4f"
+  },
+  "public/favicon.svg": {
+    "mtime": 1784364051.809305,
+    "ast_hash": "737a78fae99203f023ae09d5fd61cb38",
+    "semantic_hash": "737a78fae99203f023ae09d5fd61cb38"
+  },
+  "public/kamenicky-2024.jpg": {
+    "mtime": 1784364051.8106492,
+    "ast_hash": "17510b45400088052fec2a778868230a",
+    "semantic_hash": "17510b45400088052fec2a778868230a"
+  },
+  "public/logo-mark-1024.png": {
+    "mtime": 1784364051.811201,
+    "ast_hash": "44842a413ab0b9b69058f1c73998e2ed",
+    "semantic_hash": "44842a413ab0b9b69058f1c73998e2ed"
+  },
+  "public/logo-mark-512.png": {
+    "mtime": 1784364051.811629,
+    "ast_hash": "4773bff8810532780cb5870c472a9ba6",
+    "semantic_hash": "4773bff8810532780cb5870c472a9ba6"
+  },
+  "public/logo-mark.svg": {
+    "mtime": 1784364051.8118901,
+    "ast_hash": "c0dcd8faaedd9b6a835c356b0b16d1e7",
+    "semantic_hash": "c0dcd8faaedd9b6a835c356b0b16d1e7"
+  }
+}

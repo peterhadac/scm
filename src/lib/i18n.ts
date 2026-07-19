@@ -108,6 +108,7 @@ export const ROAST_TYPE_LABELS: Record<string, Record<Lang, string>> = {
   // Slovak roasters themselves use — neither gets a translated label.
   nespresso: { en: 'Nespresso', sk: 'Nespresso' },
   'drip-bag': { en: 'Drip bag', sk: 'Drip bag' },
+  decaf: { en: 'Decaf', sk: 'Decaf' },
 };
 
 // Proper-cased Slovak display names for data/coffee_origins.yaml's canonical
@@ -165,6 +166,16 @@ export function localizedOrigin(origin: string | null | undefined, lang: Lang): 
 export function localizedProcess(process: string | null | undefined, lang: Lang): string | null {
   if (!process) return null;
   return PROCESS_LABELS[process]?.[lang] ?? process;
+}
+
+export function localizedStockStatus(status: string | null | undefined, lang: Lang): string | null {
+  if (!status) return null;
+  const labels: Record<string, Record<Lang, string>> = {
+    'in-stock': { en: 'In stock', sk: 'Zásoba' },
+    'out-of-stock': { en: 'Out of stock', sk: 'Sklenené nie je' },
+    'pre-order': { en: 'Pre-order', sk: 'Predobjednávka' },
+  };
+  return labels[status]?.[lang] ?? status;
 }
 
 export function localizedRoastType(roastType: string | null | undefined, lang: Lang): string | null {

@@ -357,3 +357,24 @@ main :where(blockquote) {
   border-left: 3px solid var(--md-sys-color-outline-variant);
   color: var(--md-sys-color-on-surface-variant);
 }
+
+
+/* ── Issue #139/142: decaf tag and stock status badge ────────────── */
+.ct-decaf-tag {
+  font-size: 0.75em;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: hsl(0, 0%, 92%);
+  color: hsl(0, 0%, 50%);
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.ct-stock {
+  font-size: 0.8em;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.ct-stock.out-of-stock { background: #ff444433; color: #ff4444; }
+.ct-stock.pre-order { background: #ffaa0033; color: #cc8800; }

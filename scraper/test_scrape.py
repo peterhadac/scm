@@ -4789,3 +4789,64 @@ def test_infer_process_empty_name_or_origin():
 
 def test_infer_process_slovak_patterns():
     assert scrape._infer_process("Káva spracovaná 250g", "brazil") == "washed"
+# ── Schema v22: new optional fields ──────────────────────────────────────────
+
+
+def test_normalize_product_new_optional_fields():
+    raw = {
+        "name": "Test Decaf",
+        "origin": "colombia",
+        "roast_type": "decaf",
+        "packaging": [{"price": "8,90 €", "weight": "250 g"}],
+        "is_decaffeinated": True,
+        "tasting_notes": "chocolate, caramel",
+        "brewing_recommendations": "filter, French press",
+        "sweetness": 7,
+        "acidity": 4,
+        "body": 6,
+        "bitterness": 2,
+        "stock_status": "in-stock",
+        "price_from": 8.90,
+        "price_to": 12.50,
+        "quantity": 50,
+    }
+    product = scrape.normalize_product(raw, "https://x.sk/decaf/", "2026-07-04")
+    assert product["is_decaffeinated"] is True
+    assert product["tasting_notes"] == "chocolate, caramel"
+    assert product["brewing_recommendations"] == "filter, French press"
+    assert product["sweetness"] == 7
+    assert product["acidity"] == 4
+    assert product["body"] == 6
+    assert product["bitterness"] == 2
+    assert product["stock_status"] == "in-stock"
+    assert product["price_from"] == 8.90
+    assert product["price_to"] == 12.50
+    assert product["quantity"] == 50
+
+
+def test_normalize_product_clamps_ratings():
+    raw = {
+        "name": "Test",
+        "origin": "brazil",
+        "roast_type": "filter",
+        "packaging": [{"price": "8,90 €", "weight": "250 g"}],
+        "sweetness": 15,
+        "acidity": -2,
+        "body": 0,
+    }
+    product = scrape.normalize_product(raw, "https://x.sk/test/", "2026-07-04")
+    assert product["sweetness"] == 10  # clamped to max
+    assert product["acidity"] == 0     # clamped to min
+    assert product["body"] == 0
+
+
+def test_normalize_product_optional_fields_absent():
+    raw = {
+        "name": "Test",
+        "origin": "brazil",
+        "roast_type": "filter",
+        "packaging": [{"price": "8,90 €", "weight": "250 g"}],
+    }
+    product = scrape.normalize_product(raw, "https://x.sk/test/", "2026-07-04")
+    assert product.get("is_decaffeinated") is None
+    assert product.get("tasting_notes") is None

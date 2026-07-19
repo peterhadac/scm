@@ -1,4 +1,11 @@
 roasters:
+  - name: Sedmitchka Coffee Roasters
+    slug: sedmitchka-coffee-roasters
+    url: https://sedmitchka.coffee/
+    scrape_url: https://sedmitchka.coffee/en/collections/kava-1
+    scraper: playwright
+    metadata:
+      city: Dubnica nad Váhom
   - name: Kavoholik
     slug: kavoholik
     url: https://kavoholik.sk/

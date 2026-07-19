@@ -224,6 +224,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               {t.per100g} <span class="ct-sort-ind" aria-hidden="true"></span>
             </button>
           </th>
+          <th>{t.offers}</th>
         </tr>
       </thead>
       <tbody>
@@ -300,7 +301,11 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               </td>
               <td>
                 {c.process
-                  ? <Badge variant={(PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other') as 'washed' | 'honey' | 'natural' | 'other'} title={processLabel ?? undefined}>{processLabel}</Badge>
+                  ? <>
+                      {blendComposition && <span class="ct-blend-comp" style={{marginRight: '3px'}}>({blendComposition})</span>}
+                      <Badge variant={(PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other') as 'washed' | 'honey' | 'natural' | 'other'} title={processLabel ?? undefined}>{processLabel}</Badge>
+                      {c.is_decaffeinated && <span class="ct-decaf-tag" title="Decaffeinated">DEC</span>}
+                    </>
                   : <span class="ct-muted">—</span>
                 }
               </td>
@@ -352,6 +357,17 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
                 {per100g}
                 {isBest && <span class="ct-best" title={t.bestValueTitle}>{t.bestValue}</span>}
               </td>
+              {c.referral_url || c.discount_code ? (
+                <td>
+                  {c.referral_url ? (
+                    <a href={c.referral_url} target="_blank" rel="noopener" class="ct-refer-link">
+                      {c.discount_code || '—'}
+                    </a>
+                  ) : <span>{c.discount_code || '—'}</span>}
+                </td>
+              ) : (
+                <td><span class="ct-muted">—</span></td>
+              )}
             </tr>
           );
         })}
@@ -610,6 +626,17 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     console.error('CoffeeTable: table interactivity failed to initialize', err);
   }
 </script>
+
+/* Deacaf tag and stock status */
+.ct-decaf-tag {
+  font-size: 0.75em; font-weight: 600; letter-spacing: 0.05em;
+  padding: 1px 5px; border-radius: 3px;
+  background: hsl(0, 0%, 92%); color: hsl(0, 0%, 50%);
+  margin-left: 4px; vertical-align: middle;
+}
+.ct-stock-out { color: #ff4444; font-size: 0.9em; }
+.ct-stock-pre { color: #cc8800; font-size: 0.9em; }
+.ct-refer-link { color: var(--color-brand); }
 
 <style>
   .ct-wrap {

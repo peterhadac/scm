@@ -136,8 +136,8 @@ export function flattenProducts(): CoffeeRow[] {
             blend: true as const,
             ...(product.blend_origins?.length && { blend_origins: product.blend_origins }),
           }),
-          discount_code: roaster.discount_code,
-          referral_url: roaster.referral_url,
+          discount_code: roasterBySlug.get(slug)?.discount_code,
+          referral_url: roasterBySlug.get(slug)?.referral_url,
         });
       }
     }

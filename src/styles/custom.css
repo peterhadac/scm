@@ -46,6 +46,16 @@ h1#_top,
   font-family: var(--font-serif);
 }
 
+/* Main content headings → serif, per Design.md Typography */
+h1,
+h2 {
+  font-family: var(--font-serif);
+  font-size: var(--md-sys-typescale-headline-large-size);
+  line-height: var(--md-sys-typescale-headline-large-line-height);
+  font-weight: var(--md-sys-typescale-headline-large-weight);
+  letter-spacing: var(--md-sys-typescale-headline-large-tracking);
+}
+
 /* ── Light tokens ─────────────────────────────────────────────────────────── */
 /* !important: the md3 plugin injects its own seed-derived tokens as an
    unlayered inline <style>, which otherwise outranks these on some routes.
@@ -353,8 +363,10 @@ main :where(code) {
 
 main :where(blockquote) {
   margin: 1rem 0;
-  padding-left: 1rem;
-  border-left: 3px solid var(--md-sys-color-outline-variant);
+  padding: 1rem;
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-large);
   color: var(--md-sys-color-on-surface-variant);
 }
 
@@ -365,16 +377,16 @@ main :where(blockquote) {
   font-weight: 600;
   letter-spacing: 0.05em;
   padding: 1px 5px;
-  border-radius: 3px;
-  background: hsl(0, 0%, 92%);
-  color: hsl(0, 0%, 50%);
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-surface-variant);
+  color: var(--md-sys-color-on-surface-variant);
   margin-left: 4px;
   vertical-align: middle;
 }
 .ct-stock {
   font-size: 0.8em;
   padding: 1px 5px;
-  border-radius: 3px;
+  border-radius: var(--md-sys-shape-corner-full);
 }
-.ct-stock.out-of-stock { background: #ff444433; color: #ff4444; }
-.ct-stock.pre-order { background: #ffaa0033; color: #cc8800; }
+.ct-stock.out-of-stock { background: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); }
+.ct-stock.pre-order { background: var(--md-sys-color-warning-container); color: var(--md-sys-color-on-warning-container); }

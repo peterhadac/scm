@@ -1,10 +1,13 @@
 ---
-// Migrated off Starlight (issue #121). SK mirror: src/pages/sk/coffees/nespresso.astro.
 import Layout from '../../layouts/Layout.astro';
+import RoastTabs from '../../components/RoastTabs.astro';
 import CoffeeTable from '../../components/CoffeeTable.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<Layout title="Nespresso capsules" description="Browse Nespresso-compatible coffee capsules currently in stock from Slovak roasters.">
+<Layout title="Nespresso capsules" description="Browse Nespresso-compatible capsule coffees currently in stock from Slovak roasters.">
   <h1>Nespresso capsules</h1>
+  <RoastTabs activeRoast="nespresso" lang="en" base={base} />
   <CoffeeTable lang="en" roastType="nespresso" />
 </Layout>

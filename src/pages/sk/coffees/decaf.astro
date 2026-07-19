@@ -1,9 +1,13 @@
 ---
-import Layout from '../../../layouts/Layout.astro';
-import CoffeeTable from '../../../components/CoffeeTable.astro';
+import Layout from '../../layouts/Layout.astro';
+import RoastTabs from '../../components/RoastTabs.astro';
+import CoffeeTable from '../../components/CoffeeTable.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<Layout title="Bezof" description="Prehliadka bezkofeínovej kávy od slovenských pražiarní.">
-  <h1>Bezof</h1>
-  <CoffeeTable lang="sk" roastType="decaf" />
+<Layout title="Decaf kávy" description="Prezerajte dembezínové kávy dostupné od slovenských pražiarní.">
+  <h1>Decaf</h1>
+  <RoastTabs activeRoast="decaf" lang="sk" base={base} />
+  <CoffeeTable lang="sk" />
 </Layout>

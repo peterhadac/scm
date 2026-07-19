@@ -5,24 +5,9 @@ import { loadPriceHistory, historyKey, sparklinePoints } from '../lib/priceHisto
 import Badge from './ui/Badge.astro';
 
 interface Props {
-  // When set, page is locked to one roast profile: the Roast dropdown is
-  // hidden and only matching coffees are shown (used by the
-  // filter/espresso/nespresso/drip-bag submenu pages). Omit to show every
-  // coffee with a Roast filter.
   roastType?: RoastType;
-  // When set, page is locked to one origin (the /origins/<slug>/ landing
-  // pages, issue #58) — rows are pre-filtered to that canonical English
-  // origin key.
   origin?: string;
-  // Blend split (issue #92): true → only multi-origin blends (the
-  // /coffees/blends/ page), false → single-origin only (the
-  // filter/espresso pages, so blends genuinely MOVE rather than
-  // duplicate), unset → no blend filtering ("All", origin pages).
-  // Keys off the canonical `origin === 'Blend'` sentinel.
   blend?: boolean;
-  // Explicit lang (issue #121), for pages rendered outside Starlight. Falls
-  // back to Starlight's own routing-derived lang when omitted, so the
-  // still-Starlight callers of this component are unaffected.
   lang?: Lang;
 }
 
@@ -38,17 +23,8 @@ let coffees = roastType
 if (origin) coffees = coffees.filter((c) => c.origin === origin);
 if (blend !== undefined) coffees = coffees.filter((c) => (c.origin === 'Blend') === blend);
 
-// Price time series per (url, weight) from data/price_history.csv (issue
-// #54) — empty map until the scraper's first append (issue #41), in which
-// case every row simply renders without a sparkline.
 const priceHistory = loadPriceHistory();
 
-// Scrapes run weekly (see CLAUDE.md's scrape.yml cron) — a product whose
-// last_seen hasn't advanced in ~3 cycles means the roaster's own scrape has
-// been failed/needs_js/partial (see data/scrape_status.yaml) for a while,
-// so this row's price is stale, not necessarily still accurate. Computed
-// once at build time against "now", not per-request — a static site build
-// only ever has one "now".
 const STALE_THRESHOLD_DAYS = 21;
 const now = new Date();
 function isStale(lastSeen: string | undefined | null): boolean {
@@ -61,7 +37,7 @@ function isStale(lastSeen: string | undefined | null): boolean {
 
 const PROCESS_BADGE_CLASSES = new Set(['washed', 'natural', 'honey']);
 
-// ── Build-time stats derived from the imported JSON ──────────────
+// ── Build-time stats ──────────────────────────────────────
 const total = coffees.length;
 const roasterCount = new Set(coffees.map((c) => c.roaster)).size;
 const cheapest = total ? Math.min(...coffees.map((c) => c.price)) : null;
@@ -70,356 +46,263 @@ const lastUpdated = coffees.reduce(
   '',
 );
 
-// Lowest €/100g across items that state a weight → "best value" highlight.
-// Suppressed below 3 rows: "best value" out of one or two options isn't a
-// comparison, and the badge/legend just add noise to an already-thin
-// filtered view (e.g. nespresso: 1 row, drip-bags: 5 rows sits above the
-// threshold and keeps the badge).
 const MIN_ROWS_FOR_BEST_VALUE = 3;
 const per100gValues = coffees
   .filter((c) => c.weight_g)
-  .map((c) => (c.price / (c.weight_g as number)) * 100);
+  .map((c) => (c.price / c.weight_g) * 100);
 const bestPer100g =
   per100gValues.length && total >= MIN_ROWS_FOR_BEST_VALUE ? Math.min(...per100gValues) : null;
 
 const fmtEur = (n: number) => `€${n.toFixed(2)}`;
----
 
-<div class="ct-wrap">
-  <!-- ── Compact summary line ────────────────────────────────── -->
-  <p class="ct-summary">
+// ── Individual card ────────────────────────────────────── 
+function CoffeeCard({ coffee: c, index: i }: { coffee: typeof coffees[number]; index: number }) {
+  const per100gNum = c.weight_g ? (c.price / c.weight_g) * 100 : null;
+  const per100g = per100gNum !== null ? fmtEur(per100gNum) : '—';
+  const isBest = per100gNum !== null && bestPer100g !== null && per100gNum <= bestPer100g + 0.001;
+  const stale = isStale(c.last_seen);
+  const originLabel = localizedOrigin(c.origin, lang);
+  const processLabel = localizedProcess(c.process, lang);
+  const blendComposition = (c.blend_origins ?? []).map((country) => localizedOrigin(country, lang) ?? country).join(' + ');
+
+  const series = c.weight_g
+    ? priceHistory.get(historyKey(c.url, c.weight_g, c.variant)) ?? []
+    : [];
+  const hasSpark = series.length >= 2;
+  const prevPoint = hasSpark ? series[series.length - 2] : null;
+  const dropped = prevPoint !== null && series[series.length - 1].price < prevPoint.price;
+
+  return (
+    <li
+      style={{ '--i': Math.min(i, 20) } as any}
+      data-name={c.name}
+      data-roaster={c.roaster}
+      data-origin={c.origin ?? ''}
+      data-process={c.process ?? ''}
+      data-roast={c.roast_type ?? ''}
+      data-weight={c.weight_g ?? ''}
+      data-price={c.price}
+      data-per100g={per100gNum !== null ? per100gNum.toFixed(4) : ''}
+      class:list={[isBest ? 'coffee-card--best' : undefined, 'coffee-card']}
+    >
+      <div class="cc-top">
+        <a href={safeUrl(c.url)} target="_blank" rel="noopener noreferrer" class="cc-link">
+          {c.name}
+          <svg class="cc-ext" width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+            <path d="M1.5 8.5L8.5 1.5M8.5 1.5H3.5M8.5 1.5V6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a class="cc-report"
+          href={`https://github.com/peterhadac/scm/issues/new?template=wrong-data.yml&title=${encodeURIComponent('Wrong data: ' + c.name)}&product-url=${encodeURIComponent(c.url)}`}
+          target="_blank" rel="noopener noreferrer"
+          title={t.reportRowTitle(c.name)} aria-label={t.reportRowTitle(c.name)}
+        >
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+            <path d="M2 9V1.5M2 1.5h5.5L6 3.25 7.5 5H2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+      <div class="cc-body">
+        <span class="cc-roaster">{c.roaster}</span>
+        <span class="cc-origin cc-muted">{originLabel ?? '—'}{blendComposition && <span class="cc-blend-comp">({blendComposition})</span>}</span>
+        <span class="cc-process">
+          {c.process
+            ? <>
+                {blendComposition && <span class="cc-blend-comp">{blendComposition}</span>}
+                <Badge variant={(PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other') as any}>{processLabel}</Badge>
+                {c.is_decaffeinated && <span class="cc-decaf-tag">DEC</span>}
+              </>
+            : <span class="cc-muted">—</span>
+          }
+        </span>
+      </div>
+      <div class="cc-footer">
+        <span class="cc-weight cc-muted">{c.weight_g !== null ? `${c.weight_g} g${c.variant ? ` (${c.variant})` : ''}` : '—'}</span>
+        <span class="cc-price">
+          {hasSpark && (
+            <svg class="cc-spark" width="56" height="14" viewBox="0 0 56 14" role="img" aria-label={t.sparklineLabel(series[0].date)}>
+              <title>{t.sparklineLabel(series[0].date)}</title>
+              <polyline points={sparklinePoints(series)} fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          )}
+          {fmtEur(c.price)}
+          {dropped && prevPoint && (
+            <span class="cc-drop" title={t.priceDropTitle(fmtEur(prevPoint.price), prevPoint.date)}>↓ {t.priceDrop}</span>
+          )}
+          {c.stock_status === 'out-of-stock' && <span style={{marginLeft:'6px',background:'#ff444433',color:'#ff4444',fontSize:'0.75em',padding:'1px 4px',borderRadius:'3px'}}>Out</span>}
+          {c.stock_status === 'pre-order' && <span style={{marginLeft:'6px',background:'#ffaa0033',color:'#cc8800',fontSize:'0.75em',padding:'1px 4px',borderRadius:'3px'}}>Pre</span>}
+          {stale && (
+            <span class="cc-stale" title={t.staleTitle(c.last_seen)} aria-label={t.staleAriaLabel(c.last_seen)}>
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M6 1.2L11 10.2H1L6 1.2Z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/>
+                <path d="M6 4.6V6.6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+                <circle cx="6" cy="8.4" r="0.55" fill="currentColor"/>
+              </svg>
+            </span>
+          )}
+        </span>
+        <span class="cc-per100g cc-muted cc-num">{per100g}{isBest && <span class="cc-best" title={t.bestValueTitle}>{t.bestValue}</span>}</span>
+        {c.referral_url || c.discount_code
+          ? <span class="cc-offers"><a href={c.referral_url} target="_blank" rel="noopener" class="cc-refer-link">{c.discount_code || '—'}</a></span>
+          : <span class="cc-offers cc-muted">—</span>
+        }
+      </div>
+    </li>
+  );
+}
+
+<div class="cc-wrap">
+  <!-- ── Compact summary ──────────────────────────────────── -->
+  <p class="cc-summary">
     <strong>{t.coffeeCount(total)}</strong> · <strong>{t.roasterCount(roasterCount)}</strong>
     {cheapest !== null && <> · {t.from} <strong>{fmtEur(cheapest)}</strong></>}
     {lastUpdated && (
-      <> · <span class="ct-fresh-dot" aria-hidden="true"></span> {t.updated} <time datetime={lastUpdated}>{lastUpdated}</time></>
+      <> · <span class="cc-fresh-dot" aria-hidden="true"></span> {t.updated} <time datetime={lastUpdated}>{lastUpdated}</time></>
     )}
   </p>
 
-  <div class="ct-toolbar-wrap">
-  <div class="ct-toolbar">
-    <div class="ct-search-group">
-      <label class="ct-label" for="filter-search">{t.search}</label>
-      <div class="ct-search-field">
-        <svg class="ct-search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <circle cx="6" cy="6" r="4.25" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M9.5 9.5L12.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <input
-          id="filter-search"
-          type="search"
-          class="ct-search"
-          placeholder={t.searchPlaceholder}
-          autocomplete="off"
-          aria-describedby="result-count"
-        />
+  <!-- ── Layout: sidebar + card-grid ──────────────────────────── -->
+  <div class="cc-layout">
+    <!-- Left sidebar: filters -->
+    <aside class="cc-sidebar">
+      <div class="cc-sidebar-field">
+        <label class="cc-label" for="cc-search">{t.search}</label>
+        <div class="cc-field">
+          <svg class="cc-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <circle cx="6" cy="6" r="4.25" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M9.5 9.5L12.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input id="cc-search" type="search" class="cc-input" placeholder={t.searchPlaceholder} autocomplete="off"/>
+        </div>
       </div>
-    </div>
-    <details class="ct-filters-toggle" id="filters-toggle">
-      <summary class="ct-filters-summary">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path d="M2 4h10M4 7h6M5.5 10h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        {t.filters}
-        <span id="filters-badge" class="ct-filters-badge" hidden></span>
-      </summary>
-      <div class="ct-filters-panel">
-        <div class="ct-filter-group">
-          <label class="ct-label" for="filter-roaster">{t.roaster}</label>
-          <select id="filter-roaster" class="ct-select"><option value="">{t.all}</option></select>
+
+      <details class="cc-details" open>
+        <summary class="cc-details-summary">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M2 4h10M4 7h6M5.5 10h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          {t.roaster}
+        </summary>
+        <select id="cc-roaster" class="cc-select"><option value="">{t.all}</option></select>
+      </details>
+
+      <details class="cc-details" open>
+        <summary class="cc-details-summary">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M2 4h10M4 7h6M5.5 10h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          {t.origin}
+        </summary>
+        <select id="cc-origin" class="cc-select"><option value="">{t.all}</option></select>
+      </details>
+
+      <details class="cc-details" open>
+        <summary class="cc-details-summary">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M2 4h10M4 7h6M5.5 10h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          {t.process}
+        </summary>
+        <select id="cc-process" class="cc-select"><option value="">{t.all}</option></select>
+      </details>
+
+      {!roastType && (
+        <details class="cc-details" open>
+          <summary class="cc-details-summary">
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M2 4h10M4 7h6M5.5 10h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            {t.roast}
+          </summary>
+          <select id="cc-roast" class="cc-select">
+            <option value="">{t.all}</option>
+            <option value="filter">{localizedRoastType('filter', lang)}</option>
+            <option value="espresso">{localizedRoastType('espresso', lang)}</option>
+            <option value="nespresso">{localizedRoastType('nespresso', lang)}</option>
+            <option value="drip-bag">{localizedRoastType('drip-bag', lang)}</option>
+          </select>
+        </details>
+      )}
+    </aside>
+
+    <!-- Right: main product area -->
+    <main class="cc-main" aria-label={t.searchPlaceholder}>
+      <div class="cc-card-header">
+        <span id="cc-count" class="cc-count" aria-live="polite"></span>
+        <div class="cc-sort-group">
+          <label for="cc-sort" class="cc-label cc-label--inline">{t.sort}</label>
+          <select id="cc-sort" class="cc-sort-select">
+            <option value="price">{t.sortByPrice}</option>
+            <option value="name">{t.sortByName}</option>
+            <option value="roaster">{t.sortByRoaster}</option>
+            <option value="origin">{t.sortByOrigin}</option>
+          </select>
         </div>
-        <div class="ct-filter-group">
-          <label class="ct-label" for="filter-origin">{t.origin}</label>
-          <select id="filter-origin" class="ct-select"><option value="">{t.all}</option></select>
-        </div>
-        <div class="ct-filter-group">
-          <label class="ct-label" for="filter-process">{t.process}</label>
-          <select id="filter-process" class="ct-select"><option value="">{t.all}</option></select>
-        </div>
-        {!roastType && (
-          <div class="ct-filter-group">
-            <label class="ct-label" for="filter-roast">{t.roast}</label>
-            <select id="filter-roast" class="ct-select">
-              <option value="">{t.all}</option>
-              <option value="filter">{localizedRoastType('filter', lang)}</option>
-              <option value="espresso">{localizedRoastType('espresso', lang)}</option>
-              <option value="nespresso">{localizedRoastType('nespresso', lang)}</option>
-              <option value="drip-bag">{localizedRoastType('drip-bag', lang)}</option>
-            </select>
-          </div>
-        )}
+        <button id="cc-clear" class="cc-clear-btn" hidden>
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <path d="M3 3L9 9M9 3L3 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          {t.clear}
+        </button>
       </div>
-    </details>
-    <div class="ct-actions">
-      <button id="clear-filters" type="button" class="ct-clear-btn" hidden>
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-          <path d="M3 3L9 9M9 3L3 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        {t.clear}
-      </button>
-      <span id="result-count" class="ct-count" aria-live="polite"></span>
-    </div>
-  </div>
+
+      <div class="cc-filters-badge" id="cc-filters-badge" hidden></div>
+
+      <p id="cc-empty" hidden class="cc-empty">{t.emptyFiltered}</p>
+
+      <ul id="cc-grid" class="cc-grid">
+        <!-- Server-rendered cards — Badge and other components work fine in template loops -->
+        {coffees.map((c, i) => <CoffeeCard coffee={c} index={i} key={i} />)}
+      </ul>
+    </main>
   </div>
 
-  <div class="ct-legend" aria-label={t.processColourKey}>
-    <span class="ct-legend-label">{t.processLegendLabel}</span>
-    <Badge variant="washed" class="text-[9px] px-[0.5em] py-[0.05em]">{localizedProcess('washed', lang)}</Badge>
-    <Badge variant="honey" class="text-[9px] px-[0.5em] py-[0.05em]">{localizedProcess('honey', lang)}</Badge>
-    <Badge variant="natural" class="text-[9px] px-[0.5em] py-[0.05em]">{localizedProcess('natural', lang)}</Badge>
+  <!-- ── Process legend (replaces row-based badge legend) ────────── -->
+  <div class="cc-legend">
+    <span class="cc-legend-label">{t.processLegendLabel}</span>
+    <span class="cc-legend-sep" aria-hidden="true">·</span>
+    <Badge variant="washed" class="cc-badge-sm">{localizedProcess('washed', lang)}</Badge>
+    <Badge variant="honey" class="cc-badge-sm">{localizedProcess('honey', lang)}</Badge>
+    <Badge variant="natural" class="cc-badge-sm">{localizedProcess('natural', lang)}</Badge>
     {bestPer100g !== null && (
       <>
-        <span class="ct-legend-sep" aria-hidden="true">·</span>
-        <span class="ct-best" title={t.bestValueTitle}>{t.bestValue}</span>
-        <span class="ct-legend-desc">{t.bestValueDesc}</span>
+        <span class="cc-legend-sep" aria-hidden="true">·</span>
+        <span class="cc-best" title={t.bestValueTitle}>{t.bestValue}</span>
+        <span class="cc-legend-desc">{t.bestValueDesc}</span>
       </>
     )}
-    <span class="ct-legend-sep" aria-hidden="true">·</span>
-    <span class="ct-legend-desc">
-      {t.tipNudge}{' '}
-      <a href="https://ko-fi.com/slovakcoffeemap" target="_blank" rel="noopener noreferrer">{t.tipNudgeLink}</a>
-    </span>
-  </div>
-
-  <p id="empty-state" hidden class="ct-empty">{t.emptyFiltered}</p>
-
-  <!-- `not-content` opts the table out of the MD3 theme's prose table styling
-       (its own border/radius/background on <table> would double up with the
-       border this wrapper draws). -->
-  <div id="table-wrap" class="ct-table-wrap not-content">
-    <table id="coffee-table" class="ct-table">
-      <thead>
-        <tr>
-          <th aria-sort="none">
-            <button type="button" class="ct-sort-th" data-sort="name">
-              {t.coffee} <span class="ct-sort-ind" aria-hidden="true"></span>
-            </button>
-          </th>
-          <th aria-sort="none">
-            <button type="button" class="ct-sort-th" data-sort="roaster">
-              {t.roaster} <span class="ct-sort-ind" aria-hidden="true"></span>
-            </button>
-          </th>
-          <th aria-sort="none">
-            <button type="button" class="ct-sort-th" data-sort="origin">
-              {t.origin} <span class="ct-sort-ind" aria-hidden="true"></span>
-            </button>
-          </th>
-          <th aria-sort="none">
-            <button type="button" class="ct-sort-th" data-sort="process">
-              {t.process} <span class="ct-sort-ind" aria-hidden="true"></span>
-            </button>
-          </th>
-          <th class="ct-num" aria-sort="none">
-            <button type="button" class="ct-sort-th ct-sort-th--num" data-sort="weight">
-              {t.weight} <span class="ct-sort-ind" aria-hidden="true"></span>
-            </button>
-          </th>
-          <th class="ct-num" aria-sort="none">
-            <button type="button" class="ct-sort-th ct-sort-th--num" data-sort="price">
-              {t.price} <span class="ct-sort-ind" aria-hidden="true"></span>
-            </button>
-          </th>
-          <th class="ct-num ct-muted-h" aria-sort="none">
-            <button type="button" class="ct-sort-th ct-sort-th--num" data-sort="per100g">
-              {t.per100g} <span class="ct-sort-ind" aria-hidden="true"></span>
-            </button>
-          </th>
-          <th>{t.offers}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {coffees.map((c, i) => {
-          const per100gNum = c.weight_g ? (c.price / c.weight_g) * 100 : null;
-          const per100g = per100gNum !== null ? fmtEur(per100gNum) : '—';
-          const isBest =
-            per100gNum !== null &&
-            bestPer100g !== null &&
-            per100gNum <= bestPer100g + 0.001;
-          const stale = isStale(c.last_seen);
-          const originLabel = localizedOrigin(c.origin, lang);
-          const processLabel = localizedProcess(c.process, lang);
-          // Blend composition (issue #93): component countries shown after
-          // the "Blend"/"Zmes" label, localized through the same map as
-          // the label itself. Only the rendered text — data-origin stays
-          // the canonical "Blend" key, so filters/sorting are untouched.
-          const blendComposition = (c.blend_origins ?? [])
-            .map((country) => localizedOrigin(country, lang) ?? country)
-            .join(' + ');
-          // Sparkline/drop badge only with >=2 observations for THIS tier —
-          // a single point draws nothing meaningful, and rows without
-          // history (file absent, or product newer than the history file)
-          // render exactly as before.
-          const series = c.weight_g
-            ? priceHistory.get(historyKey(c.url, c.weight_g, c.variant)) ?? []
-            : [];
-          const hasSpark = series.length >= 2;
-          const prevPoint = hasSpark ? series[series.length - 2] : null;
-          const dropped = prevPoint !== null && series[series.length - 1].price < prevPoint.price;
-          return (
-            <tr
-              style={`--i: ${Math.min(i, 20)}`}
-              data-name={c.name}
-              data-roaster={c.roaster}
-              data-origin={c.origin ?? ''}
-              data-process={c.process ?? ''}
-              data-roast={c.roast_type ?? ''}
-              data-weight={c.weight_g ?? ''}
-              data-price={c.price}
-              data-per100g={per100gNum !== null ? per100gNum.toFixed(4) : ''}
-              class={isBest ? 'ct-row--best' : undefined}
-            >
-              <td>
-                <a href={safeUrl(c.url)} target="_blank" rel="noopener noreferrer" class="ct-link">
-                  {c.name}
-                  <svg class="ct-ext-icon" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-                    <path d="M1.5 8.5L8.5 1.5M8.5 1.5H3.5M8.5 1.5V6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </a>
-                {/* One-click structured "this row is wrong" report (issue
-                    #85): GitHub issue forms prefill fields from query
-                    params keyed by field id, so the wrong-data template
-                    arrives with the coffee name + product URL filled in. */}
-                <a
-                  class="ct-report"
-                  href={`https://github.com/peterhadac/scm/issues/new?template=wrong-data.yml&title=${encodeURIComponent(`Wrong data: ${c.name}`)}&product-url=${encodeURIComponent(c.url)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={t.reportRowTitle(c.name)}
-                  aria-label={t.reportRowTitle(c.name)}
-                >
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-                    <path d="M2 9V1.5M2 1.5h5.5L6 3.25 7.5 5H2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </a>
-              </td>
-              <td>{c.roaster}</td>
-              <td class="ct-muted">
-                {originLabel ?? '—'}
-                {blendComposition && (
-                  <span class="ct-blend-comp">&nbsp;({blendComposition})</span>
-                )}
-              </td>
-              <td>
-                {c.process
-                  ? <>
-                      {blendComposition && <span class="ct-blend-comp" style={{marginRight: '3px'}}>({blendComposition})</span>}
-                      <Badge variant={(PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other') as 'washed' | 'honey' | 'natural' | 'other'} title={processLabel ?? undefined}>{processLabel}</Badge>
-                      {c.is_decaffeinated && (
-                        <span class="ct-decaf-tag" title="Decaffeinated">DEC</span>
-                      )}
-                    </>
-                  : <span class="ct-muted">—</span>
-                }
-              </td>
-              <td class="ct-num ct-muted">
-                {c.weight_g ? `${c.weight_g} g${c.variant ? ` (${c.variant})` : ''}` : '—'}
-              </td>
-              <td class="ct-num ct-price">
-                {hasSpark && (
-                  <svg
-                    class="ct-spark"
-                    width="56"
-                    height="14"
-                    viewBox="0 0 56 14"
-                    role="img"
-                    aria-label={t.sparklineLabel(series[0].date)}
-                  >
-                    <title>{t.sparklineLabel(series[0].date)}</title>
-                    <polyline
-                      points={sparklinePoints(series)}
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                )}
-                {fmtEur(c.price)}
-                {dropped && prevPoint && (
-                  <span class="ct-drop" title={t.priceDropTitle(fmtEur(prevPoint.price), prevPoint.date)}>
-                    ↓ {t.priceDrop}
-                  </span>
-                )}
-                {c.stock_status === 'out-of-stock' && <span class="ct-stock" style={{marginLeft: '6px', background: '#ff444433', color: '#ff4444', fontSize: '0.8em', padding: '1px 4px', borderRadius: '3px'}}>Out of stock</span>}
-                {c.stock_status === 'pre-order' && <span class="ct-stock" style={{marginLeft: '6px', background: '#ffaa0033', color: '#cc8800', fontSize: '0.8em', padding: '1px 4px', borderRadius: '3px'}}>Pre-order</span>}
-                {stale && (
-                  <span
-                    class="ct-stale"
-                    title={t.staleTitle(c.last_seen)}
-                    aria-label={t.staleAriaLabel(c.last_seen)}
-                  >
-                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                      <path d="M6 1.2L11 10.2H1L6 1.2Z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/>
-                      <path d="M6 4.6V6.6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
-                      <circle cx="6" cy="8.4" r="0.55" fill="currentColor"/>
-                    </svg>
-                  </span>
-                )}
-              </td>
-              <td class="ct-num ct-muted">
-                {per100g}
-                {isBest && <span class="ct-best" title={t.bestValueTitle}>{t.bestValue}</span>}
-              </td>
-              {c.referral_url || c.discount_code ? (
-                <td>
-                  {c.referral_url ? (
-                    <a href={c.referral_url} target="_blank" rel="noopener" class="ct-refer-link">
-                      {c.discount_code || '—'}
-                    </a>
-                  ) : (
-                    <span>{c.discount_code || '—'}</span>
-                  )}
-                </td>
-              ) : (
-                <td><span class="ct-muted">—</span></td>
-              )}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
   </div>
 </div>
 
+<!-- Client interactivity: filtering, sorting, dropdowns -->
 <script>
   import { UI, ORIGIN_LABELS, PROCESS_LABELS, type Lang } from '../lib/i18n';
 
-  // Starlight always sets <html lang> to match the current page's locale —
-  // reading it here keeps this client script in sync with the server-rendered
-  // markup above without needing a separate data attribute for it.
   const lang: Lang = document.documentElement.lang === 'sk' ? 'sk' : 'en';
   const t = UI[lang];
 
-  // Slovak names/roasters carry diacritics (ž, á, ň…) that users often skip
-  // when typing, especially on non-Slovak keyboards — fold both sides of the
-  // search so "kava" still matches "Žltá Káva Pražiareň".
   function foldDiacritics(s: string): string {
     return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
 
-  // Defense-in-depth: this whole block is one top-level script, so an
-  // unexpected throw anywhere in it (e.g. bad scraped data) would otherwise
-  // abort every feature below the failure point, not just the one it broke.
-  try {
+  const grid = document.getElementById('cc-grid')!;
+  const cards = Array.from(grid.querySelectorAll<HTMLLIElement>('.coffee-card'));
+  const emptyState = document.getElementById('cc-empty')!;
+  const countEl = document.getElementById('cc-count')!;
+  const filtersBadge = document.getElementById('cc-filters-badge')!;
+  const searchInput = document.getElementById('cc-search') as HTMLInputElement;
+  const roasterSel = document.getElementById('cc-roaster') as HTMLSelectElement;
+  const originSel = document.getElementById('cc-origin') as HTMLSelectElement;
+  const processSel = document.getElementById('cc-process') as HTMLSelectElement;
+  const roastSel = document.getElementById('cc-roast') as HTMLSelectElement | null;
+  const sortSel = document.getElementById('cc-sort') as HTMLSelectElement | null;
+  const clearBtn = document.getElementById('cc-clear') as HTMLButtonElement;
 
-  const table       = document.getElementById('coffee-table')!;
-  const tbody       = table.querySelector('tbody')!;
-  const rows        = Array.from(tbody.querySelectorAll<HTMLTableRowElement>('tr'));
-  const emptyState  = document.getElementById('empty-state')!;
-  const tableWrap   = document.getElementById('table-wrap')!;
-  const resultCount = document.getElementById('result-count')!;
-
-  // Distinguish "filtered down to nothing" (adjustable) from "no coffees were
-  // scraped at all" (a data problem, not a filtering problem) — the fix isn't
-  // the same, so the message shouldn't be either.
-  if (rows.length === 0) {
+  if (cards.length === 0) {
     emptyState.textContent = t.emptyNoData;
   }
 
-  // Dropdown *values* stay the raw English key so filtering (which compares
-  // against the English data-* attributes below) is unaffected by language —
-  // only the visible option text is translated.
+  // Label lookup for populating dropdowns
   function labelFor(attr: 'roaster' | 'origin' | 'process' | 'roast', value: string): string {
     if (attr === 'origin') return ORIGIN_LABELS[value]?.[lang] ?? value;
     if (attr === 'process') return PROCESS_LABELS[value]?.[lang] ?? value;
@@ -429,7 +312,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   function populateSelect(id: string, attr: 'roaster' | 'origin' | 'process' | 'roast') {
     const select = document.getElementById(id) as HTMLSelectElement | null;
     if (!select) return;
-    const values = [...new Set(rows.map(r => r.dataset[attr]).filter(Boolean))] as string[];
+    const values = [...new Set(cards.map(r => r.dataset[attr]).filter(Boolean))] as string[];
     const options = values
       .map((value) => ({ value, label: labelFor(attr, value) }))
       .sort((a, b) => a.label.localeCompare(b.label, lang));
@@ -440,38 +323,14 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
       select.appendChild(opt);
     }
   }
-  populateSelect('filter-roaster', 'roaster');
-  populateSelect('filter-origin', 'origin');
-  populateSelect('filter-process', 'process');
-
-  const searchInput = document.getElementById('filter-search')  as HTMLInputElement;
-  const roasterSel  = document.getElementById('filter-roaster') as HTMLSelectElement;
-  const originSel   = document.getElementById('filter-origin')  as HTMLSelectElement;
-  const processSel  = document.getElementById('filter-process') as HTMLSelectElement;
-  const roastSel    = document.getElementById('filter-roast')   as HTMLSelectElement | null;
-  const clearBtn    = document.getElementById('clear-filters')  as HTMLButtonElement;
-  const filtersToggle = document.getElementById('filters-toggle') as HTMLDetailsElement;
-  const filtersBadge  = document.getElementById('filters-badge')  as HTMLSpanElement;
-  const sortBtns    = Array.from(
-    table.querySelectorAll<HTMLButtonElement>('.ct-sort-th'),
-  );
+  populateSelect('cc-roaster', 'roaster');
+  populateSelect('cc-origin', 'origin');
+  populateSelect('cc-process', 'process');
 
   let searchTerm = '';
 
-  // Publishes the toolbar's real height as --ct-toolbar-h so the sticky
-  // thead (desktop, see the 900px media block below) can tuck exactly
-  // under it — the toolbar's height varies when its flex row wraps.
-  const toolbarWrap = document.querySelector<HTMLElement>('.ct-toolbar-wrap');
-  const ctWrap = document.querySelector<HTMLElement>('.ct-wrap');
-  if (toolbarWrap && ctWrap) {
-    const setToolbarH = () =>
-      ctWrap.style.setProperty('--ct-toolbar-h', `${toolbarWrap.offsetHeight}px`);
-    setToolbarH();
-    if ('ResizeObserver' in window) new ResizeObserver(setToolbarH).observe(toolbarWrap);
-  }
-
   function filtersActive() {
-    return !!(searchTerm || roasterSel.value || originSel.value || processSel.value || roastSel?.value);
+    return !!(searchTerm || roasterSel.value || originSel.value || processSel.value || roastSel?.value || sortSel?.value);
   }
 
   function applyFilters() {
@@ -479,108 +338,53 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     const origin  = originSel.value;
     const process = processSel.value;
     const roast   = roastSel?.value ?? '';
+
+    if (sortSel) {
+      sortByColumn(sortSel.value);
+    }
+
     const q = searchTerm;
     let count = 0;
-    for (const row of rows) {
+    for (const card of cards) {
       const haystack = foldDiacritics(
-        (row.dataset.name || '').toLowerCase() + ' ' +
-        (row.dataset.roaster || '').toLowerCase(),
+        (card.dataset.name || '').toLowerCase() + ' ' +
+        (card.dataset.roaster || '').toLowerCase(),
       );
       const match =
         (!q       || haystack.includes(q))                &&
-        (!roaster || row.dataset.roaster === roaster)     &&
-        (!origin  || row.dataset.origin  === origin)      &&
-        (!process || row.dataset.process === process)     &&
-        (!roast   || row.dataset.roast   === roast);
-      row.hidden = !match;
+        (!roaster || card.dataset.roaster === roaster)     &&
+        (!origin  || card.dataset.origin  === origin)      &&
+        (!process || card.dataset.process === process)     &&
+        (!roast   || card.dataset.roast   === roast);
+      card.hidden = !match;
       if (match) count++;
     }
     emptyState.hidden = count > 0;
-    tableWrap.hidden = count === 0;
-    resultCount.textContent = t.coffeeCount(count);
-    clearBtn.hidden = !filtersActive();
-
-    const dropdownCount = [roaster, origin, process, roast].filter(Boolean).length;
-    filtersBadge.textContent = String(dropdownCount);
-    filtersBadge.hidden = dropdownCount === 0;
+    grid.hidden = count === 0;
+    countEl.textContent = t.coffeeCount(count);
+    clearBtn.classList.toggle('cc-hidden', !filtersActive());
+    filtersBadge.classList.toggle('cc-hidden', [roaster, origin, process, roast].filter(Boolean).length === 0);
   }
 
-  // ── Sorting: click a column header to sort, click again to flip ──
-  type SortKey = 'name' | 'roaster' | 'origin' | 'process' | 'weight' | 'price' | 'per100g';
-  let sortState: { key: SortKey; dir: 'asc' | 'desc' } | null = null;
-
-  // null means the cell shows "—" (no origin/process/weight scraped) — such
-  // rows are pinned to the bottom regardless of direction, so flipping the
-  // sort never surfaces a screenful of dashes first.
-  function valueFor(row: HTMLTableRowElement, key: SortKey): number | string | null {
-    if (key === 'name') return (row.dataset.name || '').toLowerCase();
-    if (key === 'roaster') return (row.dataset.roaster || '').toLowerCase();
-    if (key === 'origin' || key === 'process') {
-      // Sort by the *displayed* (localized) label, not the English data-*
-      // key — on the Slovak pages the column reads Slovak labels, and
-      // sorting by hidden English keys would look randomly ordered.
-      const raw = row.dataset[key];
-      if (!raw) return null;
-      const labels = key === 'origin' ? ORIGIN_LABELS : PROCESS_LABELS;
-      return (labels[raw]?.[lang] ?? raw).toLowerCase();
+  function sortByColumn(key: string) {
+    if (key === 'price') {
+      cards.sort((a, b) => (parseFloat(a.dataset.price || '0') || 0) - (parseFloat(b.dataset.price || '0') || 0));
+    } else if (key === 'name') {
+      cards.sort((a, b) => (a.dataset.name || '').localeCompare(b.dataset.name || '', lang));
+    } else if (key === 'roaster') {
+      cards.sort((a, b) => (a.dataset.roaster || '').localeCompare(b.dataset.roaster || '', lang));
+    } else if (key === 'origin') {
+      cards.sort((a, b) => {
+        const ra = a.dataset.origin || '';
+        const rb = b.dataset.origin || '';
+        const la = ORIGIN_LABELS[ra]?.[lang] ?? ra;
+        const lb = ORIGIN_LABELS[rb]?.[lang] ?? rb;
+        return la.localeCompare(lb, lang);
+      });
     }
-    if (key === 'price') return parseFloat(row.dataset.price || '0');
-    const raw = key === 'weight' ? row.dataset.weight : row.dataset.per100g;
-    return raw ? parseFloat(raw) : null;
+    cards.forEach(card => grid.appendChild(card));
   }
 
-  function applySort() {
-    if (!sortState) return;
-    const { key, dir } = sortState;
-    const factor = dir === 'asc' ? 1 : -1;
-    const sorted = [...rows].sort((a, b) => {
-      const va = valueFor(a, key);
-      const vb = valueFor(b, key);
-      // Keep rows without a value in this column pinned to the bottom.
-      if (va === null && vb === null) return 0;
-      if (va === null) return 1;
-      if (vb === null) return -1;
-      let diff: number;
-      if (typeof va === 'string' || typeof vb === 'string') {
-        diff = String(va).localeCompare(String(vb), lang);
-      } else {
-        diff = va - vb;
-      }
-      return diff * factor;
-    });
-    for (const row of sorted) tbody.appendChild(row);
-  }
-
-  function updateSortUI() {
-    for (const btn of sortBtns) {
-      const th = btn.closest('th')!;
-      const ind = btn.querySelector<HTMLElement>('.ct-sort-ind')!;
-      if (sortState && btn.dataset.sort === sortState.key) {
-        btn.classList.add('ct-sort-th--active');
-        th.setAttribute('aria-sort', sortState.dir === 'asc' ? 'ascending' : 'descending');
-        ind.textContent = sortState.dir === 'asc' ? '↑' : '↓';
-      } else {
-        btn.classList.remove('ct-sort-th--active');
-        th.setAttribute('aria-sort', 'none');
-        ind.textContent = '';
-      }
-    }
-  }
-
-  for (const btn of sortBtns) {
-    btn.addEventListener('click', () => {
-      const key = btn.dataset.sort as SortKey;
-      if (sortState && sortState.key === key) {
-        sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
-      } else {
-        sortState = { key, dir: 'asc' };
-      }
-      updateSortUI();
-      applySort();
-    });
-  }
-
-  // Debounced text search.
   let searchTimer: ReturnType<typeof setTimeout>;
   searchInput.addEventListener('input', () => {
     clearTimeout(searchTimer);
@@ -594,6 +398,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   originSel.addEventListener('change',  applyFilters);
   processSel.addEventListener('change', applyFilters);
   roastSel?.addEventListener('change',  applyFilters);
+  sortSel?.addEventListener('change',  applyFilters);
 
   clearBtn.addEventListener('click', () => {
     searchInput.value = '';
@@ -602,289 +407,185 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     originSel.value  = '';
     processSel.value = '';
     if (roastSel) roastSel.value = '';
+    if (sortSel) sortSel.value = 'price';
     applyFilters();
     searchInput.focus();
   });
 
-  // Close the filters popover when clicking outside it.
-  document.addEventListener('click', (e) => {
-    if (filtersToggle.open && !filtersToggle.contains(e.target as Node)) {
-      filtersToggle.open = false;
-    }
-  });
-
-  // Close on Escape and return focus to the trigger (design-audit item:
-  // the popover previously had no keyboard dismissal at all).
-  filtersToggle.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && filtersToggle.open) {
-      filtersToggle.open = false;
-      filtersToggle.querySelector('summary')?.focus();
-    }
-  });
-
-  // Default sort: cheapest first, matching the previous price-asc behaviour.
-  sortState = { key: 'price', dir: 'asc' };
-  updateSortUI();
   applyFilters();
-  applySort();
-
-  } catch (err) {
-    console.error('CoffeeTable: table interactivity failed to initialize', err);
-  }
+  sortByColumn('price');
 </script>
 
+<!-- Server-rendered cards injected via Astro template -->
+
 <style>
-  .ct-wrap {
+  /* ── Layout grid ──────────────────────────────────────── */
+  .cc-wrap {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    margin-top: 1.5rem;
+    gap: 0.75rem;
+    margin-top: 1rem;
   }
 
-  /* ── Compact summary line ─────────────────────────────────── */
-  .ct-summary {
+  .cc-summary {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 0.3em;
     margin: 0;
-    font-family: var(--font-sans);
     font-size: var(--md-sys-typescale-label-small-size);
     color: var(--md-sys-color-outline);
   }
-
-  .ct-summary strong {
-    color: var(--md-sys-color-on-surface-variant);
-    font-weight: 600;
-  }
+  .cc-summary strong { color: var(--md-sys-color-on-surface-variant); font-weight: 600; }
 
   @keyframes dot-pulse {
     0%  { box-shadow: 0 0 0 0px color-mix(in srgb, var(--md-sys-color-secondary) 50%, transparent); }
     60% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--md-sys-color-secondary) 0%, transparent); }
     100%{ box-shadow: 0 0 0 0px color-mix(in srgb, var(--md-sys-color-secondary) 0%, transparent); }
   }
-
-  .ct-fresh-dot {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
+  .cc-fresh-dot {
+    width: 0.5rem; height: 0.5rem; border-radius: 50%;
     background: var(--md-sys-color-secondary);
     animation: dot-pulse 2.4s ease-in-out infinite;
+  }
+
+  /* ── Sidebar + Main layout ──────────────────────────── */
+  .cc-layout {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .cc-sidebar {
+    width: 12rem;
     flex-shrink: 0;
-  }
-
-  /* ── Toolbar ──────────────────────────────────────────────── */
-  .ct-toolbar-wrap {
-    position: sticky;
-    /* --site-header-h is measured by Layout.astro from the floating notch
-       header (its height varies as the nav wraps). The old anchor here was
-       Starlight's --sl-nav-height, gone since the #121 migration — the
-       3.5rem fallback left this toolbar half-hidden under the header. */
-    top: var(--site-header-h, 4.75rem);
-    z-index: 10;
-    margin: 0 0 16px;
-    background: color-mix(in srgb, var(--md-sys-color-surface) 92%, transparent);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--md-sys-color-outline-variant);
-    padding: 8px 0;
-  }
-
-  .ct-toolbar {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px 16px;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
-  .ct-search-group {
+  .cc-sidebar-field {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    gap: 4px;
   }
 
-  .ct-search-field {
+  .cc-label {
+    font-size: var(--md-sys-typescale-label-small-size);
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--md-sys-color-outline);
+  }
+  .cc-label--inline { display: inline; }
+
+  .cc-field {
     position: relative;
     display: flex;
     align-items: center;
   }
-
-  .ct-search-icon {
+  .cc-icon {
     position: absolute;
     left: 8px;
     color: var(--md-sys-color-outline);
     pointer-events: none;
   }
 
-  .ct-search {
-    padding: 4px 8px 4px 32px;
+  .cc-input {
+    width: 100%;
+    padding: 6px 8px 6px 30px;
     border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--md-sys-shape-corner-small);
     background: var(--md-sys-color-surface-container-high);
     color: var(--md-sys-color-on-surface);
     font-size: var(--md-sys-typescale-body-medium-size);
-    min-width: 13rem;
-    transition:
-      border-color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard),
-      background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+    transition: border-color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard), background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
   }
-
-  .ct-search::placeholder { color: var(--md-sys-color-outline); }
-
-  .ct-search:hover {
-    border-color: var(--md-sys-color-outline);
-    background: var(--md-sys-color-surface-container-highest);
-  }
-
-  .ct-search:focus-visible {
+  .cc-input:hover { border-color: var(--md-sys-color-outline); background: var(--md-sys-color-surface-container-highest); }
+  .cc-input:focus-visible {
     outline: none;
     box-shadow: var(--md3-focus-ring);
     border-color: var(--md-sys-color-primary);
   }
 
-  /* ── Collapsible filters popover ─────────────────────────────
-     A native <details> — no JS state to manage, keyboard/screen-reader
-     support built in. The label sits above each select (rather than
-     beside it) so every field's input aligns on the same left edge
-     regardless of label length. */
-  .ct-filters-toggle {
-    position: relative;
+  /* Accordion-style filter details */
+  .cc-details {
+    border: none;
+    padding: 0;
   }
-
-  /* Starlight's markdown.css styles every <details> inside .sl-markdown-content
-     (which wraps this component in an MDX page) with a themed left border —
-     meant for collapsible content asides, not this filter widget. Undo it;
-     the side-stripe-border look is banned regardless of source. */
-  :global(.ct-filters-toggle) {
-    border-inline-start: none;
-    padding-inline-start: 0;
-  }
-
-  .ct-filters-summary {
-    display: inline-flex;
+  .cc-details-summary {
+    display: flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 12px;
-    border: 1px solid var(--md-sys-color-outline-variant);
-    border-radius: var(--md-sys-shape-corner-small);
-    background: var(--md-sys-color-surface-container-high);
-    color: var(--md-sys-color-on-surface);
+    padding: 6px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
     font-family: var(--font-sans);
     font-size: var(--md-sys-typescale-body-medium-size);
-    cursor: pointer;
-    user-select: none;
+    color: var(--md-sys-color-on-surface-variant);
     list-style: none;
-    transition:
-      border-color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard),
-      background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  }
+  .cc-details-summary::-webkit-details-marker { display: none; }
+  .cc-details-summary::marker { content: none; }
+  .cc-details[open] .cc-details-summary svg { transform: rotate(90deg); }
+  .cc-details-summary svg { transition: transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard); }
+
+  .cc-details > .cc-select {
+    margin: 4px 0 4px 20px;
   }
 
-  :global(.ct-filters-summary::-webkit-details-marker) { display: none !important; }
-  :global(.ct-filters-summary::marker) { content: none !important; display: none !important; font-size: 0 !important; }
-  /* Starlight's own markdown.css draws a masked chevron ::before on every
-     <summary> inside .sl-markdown-content (which wraps this component in
-     an MDX page) — neutralize it so only our own icon shows. */
-  :global(.ct-filters-summary::before) { content: none !important; display: none !important; }
-
-  .ct-filters-summary:hover {
-    border-color: var(--md-sys-color-outline);
+  .cc-select {
+    width: 100%;
+    padding: 5px 8px;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-small);
     background: var(--md-sys-color-surface-container-highest);
+    color: var(--md-sys-color-on-surface);
+    font-size: var(--md-sys-typescale-body-medium-size);
+    cursor: pointer;
+    transition: border-color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
   }
-
-  .ct-filters-summary:focus-visible {
+  .cc-select:focus-visible {
     outline: none;
     box-shadow: var(--md3-focus-ring);
+    border-color: var(--md-sys-color-primary);
   }
 
-  .ct-filters-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 1.1em;
-    padding: 0 0.35em;
-    border-radius: var(--md-sys-shape-corner-full);
-    background: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
-    font-size: 0.7rem;
-    font-weight: 600;
-    line-height: 1.5;
+  .cc-main {
+    flex: 1;
+    min-width: 0;
   }
 
-  /* The `display` above wins over the UA [hidden]{display:none} rule, so the
-     badge would render even while hidden (e.g. showing "0") without this. */
-  .ct-filters-badge[hidden] {
-    display: none;
-  }
-
-  .ct-filters-panel {
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 0;
-    z-index: 20;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(9rem, 1fr));
-    gap: 12px 16px;
-    width: max-content;
-    padding: 16px;
-    border: 1px solid var(--md-sys-color-outline-variant);
-    border-radius: var(--md-sys-shape-corner-large);
-    background: var(--md-sys-color-surface-container-high);
-    box-shadow: var(--md-sys-elevation-2, 0 4px 16px rgba(0, 0, 0, 0.16));
-  }
-
-  .ct-filter-group {
+  .cc-card-header {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 4px;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
   }
 
-  .ct-label {
-    font-family: var(--font-sans);
-    font-weight: 300;
+  .cc-count {
     font-size: var(--md-sys-typescale-label-small-size);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--md-sys-color-outline);
   }
 
-  .ct-select {
-    width: 100%;
-    padding: 4px 8px;
+  .cc-sort-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .cc-sort-select {
+    padding: 2px 12px 2px 8px;
     border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--md-sys-shape-corner-small);
-    background: var(--md-sys-color-surface-container-highest);
+    background: var(--md-sys-color-surface-container-high);
     color: var(--md-sys-color-on-surface);
     font-size: var(--md-sys-typescale-body-medium-size);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     cursor: pointer;
-    transition:
-      border-color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard),
-      background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
   }
 
-  .ct-select:hover {
-    border-color: var(--md-sys-color-outline);
-  }
-
-  .ct-select:focus-visible {
-    outline: none;
-    box-shadow: var(--md3-focus-ring);
-    border-color: var(--md-sys-color-primary);
-  }
-
-  .ct-actions {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-left: auto;
-  }
-
-  /* MD3 Text Button */
-  .ct-clear-btn {
+  .cc-clear-btn {
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -900,343 +601,25 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     transition: background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
     white-space: nowrap;
   }
+  .cc-clear-btn.cc-hidden { display: none; }
+  .cc-clear-btn:hover { background: var(--md3-state-hover, color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent)); }
 
-  /* Same [hidden]-override issue as .ct-filters-badge above. */
-  .ct-clear-btn[hidden] {
-    display: none;
-  }
-
-  .ct-clear-btn:hover { background: var(--md3-state-hover, color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent)); }
-
-  .ct-clear-btn:focus-visible {
-    outline: none;
-    box-shadow: var(--md3-focus-ring);
-  }
-
-  .ct-count {
-    font-family: var(--font-sans);
-    font-size: var(--md-sys-typescale-label-medium-size);
-    color: var(--md-sys-color-outline);
-    white-space: nowrap;
-    min-width: 5.5rem;
-    text-align: right;
-  }
-
-  /* ── Table ────────────────────────────────────────────────── */
-  .ct-table-wrap {
-    overflow-x: auto;
-    border: 1px solid var(--md-sys-color-outline-variant);
-    border-radius: var(--md-sys-shape-corner-large);
-    /* Real product names (e.g. "COFFEEIN Elite - espresso zmes (200 g,
-       zrnková káva)") push the table past 1024px-wide viewports, clipping
-       the Per 100g column with no visible sign there's more to scroll to.
-       Standard edge-shadow trick: two background-attachment:local "cover"
-       gradients hide the shadow whenever the scroll position is already at
-       that edge; the scroll-attached shadows behind them only show through
-       when there's unscrolled content past that side. */
-    background-color: var(--md-sys-color-surface-container-lowest);
-    background-image:
-      linear-gradient(to right, var(--md-sys-color-surface-container-lowest) 30%, transparent),
-      linear-gradient(to left, var(--md-sys-color-surface-container-lowest) 30%, transparent),
-      linear-gradient(to right, rgba(0, 0, 0, 0.15), transparent),
-      linear-gradient(to left, rgba(0, 0, 0, 0.15), transparent);
-    background-repeat: no-repeat;
-    background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
-    background-position: left, right, left, right;
-    background-attachment: local, local, scroll, scroll;
-  }
-
-  .ct-table {
-    width: 100%;
-    /* Without a floor, `width: 100%` compresses columns to fit real (long)
-       product names, and the numeric cells' `white-space: nowrap` text then
-       visually overflows past the table's own edge — clipped by the wrap's
-       overflow-x, invisibly, with no scrollbar ever appearing (no genuine
-       box overflow was created, just ink spilling past the border box). A
-       min-width forces real overflow instead, so the scroll-shadow above
-       has something honest to point at. */
-    min-width: 800px;
-    border-collapse: collapse;
-    font-size: var(--md-sys-typescale-body-medium-size);
-  }
-
-  /* Sticky column headers. .ct-table-wrap's overflow-x: auto makes the wrap
-     a scroll container, and since the wrap never scrolls vertically, sticky
-     against it is a no-op — headers just scrolled away with the page (601
-     rows with no column labels in sight). On viewports wide enough that the
-     table's 800px floor always fits (so horizontal scrolling can't happen
-     anyway), switch the wrap to overflow-x: clip — clip doesn't create a
-     scroll container, so the thead sticks against the viewport, tucked
-     below the site header + toolbar. Narrower viewports keep the scrollable
-     wrap and its edge shadows, and headers scroll away as before. */
-  .ct-table thead {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
-
-  @media (min-width: 900px) {
-    .ct-table-wrap {
-      overflow-x: clip;
-      overflow-y: visible;
-    }
-    .ct-table thead {
-      top: calc(var(--site-header-h, 4.75rem) + var(--ct-toolbar-h, 3.5rem));
-    }
-  }
-
-  .ct-table thead th {
-    padding: 8px 16px;
-    background: var(--md-sys-color-surface-variant);
-    font-family: var(--font-sans);
-    font-size: var(--md-sys-typescale-label-small-size);
-    font-weight: 300;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--md-sys-color-outline);
-    text-align: left;
-    /* Inset shadow, not border-bottom: with border-collapse: collapse,
-       Chrome leaves collapsed borders behind when a sticky thead sticks —
-       the header row would scroll away from its own underline. */
-    box-shadow: inset 0 -2px 0 var(--md-sys-color-outline-variant);
-    white-space: nowrap;
-  }
-
-  /* Sortable header buttons */
-  .ct-sort-th {
+  .cc-filters-badge {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 0;
-    margin: 0;
-    border: none;
-    background: none;
-    font: inherit;
-    letter-spacing: inherit;
-    text-transform: inherit;
-    color: inherit;
-    cursor: pointer;
-    transition: color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
-  }
-
-  .ct-sort-th--num { flex-direction: row-reverse; }
-
-  .ct-sort-th:hover { color: var(--md-sys-color-on-surface); }
-
-  .ct-sort-th--active { color: var(--md-sys-color-primary); }
-
-  .ct-sort-th:focus-visible {
-    outline: none;
-    box-shadow: var(--md3-focus-ring);
-    border-radius: var(--md-sys-shape-corner-extra-small, 4px);
-  }
-
-  .ct-sort-ind {
-    font-size: 0.85em;
-    min-width: 0.7em;
-    line-height: 1;
-  }
-
-  @keyframes row-in {
-    from { opacity: 0; transform: translateY(4px); }
-    to   { opacity: 1; transform: none; }
-  }
-
-  .ct-table tbody tr {
-    border-bottom: 1px solid var(--md-sys-color-outline-variant);
-    transition: background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
-    animation: row-in 0.22s ease both;
-    animation-delay: calc(var(--i, 0) * 12ms);
-  }
-
-  .ct-table tbody tr:last-child { border-bottom: none; }
-
-  .ct-table tbody tr:hover {
-    background: var(--md3-state-on-surface-hover);
-  }
-
-  .ct-table tbody td {
-    padding: 8px 16px;
-    vertical-align: middle;
-    color: var(--md-sys-color-on-surface-variant);
-  }
-
-  .ct-num {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-    font-size: 0.8125rem;
-  }
-
-  .ct-muted   { color: var(--md-sys-color-outline); }
-  .ct-muted-h { color: var(--md-sys-color-outline); }
-  .ct-price   { font-weight: 600; color: var(--md-sys-color-on-surface); }
-
-  /* ── Best value highlight ─────────────────────────────────── */
-  .ct-row--best {
-    background: color-mix(in srgb, var(--md-sys-color-secondary-container) 28%, transparent);
-  }
-
-  .ct-row--best:hover {
-    background: color-mix(in srgb, var(--md-sys-color-secondary-container) 45%, transparent) !important;
-  }
-
-  .ct-best {
-    display: inline-block;
-    margin-left: 8px;
-    padding: 0.05em 0.5em;
+    justify-content: center;
+    min-width: 1.1em;
+    padding: 0 0.35em;
     border-radius: var(--md-sys-shape-corner-full);
     background: var(--md-sys-color-primary);
     color: var(--md-sys-color-on-primary);
-    font-family: var(--font-sans);
-    font-size: var(--md-sys-typescale-label-small-size);
-    font-weight: 500;
-    letter-spacing: 0;
-    text-transform: uppercase;
-    vertical-align: middle;
-  }
-
-  /* ── Stale-price indicator ────────────────────────────────────
-     A row whose last_seen hasn't advanced in ~3 weekly scrape cycles (see
-     isStale() above) — the roaster's own scrape has likely been
-     failed/needs_js/partial for a while, so this price may no longer be
-     accurate. Deliberately just a small muted icon, not a filled pill like
-     .ct-best: this is a soft caveat, not a call to action, and shouldn't
-     compete for attention with the price itself. Reuses the tertiary
-     (Garnet) role already used for the "natural" process badge — no new
-     color introduced, per Design.md. */
-  .ct-stale {
-    display: inline-flex;
-    align-items: center;
-    margin-left: 4px;
-    color: var(--md-sys-color-tertiary);
-    opacity: 0.75;
-    vertical-align: middle;
-    cursor: help;
-  }
-
-  /* Blend composition (issue #93): the component countries after the
-     Blend label. Real text (not a hover tooltip) so it works on touch and
-     for screen readers; label-small + outline role keeps it subordinate
-     to the label, per Design.md's existing muted-annotation pattern. */
-  .ct-blend-comp {
-    margin-left: 4px;
-    font-size: var(--md-sys-typescale-label-small-size);
-    color: var(--md-sys-color-outline);
-    white-space: normal;
-  }
-
-  /* Price history sparkline (issue #54): quiet context, not a call to
-     action. Outline role keeps it below the price in visual weight; no
-     new color, per Design.md. */
-  .ct-spark {
-    margin-right: 6px;
-    color: var(--md-sys-color-outline);
-    vertical-align: middle;
-  }
-
-  /* Price-drop chip: positive news, reuses the secondary (Aqua Mist) role
-     already used by the fresh-dot — no new color, per Design.md. */
-  .ct-drop {
-    display: inline-block;
-    margin-left: 8px;
-    padding: 0.05em 0.5em;
-    border-radius: var(--md-sys-shape-corner-full);
-    background: var(--md-sys-color-secondary-container);
-    color: var(--md-sys-color-on-secondary-container);
-    font-family: var(--font-sans);
-    font-size: var(--md-sys-typescale-label-small-size);
-    font-weight: 500;
-    letter-spacing: 0;
-    white-space: nowrap;
-    cursor: help;
-  }
-
-  /* ── Coffee link ──────────────────────────────────────────── */
-  .ct-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3em;
-    font-weight: var(--md-sys-typescale-title-small-weight);
-    color: var(--md-sys-color-on-surface);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition:
-      color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard),
-      border-color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
-  }
-
-  .ct-link:hover {
-    color: var(--md-sys-color-primary);
-    border-bottom-color: color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent);
-  }
-
-  .ct-ext-icon {
-    flex-shrink: 0;
-    opacity: 0.35;
-    transition: opacity var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
-  }
-
-  .ct-link:hover .ct-ext-icon { opacity: 0.9; }
-
-  /* Per-row wrong-data flag (issue #85): deliberately near-invisible at
-     rest — a correction affordance, not a feature to advertise. */
-  .ct-report {
-    display: inline-flex;
-    margin-left: 6px;
-    color: var(--md-sys-color-outline);
-    opacity: 0.3;
-    vertical-align: middle;
-    transition: opacity var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
-  }
-  .ct-report:hover,
-  .ct-report:focus-visible {
-    opacity: 1;
-    color: var(--md-sys-color-tertiary);
-  }
-
-  /* Process badges are now the shared <Badge> component
-     (src/components/ui/Badge.astro) — the four --washed/--natural/--honey/
-     --other variants used to be duplicated here as separate CSS blocks. */
-
-  /* ── Process legend ──────────────────────────────────────── */
-  .ct-legend {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 4px 6px;
     font-size: 0.7rem;
-    color: var(--md-sys-color-outline);
-    opacity: 0.85;
+    font-weight: 600;
+    line-height: 1.5;
   }
+  .cc-filters-badge.cc-hidden { display: none; }
 
-  .ct-legend .ct-best {
-    padding: 0.02em 0.45em;
-    font-size: 0.62rem;
-  }
-
-  /* on-surface-variant, not outline: at this small size the outline role
-     lands at 4.45:1 on Morning Snow — just under WCAG AA's 4.5:1 (issue
-     #63, caught by the axe gate). */
-  .ct-legend-label {
-    font-family: var(--font-sans);
-    font-weight: 300;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-right: 4px;
-    color: var(--md-sys-color-on-surface-variant);
-  }
-
-  .ct-legend-sep {
-    color: var(--md-sys-color-outline-variant);
-    font-size: 1.1em;
-  }
-
-  /* Same 4.5:1 reasoning as .ct-legend-label above (issue #63). */
-  .ct-legend-desc { color: var(--md-sys-color-on-surface-variant); }
-
-  /* ── Empty state ──────────────────────────────────────────── */
-  .ct-empty {
+  .cc-empty {
     padding: 3rem 1rem;
     text-align: center;
     color: var(--md-sys-color-outline);
@@ -1247,63 +630,213 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     margin: 0;
   }
 
-  /* ── Responsive ───────────────────────────────────────────── */
-  @media (max-width: 640px) {
-    /* The 800px desktop floor (see .ct-table above) assumes all 7 columns
-       are visible; Weight and Per 100g are hidden below this width, so the
-       remaining columns fit comfortably without it — keep it from forcing
-       an unnecessary horizontal scroll here. */
-    .ct-table {
-      min-width: 0;
-    }
-    .ct-toolbar {
-      flex-direction: column;
-      align-items: stretch;
-    }
-    .ct-search,
-    .ct-search-field { width: 100%; }
-    .ct-search { min-width: 0; }
-    .ct-filters-summary { justify-content: center; }
-    /* Flow the panel in normal document flow instead of an absolutely
-       positioned popover — avoids off-screen overflow on narrow widths. */
-    .ct-filters-panel {
-      position: static;
-      grid-template-columns: 1fr;
-      width: auto;
-      margin-top: 6px;
-      box-shadow: none;
-    }
-    .ct-actions {
-      margin-left: 0;
-      justify-content: space-between;
-    }
-    /* Real (not pseudo-element) padding so the tap target actually reaches
-       ~44px tall — negative-inset hit-area expansion gets clipped by
-       .ct-table-wrap's overflow-x: auto, which forces overflow-y: auto too.
-       Non-sortable header cells just get extra vertical whitespace, since
-       row height is set by the tallest cell either way. */
-    .ct-sort-th {
-      padding-block: 13px;
-    }
-    /* Hide weight and per-100g columns on mobile */
-    .ct-table td:nth-child(5),
-    .ct-table th:nth-child(5),
-    .ct-table td:nth-child(7),
-    .ct-table th:nth-child(7) { display: none; }
+  /* ── Card grid ──────────────────────────────────────── */
+  .cc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
   }
 
-  @media (max-width: 440px) {
-    /* Hide origin column on very small screens */
-    .ct-table td:nth-child(3),
-    .ct-table th:nth-child(3) { display: none; }
+  .coffee-card {
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
+    background: var(--md-sys-color-surface-container-lowest);
+    padding: 12px;
+    font-size: var(--md-sys-typescale-body-medium-size);
+    animation: cc-row-in 0.2s ease both;
+    animation-delay: calc(var(--i, 0) * 8ms);
+    transition: background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard), box-shadow var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+  }
+  .coffee-card:nth-child(1) { animation-delay: 0ms; }
+  .coffee-card:nth-child(2) { animation-delay: 8ms; }
+  .coffee-card:nth-child(3) { animation-delay: 16ms; }
+  .coffee-card:nth-child(4) { animation-delay: 24ms; }
+
+  @keyframes cc-row-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .coffee-card:hover {
+    border-color: var(--md-sys-color-outline);
+    box-shadow: var(--md-sys-elevation-level1);
+  }
+
+  .coffee-card--best {
+    background: color-mix(in srgb, var(--md-sys-color-secondary-container) 28%, transparent);
+    border-color: color-mix(in srgb, var(--md-sys-color-secondary-container) 60%, var(--md-sys-color-outline-variant));
+  }
+
+  /* Card top row: name */
+  .cc-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
+  .cc-link {
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface);
+    text-decoration: none;
+    line-height: 1.4;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    flex: 1;
+    min-width: 0;
+    border-bottom: 1px solid transparent;
+    transition: color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard), border-color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+  }
+  .cc-link:hover { color: var(--md-sys-color-primary); border-bottom-color: color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent); }
+  .cc-ext { flex-shrink: 0; opacity: 0.35; transition: opacity var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard); }
+  .cc-link:hover .cc-ext { opacity: 0.9; }
+
+  .cc-report {
+    display: inline-flex;
+    flex-shrink: 0;
+    color: var(--md-sys-color-outline);
+    opacity: 0.3;
+    margin-top: 2px;
+    transition: opacity var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+    align-self: flex-start;
+  }
+  .cc-report:hover, .cc-report:focus-visible { opacity: 1; color: var(--md-sys-color-tertiary); }
+
+  /* Card body: roaster, origin, process */
+  .cc-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 8px;
+    font-size: 0.8125rem;
+  }
+
+  .cc-roaster { font-weight: 500; color: var(--md-sys-color-on-surface-variant); }
+  .cc-origin { color: var(--md-sys-color-outline); }
+  .cc-muted { color: var(--md-sys-color-outline); }
+
+  .cc-process { color: var(--md-sys-color-on-surface-variant); }
+  .cc-badge { font-size: 0.7rem; }
+  .cc-decaf-tag { font-size: 0.75em; font-weight: 600; letter-spacing: 0.05em; padding: 1px 5px; border-radius: 3px; background: hsl(0, 0%, 92%); color: hsl(0, 0%, 50%); }
+  .cc-blend-comp { font-size: 0.7rem; color: var(--md-sys-color-outline); }
+
+  /* Card footer: weight, price, per100g, offers */
+  .cc-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    font-size: 0.8125rem;
+    padding-top: 6px;
+    border-top: 1px solid var(--md-sys-color-outline-variant);
+  }
+
+  .cc-weight { color: var(--md-sys-color-outline); min-width: 3rem; }
+  .cc-num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .cc-price {
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface);
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .cc-spark { margin-right: 4px; color: var(--md-sys-color-outline); vertical-align: middle; }
+
+  .cc-drop {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 0 4px;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    font-size: 0.7rem;
+    font-weight: 500;
+    cursor: help;
+  }
+
+  .cc-stale {
+    display: inline-flex;
+    margin-left: 4px;
+    color: var(--md-sys-color-tertiary);
+    opacity: 0.75;
+    cursor: help;
+    vertical-align: middle;
+  }
+
+  .cc-per100g { color: var(--md-sys-color-outline); }
+
+  .cc-best {
+    display: inline-block;
+    padding: 0 4px;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    font-size: 0.65rem;
+    font-weight: 500;
+  }
+
+  .cc-offers { margin-left: auto; }
+  .cc-refer-link { color: var(--md-sys-color-primary); text-decoration: none; font-size: 0.8rem; }
+  .cc-refer-link:hover { text-decoration: underline; }
+
+  /* ── Legend ──────────────────────────────────────────── */
+  .cc-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 6px;
+    font-size: 0.7rem;
+    color: var(--md-sys-color-outline);
+    opacity: 0.85;
+  }
+  .cc-legend-label { font-weight: 300; letter-spacing: 0.08em; text-transform: uppercase; }
+  .cc-legend-sep { color: var(--md-sys-color-outline-variant); font-size: 1.1em; }
+  .cc-legend-desc { color: var(--md-sys-color-on-surface-variant); }
+  .cc-badge-sm { font-size: 0.7rem; padding: 0 0.5em; }
+
+  /* ── Responsive: sidebar → stacked ──────────────────── */
+  @media (max-width: 860px) {
+    .cc-layout {
+      flex-direction: column;
+    }
+    .cc-sidebar {
+      width: 100%;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.25rem 0.5rem;
+      order: -1;
+    }
+    .cc-sidebar-field { width: 100%; }
+    .cc-details { flex: 1 1 calc(50% - 0.5rem); min-width: 10rem; }
+    .cc-details-summary { border-bottom: none; padding: 6px 8px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: var(--md-sys-shape-corner-small); }
+    .cc-select { margin: 0; }
+
+    .cc-grid {
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+  }
+
+  @media (min-width: 861px) {
+    .cc-details > .cc-select { display: none; }
+    .cc-details[open] > .cc-select { display: block; }
+  }
+
+  @media (max-width: 860px) {
+    .cc-details { border-bottom: 1px solid var(--md-sys-color-outline-variant); }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .ct-table tbody tr {
-      animation: none;
-    }
-    .ct-fresh-dot {
-      animation: none;
-    }
+    .coffee-card { animation: none; }
+    .cc-fresh-dot { animation: none; }
   }
+
+  /* Card hidden (filtering) */
+  .coffee-card[hidden] { display: none !important; }
+  #cc-grid[hidden] { display: none !important; }
 </style>

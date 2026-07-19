@@ -1,10 +1,13 @@
 ---
-// SK mirror of src/pages/coffees/index.astro (issue #121).
-import Layout from '../../../layouts/Layout.astro';
-import CoffeeTable from '../../../components/CoffeeTable.astro';
+import Layout from '../../layouts/Layout.astro';
+import RoastTabs from '../../components/RoastTabs.astro';
+import CoffeeTable from '../../components/CoffeeTable.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<Layout title="Kávy" description="Prehliadajte a filtrujte všetky kávy aktuálne skladom od slovenských pražiarní.">
+<Layout title="Kávy" description="Prezerajte a filtrujte všetky kávy dostupné od slovenských pražiarní.">
   <h1>Kávy</h1>
+  <RoastTabs activeRoast={null} lang="sk" base={base} />
   <CoffeeTable lang="sk" />
 </Layout>

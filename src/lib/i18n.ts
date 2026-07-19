@@ -49,6 +49,11 @@ export const UI = {
     tipNudge: 'Found a cheaper coffee here? Consider tipping the difference:',
     tipNudgeLink: 'Ko-fi',
     reportRowTitle: (name: string) => `Report wrong data for ${name}`,
+    sort: 'Sort',
+    sortByPrice: 'Price',
+    sortByName: 'Name',
+    sortByRoaster: 'Roaster',
+    sortByOrigin: 'Origin',
   },
   sk: {
     search: 'Hľadať',
@@ -83,6 +88,11 @@ export const UI = {
     tipNudge: 'Našli ste tu lacnejšiu kávu? Zvážte, či rozdiel nepošlete ako tip:',
     tipNudgeLink: 'Ko-fi',
     reportRowTitle: (name: string) => `Nahlásiť nesprávne údaje pre ${name}`,
+    sort: 'Zoradiť',
+    sortByPrice: 'Cena',
+    sortByName: 'Názov',
+    sortByRoaster: 'Pražiareň',
+    sortByOrigin: 'Pôvod',
   },
 } satisfies Record<Lang, Record<string, string | ((...args: never[]) => string)>>;
 

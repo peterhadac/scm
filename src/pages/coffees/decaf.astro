@@ -1,10 +1,13 @@
 ---
-// Migrated off Starlight (issue #121). SK mirror: src/pages/sk/coffees/decaf.astro.
 import Layout from '../../layouts/Layout.astro';
+import RoastTabs from '../../components/RoastTabs.astro';
 import CoffeeTable from '../../components/CoffeeTable.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<Layout title="Decaf" description="Browse decaffeinated coffees currently available from Slovak roasters.">
+<Layout title="Decaf coffees" description="Browse decaffeinated coffees currently in stock from Slovak roasters.">
   <h1>Decaf</h1>
-  <CoffeeTable lang="en" roastType="decaf" />
+  <RoastTabs activeRoast="decaf" lang="en" base={base} />
+  <CoffeeTable lang="en" />
 </Layout>

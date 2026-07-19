@@ -1,10 +1,13 @@
 ---
-// Migrated off Starlight (issue #121). SK mirror: src/pages/sk/coffees/drip-bags.astro.
 import Layout from '../../layouts/Layout.astro';
+import RoastTabs from '../../components/RoastTabs.astro';
 import CoffeeTable from '../../components/CoffeeTable.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/\/$/, '');
 ---
 
-<Layout title="Drip bags" description="Browse single-serve coffee drip bags currently in stock from Slovak roasters.">
+<Layout title="Drip bags" description="Browse single-serve drip bag coffees currently in stock from Slovak roasters.">
   <h1>Drip bags</h1>
+  <RoastTabs activeRoast="drip-bags" lang="en" base={base} />
   <CoffeeTable lang="en" roastType="drip-bag" />
 </Layout>

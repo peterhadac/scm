@@ -1,10 +1,13 @@
 ---
-// Migrated off Starlight (issue #121). SK mirror: src/pages/sk/coffees/espresso.astro.
 import Layout from '../../layouts/Layout.astro';
+import RoastTabs from '../../components/RoastTabs.astro';
 import CoffeeTable from '../../components/CoffeeTable.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <Layout title="Espresso coffees" description="Browse espresso roast coffees currently in stock from Slovak roasters.">
   <h1>Espresso coffees</h1>
+  <RoastTabs activeRoast="espresso" lang="en" base={base} />
   <CoffeeTable lang="en" roastType="espresso" blend={false} />
 </Layout>

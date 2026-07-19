@@ -1,0 +1,86 @@
+---
+import { ROAST_TYPE_LABELS, type Lang } from '../lib/i18n';
+import { localePath } from '../lib/lang';
+
+interface Props {
+  activeRoast: string | null;  // null = "all"
+  lang: Lang;
+  base: string;
+}
+
+const { activeRoast, lang, base } = Astro.props;
+
+const pills: Array<{ value: string; label: string; href: string; isActive: boolean }> = [
+  { value: 'all', label: lang === 'sk' ? 'Všetky' : 'All', href: base + localePath('/coffees/', lang), isActive: activeRoast === null },
+  { value: 'filter', label: ROAST_TYPE_LABELS['filter']?.[lang] ?? 'Filter', href: base + localePath('/coffees/filter/', lang), isActive: activeRoast === 'filter' },
+  { value: 'espresso', label: ROAST_TYPE_LABELS['espresso']?.[lang] ?? 'Espresso', href: base + localePath('/coffees/espresso/', lang), isActive: activeRoast === 'espresso' },
+  { value: 'blends', label: lang === 'sk' ? 'Zmesi' : 'Blends', href: base + localePath('/coffees/blends/', lang), isActive: activeRoast === 'blends' },
+  { value: 'nespresso', label: ROAST_TYPE_LABELS['nespresso']?.[lang] ?? 'Nespresso', href: base + localePath('/coffees/nespresso/', lang), isActive: activeRoast === 'nespresso' },
+  { value: 'drip-bags', label: ROAST_TYPE_LABELS['drip-bag']?.[lang] ?? 'Drip bags', href: base + localePath('/coffees/drip-bags/', lang), isActive: activeRoast === 'drip-bags' },
+  { value: 'decaf', label: lang === 'sk' ? 'Decaf' : 'Decaf', href: base + localePath('/coffees/decaf/', lang), isActive: activeRoast === 'decaf' },
+];
+---
+
+<nav class="cc-pills">
+  {pills.map((pill) => (
+    <a
+      href={pill.href}
+      class:list={[pill.href, pill.isActive ? 'cc-pill cc-pill--active' : 'cc-pill']}
+      aria-current:group={pills.filter(p => p.isActive).length > 0 && pill.isActive}
+    >
+      {pill.label}
+    </a>
+  ))}
+</nav>
+
+<style>
+  .cc-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-bottom: 0.5rem;
+  }
+
+  .cc-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 16px;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface-variant);
+    text-decoration: none;
+    font-size: var(--md-sys-typescale-label-large-size);
+    font-weight: 500;
+    transition:
+      background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard),
+      border-color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard),
+      color var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
+  }
+
+  .cc-pill:hover {
+    background: var(--md-sys-color-surface-container-high);
+    border-color: var(--md-sys-color-outline);
+  }
+
+  .cc-pill--active {
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+    border-color: var(--md-sys-color-primary-container);
+  }
+
+  .cc-pill--active:hover {
+    background: var(--md-sys-color-primary-container);
+    filter: brightness(0.95);
+  }
+
+  @media (max-width: 860px) {
+    .cc-pills {
+      gap: 4px;
+    }
+    .cc-pill {
+      padding: 4px 12px;
+      font-size: 0.8rem;
+    }
+  }
+</style>

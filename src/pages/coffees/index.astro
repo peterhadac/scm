@@ -1,10 +1,15 @@
 ---
-// Migrated off Starlight (issue #121). SK mirror: src/pages/sk/coffees/index.astro.
 import Layout from '../../layouts/Layout.astro';
+import RoastTabs from '../../components/RoastTabs.astro';
 import CoffeeTable from '../../components/CoffeeTable.astro';
+import { localePath } from '../../lib/lang';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const lang = 'en';  // can be parameterized per page
 ---
 
 <Layout title="Coffees" description="Browse and filter every coffee currently in stock from Slovak roasters.">
   <h1>Coffees</h1>
+  <RoastTabs activeRoast={null} lang={lang} base={base} />
   <CoffeeTable lang="en" />
 </Layout>

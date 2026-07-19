@@ -1887,7 +1887,6 @@ class Hints:
     weight_g: int | None = None
 
 
-<<<<<<< HEAD
 def _deduplicate_packaging(packaging: list[dict]) -> list[dict]:
     """Deduplicate packaging tiers: keep one entry per (weight_g, price) pair.
 
@@ -1934,7 +1933,6 @@ def _infer_process(name: str, origin: str | None) -> str:
 
 
 # ---------------------------------------------------------------------------
-=======
 def _clamp_rating(v):
     """Normalize a sensor rating to int in [0, 10], or None if absent."""
     if v is None:
@@ -1944,7 +1942,6 @@ def _clamp_rating(v):
         return max(0, min(10, v))
     except (ValueError, TypeError):
         return None
->>>>>>> 2fa6871 (feat: schema v22 — decaf, sensory, tasting, brew recs, stock_status Fixes #89, #139, #141, #138, #140, #142)
 
 
 def normalize_product(raw, url, today, hints=None):

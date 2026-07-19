@@ -71,7 +71,54 @@ WEIGHT_ATTRIBUTE_KEYWORDS = ("hmotnost", "vaha", "weight", "balenie")
 # weight_g (e.g. whole bean vs ground) instead of colliding into one.
 SCHEMA_VERSION = 21
 
-# Ordered extraction-model preference list (issue #42): extract_product
+# Default processing methods per origin (issue #145):
+# When model extraction returns null/missing process, use the country's
+# dominant processing method as a fallback.  Keys are canonical country names
+# (as stored after normalize_origin).
+_ORIGIN_PROCESS_MAP: dict[str, str] = {
+    "brazil": "natural",
+    "colombia": "washed",
+    "ethiopia": "natural",
+    "kenya": "washed",
+    "guatemala": "washed",
+    "costa-rica": "honey",
+    "peru": "washed",
+    "bolivia": "washed",
+    "indonesia": "wet-hulled",
+    "madagascar": "natural",
+    "rwanda": "washed",
+    "burundi": "natural",
+    "tanzania": "washed",
+    "uganda": "washed",
+    "panama": "washed",
+    "nicaragua": "washed",
+    "el-salvador": "washed",
+    "honduras": "washed",
+    "vietnam": "washed",
+    "india": "washed",
+    "papua-new-guinea": "washed",
+}
+
+# # Process hints found in product names (case-insensitive).  Evaluated
+# in order, first match wins (issue #145).
+_PROCESS_NAME_PATTERNS: list[tuple[str, str]] = [
+    ("natural", "natural"),
+    (r"[^\w]?anaerobic[a-z]?", "anaerobic"),
+    ("carbonic.?maceration", "carbonic-maceration"),
+    (r"dry\s*proce\w+", "natural"),
+    (r"washed\b", "washed"),
+    (r"honey\s*proce\w+", "honey"),
+    ("ferment", "anaerobic"),
+    ("macerat", "carbonic-maceration"),
+    # Slovak patterns (matched against diacritic-stripped name):
+    # spracovanÃ¡ (spracovanÃ¡ = processed â washed)
+    (r"spracovan", "washed"),
+    # fermentovanÃ¡ (fermentovanÃ¡ = fermented â anaerobic)
+    (r"fermentovan", "anaerobic"),
+
+]
+
+# # Ordered extraction-model preference list (issue #42): extract_product
 # works through these left to right, so a deprecated/unavailable primary
 # degrades to the next model instead of failing the whole weekly run.
 # Overridable without a code change via OPENROUTER_MODELS (comma-separated
@@ -266,6 +313,19 @@ NON_COFFEE_KEYWORDS = (
     "nálepka",
     "nalepka",
     "sticker",
+    # tea / beverages (Slovak)
+    "cajik",
+    "caj",
+    "čaj",
+    "zaváralo",
+    "termoska",
+    # used goods / gift sets
+    "použité",
+    "second hand",
+    "setkačka",
+    # accessories / sundries
+    "káviar",
+    "kávica",
 )
 
 # URL path segments that mark a discovered link as site plumbing (cart,
@@ -1178,7 +1238,7 @@ async def _crawl_listing_links(crawler, start_url, max_pages=MAX_PAGES, throttle
                 continue
             if parsed_href.netloc != page_domain:
                 continue
-            if looks_like_product_link(href) and is_coffee(text):
+            if looks_like_product_link(href) and not _is_non_coffee_url(href) and is_coffee(text):
                 discovered.add(href)
 
         current_url = str(result.redirected_url or result.url or url)
@@ -1517,6 +1577,44 @@ def parse_weight(text):
     return None
 
 
+_NON_COFFEE_URL_PATHS_RAW = (
+    "/zaváralo/", "/zaväralo/", "/termoska/", "/kávovar/", "/mlynok/",
+    "/príslušenstvo/", "/accessories/", "/gear/",
+    "/kávovary/", "/mlynky/",
+    "/káviar/", "/kávica/",  # accessories
+)
+# Normalized copy — compared against diacritic-stripped URL paths
+_NON_COFFEE_URL_PATHS_NORM = frozenset(
+    strip_diacritics(p.lower()) for p in _NON_COFFEE_URL_PATHS_RAW
+)
+
+_NON_COFFEE_URL_SEGMENTS = frozenset(("cajik", "čaj", "caj"))
+
+
+def _is_non_coffee_url(url: str) -> bool:
+    """True if URL path/segments suggest a non-coffee product page.
+
+    This is a cheap pre-filter (no model call needed). Combined with the
+    text-based is_coffee() check it catches teas, equipment, accessories
+    that may slip past the keyword-based heuristics.
+
+    Uses strip_diacritics() so URLs with Slovak diacritics in any form
+    (e.g. /zavÃ¡ralo/ vs /zavÃ¤ralo/) still match.
+    """
+    from urllib.parse import urlparse
+    path_norm = strip_diacritics(urlparse(url).path.lower())
+    if any(p in path_norm for p in _NON_COFFEE_URL_PATHS_NORM):
+        return True
+    # segment-based: check each path component (not substring, to avoid
+    # false-positives on slugs like "/ethiopia-cajik/" — unlikely but just
+    # in case future roasters use "cajik" in a product slug).
+    for segment in path_norm.strip("/").split("/"):
+        if segment in _NON_COFFEE_URL_SEGMENTS:
+            return True
+    return False
+
+
+
 def is_coffee(name):
     """Heuristic: True unless the name clearly names non-coffee (gear/gift/subscription).
 
@@ -1733,6 +1831,54 @@ class Hints:
     weight_g: int | None = None
 
 
+def _deduplicate_packaging(packaging: list[dict]) -> list[dict]:
+    """Deduplicate packaging tiers: keep one entry per (weight_g, price) pair.
+
+    When multiple tiers share both weight_g AND price (e.g. 250g listed twice
+    at 8.90 EUR), keep only the first — they represent the same offering.
+    Tiers with different variants (whole bean / ground) are kept separately
+    because different (weight, price, variant) triplets are always distinct.
+    """
+    seen: set[tuple] = set()
+    result: list[dict] = []
+    for tier in packaging:
+        weight = tier.get("weight_g")
+        price = tier.get("price")
+        variant = tier.get("variant") or ""
+        key = (weight, price, variant)
+        if key not in seen:
+            seen.add(key)
+            result.append(tier)
+    return result
+
+def _lookup_origin_process(origin: str) -> str:
+    """Look up the dominant processing method for an origin country."""
+    return _ORIGIN_PROCESS_MAP.get(origin, "null")
+
+
+def _infer_process(name: str, origin: str | None) -> str:
+    """Infer process from name patterns or origin when extraction returned null.
+
+    Only called when the extracted `process` is missing or `null`.  The caller
+    decides whether to apply this inference.
+    """
+    if not name or not origin:
+        return None
+    name_lower = strip_diacritics(name).lower()
+
+    # 1. Name pattern matching (more specific than origin)
+    for pattern, value in _PROCESS_NAME_PATTERNS:
+        if re.search(pattern, name_lower):
+            return value
+
+    # 2. Origin-based fallback
+    val = _lookup_origin_process(origin)
+    return None if val == "null" else val
+
+
+# ---------------------------------------------------------------------------
+
+
 def normalize_product(raw, url, today, hints=None):
     """Turn a raw Gemini extraction into a products.yaml entry, or None if unusable.
 
@@ -1806,6 +1952,10 @@ def normalize_product(raw, url, today, hints=None):
     hint_origin = normalize_origin(hints.origin, name) if hints.origin else None
     origin = hint_origin or normalize_origin(raw.get("origin"), name)
 
+    # Infer process from origin/name when extraction returned null (issue #145)
+    if process in (None, "null"):
+        process = _infer_process(name, origin)
+
     # First-class blend marking (issue #91). The "Blend" origin sentinel
     # stays the single canonical filter key; this adds a new healing path —
     # a blend the model recognized from description text alone (raw
@@ -1854,6 +2004,7 @@ def normalize_product(raw, url, today, hints=None):
     if price_collision or weight_as_price or price_decreasing:
         missing_fields.append("price")
 
+    packaging = _deduplicate_packaging(packaging)
     entry = {
         "name": name,
         "url": url,

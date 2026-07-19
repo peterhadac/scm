@@ -4643,3 +4643,149 @@ def test_products_yaml_origins_are_canonical():
         if value is not None and value not in canonical
     ]
     assert bad == [], f"non-canonical origins stored in products.yaml: {bad}"
+
+
+# ── Issue #143: non-coffee URL path & keyword filters ──────────────────────
+
+
+def test_non_coffee_keywords_include_tea_and_accessories():
+    assert "cajik" in scrape.NON_COFFEE_KEYWORDS
+    assert "caj" in scrape.NON_COFFEE_KEYWORDS
+    assert "čaj" in scrape.NON_COFFEE_KEYWORDS
+    assert "zaváralo" in scrape.NON_COFFEE_KEYWORDS
+    assert "termoska" in scrape.NON_COFFEE_KEYWORDS
+    assert "použité" in scrape.NON_COFFEE_KEYWORDS
+    assert "second hand" in scrape.NON_COFFEE_KEYWORDS
+    assert "setkačka" in scrape.NON_COFFEE_KEYWORDS
+    assert "káviar" in scrape.NON_COFFEE_KEYWORDS
+    assert "kávica" in scrape.NON_COFFEE_KEYWORDS
+
+
+def test_is_non_coffee_url_detects_teapots():
+    assert scrape._is_non_coffee_url("https://example.sk/zaváralo/thermos") is True
+    assert scrape._is_non_coffee_url("https://example.sk/termoska/classic") is True
+    assert scrape._is_non_coffee_url("https://example.sk/príslušenstvo/filter") is True
+    assert scrape._is_non_coffee_url("https://example.sk/accessories/mug") is True
+    assert scrape._is_non_coffee_url("https://example.sk/gear/pump") is True
+
+
+def test_is_non_coffee_url_detects_accessories():
+    assert scrape._is_non_coffee_url("https://example.sk/kávovar/drip") is True
+    assert scrape._is_non_coffee_url("https://example.sk/mlynok/ceramic") is True
+    assert scrape._is_non_coffee_url("https://example.sk/kávovar/v4") is True
+    assert scrape._is_non_coffee_url("https://example.sk/mlynky/burgr") is True
+
+
+def test_is_non_coffee_url_detects_segment_match():
+    # segment-based: "cajik" / "čaj" as path component
+    assert scrape._is_non_coffee_url("https://example.sk/cajik/abc") is True
+    assert scrape._is_non_coffee_url("https://example.sk/čaj/premium") is True
+    assert scrape._is_non_coffee_url("https://example.sk/caj/blend") is True
+
+
+def test_is_non_coffee_url_allows_coffee():
+    assert scrape._is_non_coffee_url("https://example.sk/capsules/espresso") is False
+    assert scrape._is_non_coffee_url("https://example.sk/brand/ethiopia-natural") is False
+    assert scrape._is_non_coffee_url("https://example.sk/kava-espresso-roast") is False
+    assert scrape._is_non_coffee_url("https://example.sk/drip-bag/brazil") is False
+
+
+def test_is_non_coffee_url_no_false_positive_on_longer_segments():
+    # A product slug containing "caj" or "cajik" as substring should NOT match
+    # (segment matching only matches exact path segments)
+    assert scrape._is_non_coffee_url("https://example.sk/some-cajik-product") is False
+    assert scrape._is_non_coffee_url("https://example.sk/moje-caj-kava") is False
+
+
+# ── Issue #144: deduplicate packaging tiers with same weight + price ──────
+
+
+def test_deduplicate_packaging_preserves_different_weights():
+    packaging = [
+        {"weight_g": 250, "price": 8.90, "variant": "Whole bean"},
+        {"weight_g": 500, "price": 15.90, "variant": "Ground"},
+    ]
+    result = scrape._deduplicate_packaging(packaging)
+    assert len(result) == 2
+
+
+def test_deduplicate_packaging_removes_exact_duplicates():
+    packaging = [
+        {"weight_g": 250, "price": 8.90, "variant": "Whole bean"},
+        {"weight_g": 250, "price": 8.90, "variant": "Ground"},  # different variant → both kept
+    ]
+    result = scrape._deduplicate_packaging(packaging)
+    assert len(result) == 2
+
+
+def test_deduplicate_packaging_removes_identical_tiers():
+    packaging = [
+        {"weight_g": 250, "price": 8.90},
+        {"weight_g": 250, "price": 8.90},  # exact duplicate
+    ]
+    result = scrape._deduplicate_packaging(packaging)
+    assert len(result) == 1
+
+
+def test_deduplicate_packaging_different_prices_different_weights():
+    packaging = [
+        {"weight_g": 250, "price": 8.90},
+        {"weight_g": 250, "price": 9.50},  # same weight, diff price → different triplet → both kept
+    ]
+    result = scrape._deduplicate_packaging(packaging)
+    assert len(result) == 2
+
+
+def test_deduplicate_packaging_empty():
+    result = scrape._deduplicate_packaging([])
+    assert result == []
+
+
+def test_deduplicate_packaging_single_entry():
+    result = scrape._deduplicate_packaging([{"weight_g": 250, "price": 8.90}])
+    assert len(result) == 1
+
+
+def test_deduplicate_packaging_null_weights():
+    packaging = [
+        {"weight_g": None, "price": 5.00},
+        {"weight_g": None, "price": 5.00},  # both null → same key → dedup
+    ]
+    result = scrape._deduplicate_packaging(packaging)
+    assert len(result) == 1
+
+
+# ── Issue #145: infer missing process from origin/name ──────────────────────
+
+
+def test_infer_process_from_origin():
+    assert scrape._infer_process("Test Coffee", "brazil") == "natural"
+    assert scrape._infer_process("Test Coffee", "colombia") == "washed"
+    assert scrape._infer_process("Test Coffee", "indonesia") == "wet-hulled"
+    assert scrape._infer_process("Test Coffee", "kenya") == "washed"
+    assert scrape._infer_process("Test Coffee", "costa-rica") == "honey"
+
+
+def test_infer_process_from_name():
+    assert scrape._infer_process("Natural Process Ethiopia 250g", "colombia") == "natural"
+    assert scrape._infer_process("Anaerobic Washed Arabica", "colombia") == "anaerobic"
+    assert scrape._infer_process("Washed Filter Coffee", "kenya") == "washed"
+    assert scrape._infer_process("Honey Process Brazil", "brazil") == "honey"
+
+
+def test_infer_process_name_takes_precedence():
+    # When both name and origin hint, name pattern should win
+    assert scrape._infer_process("Washed Ethiopian Coffee", "brazil") == "washed"
+
+
+def test_infer_process_returns_null_no_match():
+    assert scrape._infer_process("Random Product", "somalia") is None
+
+
+def test_infer_process_empty_name_or_origin():
+    assert scrape._infer_process("", "brazil") is None
+    assert scrape._infer_process("Some Product", None) is None
+
+
+def test_infer_process_slovak_patterns():
+    assert scrape._infer_process("Káva spracovaná 250g", "brazil") == "washed"

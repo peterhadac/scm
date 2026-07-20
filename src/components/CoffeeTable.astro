@@ -696,7 +696,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
 
   .ct-search {
-    padding: 4px 8px 4px 32px;
+    padding: 10px 8px 10px 32px;
+    min-height: 44px;
     border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--md-sys-shape-corner-small);
     background: var(--md-sys-color-surface-container-high);
@@ -722,12 +723,13 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
 
   /* ── Collapsible filters popover ─────────────────────────────
-     A native <details> — no JS state to manage, keyboard/screen-reader
-     support built in. The label sits above each select (rather than
-     beside it) so every field's input aligns on the same left edge
-     regardless of label length. */
+      A native <details> — no JS state to manage, keyboard/screen-reader
+      support built in. The label sits above each select (rather than
+      beside it) so every field's input aligns on the same left edge
+      regardless of label length. */
   .ct-filters-toggle {
     position: relative;
+    min-height: 44px;
   }
 
   /* Starlight's markdown.css styles every <details> inside .sl-markdown-content
@@ -743,7 +745,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 12px;
+    padding: 10px 12px;
+    min-height: 44px;
     border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--md-sys-shape-corner-small);
     background: var(--md-sys-color-surface-container-high);
@@ -829,7 +832,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   .ct-select {
     width: 100%;
-    padding: 4px 8px;
+    padding: 10px 8px;
+    min-height: 44px;
     border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--md-sys-shape-corner-small);
     background: var(--md-sys-color-surface-container-highest);
@@ -866,7 +870,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 4px 16px;
+    padding: 8px 16px;
+    min-height: 44px;
     border: none;
     border-radius: var(--md-sys-shape-corner-full);
     background: transparent;
@@ -927,13 +932,13 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   .ct-table {
     width: 100%;
     /* Without a floor, `width: 100%` compresses columns to fit real (long)
-       product names, and the numeric cells' `white-space: nowrap` text then
-       visually overflows past the table's own edge — clipped by the wrap's
-       overflow-x, invisibly, with no scrollbar ever appearing (no genuine
-       box overflow was created, just ink spilling past the border box). A
-       min-width forces real overflow instead, so the scroll-shadow above
-       has something honest to point at. */
-    min-width: 800px;
+        product names, and the numeric cells' `white-space: nowrap` text then
+        visually overflows past the table's own edge — clipped by the wrap's
+        overflow-x, invisibly, with no scrollbar ever appearing (no genuine
+        box overflow was created, just ink spilling past the border box). A
+        min-width forces real overflow instead, so the scroll-shadow above
+        has something honest to point at. */
+    min-width: 320px;
     border-collapse: collapse;
     font-size: var(--md-sys-typescale-body-medium-size);
   }
@@ -953,7 +958,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     z-index: 1;
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 768px) {
     .ct-table-wrap {
       overflow-x: clip;
       overflow-y: visible;
@@ -1226,14 +1231,38 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
 
   /* ── Responsive ───────────────────────────────────────────── */
-  @media (max-width: 640px) {
+  @media (max-width: 767px) {
     /* The 800px desktop floor (see .ct-table above) assumes all 7 columns
-       are visible; Weight and Per 100g are hidden below this width, so the
-       remaining columns fit comfortably without it — keep it from forcing
-       an unnecessary horizontal scroll here. */
+        are visible; Weight and Per 100g are hidden below this width, so the
+        remaining columns fit comfortably without it — keep it from forcing
+        an unnecessary horizontal scroll here. */
     .ct-table {
       min-width: 0;
     }
+    
+    /* Show mobile nav on tablet and smaller */
+    .nav-toggle {
+      display: inline-flex;
+    }
+    .site-nav > ul {
+      display: none;
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 0.5rem;
+      background: var(--md-sys-color-surface-container-high);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-large);
+      box-shadow: var(--md-sys-elevation-level3);
+    }
+    .site-nav[data-open='true'] > ul {
+      display: flex;
+    }
+    
     .ct-toolbar {
       flex-direction: column;
       align-items: stretch;
@@ -1243,7 +1272,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     .ct-search { min-width: 0; }
     .ct-filters-summary { justify-content: center; }
     /* Flow the panel in normal document flow instead of an absolutely
-       positioned popover — avoids off-screen overflow on narrow widths. */
+        positioned popover — avoids off-screen overflow on narrow widths. */
     .ct-filters-panel {
       position: static;
       grid-template-columns: 1fr;
@@ -1256,10 +1285,10 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
       justify-content: space-between;
     }
     /* Real (not pseudo-element) padding so the tap target actually reaches
-       ~44px tall — negative-inset hit-area expansion gets clipped by
-       .ct-table-wrap's overflow-x: auto, which forces overflow-y: auto too.
-       Non-sortable header cells just get extra vertical whitespace, since
-       row height is set by the tallest cell either way. */
+        ~44px tall — negative-inset hit-area expansion gets clipped by
+        .ct-table-wrap's overflow-x: auto, which forces overflow-y: auto too.
+        Non-sortable header cells just get extra vertical whitespace, since
+        row height is set by the tallest cell either way. */
     .ct-sort-th {
       padding-block: 13px;
     }
@@ -1270,7 +1299,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     .ct-table th:nth-child(7) { display: none; }
   }
 
-  @media (max-width: 440px) {
+  @media (max-width: 480px) {
     /* Hide origin column on very small screens */
     .ct-table td:nth-child(3),
     .ct-table th:nth-child(3) { display: none; }

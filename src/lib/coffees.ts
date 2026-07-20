@@ -49,12 +49,23 @@ interface ProductEntry {
   // blend_origins lists the component countries when the page stated them.
   blend?: true;
   blend_origins?: string[];
+  // New optional fields (schema v22: issues #89, #139, #141, #138, #140, #142)
+  is_decaffeinated?: boolean;
+  stock_status?: string;
+  tasting_notes?: string;
+  brewing_recommendations?: string;
+  sweetness?: number;
+  acidity?: number;
+  body?: number;
+  bitterness?: number;
 }
 
 interface Roaster {
   name: string;
   slug: string;
   url: string;
+  discount_code?: string;
+  referral_url?: string;
 }
 
 export interface CoffeeRow {
@@ -75,6 +86,15 @@ export interface CoffeeRow {
   // JSON.stringify, so coffees.json stays clean for single-origin rows.
   blend?: true;
   blend_origins?: string[];
+  // New optional fields (schema v22: issues #89, #139, #141, #138, #140, #142)
+  is_decaffeinated?: boolean;
+  stock_status?: string;
+  tasting_notes?: string;
+  brewing_recommendations?: string;
+  sweetness?: number;
+  acidity?: number;
+  body?: number;
+  bitterness?: number;
 }
 
 function loadYaml<T>(relativePath: string): T {
@@ -116,6 +136,8 @@ export function flattenProducts(): CoffeeRow[] {
             blend: true as const,
             ...(product.blend_origins?.length && { blend_origins: product.blend_origins }),
           }),
+          discount_code: roasterBySlug.get(slug)?.discount_code,
+          referral_url: roasterBySlug.get(slug)?.referral_url,
         });
       }
     }

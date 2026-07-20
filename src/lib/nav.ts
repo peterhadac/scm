@@ -33,6 +33,7 @@ export const NAV: NavEntry[] = [
       { en: 'Blends', sk: 'Zmesi', href: '/coffees/blends/' },
       { en: 'Nespresso capsules', sk: 'Nespresso kapsuly', href: '/coffees/nespresso/' },
       { en: 'Drip bags', sk: 'Drip bagy', href: '/coffees/drip-bags/' },
+      { en: 'Decaf', sk: 'Decaf', href: '/coffees/decaf/' },
       { en: 'By origin', sk: 'Podľa pôvodu', href: '/origins/' },
     ],
   },

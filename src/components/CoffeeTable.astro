@@ -162,18 +162,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   </div>
 
   <div class="ct-legend" aria-label={t.processColourKey}>
-    <span class="ct-legend-label">{t.processLegendLabel}</span>
-    <Badge variant="washed" class="text-[9px] px-[0.5em] py-[0.05em]">{localizedProcess('washed', lang)}</Badge>
-    <Badge variant="honey" class="text-[9px] px-[0.5em] py-[0.05em]">{localizedProcess('honey', lang)}</Badge>
-    <Badge variant="natural" class="text-[9px] px-[0.5em] py-[0.05em]">{localizedProcess('natural', lang)}</Badge>
-    {bestPer100g !== null && (
-      <>
-        <span class="ct-legend-sep" aria-hidden="true">·</span>
-        <span class="ct-best" title={t.bestValueTitle}>{t.bestValue}</span>
-        <span class="ct-legend-desc">{t.bestValueDesc}</span>
-      </>
-    )}
-    <span class="ct-legend-sep" aria-hidden="true">·</span>
     <span class="ct-legend-desc">
       {t.tipNudge}{' '}
       <a href="https://ko-fi.com/slovakcoffeemap" target="_blank" rel="noopener noreferrer">{t.tipNudgeLink}</a>
@@ -224,6 +212,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               {t.per100g} <span class="ct-sort-ind" aria-hidden="true"></span>
             </button>
           </th>
+          <th>{t.offers}</th>
         </tr>
       </thead>
       <tbody>
@@ -300,57 +289,18 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               </td>
               <td>
                 {c.process
-                  ? <Badge variant={(PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other') as 'washed' | 'honey' | 'natural' | 'other'} title={processLabel ?? undefined}>{processLabel}</Badge>
+                  ? <>
+                      {blendComposition && <span class="ct-blend-comp" style={{marginRight: '3px'}}>({blendComposition})</span>}
+                      <Badge variant={(PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other') as 'washed' | 'honey' | 'natural' | 'other'} title={processLabel ?? undefined}>{processLabel}</Badge>
+                      {c.is_decaffeinated && (
+                        <span class="ct-decaf-tag" title="Decaffeinated">DEC</span>
+                      )}
+                    </>
                   : <span class="ct-muted">—</span>
                 }
               </td>
-              <td class="ct-num ct-muted">
-                {c.weight_g ? `${c.weight_g} g${c.variant ? ` (${c.variant})` : ''}` : '—'}
-              </td>
               <td class="ct-num ct-price">
-                {hasSpark && (
-                  <svg
-                    class="ct-spark"
-                    width="56"
-                    height="14"
-                    viewBox="0 0 56 14"
-                    role="img"
-                    aria-label={t.sparklineLabel(series[0].date)}
-                  >
-                    <title>{t.sparklineLabel(series[0].date)}</title>
-                    <polyline
-                      points={sparklinePoints(series)}
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                )}
                 {fmtEur(c.price)}
-                {dropped && prevPoint && (
-                  <span class="ct-drop" title={t.priceDropTitle(fmtEur(prevPoint.price), prevPoint.date)}>
-                    ↓ {t.priceDrop}
-                  </span>
-                )}
-                {stale && (
-                  <span
-                    class="ct-stale"
-                    title={t.staleTitle(c.last_seen)}
-                    aria-label={t.staleAriaLabel(c.last_seen)}
-                  >
-                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                      <path d="M6 1.2L11 10.2H1L6 1.2Z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/>
-                      <path d="M6 4.6V6.6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
-                      <circle cx="6" cy="8.4" r="0.55" fill="currentColor"/>
-                    </svg>
-                  </span>
-                )}
-              </td>
-              <td class="ct-num ct-muted">
-                {per100g}
-                {isBest && <span class="ct-best" title={t.bestValueTitle}>{t.bestValue}</span>}
               </td>
             </tr>
           );

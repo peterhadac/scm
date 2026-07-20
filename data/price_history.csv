@@ -647,3 +647,192 @@ date,roaster,url,weight_g,price,name,variant
 2026-07-14,urban-coffee,https://www.urbancoffee.sk/kenya-ab-rungeto-kiangoi/,250,12.0,Kenya AB Rungeto Kiangoi
 2026-07-14,urban-coffee,https://www.urbancoffee.sk/kenya-ab-rungeto-kiangoi/,500,18.9,Kenya AB Rungeto Kiangoi
 2026-07-14,urban-coffee,https://www.urbancoffee.sk/kenya-ab-rungeto-kiangoi/,1000,34.0,Kenya AB Rungeto Kiangoi
+2026-07-20,9-grams-coffee,https://www.coffeeart.me/9-grams-coffee-ethiopia-yirgacheffe-grade-2-co2-decaf-washed/,1000,34.0,9 Grams Coffee Ethiopia Yirgacheffe Grade 2 CO2 Decaf washed,
+2026-07-20,9-grams-coffee,https://www.coffeeart.me/9-grams-coffee-ethiopia-yirgacheffe-grade-2-co2-decaf-washed/,250,12.0,9 Grams Coffee Ethiopia Yirgacheffe Grade 2 CO2 Decaf washed,
+2026-07-20,9-grams-coffee,https://www.coffeeart.me/9-grams-coffee-dominikanska-republika-barahona-aa-washed/,1000,33.9,9 Grams Coffee Dominikanska Republika Barahona AA washed,
+2026-07-20,alternativ-coffee,https://avcoffee.sk/prazena-kava/17516-19842-indonesia-black-star-zrnkova-kavy-.html,250,14.0,Indonesia Black Star zrnková kávy,
+2026-07-20,alternativ-coffee,https://avcoffee.sk/prazena-kava/17516-19842-indonesia-black-star-zrnkova-kavy-.html,1000,56.0,Indonesia Black Star zrnková kávy,
+2026-07-20,alternativ-coffee,https://avcoffee.sk/prazena-kava/17526-19883-peach-sunset-broskynova-kava.html,250,13.5,Peach Sunset - broskyňová káva,
+2026-07-20,alternativ-coffee,https://avcoffee.sk/prazena-kava/17526-19883-peach-sunset-broskynova-kava.html,1000,54.0,Peach Sunset - broskyňová káva,
+2026-07-20,alternativ-coffee,https://avcoffee.sk/prazena-kava/17478-19780-kava-pre-ucitelov.html,250,14.9,Káva pre UČITEĽOV,
+2026-07-20,black,https://www.black.sk/sk/juicy-pussy,1000,55.0,blend • juicy pussy,
+2026-07-20,coffeein,https://www.coffeein.sk/detail/947/kava-15-rokov-coffeein-espresso-200-g-zrnkova-kava/,200,7.99,Káva 15 rokov COFFEEIN Espresso,
+2026-07-20,coffeein,https://www.coffeein.sk/detail/730/kava-pre-mamicku-200-g-zrnkova-kava/,200,7.99,"Káva pre mamičku (200 g, zrnková káva)",
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/java-cloud-colombia/,250,22.0,Java Cloud – Colombia,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/java-cloud-colombia/,1000,80.0,Java Cloud – Colombia,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/java-cloud-colombia/,250,22.0,Java Cloud – Colombia,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/java-cloud-colombia/,1000,80.0,Java Cloud – Colombia,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/summerjam-colombia/,250,18.5,Summerjam – Colombia,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/summerjam-colombia/,1000,66.0,Summerjam – Colombia,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/summerjam-colombia/,250,18.5,Summerjam – Colombia,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/summerjam-colombia/,1000,66.0,Summerjam – Colombia,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/strawberry-icecream-colombia/,250,18.0,Strawberry Icecream – Colombia,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/strawberry-icecream-colombia/,1000,62.0,Strawberry Icecream – Colombia,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/strawberry-icecream-colombia/,250,18.0,Strawberry Icecream – Colombia,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/strawberry-icecream-colombia/,1000,62.0,Strawberry Icecream – Colombia,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/berry-blast-colombia/,250,18.5,Berry Blast – Colombia,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/berry-blast-colombia/,1000,66.0,Berry Blast – Colombia,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/berry-blast-colombia/,250,18.5,Berry Blast – Colombia,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/berry-blast-colombia/,1000,66.0,Berry Blast – Colombia,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/gedicho-ethiopia/,250,14.0,Gedicho – Ethiopia,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/gedicho-ethiopia/,1000,53.0,Gedicho – Ethiopia,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/gedicho-ethiopia/,250,14.0,Gedicho – Ethiopia,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/gedicho-ethiopia/,1000,53.0,Gedicho – Ethiopia,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/kerinci-indonesia/,250,14.0,Kerinci - Indonesia,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/kerinci-indonesia/,1000,51.0,Kerinci - Indonesia,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/kerinci-indonesia/,250,14.0,Kerinci - Indonesia,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/kerinci-indonesia/,1000,51.0,Kerinci - Indonesia,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/cold-shock-colombia/,250,16.0,Cold Shock – Colombia,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/cold-shock-colombia/,1000,60.0,Cold Shock – Colombia,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/cold-shock-colombia/,250,16.0,Cold Shock – Colombia,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/cold-shock-colombia/,1000,60.0,Cold Shock – Colombia,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/nemba-burundi/,250,15.0,Nemba – Burundi,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/nemba-burundi/,1000,54.0,Nemba – Burundi,Praženie: Filter
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/nemba-burundi/,250,15.0,Nemba – Burundi,Praženie: Espresso
+2026-07-20,concept-coffee-roasters,https://www.conceptcoffee.sk/nemba-burundi/,1000,54.0,Nemba – Burundi,Praženie: Espresso
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/guatemala-el-mirador/,1000,52.0,Guatemala El Mirador – zrnková káva,espressoroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/guatemala-el-mirador/,1000,52.0,Guatemala El Mirador – zrnková káva,filterroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/guatemala-el-mirador/,250,14.0,Guatemala El Mirador – zrnková káva,espressoroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/guatemala-el-mirador/,250,14.0,Guatemala El Mirador – zrnková káva,filterroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/guatemala-el-mirador/,500,26.0,Guatemala El Mirador – zrnková káva,espressoroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/guatemala-el-mirador/,500,26.0,Guatemala El Mirador – zrnková káva,filterroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/uganda-nyabirongo-natural/,1000,56.0,Uganda Nyabirongo Natural – zrnková káva,espressoroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/uganda-nyabirongo-natural/,250,15.0,Uganda Nyabirongo Natural – zrnková káva,espressoroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/uganda-nyabirongo-natural/,500,28.0,Uganda Nyabirongo Natural – zrnková káva,espressoroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/uganda-nyabirongo-natural/,1000,56.0,Uganda Nyabirongo Natural – zrnková káva,filterroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/uganda-nyabirongo-natural/,250,15.0,Uganda Nyabirongo Natural – zrnková káva,filterroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/uganda-nyabirongo-natural/,500,28.0,Uganda Nyabirongo Natural – zrnková káva,filterroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/kolumbia-kumanday-reserve/,1000,40.0,Kolumbia Kumanday Reserve,espressoroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/kolumbia-kumanday-reserve/,1000,40.0,Kolumbia Kumanday Reserve,automaticky kavovar
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/kolumbia-kumanday-reserve/,250,11.0,Kolumbia Kumanday Reserve,espressoroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/kolumbia-kumanday-reserve/,250,11.0,Kolumbia Kumanday Reserve,automaticky kavovar
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/kolumbia-kumanday-reserve/,500,20.0,Kolumbia Kumanday Reserve,espressoroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/kolumbia-kumanday-reserve/,500,20.0,Kolumbia Kumanday Reserve,automaticky kavovar
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/kongo-kisunga-zrnkova-kava/,250,15.0,Kongo Kisunga – zrnková káva,espressoroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/kongo-kisunga-zrnkova-kava/,500,28.0,Kongo Kisunga – zrnková káva,espressoroast
+2026-07-20,diamonds-roastery,https://diroastery.sk/produkt/kongo-kisunga-zrnkova-kava/,1000,56.0,Kongo Kisunga – zrnková káva,espressoroast
+2026-07-20,doraz,https://doraz.sk/obchod/brasil-cerrado-doce-diamantina/,250,9.4,BRASIL CERRADO DOCE DIAMANTINA,
+2026-07-20,doraz,https://doraz.sk/obchod/brasil-cerrado-doce-diamantina/,500,16.9,BRASIL CERRADO DOCE DIAMANTINA,
+2026-07-20,doraz,https://doraz.sk/obchod/brasil-cerrado-doce-diamantina/,1000,31.0,BRASIL CERRADO DOCE DIAMANTINA,
+2026-07-20,epera-coffee,https://www.praziarenepera.sk/produkt/etiopia/,500,15.9,Káva ETIÓPIA,
+2026-07-20,epera-coffee,https://www.praziarenepera.sk/produkt/kava-kena/,500,15.9,Káva KEŇA,
+2026-07-20,epera-coffee,https://www.praziarenepera.sk/produkt/bar-blend/,500,14.5,Káva BAR BLEND,
+2026-07-20,epera-coffee,https://www.praziarenepera.sk/produkt/ranny-blend/,500,15.9,Ranný Blend,
+2026-07-20,epera-coffee,https://www.praziarenepera.sk/produkt/india/,500,14.5,Káva INDIA,
+2026-07-20,good-times-coffee-roasters,https://goodtimes.coffee/produkt/honduras-comsa-co-operative/,200,10.0,Honduras COMSA co-operative,
+2026-07-20,good-times-coffee-roasters,https://goodtimes.coffee/produkt/honduras-comsa-co-operative/,1000,40.0,Honduras COMSA co-operative,
+2026-07-20,goriffee,https://www.goriffee.com/shop/kava/rwanda-ngororero-natural/,250,15.0,Rwanda Ngororero Natural,medium roast
+2026-07-20,goriffee,https://www.goriffee.com/shop/kava/rwanda-ngororero-natural/,1000,58.0,Rwanda Ngororero Natural,medium roast
+2026-07-20,goriffee,https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/brazil-caramelo-natural/,250,11.0,Brazil Caramelo natural,medium roast
+2026-07-20,goriffee,https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/brazil-caramelo-natural/,1000,42.0,Brazil Caramelo natural,medium roast
+2026-07-20,goriffee,https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/brazil-caramelo-natural/,250,11.0,Brazil Caramelo natural,full city roast
+2026-07-20,goriffee,https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/brazil-caramelo-natural/,1000,42.0,Brazil Caramelo natural,full city roast
+2026-07-20,jungle-roastery,https://www.jungleroastery.sk/honduras/,1000,46.0,HONDURAS - Café Organico,Praženie: Espresso - moderné
+2026-07-20,jungle-roastery,https://www.jungleroastery.sk/honduras/,250,13.0,HONDURAS - Café Organico,Praženie: Espresso - moderné
+2026-07-20,jungle-roastery,https://www.jungleroastery.sk/colombia-supremo/,1000,36.0,COLOMBIA Supremo,Praženie: Espresso - tradičné
+2026-07-20,jungle-roastery,https://www.jungleroastery.sk/colombia-supremo/,250,10.5,COLOMBIA Supremo,Praženie: Espresso - tradičné
+2026-07-20,kaan-roastery,https://kaan.sk/produkt/india-kaapi-royal/,500,15.0,India Kaapi Royal,
+2026-07-20,kaan-roastery,https://kaan.sk/produkt/india-kaapi-royal/,1000,27.0,India Kaapi Royal,
+2026-07-20,kaan-roastery,https://kaan.sk/produkt/energy-booster/,500,17.5,Energy Booster,
+2026-07-20,kaan-roastery,https://kaan.sk/produkt/energy-booster/,1000,32.0,Energy Booster,
+2026-07-20,kaan-roastery,https://kaan.sk/produkt/tasty-decaf/,250,13.0,Tasty Decaf,
+2026-07-20,kaan-roastery,https://kaan.sk/produkt/tasty-decaf/,500,23.0,Tasty Decaf,
+2026-07-20,kaan-roastery,https://kaan.sk/produkt/tasty-decaf/,1000,42.0,Tasty Decaf,
+2026-07-20,kaffa-roastery,https://kaffaroastery.sk/produkt/colombia-quebraditas-peach/,200,16.42,Colombia Quebraditas Peach,
+2026-07-20,kaffa-roastery,https://kaffaroastery.sk/produkt/kenya-kabingara-estate/,250,13.69,Kenya Kabingara Estate,
+2026-07-20,kavoholik,https://kavoholik.sk/stredne-medium/423-386-kavoholik-espresso-kava-stur-a-r-80-20-1kg-zrno.html,250,11.5,"KÁVOHOLIK, espresso káva Štúr, A/R, zmes 80/20",
+2026-07-20,kavoholik,https://kavoholik.sk/mokra-washed/1232-577-kavoholik-kena-kiamwangi-iria-ini-washed.html,200,13.77,"KÁVOHOLIK, Keňa, Kiamwangi Iria-ini, washed",
+2026-07-20,kavoholik,https://kavoholik.sk/honey/1222-571-kavoholik-kolumbia-edwin-norena-purple-pulse.html,200,26.22,"KÁVOHOLIK, Kolumbia, Edwin Norena, Purple Pulse",
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/guatemala/,500,15.0,GUATEMALA,Zomlieť kávu?: Zrnková káva
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/guatemala/,500,15.0,GUATEMALA,Zomlieť kávu?: Mletá káva na zalievanie
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/guatemala/,500,15.0,GUATEMALA,Zomlieť kávu?: Mletá káva do kávovaru
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/guatemala/,500,15.0,GUATEMALA,Zomlieť kávu?: Mletá káva pre Aeropress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/guatemala/,500,15.0,GUATEMALA,Zomlieť kávu?: Mletá káva pre mokka kávovar
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/guatemala/,500,15.0,GUATEMALA,"Zomlieť kávu?: Mletá káva na filter (V60, Chemex)"
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/guatemala/,500,15.0,GUATEMALA,Zomlieť kávu?: Mletá káva na frenchpress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/guatemala/,1000,30.0,GUATEMALA,Zomlieť kávu?: Zrnková káva
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/guatemala/,1000,30.0,GUATEMALA,Zomlieť kávu?: Mletá káva na zalievanie
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/guatemala/,1000,30.0,GUATEMALA,Zomlieť kávu?: Mletá káva do kávovaru
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/guatemala/,1000,30.0,GUATEMALA,Zomlieť kávu?: Mletá káva pre Aeropress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/guatemala/,1000,30.0,GUATEMALA,Zomlieť kávu?: Mletá káva pre mokka kávovar
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/guatemala/,1000,30.0,GUATEMALA,"Zomlieť kávu?: Mletá káva na filter (V60, Chemex)"
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/guatemala/,1000,30.0,GUATEMALA,Zomlieť kávu?: Mletá káva na frenchpress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/cappuccinoblend/,500,16.0,CAPPUCCINO BLEND,Zomlieť kávu?: Zrnková káva
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/cappuccinoblend/,500,16.0,CAPPUCCINO BLEND,Zomlieť kávu?: Mletá káva na zalievanie
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/cappuccinoblend/,500,16.0,CAPPUCCINO BLEND,Zomlieť kávu?: Mletá káva do kávovaru
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/cappuccinoblend/,500,16.0,CAPPUCCINO BLEND,Zomlieť kávu?: Mletá káva pre Aeropress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/cappuccinoblend/,500,16.0,CAPPUCCINO BLEND,Zomlieť kávu?: Mletá káva pre mokka kávovar
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/cappuccinoblend/,500,16.0,CAPPUCCINO BLEND,"Zomlieť kávu?: Mletá káva na filter (V60, Chemex)"
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/cappuccinoblend/,500,16.0,CAPPUCCINO BLEND,Zomlieť kávu?: Mletá káva na frenchpress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/cappuccinoblend/,1000,32.0,CAPPUCCINO BLEND,Zomlieť kávu?: Zrnková káva
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/cappuccinoblend/,1000,32.0,CAPPUCCINO BLEND,Zomlieť kávu?: Mletá káva na zalievanie
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/cappuccinoblend/,1000,32.0,CAPPUCCINO BLEND,Zomlieť kávu?: Mletá káva do kávovaru
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/cappuccinoblend/,1000,32.0,CAPPUCCINO BLEND,Zomlieť kávu?: Mletá káva pre Aeropress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/cappuccinoblend/,1000,32.0,CAPPUCCINO BLEND,Zomlieť kávu?: Mletá káva pre mokka kávovar
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/cappuccinoblend/,1000,32.0,CAPPUCCINO BLEND,"Zomlieť kávu?: Mletá káva na filter (V60, Chemex)"
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/cappuccinoblend/,1000,32.0,CAPPUCCINO BLEND,Zomlieť kávu?: Mletá káva na frenchpress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-dark/,1000,17.0,ETHIOPIA YIERGACHEFFE DARK,
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-medium/,500,17.0,ETHIOPIA YIERGACHEFFE MEDIUM,Zomlieť kávu?: Zrnková káva
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-medium/,500,17.0,ETHIOPIA YIERGACHEFFE MEDIUM,Zomlieť kávu?: Mletá káva na zalievanie
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-medium/,500,17.0,ETHIOPIA YIERGACHEFFE MEDIUM,Zomlieť kávu?: Mletá káva do kávovaru
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-medium/,500,17.0,ETHIOPIA YIERGACHEFFE MEDIUM,Zomlieť kávu?: Mletá káva pre Aeropress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-medium/,500,17.0,ETHIOPIA YIERGACHEFFE MEDIUM,Zomlieť kávu?: Mletá káva pre mokka kávovar
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-medium/,500,17.0,ETHIOPIA YIERGACHEFFE MEDIUM,"Zomlieť kávu?: Mletá káva na filter (V60, Chemex)"
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-medium/,500,17.0,ETHIOPIA YIERGACHEFFE MEDIUM,Zomlieť kávu?: Mletá káva na frenchpress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-medium/,1000,34.0,ETHIOPIA YIERGACHEFFE MEDIUM,Zomlieť kávu?: Zrnková káva
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-medium/,1000,34.0,ETHIOPIA YIERGACHEFFE MEDIUM,Zomlieť kávu?: Mletá káva na zalievanie
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-medium/,1000,34.0,ETHIOPIA YIERGACHEFFE MEDIUM,Zomlieť kávu?: Mletá káva do kávovaru
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-medium/,1000,34.0,ETHIOPIA YIERGACHEFFE MEDIUM,Zomlieť kávu?: Mletá káva pre Aeropress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-medium/,1000,34.0,ETHIOPIA YIERGACHEFFE MEDIUM,Zomlieť kávu?: Mletá káva pre mokka kávovar
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-medium/,1000,34.0,ETHIOPIA YIERGACHEFFE MEDIUM,"Zomlieť kávu?: Mletá káva na filter (V60, Chemex)"
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/ethiopia-yiergacheffe-medium/,1000,34.0,ETHIOPIA YIERGACHEFFE MEDIUM,Zomlieť kávu?: Mletá káva na frenchpress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/honduras/,500,15.0,HONDURAS,Zomlieť kávu?: Zrnková káva
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/honduras/,500,15.0,HONDURAS,Zomlieť kávu?: Mletá káva na zalievanie
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/honduras/,500,15.0,HONDURAS,Zomlieť kávu?: Mletá káva do kávovaru
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/honduras/,500,15.0,HONDURAS,Zomlieť kávu?: Mletá káva pre Aeropress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/honduras/,500,15.0,HONDURAS,Zomlieť kávu?: Mletá káva pre mokka kávovar
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/honduras/,500,15.0,HONDURAS,"Zomlieť kávu?: Mletá káva na filter (V60, Chemex)"
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/honduras/,500,15.0,HONDURAS,Zomlieť kávu?: Mletá káva na frenchpress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/honduras/,1000,30.0,HONDURAS,Zomlieť kávu?: Zrnková káva
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/honduras/,1000,30.0,HONDURAS,Zomlieť kávu?: Mletá káva na zalievanie
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/honduras/,1000,30.0,HONDURAS,Zomlieť kávu?: Mletá káva do kávovaru
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/honduras/,1000,30.0,HONDURAS,Zomlieť kávu?: Mletá káva pre Aeropress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/honduras/,1000,30.0,HONDURAS,Zomlieť kávu?: Mletá káva pre mokka kávovar
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/honduras/,1000,30.0,HONDURAS,"Zomlieť kávu?: Mletá káva na filter (V60, Chemex)"
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/honduras/,1000,30.0,HONDURAS,Zomlieť kávu?: Mletá káva na frenchpress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/costa-rica/,500,16.0,COSTA RICA,Zomlieť kávu?: Zrnková káva
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/costa-rica/,500,16.0,COSTA RICA,Zomlieť kávu?: Mletá káva na zalievanie
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/costa-rica/,500,16.0,COSTA RICA,Zomlieť kávu?: Mletá káva do kávovaru
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/costa-rica/,500,16.0,COSTA RICA,Zomlieť kávu?: Mletá káva pre Aeropress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/costa-rica/,500,16.0,COSTA RICA,Zomlieť kávu?: Mletá káva pre mokka kávovar
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/costa-rica/,500,16.0,COSTA RICA,"Zomlieť kávu?: Mletá káva na filter (V60, Chemex)"
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/costa-rica/,500,16.0,COSTA RICA,Zomlieť kávu?: Mletá káva na frenchpress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/costa-rica/,1000,32.0,COSTA RICA,Zomlieť kávu?: Zrnková káva
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/costa-rica/,1000,32.0,COSTA RICA,Zomlieť kávu?: Mletá káva na zalievanie
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/costa-rica/,1000,32.0,COSTA RICA,Zomlieť kávu?: Mletá káva do kávovaru
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/costa-rica/,1000,32.0,COSTA RICA,Zomlieť kávu?: Mletá káva pre Aeropress
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/costa-rica/,1000,32.0,COSTA RICA,Zomlieť kávu?: Mletá káva pre mokka kávovar
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/costa-rica/,1000,32.0,COSTA RICA,"Zomlieť kávu?: Mletá káva na filter (V60, Chemex)"
+2026-07-20,praziaren-velke-zaluzie,https://www.praziarenvelkezaluzie.sk/costa-rica/,1000,32.0,COSTA RICA,Zomlieť kávu?: Mletá káva na frenchpress
+2026-07-20,simple-coffee,https://simplecoffee.sk/produkt/zrnkova-kava-z-kostariky/,250,9.9,Costa Rica La Pastora Tarrazú – medová arabica z Kostariky,
+2026-07-20,simple-coffee,https://simplecoffee.sk/produkt/zrnkova-kava-z-kostariky/,1000,35.9,Costa Rica La Pastora Tarrazú – medová arabica z Kostariky,
+2026-07-20,spojka-roastery,https://shop.spojkaroastery.com/en/products/bach,200,21.0,Bach,
+2026-07-20,spojka-roastery,https://shop.spojkaroastery.com/en/products/bach,500,52.0,Bach,
+2026-07-20,spojka-roastery,https://shop.spojkaroastery.com/en/products/bach,1000,100.0,Bach,
+2026-07-20,spojka-roastery,https://shop.spojkaroastery.com/en/products/bach-1,12,3.0,Bach – Costa Rica (Drip Bag),Drip bag (mletá káva)
+2026-07-20,spojka-roastery,https://shop.spojkaroastery.com/en/products/gold-digger-colombia-drip-bag,12,3.0,Gold Digger – Colombia (Drip Bag),Drip bag (mletá káva)
+2026-07-20,trinity-beans,https://www.trinitybeans.sk/produkt/brasil-santos-co2-decaf-bezkofeinova/,250,9.0,Brasil Santos CO2 Decaf – Bezkofeínová,
+2026-07-20,trinity-beans,https://www.trinitybeans.sk/produkt/brasil-santos-co2-decaf-bezkofeinova/,1000,32.0,Brasil Santos CO2 Decaf – Bezkofeínová,
+2026-07-20,trinity-beans,https://www.trinitybeans.sk/produkt/brasil-santos-co2-decaf-bezkofeinova/,500,16.0,Brasil Santos CO2 Decaf – Bezkofeínová,
+2026-07-20,trinity-beans,https://www.trinitybeans.sk/produkt/lahodna-kvalita/,250,9.0,Lahodná kvalita,
+2026-07-20,trinity-beans,https://www.trinitybeans.sk/produkt/lahodna-kvalita/,1000,32.0,Lahodná kvalita,
+2026-07-20,trinity-beans,https://www.trinitybeans.sk/produkt/lahodna-kvalita/,500,16.0,Lahodná kvalita,
+2026-07-20,trinity-beans,https://www.trinitybeans.sk/produkt/brasil-doce-diamantina/,250,9.0,Brasil Doce Diamantina,
+2026-07-20,trinity-beans,https://www.trinitybeans.sk/produkt/brasil-doce-diamantina/,1000,32.0,Brasil Doce Diamantina,
+2026-07-20,trinity-beans,https://www.trinitybeans.sk/produkt/brasil-doce-diamantina/,500,16.0,Brasil Doce Diamantina,
+2026-07-20,trinity-beans,https://www.trinitybeans.sk/produkt/costa-rica-shb-los-santos-tarrazu/,250,9.0,Costa Rica SHB Los Santos Tarrazu,
+2026-07-20,trinity-beans,https://www.trinitybeans.sk/produkt/costa-rica-shb-los-santos-tarrazu/,500,16.0,Costa Rica SHB Los Santos Tarrazu,
+2026-07-20,trinity-beans,https://www.trinitybeans.sk/produkt/costa-rica-shb-los-santos-tarrazu/,1000,32.0,Costa Rica SHB Los Santos Tarrazu,
+2026-07-20,trip-roasters,https://triproasters.sk/papua-new-guinea-lamari/,250,11.0,PAPUA NEW GUINEA – LAMARI,espresso
+2026-07-20,trip-roasters,https://triproasters.sk/papua-new-guinea-lamari/,1000,34.0,PAPUA NEW GUINEA – LAMARI,espresso
+2026-07-20,two-hands,https://www.twohands.sk/prazena-kava-blend-two-hands/,500,20.0,Two Hands Blend,

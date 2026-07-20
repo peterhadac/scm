@@ -46,6 +46,16 @@ h1#_top,
   font-family: var(--font-serif);
 }
 
+/* Main content headings → serif, per Design.md Typography */
+h1,
+h2 {
+  font-family: var(--font-serif);
+  font-size: var(--md-sys-typescale-headline-large-size);
+  line-height: var(--md-sys-typescale-headline-large-line-height);
+  font-weight: var(--md-sys-typescale-headline-large-weight);
+  letter-spacing: var(--md-sys-typescale-headline-large-tracking);
+}
+
 /* ── Light tokens ─────────────────────────────────────────────────────────── */
 /* !important: the md3 plugin injects its own seed-derived tokens as an
    unlayered inline <style>, which otherwise outranks these on some routes.
@@ -359,3 +369,24 @@ main :where(blockquote) {
   background: var(--md-sys-color-surface-container);
   color: var(--md-sys-color-on-surface-variant);
 }
+
+
+/* ── Issue #139/142: decaf tag and stock status badge ────────────── */
+.ct-decaf-tag {
+  font-size: 0.75em;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 1px 5px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-surface-variant);
+  color: var(--md-sys-color-on-surface-variant);
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.ct-stock {
+  font-size: 0.8em;
+  padding: 1px 5px;
+  border-radius: var(--md-sys-shape-corner-full);
+}
+.ct-stock.out-of-stock { background: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); }
+.ct-stock.pre-order { background: var(--md-sys-color-warning-container); color: var(--md-sys-color-on-warning-container); }

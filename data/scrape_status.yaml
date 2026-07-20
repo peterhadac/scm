@@ -1,155 +1,160 @@
 9-grams-coffee:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: 9 Grams Coffee
   status: ok
 alternativ-coffee:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Alternativ Coffee
   status: ok
 black:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Black.
   status: ok
 blue-mondays-coffee:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Blue Mondays Coffee
   status: ok
 caffe4u:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Caffe4u
   status: ok
 casa-del-caffe:
-  consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  consecutive_non_ok: 1
+  last_run: '2026-07-20'
   name: Casa del Caffe
-  status: ok
+  status: failed
 coffeein:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Coffeein
   status: ok
 concept-coffee-roasters:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Concept Coffee Roasters
   status: ok
 diamonds-roastery:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Diamond's Roastery
   status: ok
 doraz:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Doraz
   status: ok
 epera-coffee:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Epera Coffee
   status: ok
 good-times-coffee-roasters:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Good Times Coffee Roasters
   status: ok
 goriffee:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Goriffee
   status: ok
 green-plantation:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Green Plantation
   status: ok
 incuple:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Incuple
   status: ok
 jungle-roastery:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Jungle Roastery
   status: ok
 kaan-roastery:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: KAAN Roastery
   status: ok
 kaffa-roastery:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Kaffa Roastery
   status: ok
 karma-coffee:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Karma Coffee
   status: ok
 kavoholik:
-  consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  consecutive_non_ok: 1
+  last_run: '2026-07-20'
   name: Kavoholik
-  status: ok
+  status: partial
 praziaren-rydze:
-  consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  consecutive_non_ok: 1
+  last_run: '2026-07-20'
   name: Pražiareň Rýdze
-  status: ok
+  status: failed
 praziaren-velke-zaluzie:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Pražiareň Veľké Zálužie
   status: ok
 ready-after:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Ready After
   status: ok
 sedmitchka-coffee-roasters:
-  consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  consecutive_non_ok: 1
+  last_run: '2026-07-20'
   name: Sedmitchka Coffee Roasters
-  status: ok
+  status: failed
 simple-coffee:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Simple Coffee
   status: ok
 spojka-roastery:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Spojka Roastery
   status: ok
 suca-roastery:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Suca Roastery
   status: ok
 sweet-beans-coffee:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Sweet Beans Coffee
+  status: ok
+trinity-beans:
+  consecutive_non_ok: 0
+  last_run: '2026-07-20'
+  name: Trinity Beans
   status: ok
 trip-roasters:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Trip Coffee Roasters
   status: ok
 triple-five-coffee:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Triple Five Coffee
   status: ok
 two-hands:
   consecutive_non_ok: 0
-  last_run: '2026-07-14'
+  last_run: '2026-07-20'
   name: Two Hands
   status: ok

@@ -363,10 +363,10 @@ main :where(code) {
 
 main :where(blockquote) {
   margin: 1rem 0;
-  padding: 1rem;
-  background: var(--md-sys-color-surface-container);
+  padding: 0.75rem 1rem;
   border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-large);
+  border-radius: var(--md-sys-shape-corner-medium);
+  background: var(--md-sys-color-surface-container);
   color: var(--md-sys-color-on-surface-variant);
 }
 

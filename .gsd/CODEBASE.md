@@ -1,7 +1,7 @@
 # Codebase Map
 
-Generated: 2026-07-20T22:15:59Z | Files: 169 | Described: 0/169
-<!-- gsd:codebase-meta {"generatedAt":"2026-07-20T22:15:59Z","fingerprint":"48f4e7283a101fe942fdf497b9046bd83dc70808","fileCount":169,"truncated":false} -->
+Generated: 2026-07-21T19:04:13Z | Files: 170 | Described: 0/170
+<!-- gsd:codebase-meta {"generatedAt":"2026-07-21T19:04:13Z","fingerprint":"948838ff98f5f93dac618f40f8762bde30cd5627","fileCount":170,"truncated":false} -->
 
 ### (root)/
 - `.env.example`
@@ -58,6 +58,7 @@ Generated: 2026-07-20T22:15:59Z | Files: 169 | Described: 0/169
 - `data/scrape_status.yaml`
 
 ### docs/
+- `docs/awwwards-plan.md`
 - `docs/design-audit-followups.md`
 
 ### docs/superpowers/plans/

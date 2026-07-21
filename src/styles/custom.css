@@ -212,6 +212,15 @@ h2 {
   --md-sys-state-dragged-opacity: 0.16;
   --md-sys-state-disabled-container-opacity: 0.12;
   --md-sys-state-disabled-label-opacity: 0.38;
+
+  /* Awwwards-level motion system — enhanced easing for polished feel */
+  --motion-easing-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --motion-easing-bounce: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  --motion-easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-easing-sharp: cubic-bezier(0.4, 0, 0.6, 1);
+  --motion-duration-slow: 600ms;
+  --motion-duration-normal: 300ms;
+  --motion-duration-fast: 150ms;
 }
 
 /* ── Dark tokens — prefers-color-scheme ──────────────────────────────────── */
@@ -261,6 +270,15 @@ h2 {
     --md-sys-elevation-level3: 0 8px 24px hsl(200 50% 2% / 0.28);
     --md-sys-elevation-level4: 0 12px 32px hsl(200 50% 2% / 0.3);
     --md-sys-elevation-level5: 0 18px 44px hsl(200 50% 2% / 0.34);
+
+    /* Awwwards-level motion system — enhanced easing for polished feel */
+    --motion-easing-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --motion-easing-bounce: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+    --motion-easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --motion-easing-sharp: cubic-bezier(0.4, 0, 0.6, 1);
+    --motion-duration-slow: 600ms;
+    --motion-duration-normal: 300ms;
+    --motion-duration-fast: 150ms;
   }
 }
 
@@ -298,6 +316,7 @@ html[data-theme="dark"] {
   --md-sys-color-on-primary:                #611200 !important;
   --md-sys-color-primary-container:         #891e00 !important;
   --md-sys-color-on-primary-container:      #ffdbd2 !important;
+
   --md-sys-color-error:                     #ffb4ab !important;
   --md-sys-color-on-error:                  #690005 !important;
   --md-sys-color-error-container:           #93000a !important;
@@ -310,6 +329,15 @@ html[data-theme="dark"] {
   --md-sys-elevation-level3: 0 8px 24px hsl(200 50% 2% / 0.28);
   --md-sys-elevation-level4: 0 12px 32px hsl(200 50% 2% / 0.3);
   --md-sys-elevation-level5: 0 18px 44px hsl(200 50% 2% / 0.34);
+
+  /* Awwwards-level motion system — enhanced easing for polished feel */
+  --motion-easing-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --motion-easing-bounce: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  --motion-easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-easing-sharp: cubic-bezier(0.4, 0, 0.6, 1);
+  --motion-duration-slow: 600ms;
+  --motion-duration-normal: 300ms;
+  --motion-duration-fast: 150ms;
 }
 
 /* ── Baseline prose (issue #121) ──────────────────────────────────────────
@@ -371,6 +399,300 @@ main :where(blockquote) {
 }
 
 
+/* ── Awwwards-level polished motion system ─────────────────────────────── */
+/* Smooth scrolling for page navigation */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Global transition mask — all transitions use enhanced easing */
+*,
+*::before,
+*::after {
+  transition-timing-function: var(--motion-easing-smooth);
+}
+
+/* ── Micro-interactions — buttons ──────────────────────────────────────── */
+.button,
+astro-button {
+  transition: all var(--motion-duration-fast) var(--motion-easing-smooth);
+  transform-origin: center;
+}
+
+.button:hover,
+astro-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px hsl(190 18% 13% / 0.15);
+}
+
+.button:active,
+astro-button:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 6px hsl(190 18% 13% / 0.1);
+}
+
+/* Button ripple effect */
+.button::after,
+astro-button::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  background: currentColor;
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+  transition: transform var(--motion-duration-normal) var(--motion-easing-bounce),
+              opacity var(--motion-duration-normal) var(--motion-easing-smooth);
+}
+
+.button:hover::after,
+astro-button:hover::after {
+  opacity: 0.1;
+  transform: scale(2);
+}
+
+/* ── Micro-interactions — cards ────────────────────────────────────────── */
+.card,
+.CoffeeTable-card {
+  transition: all var(--motion-duration-normal) var(--motion-easing-smooth);
+  transform-origin: center;
+}
+
+.card:hover,
+.CoffeeTable-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px hsl(190 18% 13% / 0.12);
+}
+
+.card:active,
+.CoffeeTable-card:active {
+  transform: scale(0.98);
+}
+
+/* ── Hero section polish ───────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.1), transparent 40%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero headline reveal animation */
+.hero h1 {
+  opacity: 0;
+  animation: headlineReveal 0.8s var(--motion-easing-bounce) forwards;
+  animation-delay: 0.2s;
+}
+
+@keyframes headlineReveal {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Coffee table polish ───────────────────────────────────────────────── */
+.CoffeeTable {
+  transition: opacity var(--motion-duration-normal) var(--motion-easing-smooth);
+}
+
+.CoffeeTable-loading {
+  opacity: 0.5;
+}
+
+.CoffeeTable:not(.CoffeeTable-loading) {
+  opacity: 1;
+}
+
+/* Table row hover state */
+.CoffeeTable-row {
+  transition: background-color var(--motion-duration-fast) var(--motion-easing-smooth);
+}
+
+.CoffeeTable-row:hover {
+  background-color: var(--md-sys-color-surface-container-low);
+}
+
+/* Table header sort indicator */
+.CoffeeTable-sortable:hover {
+  cursor: pointer;
+  color: var(--md-sys-color-primary);
+}
+
+.CoffeeTable-sortable:hover::after {
+  content: '↓';
+  margin-left: 4px;
+  animation: sortIndicator var(--motion-duration-fast) var(--motion-easing-smooth) infinite alternate;
+}
+
+@keyframes sortIndicator {
+  from { transform: translateY(0); }
+  to { transform: translateY(2px); }
+}
+
+/* ── Navigation polish ─────────────────────────────────────────────────── */
+.nav-link {
+  position: relative;
+  transition: color var(--motion-duration-fast) var(--motion-easing-smooth);
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width var(--motion-duration-normal) var(--motion-easing-emphasized);
+}
+
+.nav-link:hover::before,
+.nav-link:focus-visible::before {
+  width: 100%;
+}
+
+/* ── Theme toggle polish ───────────────────────────────────────────────── */
+.theme-toggle {
+  position: relative;
+  overflow: hidden;
+  transition: background-color var(--motion-duration-normal) var(--motion-easing-smooth);
+}
+
+.theme-toggle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 180deg at 50% 50%, var(--md-sys-color-primary) 0deg, var(--md-sys-color-primary-container) 90deg, transparent 90deg, transparent 180deg, var(--md-sys-color-primary) 180deg, var(--md-sys-color-primary-container) 270deg, transparent 270deg, transparent 360deg);
+  opacity: 0;
+  transition: opacity var(--motion-duration-normal) var(--motion-easing-smooth);
+}
+
+.theme-toggle:hover::before {
+  opacity: 0.1;
+}
+
+/* ── Language switcher polish ──────────────────────────────────────────── */
+.lang-switch {
+  position: relative;
+  transition: background-color var(--motion-duration-fast) var(--motion-easing-smooth);
+}
+
+.lang-switch::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--md-sys-color-primary);
+  transition: width var(--motion-duration-normal) var(--motion-easing-emphasized);
+}
+
+.lang-switch:hover::after {
+  width: 50%;
+}
+
+/* ── Stale badge indicator polish ──────────────────────────────────────── */
+.ct-stale {
+  animation: pulseBadge var(--motion-duration-long) var(--motion-easing-smooth) infinite;
+}
+
+@keyframes pulseBadge {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 hsl(20 70% 50% / 0.7);
+  }
+  70% {
+    opacity: 1;
+    box-shadow: 0 0 0 6px hsl(20 70% 50% / 0);
+  }
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 hsl(20 70% 50% / 0);
+  }
+}
+
+/* ── Loading states polish ─────────────────────────────────────────────── */
+.loading-skeleton {
+  background: linear-gradient(90deg, var(--md-sys-color-surface-container-low) 25%, var(--md-sys-color-surface-container) 50%, var(--md-sys-color-surface-container-low) 75%);
+  background-size: 200% 100%;
+  animation: shimmer var(--motion-duration-long) var(--motion-easing-linear) infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Mobile optimization polish ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    line-height: 1.1;
+  }
+
+  .hero h1 {
+    animation: mobileHeadlineReveal 0.6s var(--motion-easing-bounce) forwards;
+    animation-delay: 0.1s;
+  }
+
+  @keyframes mobileHeadlineReveal {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .button,
+  astro-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .card:hover,
+  .CoffeeTable-card:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* ── Reduced motion preference ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* ── Issue #139/142: decaf tag and stock status badge ────────────── */
 .ct-decaf-tag {
   font-size: 0.75em;
@@ -383,10 +705,47 @@ main :where(blockquote) {
   margin-left: 4px;
   vertical-align: middle;
 }
+
 .ct-stock {
   font-size: 0.8em;
   padding: 1px 5px;
   border-radius: var(--md-sys-shape-corner-full);
+  transition: all var(--motion-duration-fast) var(--motion-easing-smooth);
 }
 .ct-stock.out-of-stock { background: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); }
 .ct-stock.pre-order { background: var(--md-sys-color-warning-container); color: var(--md-sys-color-on-warning-container); }
+
+/* ── Dark mode polish enhancements ─────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .lightness-scheme {
+    --lightness-amount: 2;
+  }
+}
+
+html[data-theme="dark"] .lightness-scheme {
+  --lightness-amount: 2;
+}
+
+/* Dark mode card hover polish */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .card:hover,
+  html:not([data-theme="light"]) .CoffeeTable-card:hover {
+    box-shadow: 0 12px 32px hsl(200 50% 2% / 0.2);
+  }
+}
+
+html[data-theme="dark"] .card:hover,
+html[data-theme="dark"] .CoffeeTable-card:hover {
+  box-shadow: 0 12px 32px hsl(200 50% 2% / 0.2);
+}
+
+/* Dark mode navigation polish */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .nav-link::before {
+    background: var(--md-sys-color-primary);
+  }
+}
+
+html[data-theme="dark"] .nav-link::before {
+  background: var(--md-sys-color-primary);
+}

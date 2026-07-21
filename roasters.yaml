@@ -9,7 +9,7 @@ roasters:
 - metadata:
     city: Bratislava
   name: Kavoholik
-  scrape_url: https://kavoholik.sk/750-cerstvo-prazena-zrnkova-kava
+  scrape_url: https://kavoholik.sk/12-e-shop
   slug: kavoholik
   url: https://kavoholik.sk/
 - metadata:
@@ -18,56 +18,56 @@ roasters:
   roast_type_urls:
     espresso: https://www.readyafter.sk/espresso-zmesi/
     filter: https://www.readyafter.sk/kava-filter/
-  scrape_url: https://www.readyafter.sk/
+  scrape_url: https://www.readyafter.sk/kava/
   slug: ready-after
   url: https://www.readyafter.sk/
 - metadata:
     city: Vranov nad Topľou
   name: Kaffa Roastery
-  scrape_url: https://kaffaroastery.sk/
+  scrape_url: https://kaffaroastery.sk/shop/
   slug: kaffa-roastery
   url: https://kaffaroastery.sk/
 - metadata:
     city: Dolná Súča
   name: Suca Roastery
-  scrape_url: https://www.sucaroastery.sk/
+  scrape_url: https://www.sucaroastery.sk/kava
   slug: suca-roastery
   url: https://www.sucaroastery.sk/
 - metadata:
     city: Šahy
   name: Coffeein
-  scrape_url: https://www.coffeein.sk/
+  scrape_url: https://www.coffeein.sk/kategoria/2/cerstvo-prazena-zrnkova-kava/1/
   scraper: playwright
   slug: coffeein
   url: https://www.coffeein.sk/
 - metadata:
     city: Bratislava
   name: Black.
-  scrape_url: https://black.sk/
+  scrape_url: https://www.black.sk/sk/e-shop
   slug: black
   url: https://black.sk/
 - metadata:
     city: Bratislava
   name: Blue Mondays Coffee
-  scrape_url: https://bluemondayscoffee.com/
+  scrape_url: https://bluemondays.sk/collections/all
   slug: blue-mondays-coffee
   url: https://bluemondayscoffee.com/
 - metadata:
     city: Bratislava
   name: Caffe4u
-  scrape_url: https://caffe4u.sk/
+  scrape_url: https://caffe4u.sk/eshop/
   slug: caffe4u
   url: https://caffe4u.sk/
 - metadata:
     city: Dunajská Lužná
   name: Diamond's Roastery
-  scrape_url: https://diroastery.sk/
+  scrape_url: https://diroastery.sk/kategoria-produktu/kava
   slug: diamonds-roastery
   url: https://diroastery.sk/
 - metadata:
     city: Bratislava
   name: Good Times Coffee Roasters
-  scrape_url: https://goodtimes.coffee/
+  scrape_url: https://goodtimes.coffee/obchod/
   slug: good-times-coffee-roasters
   url: https://goodtimes.coffee/
 - metadata:
@@ -79,19 +79,19 @@ roasters:
 - metadata:
     city: Bratislava
   name: Jungle Roastery
-  scrape_url: https://thisisjungle.sk/
+  scrape_url: https://www.jungleroastery.sk/kava/
   slug: jungle-roastery
   url: https://thisisjungle.sk/
 - metadata:
     city: Bratislava
   name: Sweet Beans Coffee
-  scrape_url: https://sweetbeans.coffee/
+  scrape_url: https://www.sweetbeans.coffee/kategoria-produktu/coffee-beans/
   slug: sweet-beans-coffee
   url: https://sweetbeans.coffee/
 - metadata:
     city: Bratislava
   name: Triple Five Coffee
-  scrape_url: https://triplefivecoffee.com/
+  scrape_url: https://triplefivecoffee.com/kava/
   slug: triple-five-coffee
   url: https://triplefivecoffee.com/
 - metadata:
@@ -120,8 +120,11 @@ roasters:
   url: https://praziarenrydze.sk/
 - metadata:
     city: Piešťany
+  roast_type_urls:
+    espresso: https://www.conceptcoffee.sk/espresso/
+    filter: https://www.conceptcoffee.sk/filter/
   name: Concept Coffee Roasters
-  scrape_url: https://www.conceptcoffee.sk/filter/
+  scrape_url: https://www.conceptcoffee.sk/
   slug: concept-coffee-roasters
   url: https://www.conceptcoffee.sk/
 - metadata:

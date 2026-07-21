@@ -212,7 +212,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               {t.per100g} <span class="ct-sort-ind" aria-hidden="true"></span>
             </button>
           </th>
-          <th>{t.offers}</th>
         </tr>
       </thead>
       <tbody>
@@ -298,6 +297,12 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
                     </>
                   : <span class="ct-muted">—</span>
                 }
+              </td>
+              <td class="ct-num">
+                {c.weight_g ?? '—'}
+              </td>
+              <td class="ct-num">
+                {per100g}
               </td>
               <td class="ct-num ct-price">
                 {fmtEur(c.price)}

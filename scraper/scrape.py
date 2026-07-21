@@ -2605,6 +2605,19 @@ def _require_openrouter_api_key():
         )
     return api_key
 
+async def _create_llm_client():
+    """Create an OpenAI-compatible client for LLM extraction.
+    
+    Supports either OpenRouter (default) or a local Ollama instance.
+    Set OLLAMA_BASE_URL to use a local Ollama (e.g. http://localhost:11434/v1).
+    """
+    if ollama_url := os.environ.get("OLLAMA_BASE_URL"):
+        # Use local Ollama - no API key required
+        return OpenAI(base_url=ollama_url, api_key="ollama")
+    else:
+        # Use OpenRouter (default)
+        return OpenAI(base_url=OPENROUTER_BASE_URL, api_key=_require_openrouter_api_key())
+
 
 async def run(
     only=None,
@@ -2613,7 +2626,7 @@ async def run(
     status_path=STATUS_PATH,
     history_path=HISTORY_PATH,
 ):
-    client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=_require_openrouter_api_key())
+    client = await _create_llm_client()
     all_roasters = load_roasters(roasters_path)
     roasters = all_roasters
     if only:
@@ -2814,7 +2827,7 @@ def run_canary(client, fixture_path=CANARY_PATH):
     return True
 
 
-def main():
+async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--only", help="limit the run to roasters whose name contains this substring")
     parser.add_argument(
@@ -2824,15 +2837,15 @@ def main():
     )
     args = parser.parse_args()
     if args.canary:
-        client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=_require_openrouter_api_key())
+        client = await _create_llm_client()
         run_canary(client)
         report_llm_usage()
         # Deliberately exit 0 even on mismatch: the ::warning:: annotation
         # is the signal, and a flaky canary must not fail the whole
         # scheduled workflow.
         raise SystemExit(0)
-    asyncio.run(run(only=args.only))
+    await run(only=args.only)
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

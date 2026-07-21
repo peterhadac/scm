@@ -60,8 +60,41 @@ good-times-coffee-roasters:
   status: ok
 goriffee:
   consecutive_non_ok: 0
-  last_run: '2026-07-20'
+  last_run: '2026-07-21'
   name: Goriffee
+  product_count: 31
+  product_urls:
+  - https://www.goriffee.com/kavovy-catering-goriffee/
+  - https://www.goriffee.com/zasady-spracuvania-cookies/
+  - https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/jednoducho-kava-espresso-blend/
+  - https://www.goriffee.com/shop/kava/vyberova-kava-na-filter/burundi-gakenke-washed/
+  - https://www.goriffee.com/shop/kava/bezkofeinova-kava/colombia-tumbaga-decaf-na-filter/
+  - https://www.goriffee.com/produkty/
+  - https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/highlander-espresso-blend/
+  - https://www.goriffee.com/shop/kava/bezkofeinova-kava/colombia-tumbaga-decaf-na-espresso/
+  - https://www.goriffee.com/shop/kava/kavove-kapsule/vyhodny-balik-3x-kavove-kapsule-pre-nespresso/
+  - https://www.goriffee.com/shop/kava/vyhodne-baliky/vyhodny-balik-3x-brazilia-inak/
+  - https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/milkyway-espresso-blend/
+  - https://www.goriffee.com/shop/kava/vyhodne-baliky/vyhodny-balik-3x-klasicke-espresso/
+  - https://www.goriffee.com/shop/kava/bezkofeinova-kava/colombia-tumbaga-decaf-kavove-kapsule/
+  - https://www.goriffee.com/produkty/page/2/
+  - https://www.goriffee.com/shop/kava/colombia-el-rosal-natural/
+  - https://www.goriffee.com/shop/kava/kavove-kapsule/brazil-caramelo-kavove-kapsule/
+  - https://www.goriffee.com/nase-kaviarne/
+  - https://www.goriffee.com/shop/kava/kenya-kagumo-aa-washed/
+  - https://www.goriffee.com/shop/kava/peach-please-brew-bags/
+  - https://www.goriffee.com/shop/merch/slowtella-kavova-250g/
+  - https://www.goriffee.com/shop/kava/vyberova-kava-na-filter/peach-please-filter-blend/
+  - https://www.goriffee.com/shop/kava/kavove-kapsule/milkyway-kavove-kapsule/
+  - https://www.goriffee.com/shop/kava/peru-la-cima-washed/
+  - https://www.goriffee.com/vseobecne-obchodne-podmienky/
+  - https://www.goriffee.com/shop/kava/brazil-morada-da-prata-natural/
+  - https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/colombia-popayan-reserve-washed/
+  - https://www.goriffee.com/shop/kava/rwanda-ngororero-natural/
+  - https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/brazil-caramelo-natural/
+  - https://www.goriffee.com/kontaktujte-nas/
+  - https://www.goriffee.com/shop/kava/brazil-rodomunho-natural/
+  - https://www.goriffee.com/velkoobchod-kava-do-firiem/
   status: ok
 green-plantation:
   consecutive_non_ok: 0

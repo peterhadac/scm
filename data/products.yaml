@@ -2369,7 +2369,7 @@ caffe4u:
   schema_version: 16
   status: incomplete
   url: https://caffe4u.sk/produkt/balicek-variety-3-x-200g/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: f9e8c6524b62407b7f6716aa27ff1ea0b0b2816443aca1e5572edbc750b3166c
   status: not_a_product
   url: https://caffe4u.sk/kavove-sety-a-balicky/
@@ -2498,7 +2498,7 @@ caffe4u:
   sweetness: null
   tasting_notes: čokoláda, grep, karamel
   url: https://caffe4u.sk/produkt/salvador-el-borbollon/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 91d61bf69014b3cedcced7605af8b3d433ec33259d59d27c5d63d120699bc1b8
   status: not_a_product
   url: https://caffe4u.sk/akciove-kavy/
@@ -2586,7 +2586,7 @@ caffe4u:
   sweetness: null
   tasting_notes: černicový kompót, punčák, vanilka
   url: https://caffe4u.sk/produkt/blendiana-jones/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 2af99ff107310447f653b6074c7625881518162e7c3479605e5fc8652dff261d
   status: not_a_product
   url: https://caffe4u.sk/eshop/
@@ -2672,7 +2672,7 @@ caffe4u:
   schema_version: 20
   status: ok
   url: https://caffe4u.sk/produkt/obedna-pauzicka/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 3fdaf259864301bea53cea218fdbe24479199d4f70a80174f62f271fcd44ee07
   status: not_a_product
   url: https://caffe4u.sk/kava-tyzdna/
@@ -2906,7 +2906,7 @@ coffeein:
   schema_version: 19
   status: ok
   url: https://www.coffeein.sk/detail/768/popeachy-kava-stredne-prazenie-200-g-zrnkova-kava/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: aa5c840387dc33d9cb3dc7380f744f9f5b8da905cfa33dd6af2b6045686b3caa
   status: not_a_product
   url: https://www.coffeein.sk/special/novinky/1/
@@ -2950,7 +2950,7 @@ coffeein:
   schema_version: 19
   status: ok
   url: https://www.coffeein.sk/detail/832/kava-pre-super-ocka-200-g-zrnkova-kava/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: cb3a0f718952107bc0239c3e7e3c90ffa01699af4a969acd6749b0c8011a4b80
   status: not_a_product
   url: https://www.coffeein.sk/special/top/1/
@@ -3612,7 +3612,7 @@ diamonds-roastery:
   page_hash: 0668517ab6ff335fea310802ac9b3ab6c7eed72d5fc98afa5a91e8c94bfe73e1
   status: not_a_product
   url: https://diroastery.sk/produkt/modra-ruzova-kolekcia-s-uskom/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: c924c2b3d6bba1f724acd5c875f57c20fcc2d79f712cb251caccb5cd1e34dca1
   status: not_a_product
   url: https://diroastery.sk/najcastejsie-otazky/
@@ -4697,7 +4697,7 @@ good-times-coffee-roasters:
   body: null
   brewing_recommendations: Vhodné pre pákové kávovary, automatické kávovary a koťogo.
   is_decaffeinated: false
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-21'
   name: Daily Espresso Seasonal Blend
   origin: Blend
   packaging:
@@ -4746,102 +4746,192 @@ good-times-coffee-roasters:
   sweetness: null
   tasting_notes: Čučoriedky, portské víno
   url: https://goodtimes.coffee/produkt/honduras-comsa-co-operative/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 067904df6faaa33ab83195f28281438e08a02dab59dbf7c25ac9037a596db64e
   status: not_a_product
   url: https://goodtimes.coffee/obchod/
 goriffee:
-- last_seen: '2026-07-10'
-  name: Highlander espresso blend
-  origin: Blend
-  packaging:
-  - price: 11.0
-    weight_g: 250
-  - price: 42.0
-    weight_g: 1000
-  page_hash: 4181ac489637394c548ceb5ce69c63feeab4d300f76f5e892e6a809f6ab3a058
-  process: null
-  roast_type: espresso
-  schema_version: 16
-  status: ok
-  url: https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/highlander-espresso-blend/
-- last_seen: '2026-07-14'
-  name: Colombia El Rosal Natural
-  origin: Colombia
-  packaging:
-  - price: 17.0
-    weight_g: 250
-  - price: 66.0
-    weight_g: 1000
-  page_hash: 47c0b6bb5710ba24ca6c9e0828ce7d0cd7e2eab75dcc4c922893cbee097a57cd
-  process: natural
-  roast_type: filter
-  schema_version: 20
-  status: ok
-  url: https://www.goriffee.com/shop/kava/colombia-el-rosal-natural/
-- last_seen: '2026-07-20'
-  page_hash: 1d09e65fa7d97f65524ef64206adcb0044b332b02d92faafb549e4d6b7640499
+- last_seen: '2026-07-21'
+  page_hash: b9413c90e172bf1e02aef4096d35574cf6c573bf832c6b968cf1e358a6060027
   status: not_a_product
-  url: https://www.goriffee.com/nase-kaviarne/
-- last_seen: '2026-07-14'
-  name: Kenya Kagumo AA Washed
-  origin: Kenya
+  url: https://www.goriffee.com/kavovy-catering-goriffee/
+- last_seen: '2026-07-21'
+  page_hash: fbd94c23bb2fe5b60f504d57e8e0f11edcd50acc36492628aa29958141e20f9a
+  status: not_a_product
+  url: https://www.goriffee.com/zasady-spracuvania-cookies/
+- acidity: 3
+  bitterness: 8
+  body: 8
+  brewing_recommendations: espresso, koťogo, zaliateho “turka”
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  name: Jednoducho káva espresso blend
+  origin: Honduras
+  packaging:
+  - price: 7.8
+    variant: full city roast
+    weight_g: 200
+  - price: 37.0
+    variant: full city roast
+    weight_g: 1000
+  page_hash: 8392b65d4b3aa20fa8d1f65ed0c6a2f1c3acef325ff6c0f45319c38041c40a7b
+  price_from: null
+  price_to: null
+  process: washed
+  quantity: null
+  roast_type: espresso
+  schema_version: 22
+  status: ok
+  stock_status: in-stock
+  sweetness: 5
+  tasting_notes: horká, silná, kávová; tóny horkej čokolády, pražených orechov, štipky
+    tabaku; dlhá, kakaovo-tabaková dochuť
+  url: https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/jednoducho-kava-espresso-blend/
+- acidity: 8
+  bitterness: 3
+  body: 6
+  brewing_recommendations: Filter, V60, French Press, Aeropress, Chemex, Cold Brew
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  name: Burundi Gakenke Washed
+  origin: Burundi
   packaging:
   - price: 16.0
+    variant: light roast
     weight_g: 250
   - price: 62.0
+    variant: light roast
     weight_g: 1000
-  page_hash: 8a597b35d84dfff517e3b40f8bc93a460f8351a3a300bcbf253edcee9ef68f12
-  process: null
+  page_hash: 4a0667e4790273c332dccfc8ea27cbb55ee81085b43800b46630c62bcf00e9bc
+  price_from: null
+  price_to: null
+  process: washed
+  quantity: null
   roast_type: filter
-  schema_version: 20
+  schema_version: 22
   status: ok
-  url: https://www.goriffee.com/shop/kava/kenya-kagumo-aa-washed/
+  stock_status: in-stock
+  sweetness: 7
+  tasting_notes: brusnice, černice, karamel
+  url: https://www.goriffee.com/shop/kava/vyberova-kava-na-filter/burundi-gakenke-washed/
+- acidity: 3
+  bitterness: 2
+  body: 6
+  brewing_recommendations: Filter, V60, French Press, Aeropress, Chemex, Brew Bag,
+    Cold Brew
+  is_decaffeinated: true
+  last_seen: '2026-07-21'
+  name: Colombia Tumbaga decaf na filter
+  origin: Colombia
+  packaging:
+  - price: 13.0
+    variant: light roast
+    weight_g: 250
+  - price: 50.0
+    variant: light roast
+    weight_g: 1000
+  page_hash: c443505645e314151d64fc7534be2c6bbfde37ff11a3d3f55e9d94151ea44f2f
+  price_from: 9.1
+  price_to: 50
+  process: natural
+  quantity: null
+  roast_type: filter
+  schema_version: 22
+  status: ok
+  stock_status: in-stock
+  sweetness: 8
+  tasting_notes: jablko, škorica, karamel
+  url: https://www.goriffee.com/shop/kava/bezkofeinova-kava/colombia-tumbaga-decaf-na-filter/
+- last_seen: '2026-07-21'
+  page_hash: 36f2a2bb974117f8b9c02fc36f7d977e29d7d39d8a1ccf7647213d6b9372b2de
+  status: not_a_product
+  url: https://www.goriffee.com/produkty/
+- acidity: 4
+  bitterness: 5
+  body: 7
+  brewing_recommendations: espresso, Moka kávovar / Koťogo, Automatický kávovar
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  name: Highlander espresso blend
+  origin: Brazil
+  packaging:
+  - price: 11.0
+    variant: full city roast
+    weight_g: 250
+  - price: 42.0
+    variant: full city roast
+    weight_g: 1000
+  page_hash: fba70c92b4dbaa7da3cde8c02a043fdb36ed2847039dac84d3579b01c26cbd1a
+  price_from: null
+  price_to: null
+  process: washed
+  quantity: null
+  roast_type: espresso
+  schema_version: 22
+  status: ok
+  stock_status: in-stock
+  sweetness: 7
+  tasting_notes: kakao, orechy, ďatle
+  url: https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/highlander-espresso-blend/
+- acidity: 3
+  bitterness: 5
+  body: 8
+  brewing_recommendations: espresso, Moka kávovar / Koťogo, Automatický kávovar
+  is_decaffeinated: true
+  last_seen: '2026-07-21'
+  name: Colombia Tumbaga decaf na espresso
+  origin: Colombia
+  packaging:
+  - price: 13.0
+    variant: medium roast
+    weight_g: 250
+  - price: 50.0
+    variant: medium roast
+    weight_g: 1000
+  page_hash: 8da98ed2109b68d51762d1fce9237c589b1f4da5f0c009410a3cdd030b70b3ea
+  price_from: 9.1
+  price_to: 50
+  process: natural
+  quantity: null
+  roast_type: espresso
+  schema_version: 22
+  status: ok
+  stock_status: in-stock
+  sweetness: 8
+  tasting_notes: jablko, škorica, karamel
+  url: https://www.goriffee.com/shop/kava/bezkofeinova-kava/colombia-tumbaga-decaf-na-espresso/
 - acidity: null
   bitterness: null
-  blend: true
-  blend_origins:
-  - Brazil
-  - Colombia
   body: null
   brewing_recommendations: null
   is_decaffeinated: null
   last_seen: '2026-07-20'
   missing_fields:
-  - price
-  name: 'Výhodný balík: 3x Klasické Espresso'
-  origin: Blend
+  - origin
+  name: 'Výhodný balík: 3x Kávové kapsule pre Nespresso'
+  origin: null
   packaging:
-  - price: 33.0
+  - price: 45.0
+    variant: 1x 250g Brazil Caramelo natural – kávové kapsule pre Nespresso
     weight_g: 250
-  - price: 29.7
+  - price: 45.0
+    variant: 1x 250g Milkyway espresso blend – kávové kapsule pre Nespresso
     weight_g: 250
-  page_hash: 48e055245621ade372cd80f2a4a44cb02440492ad46be7786c1ef2d8e0875a0a
-  price_from: 29.7
+  - price: 45.0
+    variant: 1x 250g Colombia Decaf – kávové kapsule pre Nespresso
+    weight_g: 250
+  page_hash: daa330157254a6cde7efaae8ddd61224873eb0a6da5fdb767f5bcce073731e0d
+  price_from: 40.5
   price_to: null
   process: null
   quantity: null
-  roast_type: espresso
+  roast_type: nespresso
   schema_version: 22
   status: incomplete
   stock_status: null
   sweetness: null
   tasting_notes: null
-  url: https://www.goriffee.com/shop/kava/vyhodne-baliky/vyhodny-balik-3x-klasicke-espresso/
-- last_seen: '2026-07-10'
-  name: Brazil Rodomunho Natural
-  origin: Brazil
-  packaging:
-  - price: 15.0
-    weight_g: 250
-  - price: 58.0
-    weight_g: 1000
-  page_hash: 8cf1a3e1d865a3e275a55cbaba62b6d3a70ef4a13b8b281ed44625ef292ca0b0
-  process: null
-  roast_type: filter
-  schema_version: 16
-  status: ok
-  url: https://www.goriffee.com/shop/kava/brazil-rodomunho-natural/
+  url: https://www.goriffee.com/shop/kava/kavove-kapsule/vyhodny-balik-3x-kavove-kapsule-pre-nespresso/
 - acidity: null
   bitterness: null
   body: null
@@ -4887,62 +4977,393 @@ goriffee:
     farmy Fazenda Rodomunho, ideálny na filter. Ponúka zamatovo sladké a šťavnaté
     telo s tónmi zrelého hrozna, medu a čerstvých jahôd.
   url: https://www.goriffee.com/shop/kava/vyhodne-baliky/vyhodny-balik-3x-brazilia-inak/
-- last_seen: '2026-07-08'
+- acidity: 4
+  bitterness: 5
+  body: 8
+  brewing_recommendations: Espresso, Moka, Pour-over
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  name: Milkyway espresso blend
+  origin: Brazil
+  packaging:
+  - price: 11.0
+    variant: medium roast
+    weight_g: 250
+  - price: 42.0
+    variant: medium roast
+    weight_g: 1000
+  page_hash: cd10750bed303c61f1f4b3b8fcfeedf21b47c3cc286b93776705d372676e8a70
+  price_from: null
+  price_to: null
+  process: other
+  quantity: null
+  roast_type: espresso
+  schema_version: 22
+  status: ok
+  stock_status: in-stock
+  sweetness: 7
+  tasting_notes: karamel, orechy, kondenzované mlieko
+  url: https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/milkyway-espresso-blend/
+- acidity: null
+  bitterness: null
+  blend: true
+  blend_origins:
+  - Brazil
+  - Colombia
+  body: null
+  brewing_recommendations: null
+  is_decaffeinated: null
+  last_seen: '2026-07-20'
+  missing_fields:
+  - price
+  name: 'Výhodný balík: 3x Klasické Espresso'
+  origin: Blend
+  packaging:
+  - price: 33.0
+    weight_g: 250
+  - price: 29.7
+    weight_g: 250
+  page_hash: 48e055245621ade372cd80f2a4a44cb02440492ad46be7786c1ef2d8e0875a0a
+  price_from: 29.7
+  price_to: null
+  process: null
+  quantity: null
+  roast_type: espresso
+  schema_version: 22
+  status: incomplete
+  stock_status: null
+  sweetness: null
+  tasting_notes: null
+  url: https://www.goriffee.com/shop/kava/vyhodne-baliky/vyhodny-balik-3x-klasicke-espresso/
+- acidity: 3
+  bitterness: 4
+  body: 7
+  brewing_recommendations: null
+  is_decaffeinated: true
+  last_seen: '2026-07-21'
+  missing_fields:
+  - weight_g
+  name: Colombia Tumbaga Decaf – kávové kapsule
+  origin: Colombia
+  packaging:
+  - price: 15.0
+    variant: Kávové kapsule
+    weight_g: null
+  - price: 57.0
+    variant: Kávové kapsule
+    weight_g: null
+  page_hash: 8210775aba9adfb3b1057c5bb4307378711a96761ba70ded95f1699a77066538
+  price_from: 15
+  price_to: 57
+  process: natural
+  quantity: null
+  reextract_attempts: 3
+  roast_type: nespresso
+  schema_version: 22
+  status: incomplete
+  stock_status: in-stock
+  sweetness: 8
+  tasting_notes: jablko, škorica, karamel
+  url: https://www.goriffee.com/shop/kava/bezkofeinova-kava/colombia-tumbaga-decaf-kavove-kapsule/
+- last_seen: '2026-07-21'
+  page_hash: 62385a700222dde8d7033913526989807f4715121850cb1c09e231de136e5b9a
+  status: not_a_product
+  url: https://www.goriffee.com/produkty/page/2/
+- acidity: 8
+  bitterness: 3
+  body: 6
+  brewing_recommendations: Filter (V60, Chemex, Aeropress), Cold brew
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  name: Colombia El Rosal Natural
+  origin: Colombia
+  packaging:
+  - price: 17.0
+    variant: light roast
+    weight_g: 250
+  - price: 66.0
+    variant: light roast
+    weight_g: 1000
+  page_hash: 034e4e0a6feccc585c7ae009ebc882f862158da72a7d0c2f114cf40b384dcb9c
+  price_from: null
+  price_to: null
+  process: natural
+  quantity: null
+  roast_type: filter
+  schema_version: 22
+  status: ok
+  stock_status: in-stock
+  sweetness: 7
+  tasting_notes: Limeta, Karamel, Ananás
+  url: https://www.goriffee.com/shop/kava/colombia-el-rosal-natural/
+- acidity: null
+  bitterness: null
+  body: null
+  brewing_recommendations: Nespresso
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  missing_fields:
+  - weight_g
+  name: Brazil Caramelo – kávové kapsule
+  origin: Brazil
+  packaging:
+  - price: 15.0
+    weight_g: null
+  - price: 57.0
+    weight_g: null
+  page_hash: 457a8a4a84e5fb5a7d7001183f0ef3f9dad811681d9bc6df8eced8690a4267a2
+  price_from: null
+  price_to: null
+  process: natural
+  quantity: null
+  reextract_attempts: 2
+  roast_type: espresso
+  schema_version: 22
+  status: incomplete
+  stock_status: in-stock
+  sweetness: null
+  tasting_notes: karamel, orechy, čokoláda
+  url: https://www.goriffee.com/shop/kava/kavove-kapsule/brazil-caramelo-kavove-kapsule/
+- last_seen: '2026-07-21'
+  page_hash: af0b9c6d8348456380f34e103a3b669f06a5e4b585bd3ad5168dfb6dbea39a1b
+  status: not_a_product
+  url: https://www.goriffee.com/nase-kaviarne/
+- acidity: 8
+  bitterness: 3
+  body: 6
+  brewing_recommendations: Filter, V60, French Press, Aeropress, Chemex, Cold Brew
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  missing_fields:
+  - roast_type
+  name: Kenya Kagumo AA Washed
+  origin: Kenya
+  packaging:
+  - price: 16.0
+    variant: light roast
+    weight_g: 250
+  - price: 62.0
+    variant: light roast
+    weight_g: 1000
+  page_hash: f13b4311837fa2dfab2f238ea586870008009f3781f3dae74fc8fe312d86fe93
+  price_from: null
+  price_to: null
+  process: washed
+  quantity: null
+  reextract_attempts: 3
+  roast_type: null
+  schema_version: 22
+  status: incomplete
+  stock_status: in-stock
+  sweetness: 7
+  tasting_notes: Marakuja, Ananás, Trstinový cukor
+  url: https://www.goriffee.com/shop/kava/kenya-kagumo-aa-washed/
+- acidity: null
+  bitterness: null
+  body: null
+  brewing_recommendations: Brew Bag (4–5 min), V60, French Press, Aeropress, Chemex,
+    Cold Brew
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  name: Peach Please Brew Bags
+  origin: Colombia
+  packaging:
+  - price: 16.0
+    variant: Brew Bag
+    weight_g: 12
+  page_hash: 451d7f0e69ea2c5b1ffa02bc3544042c12e53d698a45c36e8d87f5e9f55345c1
+  price_from: null
+  price_to: null
+  process: honey
+  quantity: null
+  roast_type: filter
+  schema_version: 22
+  status: ok
+  stock_status: in-stock
+  sweetness: null
+  tasting_notes: Broskyne, Karamel, Tropické ovocie
+  url: https://www.goriffee.com/shop/kava/peach-please-brew-bags/
+- acidity: null
+  bitterness: null
+  body: null
+  brewing_recommendations: null
+  is_decaffeinated: false
+  last_seen: '2026-07-21'
+  missing_fields:
+  - roast_type
+  name: Slowtella kávová 250g
+  origin: Brazil
+  packaging:
+  - price: 13.9
+    weight_g: 250
+  page_hash: 0da5f64e7e1105d4170eaed7af9d12e049013687fdda736ce590c1c3eafd8e69
+  price_from: null
+  price_to: null
+  process: null
+  quantity: 3
+  roast_type: null
+  schema_version: 22
+  status: incomplete
+  stock_status: in-stock
+  sweetness: null
+  tasting_notes: orieškový, kávový, karamelový
+  url: https://www.goriffee.com/shop/merch/slowtella-kavova-250g/
+- acidity: 8
+  bitterness: 3
+  body: 6
+  brewing_recommendations: Filter, Cold brew, Brew Bag, Hario v60, French Press, Aeropress,
+    Chemex, Hario ColdBrew Bottle
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  name: Peach Please filter blend
+  origin: Colombia
+  packaging:
+  - price: 19.0
+    variant: light roast
+    weight_g: 250
+  - price: 74.0
+    variant: light roast
+    weight_g: 1000
+  page_hash: 3084d269cd811e9cb7e8cdc781ef0290710623a1792c8799309705051db4f42f
+  price_from: null
+  price_to: null
+  process: honey
+  quantity: null
+  roast_type: filter
+  schema_version: 22
+  status: ok
+  stock_status: in-stock
+  sweetness: 7
+  tasting_notes: Broskyne, Karamel, Tropické ovocie
+  url: https://www.goriffee.com/shop/kava/vyberova-kava-na-filter/peach-please-filter-blend/
+- acidity: null
+  bitterness: null
+  body: null
+  brewing_recommendations: Nespresso
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  missing_fields:
+  - weight_g
+  name: Milkyway – kávové kapsule
+  origin: Brazil
+  packaging:
+  - price: 15.0
+    weight_g: null
+  - price: 57.0
+    weight_g: null
+  page_hash: 9a9a7811ffd860007edeb2edd75ea33dbb0b48e65ccc79cec19ccd409ca80b91
+  price_from: 15
+  price_to: 57
+  process: other
+  quantity: null
+  reextract_attempts: 2
+  roast_type: espresso
+  schema_version: 22
+  status: incomplete
+  stock_status: in-stock
+  sweetness: null
+  tasting_notes: karamel, orechy, kondenzované mlieko
+  url: https://www.goriffee.com/shop/kava/kavove-kapsule/milkyway-kavove-kapsule/
+- acidity: 5
+  bitterness: 3
+  body: 6
+  brewing_recommendations: Espresso, Cappuccino
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  missing_fields:
+  - roast_type
+  name: Peru La Cima Washed
+  origin: Peru
+  packaging:
+  - price: 14.0
+    variant: medium roast
+    weight_g: 250
+  - price: 58.0
+    variant: medium roast
+    weight_g: 1000
+  page_hash: 18b8910a484bb06c64017aa2bea97267fe7c0e3d5ac15d7e3deadf1c5c175f14
+  price_from: null
+  price_to: null
+  process: washed
+  quantity: null
+  reextract_attempts: 2
+  roast_type: null
+  schema_version: 22
+  status: incomplete
+  stock_status: in-stock
+  sweetness: 7
+  tasting_notes: Slivka, karamel, vanilka
+  url: https://www.goriffee.com/shop/kava/peru-la-cima-washed/
+- last_seen: '2026-07-21'
+  page_hash: b586b3cb6b1904c9caff67e2fed41303f821a210e205eb76582f03686ac6e1ba
+  status: not_a_product
+  url: https://www.goriffee.com/vseobecne-obchodne-podmienky/
+- acidity: 5
+  bitterness: 4
+  body: 6
+  brewing_recommendations: Espresso, Moka, Pour-over
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  missing_fields:
+  - roast_type
+  name: Brazil Morada da Prata Natural
+  origin: Brazil
+  packaging:
+  - price: 14.0
+    variant: medium roast
+    weight_g: 250
+  - price: 54.0
+    variant: medium roast
+    weight_g: 1000
+  page_hash: a22bbb8031608301434fbfa7ee27a9f2a15b3109eba41bdd4136b4926b8a9f22
+  price_from: null
+  price_to: null
+  process: natural
+  quantity: null
+  reextract_attempts: 3
+  roast_type: null
+  schema_version: 22
+  status: incomplete
+  stock_status: in-stock
+  sweetness: 7
+  tasting_notes: Slivka, Para orech, Karamel
+  url: https://www.goriffee.com/shop/kava/brazil-morada-da-prata-natural/
+- acidity: 5
+  bitterness: 4
+  body: 7
+  brewing_recommendations: espresso, mliečne cappuccino
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  missing_fields:
+  - roast_type
   name: Colombia Popayan Reserve Washed
   origin: Colombia
   packaging:
   - price: 11.0
+    variant: medium roast
     weight_g: 250
   - price: 42.0
+    variant: medium roast
     weight_g: 1000
-  page_hash: 845d05d4c1dbaa43ff918921184c86c25bd24f5b5c907d5c8d23caaf963364aa
-  process: null
-  roast_type: filter
-  schema_version: 14
-  status: ok
+  page_hash: db7b3bf32092038cc74a85753a5237e4f81d68b1b97e016d13451b6597be5435
+  price_from: null
+  price_to: null
+  process: washed
+  quantity: null
+  reextract_attempts: 3
+  roast_type: null
+  schema_version: 22
+  status: incomplete
+  stock_status: in-stock
+  sweetness: 7
+  tasting_notes: sušený pomaranč, mandle, čokoláda
   url: https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/colombia-popayan-reserve-washed/
-- last_seen: '2026-07-20'
-  page_hash: 1cc5db8fa97b54c055ad3ec2ff92d7dfad0d0a50294efcc75c53ca49f40852e8
-  status: not_a_product
-  url: https://www.goriffee.com/vseobecne-obchodne-podmienky/
-- last_seen: '2026-07-20'
-  page_hash: 652956f31bedc7133c46cdb66a075563dec4d9314f628e3bd68f67021d8927d6
-  status: not_a_product
-  url: https://www.goriffee.com/zasady-spracuvania-cookies/
-- acidity: null
-  bitterness: null
-  body: null
-  brewing_recommendations: "Pákový espresso kávovar\n_Brew ratio (vstupná gramáž,\
-    \ výstupná gramáž, čas): Najčastejšie používaný pomer pre espresso je 1:2 až 1:2,5\
-    \ (káva:voda), a čas približne 20-25s_\n  * 1.krok: Odvážime si čerstvo namletú\
-    \ kávu (príklad 14g)\n  * 2.krok: Nasypeme kávu do suchého a čistého portafiltra,\
-    \ rovnomerne rozložíme a utampujeme\n  * 3.krok: Vždy pred a po extrakcii odpustíme\
-    \ horúcu vodu z hlavy, nasadíme páku a spúšťame extrakciu\n  * 3.krok: Výslednú\
-    \ extrakciu v šálke “púšťame” na váhu, v prípade že používame 14g kávy a brewratio\
-    \ 1:2,5, výsledný objem by mal byť 35g pri čase 20-25 sekúnd.\n\n\nMalý tip na\
-    \ záver: Ak sa espresso extrahuje prirýchlo, treba zvoliť jemnejšie mletie. Ak\
-    \ sa espresso extrahuje príliš pomaly, treba naopak zvoliť hrubšie mletie. Neexistuje\
-    \ univerzálny recept pre espresso, každá káva si vyžaduje iný prístup. Ak budete\
-    \ hľadať ten správny recept pre tú vašu kávu, nemeňte vždy naraz všetky hodnoty\
-    \ (čas, vstupná gramáž, výstupná gramáž). Pracujte vždy iba s jednou premenou\
-    \ a pozorujte zmeny v chutí.\nAutomatický kávovar\nKaždý automatický kávovar má\
-    \ svoje nastavenia, o ktoré sa nemusíte starať. Väčšinou stačí stlačiť gombík.\n\
-    Odporúčame používať prefiltrovanú vodu, ktorou zlepšíte chuť kávy o 100%\nMoka\
-    \ kávovar / Koťogo\n_Vodu ktorú budeme používať si dopredu zohrejeme v konvici,\
-    \ aby sme sa vyhli zbytočne dlhému vriacemu procesu pri prírpave kávy_\n_Používame\
-    \ o trochu hrubšie mletie ako na espresso_\n  * **1.krok** : Zohriatu vodu nalejeme\
-    \ do spodnej časti mokky tesne pod ventil\n  * **2.krok** : Do sitka nasypeme\
-    \ do plna čerstvo namletú kávu, neutláčame\n  * **3.krok** : Poskladáme všetky\
-    \ časti mokky a dáme zohrievať\n  * **4.krok** : Keď budeme počuť jemné “chrchlanie”\
-    \ káva je hotová.\n  * **5.krok** : Ochladíme spodnú časť mokky aby sme zastavili\
-    \ proces extrakcie\n\n\n**Malý tip na záver** : Udržiavať čistotu moka expressu\
-    \ je veľmi dôležité, je potrebné ho dôkladne prepláchnuť po každej príprave kávy.\
-    \ Pokiaľ bude mokka express zanesený od nečistôt, môže spôsobovať nežiadúcu horkú\
-    \ chuť kávy. Ak vám káva z mokky “vyprskla” príliž rýchlo, pravdepodobne ste ju\
-    \ varili na silnom ohni. Spomalte teplotu a extrakcia bude plynulá a chuť komplexná.\
-    \ Nazdravie:)"
+- acidity: 5
+  bitterness: 4
+  body: 8
+  brewing_recommendations: Espresso, Moka kávovar / Koťogo
   is_decaffeinated: null
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-21'
   name: Rwanda Ngororero Natural
   origin: Rwanda
   packaging:
@@ -4952,7 +5373,62 @@ goriffee:
   - price: 58.0
     variant: medium roast
     weight_g: 1000
-  page_hash: 0dabd75c9767850a419707a3b3da8860b1bd32891216692c81c82bea7ef5a8db
+  page_hash: 19ce5ccefb4a5f90086f413b57ba3bc5d7fecaa9a7b348fffddfa1b9d5a6f1e7
+  price_from: null
+  price_to: null
+  process: natural
+  quantity: null
+  roast_type: espresso
+  schema_version: 22
+  status: ok
+  stock_status: in-stock
+  sweetness: 7
+  tasting_notes: Nugát, slivky, funky
+  url: https://www.goriffee.com/shop/kava/rwanda-ngororero-natural/
+- acidity: 2
+  bitterness: 5
+  body: 7
+  brewing_recommendations: Espresso, Moka, Pour-over
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  name: Brazil Caramelo natural
+  origin: Brazil
+  packaging:
+  - price: 11.0
+    variant: medium roast
+    weight_g: 250
+  page_hash: 796408b3450dc228ee891230be2219e4bb599239e236fd7895706001b320e631
+  price_from: null
+  price_to: null
+  process: natural
+  quantity: null
+  roast_type: espresso
+  schema_version: 22
+  status: ok
+  stock_status: in-stock
+  sweetness: 8
+  tasting_notes: karamel, orechy, čokoláda, sladká, krémová
+  url: https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/brazil-caramelo-natural/
+- last_seen: '2026-07-21'
+  page_hash: c9f1a53d5423eda6b683ee5fab67f9a83016920d2a8c605a703e56a2449382eb
+  status: not_a_product
+  url: https://www.goriffee.com/kontaktujte-nas/
+- acidity: 6
+  bitterness: 3
+  body: 7
+  brewing_recommendations: Filter, V60, French Press, Aeropress, Chemex, Cold Brew
+  is_decaffeinated: null
+  last_seen: '2026-07-21'
+  name: Brazil Rodomunho Natural
+  origin: Brazil
+  packaging:
+  - price: 15.0
+    variant: light roast
+    weight_g: 250
+  - price: 58.0
+    variant: light roast
+    weight_g: 1000
+  page_hash: eed7525f1348ad8d81e5242aa163dd74249a494e4e0e8ae2c4eed0fc0a64780c
   price_from: null
   price_to: null
   process: natural
@@ -4961,174 +5437,13 @@ goriffee:
   schema_version: 22
   status: ok
   stock_status: in-stock
-  sweetness: null
-  tasting_notes: Nugát, slivky, funky
-  url: https://www.goriffee.com/shop/kava/rwanda-ngororero-natural/
-- last_seen: '2026-07-10'
-  name: Milkyway espresso blend
-  origin: Blend
-  packaging:
-  - price: 11.0
-    weight_g: 250
-  - price: 42.0
-    weight_g: 1000
-  page_hash: 7f367d91e048b2e56acf935198d01d1f169af4bd1bdb6ebc6f678465d2c907d3
-  process: null
-  roast_type: filter
-  schema_version: 16
-  status: ok
-  url: https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/milkyway-espresso-blend/
-- last_seen: '2026-07-14'
-  name: Brazil Morada da Prata Natural
-  origin: Brazil
-  packaging:
-  - price: 14.0
-    weight_g: 250
-  - price: 54.0
-    weight_g: 1000
-  page_hash: 38fd67496559f23541552d9ea4dd2f006d01dfe8da65114b9d4ba8666531cff7
-  process: natural
-  roast_type: espresso
-  schema_version: 20
-  status: ok
-  url: https://www.goriffee.com/shop/kava/brazil-morada-da-prata-natural/
-- acidity: 0
-  bitterness: null
-  body: null
-  brewing_recommendations: 'Pákový espresso kávovar: Brew ratio (vstupná gramáž, výstupná
-    gramáž, čas): Najčastejšie používaný pomer pre espresso je 1:2 až 1:2,5 (káva:voda),
-    a čas približne 20-25s. 1.krok: Odvážime si čerstvo namletú kávu (príklad 14g)
-    2.krok: Nasypeme kávu do suchého a čistého portafiltra, rovnomerne rozložíme a
-    utampujeme 3.krok: Vždy pred a po extrakcii odpustíme horúcu vodu z hlavy, nasadíme
-    páku a spúšťame extrakciu 3.krok: Výslednú extrakciu v šálke “púšťame” na váhu,
-    v prípade že používame 14g kávy a brewratio 1:2,5, výsledný objem by mal byť 35g
-    pri čase 20-25 sekúnd. Malý tip na záver: Ak sa espresso extrahuje prirýchlo,
-    treba zvoliť jemnejšie mletie. Ak sa espresso extrahuje príliš pomaly, treba naopak
-    zvoliť hrubšie mletie. Neexistuje univerzálny recept pre espresso, každá káva
-    si vyžaduje iný prístup. Ak budete hľadať ten správny recept pre tú vašu kávu,
-    nemeňte vždy naraz všetky hodnoty (čas, vstupná gramáž, výstupná gramáž). Pracujte
-    vždy iba s jednou premenou a pozorujte zmeny v chutí. Automatický kávovar: Každý
-    automatický kávovar má svoje nastavenia, o ktoré sa nemusíte starať. Väčšinou
-    stačí stlačiť gombík. Odporúčame používať prefiltrovanú vodu, ktorou zlepšíte
-    chuť kávy o 100%. Moka kávovar / Koťogo: Vodu ktorú budeme používať si dopredu
-    zohrejeme v konvici, aby sme sa vyhli zbytočne dlhému vriacemu procesu pri prírpave
-    kávy Používame o trochu hrubšie mletie ako na espresso 1.krok : Zohriatu vodu
-    nalejeme do spodnej časti mokky tesne pod ventil 2.krok : Do sitka nasypeme do
-    plna čerstvo namletú kávu, neutláčame 3.krok : Poskladáme všetky časti mokky a
-    dáme zohrievať 4.krok : Keď budeme počuť jemné “chrchlanie” káva je hotová. 5.krok
-    : Ochladíme spodnú časť mokky aby sme zastavili proces extrakcie Malý tip na záver
-    : Udržiavať čistotu moka expressu je veľmi dôležité, je potrebné ho dôkladne prepláchnuť
-    po každej príprave kávy. Pokiaľ bude mokka express zanesený od nečistôt, môže
-    spôsobovať nežiadúcu horkú chuť kávy. Ak vám káva z mokky “vyprskla” príliž rýchlo,
-    pravdepodobne ste ju varili na silnom ohni. Spomalte teplotu a extrakcia bude
-    plynulá a chuť komplexná. Nazdravie:)'
-  is_decaffeinated: false
-  last_seen: '2026-07-20'
-  name: Brazil Caramelo natural
-  origin: Brazil
-  packaging:
-  - price: 11.0
-    variant: medium roast
-    weight_g: 250
-  - price: 42.0
-    variant: medium roast
-    weight_g: 1000
-  - price: 11.0
-    variant: full city roast
-    weight_g: 250
-  - price: 42.0
-    variant: full city roast
-    weight_g: 1000
-  page_hash: d48980c4b732ccaa7f7b5c02abb67e93bd7b6d51fd5473ebe608356d352ac75c
-  price_from: null
-  price_to: null
-  process: natural
-  quantity: null
-  roast_type: espresso
-  schema_version: 22
-  status: ok
-  stock_status: null
-  sweetness: null
-  tasting_notes: karamel, orechy, čokoláda, sladká, krémová
-  url: https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/brazil-caramelo-natural/
-- last_seen: '2026-07-20'
-  page_hash: 36b877742800a8842b897d5dba416bd1daa18f64d9da5d4c649d83875bacf046
-  status: not_a_product
-  url: https://www.goriffee.com/kontaktujte-nas/
-- acidity: null
-  bitterness: null
-  body: null
-  brewing_recommendations: null
-  is_decaffeinated: null
-  last_seen: '2026-07-20'
-  missing_fields:
-  - origin
-  name: 'Výhodný balík: 3x Kávové kapsule pre Nespresso'
-  origin: null
-  packaging:
-  - price: 45.0
-    variant: 1x 250g Brazil Caramelo natural – kávové kapsule pre Nespresso
-    weight_g: 250
-  - price: 45.0
-    variant: 1x 250g Milkyway espresso blend – kávové kapsule pre Nespresso
-    weight_g: 250
-  - price: 45.0
-    variant: 1x 250g Colombia Decaf – kávové kapsule pre Nespresso
-    weight_g: 250
-  page_hash: daa330157254a6cde7efaae8ddd61224873eb0a6da5fdb767f5bcce073731e0d
-  price_from: 40.5
-  price_to: null
-  process: null
-  quantity: null
-  roast_type: nespresso
-  schema_version: 22
-  status: incomplete
-  stock_status: null
-  sweetness: null
-  tasting_notes: null
-  url: https://www.goriffee.com/shop/kava/kavove-kapsule/vyhodny-balik-3x-kavove-kapsule-pre-nespresso/
-- last_seen: '2026-07-10'
-  missing_fields:
-  - weight_g
-  name: Peach Please Brew Bags
-  origin: Colombia
-  packaging:
-  - price: 16.0
-    weight_g: null
-  page_hash: 26b94166248867f1235015344344bbc366f46d6f6cd8f45264e8293472b7cc94
-  process: null
-  roast_type: filter
-  schema_version: 16
-  status: incomplete
-  url: https://www.goriffee.com/shop/kava/peach-please-brew-bags/
-- last_seen: '2026-07-12'
-  missing_fields:
-  - weight_g
-  name: Colombia Tumbaga Decaf – kávové kapsule
-  origin: Colombia
-  packaging:
-  - price: 15.0
-    weight_g: null
-  - price: 57.0
-    weight_g: null
-  page_hash: 48f4e2db8d79387b989cc9d57a0b486a387eec8442d81e46a7bb762d28a0ccbe
-  process: natural
-  roast_type: nespresso
-  schema_version: 19
-  status: incomplete
-  url: https://www.goriffee.com/shop/kava/bezkofeinova-kava/colombia-tumbaga-decaf-kavove-kapsule/
-- last_seen: '2026-07-20'
-  page_hash: ba0e9bfca9a17d1e171963e975a38bc794caff97c253d0eb282fbf6db71b81f7
+  sweetness: 8
+  tasting_notes: hrozno, med, jahody
+  url: https://www.goriffee.com/shop/kava/brazil-rodomunho-natural/
+- last_seen: '2026-07-21'
+  page_hash: a0e20a1eba39209a9ad845cb879d64b3c7c11a7636c60a52c57e27c909afbb3b
   status: not_a_product
   url: https://www.goriffee.com/velkoobchod-kava-do-firiem/
-- last_seen: '2026-07-20'
-  page_hash: e495175571672610247c2f8b811ad9f1e747f38da1e5fe2385786ee4739fabd2
-  status: not_a_product
-  url: https://www.goriffee.com/kavovy-catering-goriffee/
-- last_seen: '2026-07-20'
-  page_hash: 3e05ac693543ac7e2707ac7a2a138d268b997769472d23757ab4d673059a0879
-  status: not_a_product
-  url: https://www.goriffee.com/produkty/
 green-plantation:
 - last_seen: '2026-07-20'
   page_hash: b504d7cb71916c8408e25ed2d50eaf588b2e341d9bdcee2af2722b38d5c3caae
@@ -7274,7 +7589,7 @@ kaan-roastery:
   tasting_notes: karamel, pekanové orechy, jablko
   url: https://kaan.sk/produkt/tasty-decaf/
 kaffa-roastery:
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 96ecbcfa451c84c6ecbe711dfffb20f3bc0a5573f90f687cadd0fb834b04f55a
   status: not_a_product
   url: https://kaffaroastery.sk/produkt/only-good-kaffa-5-panelova-siltovka-terracotta-tehlova/
@@ -7282,7 +7597,7 @@ kaffa-roastery:
   page_hash: 7485e067829ad72a4ccfbc4a738806bc595b0d6fe9a9cf238052e1659e54b667
   status: not_a_product
   url: https://kaffaroastery.sk/produkt/only-good-kaffa-5-panelova-siltovka-black-cierna/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: e2b9a0694046094fe315712ba98b9c0c8244bb7bd901422c4ed36619a1b4d0d5
   status: not_a_product
   url: https://kaffaroastery.sk/vseobecne-obchodne-podmienky/
@@ -7336,7 +7651,7 @@ kaffa-roastery:
   page_hash: ea13d81a1b0e90ec989b36c773c26c81798dea524f72aa90367cb53210d644b1
   status: not_a_product
   url: https://kaffaroastery.sk/produkt/only-good-kaffa-tricko-biele/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 9f0353a88fd42b21fdbbc069eaa6c15cd4fdd1dd310a3335bf77cfce29920132
   status: not_a_product
   url: https://kaffaroastery.sk/merch/
@@ -7377,7 +7692,7 @@ kaffa-roastery:
   page_hash: bf2e663b4ba0543e6550d8f52fa57b74954f9d9ca9ccd06a18fa984cd8940275
   status: not_a_product
   url: https://kaffaroastery.sk/kava-na-filter/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 6a17b5e16a0302968646be14b96ac4d880df002ed61db8754c8d426554ee02f6
   status: not_a_product
   url: https://kaffaroastery.sk/tradicne-espresso/
@@ -7434,7 +7749,7 @@ kaffa-roastery:
   sweetness: null
   tasting_notes: Žltý melón, mango, med, marakuja, pomarančový kvet, javorový sirup
   url: https://kaffaroastery.sk/produkt/stellar-origin/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: f8b2446c61be1c80def5e3099c308cc6895b043872fdcc844297cc39385d8745
   status: not_a_product
   url: https://kaffaroastery.sk/zasady-ochrany-osobnych-udajov/
@@ -7447,7 +7762,7 @@ kaffa-roastery:
   body: null
   brewing_recommendations: espresso
   is_decaffeinated: false
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-21'
   name: Costa Rica Hacienda Sonora
   origin: Costa Rica
   packaging:
@@ -7465,7 +7780,7 @@ kaffa-roastery:
   sweetness: null
   tasting_notes: Tropické ovocie, červené víno, horká čokoláda, višňa, cukrová trstina
   url: https://kaffaroastery.sk/produkt/costa-rica-hacienda-sonora/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: d0b8b22b54f7289f1ead87322f933e07cb2bfc2641ae57acdcbf5da57c72c3a5
   status: not_a_product
   url: https://kaffaroastery.sk/kariera/
@@ -9952,11 +10267,11 @@ ready-after:
   page_hash: 0329a56d125bca84fedb973bbf38717349bc67ba0670f9055d4b01cce0c6f0a8
   status: not_a_product
   url: https://www.readyafter.sk/ostatne/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 4dfe2572a668e6501d4cb15bb32b0d80ffdaaec653ff0d8931c8680258a6d511
   status: not_a_product
   url: https://www.readyafter.sk/ako-vybrat-kavu/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: a64576b9db0cc51c1105f9fe30d12b6db02c41be3db47334d57ae9c7a6acb0d6
   status: not_a_product
   url: https://www.readyafter.sk/moka-konvicky-kotogo/
@@ -10008,7 +10323,7 @@ ready-after:
   page_hash: 9e85dbd81c87c1048bc4e283a8e6960c0ea2a9d740149e70d0035e05538cf72b
   status: not_a_product
   url: https://www.readyafter.sk/udrzatelnost/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: ec7361f5a8ca2062dee0511e2d6eb502ac52acfec82280c4d874a82cb32d5d5d
   status: not_a_product
   url: https://www.readyafter.sk/kava-podla-kyslosti/
@@ -10102,7 +10417,7 @@ ready-after:
   page_hash: a3658dc596db9f349ff7ee4254162cc90f4781a06853008c395caf8b6b2a845a
   status: not_a_product
   url: https://www.readyafter.sk/bentianna/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: b6163ca661808e27898ad69318f20acdfccd4f5998d619a6aa47927e75c1eec0
   status: not_a_product
   url: https://www.readyafter.sk/filtre-do-kavovaru/
@@ -10142,7 +10457,7 @@ ready-after:
   page_hash: 946247b6ea1be05e478f6e8d9bd3ab097e14d3a5432973b61d754bb407e9d254
   status: not_a_product
   url: https://www.readyafter.sk/kava-do-kancelarie/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: b6740809b763c52538d9bb1222dabd8d9d4e0703ed7852cb4abe8a464bbce6ca
   status: not_a_product
   url: https://www.readyafter.sk/ovocne-sypane-caje/
@@ -10182,7 +10497,7 @@ ready-after:
   page_hash: 53ceb6eef862e1328340e665a4000d10cc757e71d18823c2b5ce4792dfd6dd51
   status: not_a_product
   url: https://www.readyafter.sk/cistiaca-chemia/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 86ab8eeaad640cf7e7de2e235e2ea83219215129bbe45e6e006deea5315dd733
   status: not_a_product
   url: https://www.readyafter.sk/sunrise-vyberova-kavova-zmes/
@@ -10260,7 +10575,7 @@ ready-after:
   page_hash: 44cdd2e97000859de97bc165e4d53fab7cf666c7b3c1c56b83773e721c2e5ea7
   status: not_a_product
   url: https://www.readyafter.sk/zlavnene-produkty/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 0a163a8e8213d9cbbd9b64753c972c9e4a2f21214959b0b929e1854fdd5e1b2a
   status: not_a_product
   url: https://www.readyafter.sk/salky-na-kavu/
@@ -10344,7 +10659,7 @@ ready-after:
   page_hash: 39d87ea4b189c39e672fe896bdbac03d26f82a193007fb050ad81fb5680263be
   status: not_a_product
   url: https://www.readyafter.sk/filtre-na-kavu/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 0859ad26bcb079c294bf76d0f373fa90faa9b37918cc7dad83ab26689b7d74dd
   status: not_a_product
   url: https://www.readyafter.sk/pochutiny/
@@ -10420,7 +10735,7 @@ ready-after:
   page_hash: 8076796cd0f42dcc21876a79534c1e87ad8b0656ec7ff48927ea149336eec5c0
   status: not_a_product
   url: https://www.readyafter.sk/kava-pre-histaminikov-histaminova-intolerancia/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: d900fb58ea47293c5981048a6e513fd2d99a4f45a45b97f42e72d3bd658915bd
   status: not_a_product
   url: https://www.readyafter.sk/keepcup/
@@ -10484,7 +10799,7 @@ ready-after:
   page_hash: caa7fb0438eb49f16759d77eca35bcb17e4a06f9399018cd099fb3c148fff27c
   status: not_a_product
   url: https://www.readyafter.sk/kavove-filter-kava/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 6ecffb08e6f70d3ef4c91f572865fe102f825f00cbfce4cbd4cb1c9b8fe63942
   status: not_a_product
   url: https://www.readyafter.sk/pohare-na-kavu-so-sebou/
@@ -10492,7 +10807,7 @@ ready-after:
   page_hash: 4a859a39138ae8f564ab6330531103a9470e7f978e5bd16ebaa63291333b7aa7
   status: not_a_product
   url: https://www.readyafter.sk/kavovy-slovnik/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: b83ac98d1ba9399f4438491018712042853f5b89afcb8301d88ac831af2d9563
   status: not_a_product
   url: https://www.readyafter.sk/french-press-kavovary/
@@ -12321,7 +12636,7 @@ suca-roastery:
   schema_version: 16
   status: ok
   url: https://www.sucaroastery.sk/p/guatemala-la-bella-natural
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 4163c266e22cccbb808e9d43b5ba767f2cb084269a862196f944a90f5988cf92
   status: not_a_product
   url: https://www.sucaroastery.sk/customer/find-order/
@@ -12419,7 +12734,7 @@ sweet-beans-coffee:
   body: null
   brewing_recommendations: null
   is_decaffeinated: false
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-21'
   name: Colombia Villa Betulia | washed pacamara
   origin: Colombia
   packaging:
@@ -13264,7 +13579,7 @@ trip-roasters:
   sweetness: null
   tasting_notes: tmavá čokoláda, pomaranč a mandle
   url: https://triproasters.sk/peru-amazonas/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 02cfe4c16b9ef56ec53a4700f8a563449bfb6311546f9563a19dab5f58d777ef
   status: not_a_product
   url: https://triproasters.sk/prislusenstvo-ku-kave/
@@ -13431,7 +13746,7 @@ trip-roasters:
   tasting_notes: Karamel, jablko a mliečna čokoláda
   url: https://triproasters.sk/colombia-tumbaga-decaf/
 triple-five-coffee:
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 914b73b699ea739e0750adc4ff237575918362b73a1a7a2dcba727089f2df27d
   status: not_a_product
   url: https://triplefivecoffee.com/prenajom-priestorov/
@@ -13564,7 +13879,7 @@ triple-five-coffee:
   body: null
   brewing_recommendations: Kalita, Chemex, French press, V60, Aeropress
   is_decaffeinated: false
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-21'
   name: Rwanda Natural (filter)
   origin: Rwanda
   packaging:
@@ -13592,7 +13907,7 @@ triple-five-coffee:
   page_hash: d67b171702d08edb44d9457cc80ef89f79f13efc824ac333e75a00eded8b83ec
   status: not_a_product
   url: https://triplefivecoffee.com/merch/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 4e9f142dab38addda8cc77a56c3583dcff246bf37d329a04c53fdd4c366cb336
   status: not_a_product
   url: https://triplefivecoffee.com/kaviarne/
@@ -13605,7 +13920,7 @@ triple-five-coffee:
   body: null
   brewing_recommendations: V60, Kalita, Chemex, Aeropress
   is_decaffeinated: null
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-21'
   name: Tanzania Acacia Hills (filter)
   origin: Tanzania
   packaging:
@@ -13625,7 +13940,7 @@ triple-five-coffee:
   sweetness: null
   tasting_notes: Almond, blueberry, honey, strawberry, floral
   url: https://triplefivecoffee.com/product/tanzania-acacia-hills-filter/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-21'
   page_hash: 865b6899d13b2292c268e4533a9cc93430cfe7ed780845ef467e41b5e4fec182
   status: not_a_product
   url: https://triplefivecoffee.com/obchod/
@@ -13634,7 +13949,7 @@ triple-five-coffee:
   body: null
   brewing_recommendations: V60, Kalita, Chemex, Aeropress
   is_decaffeinated: null
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-21'
   name: Tanzania Geisha (filter)
   origin: Tanzania
   packaging:

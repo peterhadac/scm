@@ -3739,8 +3739,8 @@ async def test_run_records_failed_status_for_roaster_that_raised(monkeypatch, tm
     # issue #38: every summary line carries the roaster's own processing
     # duration so a run creeping toward the job timeout shows which
     # roasters to look at.
-    assert re.search(r"Roaster One: ok \(\d+s\)", out)
-    assert re.search(r"Roaster Two: failed \(\d+s\)", out)
+    assert re.search(r"Roaster One: ok \(\d+s, \d+ products\)", out)
+    assert re.search(r"Roaster Two: failed \(\d+s, \d+ products\)", out)
 
 
 @pytest.mark.asyncio
@@ -4053,10 +4053,12 @@ def test_write_github_step_summary_writes_table(tmp_path):
 
     content = summary_path.read_text()
     assert "## Scrape run health" in content
-    assert "| Roaster | Status | Note |" in content
+    assert "| Roaster | Status | Products | Note |" in content
     assert "Kavoholik" in content and "| ok |" in content
     assert "Broken Roaster" in content and "| failed |" in content
     assert "Js Roaster" in content and "| needs_js |" in content
+    # Verify new sections were added
+    assert "## Product URLs by Roaster" in content
 
 
 def test_write_github_step_summary_appends_not_overwrites(tmp_path):
@@ -4116,6 +4118,8 @@ def test_build_scrape_status_records_first_ok_run_has_zero_streak():
         "status": "ok",
         "last_run": "2026-07-06",
         "consecutive_non_ok": 0,
+        "product_count": 0,
+        "product_urls": [],
     }
 
 

@@ -2430,7 +2430,7 @@ async def process_roaster(crawler, client, roaster, existing_entries, today, max
     return kept, status
 
 
-def build_scrape_status_records(statuses_by_slug, today, previous=None):
+def build_scrape_status_records(statuses_by_slug, today, previous=None, products_by_slug=None):
     """Merge this run's per-roaster statuses into the persisted health record.
 
     Issue #28. `statuses_by_slug` is {slug: {"name": ..., "status": ...}}
@@ -2443,6 +2443,9 @@ def build_scrape_status_records(statuses_by_slug, today, previous=None):
     needs_js, partial all count — every one of them means "the site wasn't
     cleanly readable this run") and resets to 0 the moment a roaster comes
     back "ok".
+
+    `products_by_slug` is {slug: list of product entries} for the same
+    roasters — used to include product count and URLs in the status record.
     """
     previous = previous or {}
     records = {slug: dict(record) for slug, record in previous.items()}
@@ -2451,35 +2454,75 @@ def build_scrape_status_records(statuses_by_slug, today, previous=None):
         prior = previous.get(slug) or {}
         prior_streak = prior.get("consecutive_non_ok", 0) if isinstance(prior, dict) else 0
         consecutive_non_ok = 0 if status == "ok" else prior_streak + 1
+        
+        # Include product count and URLs in the status record
+        product_entries = products_by_slug.get(slug, []) if products_by_slug else []
+        product_count = len(product_entries)
+        product_urls = [p["url"] for p in product_entries if p.get("url")]
+        
+        # For failed/needs_js/partial status, preserve prior product URLs if no new data
+        if status in ("failed", "needs_js", "partial") and slug in previous:
+            prior_urls = previous[slug].get("product_urls", [])
+            if prior_urls:
+                product_urls = prior_urls
+            # Also preserve the previous product count for failed roasters
+            prior_count = previous[slug].get("product_count", 0)
+            if prior_count > 0:
+                product_count = prior_count
+        
         records[slug] = {
             "name": info.get("name", slug),
             "status": status,
             "last_run": today,
             "consecutive_non_ok": consecutive_non_ok,
+            "product_count": product_count,
+            "product_urls": product_urls,
         }
     return records
 
 
-def write_github_step_summary(statuses_by_slug, summary_path=None):
+def write_github_step_summary(statuses_by_slug, summary_path=None, records=None):
     """Append a roaster-health Markdown table to $GITHUB_STEP_SUMMARY.
 
     Issue #28, suggested fix 1. `summary_path` defaults to reading the
     GITHUB_STEP_SUMMARY env var — only set inside a GitHub Actions job step,
     so running this locally (or from a test that doesn't pass a path) is a
     silent no-op, not an error.
+
+    `records` is the full scrape_status.yaml data (keyed by slug) and is used
+    to include product count and URLs in the summary.
     """
     if summary_path is None:
         summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
     if not summary_path:
         return
-    lines = ["## Scrape run health", "", "| Roaster | Status | Note |", "| --- | --- | --- |"]
+    lines = ["## Scrape run health", "", "| Roaster | Status | Products | Note |", "| --- | --- | --- | --- |"]
     for slug in sorted(statuses_by_slug, key=lambda s: statuses_by_slug[s]["name"].lower()):
         info = statuses_by_slug[slug]
         status = info["status"]
         note = ROASTER_STATUS_NOTES.get(status, "") if status != "ok" else ""
-        lines.append(f"| {info['name']} | {status} | {note} |")
+        # Get product count from records if available
+        product_count = 0
+        if records and slug in records:
+            product_count = records[slug].get("product_count", 0)
+        lines.append(f"| {info['name']} | {status} | {product_count} | {note} |")
     with open(summary_path, "a", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
+    
+    # Add product URLs section
+    lines = ["", "## Product URLs by Roaster", ""]
+    for slug in sorted(statuses_by_slug, key=lambda s: statuses_by_slug[s]["name"].lower()):
+        if records and slug in records:
+            record = records[slug]
+            name = record.get("name", slug)
+            product_urls = record.get("product_urls", [])
+            if product_urls:
+                lines.append(f"### {name}")
+                for url in product_urls:
+                    lines.append(f"- {url}")
+                lines.append("")
+    with open(summary_path, "a", encoding="utf-8") as f:
+        f.write("\n".join(lines))
 
 
 def emit_warning_annotations(statuses_by_slug):
@@ -2519,11 +2562,31 @@ def escalate_repeated_failures(records, threshold=CONSECUTIVE_NON_OK_ALERT_THRES
         if streak >= threshold:
             name = record.get("name", slug)
             status = record.get("status", "?")
+            product_count = record.get("product_count", 0)
             print(
                 f"::error::Roaster '{name}' has been non-ok for {streak} "
-                f"consecutive runs (current status: '{status}') — needs "
+                f"consecutive runs (current status: '{status}', {product_count} products) — needs "
                 "attention (scraper: playwright? dead scrape_url? delisted?)"
             )
+
+
+def check_urls(status_records, threshold=10):
+    """Print a distinct ``::warning::`` annotation for roasters with many URLs.
+
+    This helps identify roasters that might have changed their site structure
+    or have an unusually large number of products that might need manual review.
+    """
+    for slug, record in status_records.items():
+        if not isinstance(record, dict):
+            continue
+        product_count = record.get("product_count", 0)
+        if product_count >= threshold:
+            name = record.get("name", slug)
+            print(
+                f"::warning::Roaster '{name}' has {product_count} products - consider reviewing "
+                "the product list for completeness and accuracy"
+            )
+
 
 
 def _require_openrouter_api_key():
@@ -2653,13 +2716,23 @@ async def run(
 
         await asyncio.gather(*(process_one(roaster) for roaster in roasters))
 
+    # Build products_by_slug for product count/URLs in scrape_status
+    products_by_slug = {slug: entries for slug, entries in products.items() if entries}
+    previous_status_records = load_scrape_status(status_path)
+    status_records = build_scrape_status_records(statuses_by_slug, today, previous_status_records, products_by_slug)
+    save_scrape_status(status_records, status_path)
+    
     print("scrape_status:")
     # Sorted for readable, deterministic output — completion order (and so
     # dict insertion order) is no longer list order once roasters run
     # concurrently, but that has no bearing on correctness, only on how
     # this summary reads.
     for name in sorted(statuses):
-        print(f"  {name}: {statuses[name]} ({durations.get(name, 0.0):.0f}s)")
+        slug = next((s for s, info in statuses_by_slug.items() if info["name"] == name), name)
+        product_count = 0
+        if slug in status_records:
+            product_count = status_records[slug].get("product_count", 0)
+        print(f"  {name}: {statuses[name]} ({durations.get(name, 0.0):.0f}s, {product_count} products)")
 
     # Issue #28: the stdout summary above is invisible unless someone opens
     # the Actions log — surface non-ok roasters where they're actually
@@ -2667,11 +2740,8 @@ async def run(
     # UI), persist a run-over-run health record, and escalate a roaster
     # that's been stuck non-ok for CONSECUTIVE_NON_OK_ALERT_THRESHOLD+ runs.
     emit_warning_annotations(statuses_by_slug)
-    write_github_step_summary(statuses_by_slug)
-
-    previous_status_records = load_scrape_status(status_path)
-    status_records = build_scrape_status_records(statuses_by_slug, today, previous_status_records)
-    save_scrape_status(status_records, status_path)
+    write_github_step_summary(statuses_by_slug, None, status_records)
+    check_urls(status_records)
     escalate_repeated_failures(status_records)
     report_llm_usage()
 

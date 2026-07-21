@@ -695,11 +695,31 @@ const goatcounterCode = process.env.GOATCOUNTER_CODE;
       box-shadow: none;
       border: none;
       background: none;
-      padding-left: 0.75rem;
+      padding: 0;
     }
 
     .nav-dropdown[data-open='true'] .nav-dropdown-menu {
       display: block;
+    }
+
+    /* Mobile menu items should be full-width with no nowrap */
+    .nav-dropdown-menu > li {
+      width: 100%;
+    }
+
+    .nav-dropdown-menu a {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 0.6rem 0.5rem;
+      border-radius: var(--md-sys-shape-corner-small);
+      white-space: normal;
+      font-size: var(--md-sys-typescale-body-medium-size);
+    }
+
+    .nav-dropdown-menu a:hover {
+      background: var(--md-sys-color-surface-container-highest);
+      color: var(--md-sys-color-primary);
     }
   }
 

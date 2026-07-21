@@ -1,3 +1,4 @@
-# GSD context snapshot (2026-07-21T20:00:55.080Z)
+# GSD context snapshot (2026-07-21T21:03:30.373Z)
 
-_No durable memories, active context, or exec history to surface._
+## Recent gsd_exec runs
+- [f5990980-2d79-4162-b465-f6dc462f0eb6] bash exit:2 — UAT M001/S01/UAT-01 (uat-browser-check)

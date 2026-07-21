@@ -60,7 +60,7 @@ good-times-coffee-roasters:
   status: ok
 goriffee:
   consecutive_non_ok: 0
-  last_run: '2026-07-20'
+  last_run: '2026-07-21'
   name: Goriffee
   status: ok
 green-plantation:

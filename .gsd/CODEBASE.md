@@ -1,13 +1,14 @@
 # Codebase Map
 
-Generated: 2026-07-21T19:04:13Z | Files: 170 | Described: 0/170
-<!-- gsd:codebase-meta {"generatedAt":"2026-07-21T19:04:13Z","fingerprint":"948838ff98f5f93dac618f40f8762bde30cd5627","fileCount":170,"truncated":false} -->
+Generated: 2026-07-21T20:07:12Z | Files: 171 | Described: 0/171
+<!-- gsd:codebase-meta {"generatedAt":"2026-07-21T20:07:12Z","fingerprint":"0996b084888761f0f2f85967180afa49d0fed0af","fileCount":171,"truncated":false} -->
 
 ### (root)/
 - `.env.example`
 - `.gitignore`
 - `.lighthouserc.json`
 - `.node-version`
+- `AGENTS.md`
 - `Architecture.md`
 - `astro.config.mjs`
 - `CLAUDE.md`

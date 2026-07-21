@@ -1139,11 +1139,10 @@ def extract_shoptet_variations(soup):
     JSON dump of just the own-product (variant, price) pairs, sorted — NOT
     the whole attribute, which would leak the related-products carousel
     into the page hash (issue #13's exact failure mode). Tiers are deduped
-    by (weight_g, variant) — first-seen wins for a true full duplicate, but
-    a grind axis crossed with the weight axis (e.g. "Zrnková" vs "Mletá" at
-    the same weight) now keeps each combination as its own tier, tagged
-    with whichever comma-segment of the raw `variant` string isn't the
-    weight one.
+    by (weight_g) only — variants that differ only by grind type (or other
+    non-weight axes) at the same price are collapsed into one per weight
+    tier. The `variant` field is only set for the "Zrnková káva" (whole beans)
+    option since grind types are configurations, not separate variants.
     """
     script = soup.find("script", id="trackingScript")
     if not script or not script.has_attr("data-products"):
@@ -1173,22 +1172,34 @@ def extract_shoptet_variations(soup):
             continue
         pairs.append((str(record.get("variant") or ""), price))
 
-    tiers = []
-    seen_tiers = set()
+    # Group by (weight_g, price) and keep only the "Zrnková káva" (whole beans)
+    # variant for each unique weight+price combination. On Shoptet sites, the
+    # "Zomlieť kávu?" (grind type) option is a configuration, not a separate
+    # product variant — all grind types share the same price and weight.
+    weight_price_map: dict[tuple[int | None, float], str] = {}
     for variant, price in pairs:
         weight_g = parse_weight(variant)
-        # The weight lives in exactly one comma-segment (e.g. "Hmotnosť:
-        # 500g"); any other segment(s) (e.g. "Zomlieť kávu?: Zrnková
-        # káva") name a second axis — join them as this tier's label.
+        # Extract the non-weight part (the grind type) for the variant label.
         segments = [s.strip() for s in variant.split(",")]
         variant_label = ", ".join(s for s in segments if parse_weight(s) is None) or None
-        tier_key = (weight_g, variant_label)
-        if not is_valid_tier(weight_g, price) or tier_key in seen_tiers:
+        # Only keep the "Zrnková káva" (whole beans) variant for each weight.
+        # Grind types like "Mletá káva..." are not separate variants.
+        if variant_label and "Zrnková káva" not in variant_label:
             continue
-        seen_tiers.add(tier_key)
+        key = (weight_g, price)
+        # If we already have an entry for this (weight, price), only update
+        # if this is the whole-bean variant (preferred over ground variants).
+        if key not in weight_price_map:
+            weight_price_map[key] = variant_label
+
+    tiers = []
+    for (weight_g, price), variant_label in weight_price_map.items():
+        if not is_valid_tier(weight_g, price):
+            continue
         tier = {"weight_g": weight_g, "price": price}
-        if variant_label:
-            tier["variant"] = variant_label
+        # Only include variant if it's the whole-bean option.
+        if variant_label and "Zrnková káva" in variant_label:
+            tier["variant"] = "Zrnková káva"
         tiers.append(tier)
     raw_projection = json.dumps(sorted(pairs), ensure_ascii=False) if pairs else ""
     return raw_projection, tiers
@@ -2543,6 +2554,19 @@ def _require_openrouter_api_key():
     return api_key
 
 
+async def _create_llm_client():
+    """Create an OpenAI-compatible client for LLM extraction.
+    
+    Supports either OpenRouter (default) or a local Ollama instance.
+    Set OLLAMA_BASE_URL to use a local Ollama (e.g. http://localhost:11434/v1).
+    """
+    if ollama_url := os.environ.get("OLLAMA_BASE_URL"):
+        # Use local Ollama - no API key required
+        return OpenAI(base_url=ollama_url, api_key="ollama")
+    else:
+        # Use OpenRouter (default)
+        return OpenAI(base_url=OPENROUTER_BASE_URL, api_key=_require_openrouter_api_key())
+
 async def run(
     only=None,
     roasters_path=ROASTERS_PATH,
@@ -2550,7 +2574,7 @@ async def run(
     status_path=STATUS_PATH,
     history_path=HISTORY_PATH,
 ):
-    client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=_require_openrouter_api_key())
+    client = await _create_llm_client()
     all_roasters = load_roasters(roasters_path)
     roasters = all_roasters
     if only:

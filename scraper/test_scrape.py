@@ -477,14 +477,17 @@ SHOPTET_RECORDS = {
 }
 
 
-def test_extract_shoptet_variations_keeps_distinct_grind_tiers_per_weight():
+def test_extract_shoptet_variations_keeps_only_whole_beans_per_weight():
+    # Shoptet sites have a weight selector (500g, 1000g) and a grind-type
+    # selector (Zrnková káva, Mletá káva...). The grind type is a configuration,
+    # not a separate variant — all grind types share the same price and weight.
+    # Only the "Zrnková káva" (whole beans) option should be recorded.
     raw, tiers = scrape.extract_shoptet_variations(_soup(_shoptet_html(SHOPTET_RECORDS)))
     assert raw  # non-empty, folded into the page hash
+    # Only 2 tiers: 500g whole beans and 1000g whole beans
     assert sorted(tiers, key=lambda t: (t["weight_g"], t["variant"])) == [
-        {"weight_g": 500, "price": 17.0, "variant": "Zomlieť kávu?: Mletá káva na zalievanie"},
-        {"weight_g": 500, "price": 17.0, "variant": "Zomlieť kávu?: Zrnková káva"},
-        {"weight_g": 1000, "price": 34.0, "variant": "Zomlieť kávu?: Mletá káva na frenchpress"},
-        {"weight_g": 1000, "price": 34.0, "variant": "Zomlieť kávu?: Zrnková káva"},
+        {"weight_g": 500, "price": 17.0, "variant": "Zrnková káva"},
+        {"weight_g": 1000, "price": 34.0, "variant": "Zrnková káva"},
     ]
 
 

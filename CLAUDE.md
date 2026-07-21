@@ -421,3 +421,16 @@ pnpm dev             # astro dev server with live reload
 3. Run scraper locally to verify extraction works — this also validates the new entry against `roasters.schema.yaml`
 4. If output is empty, add `scraper: playwright` and re-test
 5. Commit `roasters.yaml` — next cron run picks it up
+
+## Shoptet Variant Handling (Pražiareň Veľké Zálužie and others)
+
+When a Shoptet-based roaster (e.g. praziarenvelkezaluzie.sk) has products with **weight + grind-type variant selectors**, the scraper should only record the base weight tiers (e.g. 500g, 1000g) with **"Zrnková káva" (whole beans)** as the variant, not every grind-type combination.
+
+**Why:** On these sites, the "Zomlieť kávu?" (grind type) option is a configuration selector on the same physical product, not a separate variant. All grind types (whole beans, ground for V60, ground for Aeropress, etc.) share the same price and weight.
+
+**Expected behavior:**
+- For a product with 500g at €17 and 1000g at €34 (each with 7 grind options), the scraper should produce **2 packaging entries**, not 14.
+- Each entry should have `variant: "Zrnková káva"` to indicate the default whole-bean form.
+- The scrape should filter out all "Mletá káva..." (ground) variants.
+
+**Implementation:** See `extract_shoptet_variations()` in `scraper/scrape.py` which should deduplicate by `(weight_g, price)` and keep only the whole-bean option per weight.

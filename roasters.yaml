@@ -143,34 +143,18 @@ roasters:
     scrape_url: https://www.coffeeart.me/kategoria/9-grams-coffee/   # 9gramscoffee.sk has no on-site catalog; products are sold via this external storefront
     metadata:
       city: Žilina
-  - name: Green Plantation
-    slug: green-plantation
-    url: https://www.gpkava.sk/
-    scrape_url: https://www.gpkava.sk/cerstva-kava
-    metadata:
-      city: Komárno
   - name: Simple Coffee
     slug: simple-coffee
     url: https://simplecoffee.sk/
     scrape_url: https://simplecoffee.sk/kategorie/zrnkova-kava/
     metadata:
       city: Bratislava
-  # Sedmitchka: Shopify storefront is password-locked as of 2026-07-17
-  # (https://sedmitchka.coffee/en/collections/kava-1 → 302 → /en/password),
-  # so there is nothing to scrape. Re-enable once the shop reopens — see the
-  # "Roaster health: Sedmitchka Coffee Roasters" tracking issue.
-  # - name: Sedmitchka Coffee Roasters
-  #   slug: sedmitchka-coffee-roasters
-  #   url: https://sedmitchka.coffee/
-  #   scrape_url: https://sedmitchka.coffee/en/collections/kava-1
-  #   metadata:
-  #     city: Dubnica nad Váhom
   - name: Incuple
     slug: incuple
     url: https://incuple.sk/
     scrape_url: https://incuple.sk/obchod/
     metadata:
-      city: Topoľčany
+      city: Kamanová
   - name: Epera Coffee
     slug: epera-coffee
     url: https://www.praziarenepera.sk/

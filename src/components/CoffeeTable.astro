@@ -1,6 +1,6 @@
 ---
 import { flattenProducts, safeUrl, type RoastType } from '../lib/coffees';
-import { UI, localizedOrigin, localizedProcess, localizedRoastType, type Lang } from '../lib/i18n';
+import { UI, localizedOrigin, localizedRoastType, type Lang } from '../lib/i18n';
 import { loadPriceHistory, historyKey, sparklinePoints } from '../lib/priceHistory';
 import Badge from './ui/Badge.astro';
 
@@ -59,7 +59,6 @@ function isStale(lastSeen: string | undefined | null): boolean {
   return ageDays > STALE_THRESHOLD_DAYS;
 }
 
-const PROCESS_BADGE_CLASSES = new Set(['washed', 'natural', 'honey']);
 
 // ── Build-time stats derived from the imported JSON ──────────────
 const total = coffees.length;
@@ -131,10 +130,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
           <label class="ct-label" for="filter-origin">{t.origin}</label>
           <select id="filter-origin" class="ct-select"><option value="">{t.all}</option></select>
         </div>
-        <div class="ct-filter-group">
-          <label class="ct-label" for="filter-process">{t.process}</label>
-          <select id="filter-process" class="ct-select"><option value="">{t.all}</option></select>
-        </div>
         {!roastType && (
           <div class="ct-filter-group">
             <label class="ct-label" for="filter-roast">{t.roast}</label>
@@ -161,7 +156,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   </div>
   </div>
 
-  <div class="ct-legend" aria-label={t.processColourKey}>
+  <div class="ct-legend" aria-label="coffee table legend">
     <span class="ct-legend-desc">
       {t.tipNudge}{' '}
       <a href="https://ko-fi.com/slovakcoffeemap" target="_blank" rel="noopener noreferrer">{t.tipNudgeLink}</a>
@@ -192,11 +187,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               {t.origin} <span class="ct-sort-ind" aria-hidden="true"></span>
             </button>
           </th>
-          <th aria-sort="none">
-            <button type="button" class="ct-sort-th" data-sort="process">
-              {t.process} <span class="ct-sort-ind" aria-hidden="true"></span>
-            </button>
-          </th>
           <th class="ct-num" aria-sort="none">
             <button type="button" class="ct-sort-th ct-sort-th--num" data-sort="weight">
               {t.weight} <span class="ct-sort-ind" aria-hidden="true"></span>
@@ -204,12 +194,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
           </th>
           <th class="ct-num" aria-sort="none">
             <button type="button" class="ct-sort-th ct-sort-th--num" data-sort="price">
-              {t.price} <span class="ct-sort-ind" aria-hidden="true"></span>
-            </button>
-          </th>
-          <th class="ct-num ct-muted-h" aria-sort="none">
-            <button type="button" class="ct-sort-th ct-sort-th--num" data-sort="per100g">
-              {t.per100g} <span class="ct-sort-ind" aria-hidden="true"></span>
+              {t.pricePer100g} <span class="ct-sort-ind" aria-hidden="true"></span>
             </button>
           </th>
           <th>{t.offers}</th>
@@ -225,7 +210,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
             per100gNum <= bestPer100g + 0.001;
           const stale = isStale(c.last_seen);
           const originLabel = localizedOrigin(c.origin, lang);
-          const processLabel = localizedProcess(c.process, lang);
           // Blend composition (issue #93): component countries shown after
           // the "Blend"/"Zmes" label, localized through the same map as
           // the label itself. Only the rendered text — data-origin stays
@@ -249,11 +233,9 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
               data-name={c.name}
               data-roaster={c.roaster}
               data-origin={c.origin ?? ''}
-              data-process={c.process ?? ''}
               data-roast={c.roast_type ?? ''}
               data-weight={c.weight_g ?? ''}
-              data-price={c.price}
-              data-per100g={per100gNum !== null ? per100gNum.toFixed(4) : ''}
+              data-price={per100gNum !== null ? per100gNum.toFixed(4) : ''}
               class={isBest ? 'ct-row--best' : undefined}
             >
               <td>
@@ -287,20 +269,8 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
                   <span class="ct-blend-comp">&nbsp;({blendComposition})</span>
                 )}
               </td>
-              <td>
-                {c.process
-                  ? <>
-                      {blendComposition && <span class="ct-blend-comp" style={{marginRight: '3px'}}>({blendComposition})</span>}
-                      <Badge variant={(PROCESS_BADGE_CLASSES.has(c.process) ? c.process : 'other') as 'washed' | 'honey' | 'natural' | 'other'} title={processLabel ?? undefined}>{processLabel}</Badge>
-                      {c.is_decaffeinated && (
-                        <span class="ct-decaf-tag" title="Decaffeinated">DEC</span>
-                      )}
-                    </>
-                  : <span class="ct-muted">—</span>
-                }
-              </td>
               <td class="ct-num ct-price">
-                {fmtEur(c.price)}
+                {per100g}
               </td>
             </tr>
           );
@@ -311,7 +281,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 </div>
 
 <script>
-  import { UI, ORIGIN_LABELS, PROCESS_LABELS, type Lang } from '../lib/i18n';
+  import { UI, ORIGIN_LABELS, type Lang } from '../lib/i18n';
 
   // Starlight always sets <html lang> to match the current page's locale —
   // reading it here keeps this client script in sync with the server-rendered
@@ -348,13 +318,12 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   // Dropdown *values* stay the raw English key so filtering (which compares
   // against the English data-* attributes below) is unaffected by language —
   // only the visible option text is translated.
-  function labelFor(attr: 'roaster' | 'origin' | 'process' | 'roast', value: string): string {
+  function labelFor(attr: 'roaster' | 'origin' | 'roast', value: string): string {
     if (attr === 'origin') return ORIGIN_LABELS[value]?.[lang] ?? value;
-    if (attr === 'process') return PROCESS_LABELS[value]?.[lang] ?? value;
     return value;
   }
 
-  function populateSelect(id: string, attr: 'roaster' | 'origin' | 'process' | 'roast') {
+  function populateSelect(id: string, attr: 'roaster' | 'origin' | 'roast') {
     const select = document.getElementById(id) as HTMLSelectElement | null;
     if (!select) return;
     const values = [...new Set(rows.map(r => r.dataset[attr]).filter(Boolean))] as string[];
@@ -370,12 +339,10 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
   populateSelect('filter-roaster', 'roaster');
   populateSelect('filter-origin', 'origin');
-  populateSelect('filter-process', 'process');
 
   const searchInput = document.getElementById('filter-search')  as HTMLInputElement;
   const roasterSel  = document.getElementById('filter-roaster') as HTMLSelectElement;
   const originSel   = document.getElementById('filter-origin')  as HTMLSelectElement;
-  const processSel  = document.getElementById('filter-process') as HTMLSelectElement;
   const roastSel    = document.getElementById('filter-roast')   as HTMLSelectElement | null;
   const clearBtn    = document.getElementById('clear-filters')  as HTMLButtonElement;
   const filtersToggle = document.getElementById('filters-toggle') as HTMLDetailsElement;
@@ -399,13 +366,12 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
   }
 
   function filtersActive() {
-    return !!(searchTerm || roasterSel.value || originSel.value || processSel.value || roastSel?.value);
+    return !!(searchTerm || roasterSel.value || originSel.value || roastSel?.value);
   }
 
   function applyFilters() {
     const roaster = roasterSel.value;
     const origin  = originSel.value;
-    const process = processSel.value;
     const roast   = roastSel?.value ?? '';
     const q = searchTerm;
     let count = 0;
@@ -418,7 +384,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
         (!q       || haystack.includes(q))                &&
         (!roaster || row.dataset.roaster === roaster)     &&
         (!origin  || row.dataset.origin  === origin)      &&
-        (!process || row.dataset.process === process)     &&
         (!roast   || row.dataset.roast   === roast);
       row.hidden = !match;
       if (match) count++;
@@ -428,32 +393,32 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     resultCount.textContent = t.coffeeCount(count);
     clearBtn.hidden = !filtersActive();
 
-    const dropdownCount = [roaster, origin, process, roast].filter(Boolean).length;
+    const dropdownCount = [roaster, origin, roast].filter(Boolean).length;
     filtersBadge.textContent = String(dropdownCount);
     filtersBadge.hidden = dropdownCount === 0;
   }
 
   // ── Sorting: click a column header to sort, click again to flip ──
-  type SortKey = 'name' | 'roaster' | 'origin' | 'process' | 'weight' | 'price' | 'per100g';
+  type SortKey = 'name' | 'roaster' | 'origin' | 'weight' | 'price' | 'per100g';
   let sortState: { key: SortKey; dir: 'asc' | 'desc' } | null = null;
 
-  // null means the cell shows "—" (no origin/process/weight scraped) — such
+  // null means the cell shows "—" (no origin/weight scraped) — such
   // rows are pinned to the bottom regardless of direction, so flipping the
   // sort never surfaces a screenful of dashes first.
   function valueFor(row: HTMLTableRowElement, key: SortKey): number | string | null {
     if (key === 'name') return (row.dataset.name || '').toLowerCase();
     if (key === 'roaster') return (row.dataset.roaster || '').toLowerCase();
-    if (key === 'origin' || key === 'process') {
+    if (key === 'origin') {
       // Sort by the *displayed* (localized) label, not the English data-*
       // key — on the Slovak pages the column reads Slovak labels, and
       // sorting by hidden English keys would look randomly ordered.
       const raw = row.dataset[key];
       if (!raw) return null;
-      const labels = key === 'origin' ? ORIGIN_LABELS : PROCESS_LABELS;
+      const labels = key === 'origin' ? ORIGIN_LABELS : {};
       return (labels[raw]?.[lang] ?? raw).toLowerCase();
     }
     if (key === 'price') return parseFloat(row.dataset.price || '0');
-    const raw = key === 'weight' ? row.dataset.weight : row.dataset.per100g;
+    const raw = key === 'weight' ? row.dataset.weight : row.dataset.price;
     return raw ? parseFloat(raw) : null;
   }
 
@@ -520,7 +485,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
 
   roasterSel.addEventListener('change', applyFilters);
   originSel.addEventListener('change',  applyFilters);
-  processSel.addEventListener('change', applyFilters);
   roastSel?.addEventListener('change',  applyFilters);
 
   clearBtn.addEventListener('click', () => {
@@ -528,7 +492,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     searchTerm = '';
     roasterSel.value = '';
     originSel.value  = '';
-    processSel.value = '';
     if (roastSel) roastSel.value = '';
     applyFilters();
     searchInput.focus();

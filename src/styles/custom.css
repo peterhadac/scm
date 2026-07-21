@@ -2,39 +2,29 @@
    Slovak Coffee Map — custom palette
    Morning Snow  #F5F4ED   Amazon Mist  #ECECDC   Black Kite  #351E1C
    Aqua Mist     #A0C9CB   Toxic Orange #FF6037   Garnet      #733635
-   Deep Espresso #100C0B   Warm Coffee  #8B5E3C
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* Self-hosted fonts (see #26 — no hotlinking fonts.googleapis.com for GDPR
-    reasons). DM Serif Display: regular weight only, normal + italic (matches
-    the old `ital@0;1` Google Fonts request). DM Sans: static 300/400/500
-    weights only (design-audit item: Design.md's own typography table never
-    calls for the full variable weight axis, and @fontsource-variable/dm-sans
-    was shipping it anyway). */
-@import '@fontsource/playfair-display/700.css';
-
-/* ── Typography (see Design.md) — DM Serif Display + DM Sans + Playfair Display, no third family ── */
+   reasons). DM Serif Display: regular weight only, normal + italic (matches
+   the old `ital@0;1` Google Fonts request). DM Sans: static 300/400/500
+   weights only (design-audit item: Design.md's own typography table never
+   calls for the full variable weight axis, and @fontsource-variable/dm-sans
+   was shipping it anyway). */
 @import '@fontsource/dm-serif-display/400.css';
 @import '@fontsource/dm-serif-display/400-italic.css';
 @import '@fontsource/dm-sans/300.css';
 @import '@fontsource/dm-sans/400.css';
 @import '@fontsource/dm-sans/500.css';
-@import '@fontsource/playfair-display/700.css';
 
-/* ── Typography (see Design.md) — DM Serif Display + DM Sans + Playfair Display, no third family ── */
+/* ── Typography (see Design.md) — DM Serif Display + DM Sans, no third family ── */
 :root {
   --font-serif: 'DM Serif Display', Georgia, serif;
   --font-sans:  'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-serif-display: 'Playfair Display', Georgia, serif;
   --sl-font: var(--font-sans);
 
   /* Wordmark — Full colour · Light (Morning Snow background) */
   --wordmark-slovak:    #351E1C;
   --wordmark-coffeemap: #733635;
-
-  /* Brand expansion — Deep Espresso and Warm Coffee */
-  --color-deep-espresso: #100C0B;
-  --color-warm-coffee: #8B5E3C;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -56,44 +46,14 @@ h1#_top,
   font-family: var(--font-serif);
 }
 
-/* Hero display headings → enhanced letter-spacing (per Awwwards plan Step 13) */
-.hero h1,
-h1 {
-  font-family: var(--font-serif);
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-}
-
 /* Main content headings → serif, per Design.md Typography */
+h1,
 h2 {
   font-family: var(--font-serif);
-  font-size: clamp(1.5rem, 4vw, 2rem);
-  line-height: 1.20;
-  letter-spacing: -0.01em;
-}
-
-/* Subheadings → serif with improved line-height */
-h3 {
-  font-family: var(--font-serif);
-  font-size: clamp(1.125rem, 3vw, 1.5rem);
-  line-height: 1.40;
-  letter-spacing: 0;
-}
-
-/* Pull quotes and testimonials — Playfair Display (per Awwwards plan Step 3) */
-.quotation,
-.pull-quote {
-  font-family: var(--font-serif-display);
-  font-size: 1.5rem;
-  line-height: 1.6;
-  font-weight: 400;
-}
-
-/* Body text → improved line-height (per Awwwards plan Step 13) */
-body {
-  line-height: 1.60;
-  letter-spacing: 0;
+  font-size: var(--md-sys-typescale-headline-large-size);
+  line-height: var(--md-sys-typescale-headline-large-line-height);
+  font-weight: var(--md-sys-typescale-headline-large-weight);
+  letter-spacing: var(--md-sys-typescale-headline-large-tracking);
 }
 
 /* ── Light tokens ─────────────────────────────────────────────────────────── */
@@ -252,6 +212,15 @@ body {
   --md-sys-state-dragged-opacity: 0.16;
   --md-sys-state-disabled-container-opacity: 0.12;
   --md-sys-state-disabled-label-opacity: 0.38;
+
+  /* Awwwards-level motion system — enhanced easing for polished feel */
+  --motion-easing-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --motion-easing-bounce: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  --motion-easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-easing-sharp: cubic-bezier(0.4, 0, 0.6, 1);
+  --motion-duration-slow: 600ms;
+  --motion-duration-normal: 300ms;
+  --motion-duration-fast: 150ms;
 }
 
 /* ── Dark tokens — prefers-color-scheme ──────────────────────────────────── */
@@ -301,6 +270,15 @@ body {
     --md-sys-elevation-level3: 0 8px 24px hsl(200 50% 2% / 0.28);
     --md-sys-elevation-level4: 0 12px 32px hsl(200 50% 2% / 0.3);
     --md-sys-elevation-level5: 0 18px 44px hsl(200 50% 2% / 0.34);
+
+    /* Awwwards-level motion system — enhanced easing for polished feel */
+    --motion-easing-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --motion-easing-bounce: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+    --motion-easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --motion-easing-sharp: cubic-bezier(0.4, 0, 0.6, 1);
+    --motion-duration-slow: 600ms;
+    --motion-duration-normal: 300ms;
+    --motion-duration-fast: 150ms;
   }
 }
 
@@ -338,6 +316,7 @@ html[data-theme="dark"] {
   --md-sys-color-on-primary:                #611200 !important;
   --md-sys-color-primary-container:         #891e00 !important;
   --md-sys-color-on-primary-container:      #ffdbd2 !important;
+
   --md-sys-color-error:                     #ffb4ab !important;
   --md-sys-color-on-error:                  #690005 !important;
   --md-sys-color-error-container:           #93000a !important;
@@ -350,6 +329,15 @@ html[data-theme="dark"] {
   --md-sys-elevation-level3: 0 8px 24px hsl(200 50% 2% / 0.28);
   --md-sys-elevation-level4: 0 12px 32px hsl(200 50% 2% / 0.3);
   --md-sys-elevation-level5: 0 18px 44px hsl(200 50% 2% / 0.34);
+
+  /* Awwwards-level motion system — enhanced easing for polished feel */
+  --motion-easing-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --motion-easing-bounce: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  --motion-easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-easing-sharp: cubic-bezier(0.4, 0, 0.6, 1);
+  --motion-duration-slow: 600ms;
+  --motion-duration-normal: 300ms;
+  --motion-duration-fast: 150ms;
 }
 
 /* ── Baseline prose (issue #121) ──────────────────────────────────────────
@@ -411,6 +399,300 @@ main :where(blockquote) {
 }
 
 
+/* ── Awwwards-level polished motion system ─────────────────────────────── */
+/* Smooth scrolling for page navigation */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Global transition mask — all transitions use enhanced easing */
+*,
+*::before,
+*::after {
+  transition-timing-function: var(--motion-easing-smooth);
+}
+
+/* ── Micro-interactions — buttons ──────────────────────────────────────── */
+.button,
+astro-button {
+  transition: all var(--motion-duration-fast) var(--motion-easing-smooth);
+  transform-origin: center;
+}
+
+.button:hover,
+astro-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px hsl(190 18% 13% / 0.15);
+}
+
+.button:active,
+astro-button:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 6px hsl(190 18% 13% / 0.1);
+}
+
+/* Button ripple effect */
+.button::after,
+astro-button::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  background: currentColor;
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+  transition: transform var(--motion-duration-normal) var(--motion-easing-bounce),
+              opacity var(--motion-duration-normal) var(--motion-easing-smooth);
+}
+
+.button:hover::after,
+astro-button:hover::after {
+  opacity: 0.1;
+  transform: scale(2);
+}
+
+/* ── Micro-interactions — cards ────────────────────────────────────────── */
+.card,
+.CoffeeTable-card {
+  transition: all var(--motion-duration-normal) var(--motion-easing-smooth);
+  transform-origin: center;
+}
+
+.card:hover,
+.CoffeeTable-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px hsl(190 18% 13% / 0.12);
+}
+
+.card:active,
+.CoffeeTable-card:active {
+  transform: scale(0.98);
+}
+
+/* ── Hero section polish ───────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.1), transparent 40%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero headline reveal animation */
+.hero h1 {
+  opacity: 0;
+  animation: headlineReveal 0.8s var(--motion-easing-bounce) forwards;
+  animation-delay: 0.2s;
+}
+
+@keyframes headlineReveal {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Coffee table polish ───────────────────────────────────────────────── */
+.CoffeeTable {
+  transition: opacity var(--motion-duration-normal) var(--motion-easing-smooth);
+}
+
+.CoffeeTable-loading {
+  opacity: 0.5;
+}
+
+.CoffeeTable:not(.CoffeeTable-loading) {
+  opacity: 1;
+}
+
+/* Table row hover state */
+.CoffeeTable-row {
+  transition: background-color var(--motion-duration-fast) var(--motion-easing-smooth);
+}
+
+.CoffeeTable-row:hover {
+  background-color: var(--md-sys-color-surface-container-low);
+}
+
+/* Table header sort indicator */
+.CoffeeTable-sortable:hover {
+  cursor: pointer;
+  color: var(--md-sys-color-primary);
+}
+
+.CoffeeTable-sortable:hover::after {
+  content: '↓';
+  margin-left: 4px;
+  animation: sortIndicator var(--motion-duration-fast) var(--motion-easing-smooth) infinite alternate;
+}
+
+@keyframes sortIndicator {
+  from { transform: translateY(0); }
+  to { transform: translateY(2px); }
+}
+
+/* ── Navigation polish ─────────────────────────────────────────────────── */
+.nav-link {
+  position: relative;
+  transition: color var(--motion-duration-fast) var(--motion-easing-smooth);
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width var(--motion-duration-normal) var(--motion-easing-emphasized);
+}
+
+.nav-link:hover::before,
+.nav-link:focus-visible::before {
+  width: 100%;
+}
+
+/* ── Theme toggle polish ───────────────────────────────────────────────── */
+.theme-toggle {
+  position: relative;
+  overflow: hidden;
+  transition: background-color var(--motion-duration-normal) var(--motion-easing-smooth);
+}
+
+.theme-toggle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 180deg at 50% 50%, var(--md-sys-color-primary) 0deg, var(--md-sys-color-primary-container) 90deg, transparent 90deg, transparent 180deg, var(--md-sys-color-primary) 180deg, var(--md-sys-color-primary-container) 270deg, transparent 270deg, transparent 360deg);
+  opacity: 0;
+  transition: opacity var(--motion-duration-normal) var(--motion-easing-smooth);
+}
+
+.theme-toggle:hover::before {
+  opacity: 0.1;
+}
+
+/* ── Language switcher polish ──────────────────────────────────────────── */
+.lang-switch {
+  position: relative;
+  transition: background-color var(--motion-duration-fast) var(--motion-easing-smooth);
+}
+
+.lang-switch::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--md-sys-color-primary);
+  transition: width var(--motion-duration-normal) var(--motion-easing-emphasized);
+}
+
+.lang-switch:hover::after {
+  width: 50%;
+}
+
+/* ── Stale badge indicator polish ──────────────────────────────────────── */
+.ct-stale {
+  animation: pulseBadge var(--motion-duration-long) var(--motion-easing-smooth) infinite;
+}
+
+@keyframes pulseBadge {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 hsl(20 70% 50% / 0.7);
+  }
+  70% {
+    opacity: 1;
+    box-shadow: 0 0 0 6px hsl(20 70% 50% / 0);
+  }
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 hsl(20 70% 50% / 0);
+  }
+}
+
+/* ── Loading states polish ─────────────────────────────────────────────── */
+.loading-skeleton {
+  background: linear-gradient(90deg, var(--md-sys-color-surface-container-low) 25%, var(--md-sys-color-surface-container) 50%, var(--md-sys-color-surface-container-low) 75%);
+  background-size: 200% 100%;
+  animation: shimmer var(--motion-duration-long) var(--motion-easing-linear) infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Mobile optimization polish ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    line-height: 1.1;
+  }
+
+  .hero h1 {
+    animation: mobileHeadlineReveal 0.6s var(--motion-easing-bounce) forwards;
+    animation-delay: 0.1s;
+  }
+
+  @keyframes mobileHeadlineReveal {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .button,
+  astro-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .card:hover,
+  .CoffeeTable-card:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* ── Reduced motion preference ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* ── Issue #139/142: decaf tag and stock status badge ────────────── */
 .ct-decaf-tag {
   font-size: 0.75em;
@@ -422,208 +704,48 @@ main :where(blockquote) {
   color: var(--md-sys-color-on-surface-variant);
   margin-left: 4px;
   vertical-align: middle;
-  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1);
-}
-.ct-decaf-tag:hover {
-  transform: scale(1.05);
 }
 
 .ct-stock {
   font-size: 0.8em;
   padding: 1px 5px;
   border-radius: var(--md-sys-shape-corner-full);
-  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1);
+  transition: all var(--motion-duration-fast) var(--motion-easing-smooth);
 }
 .ct-stock.out-of-stock { background: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); }
 .ct-stock.pre-order { background: var(--md-sys-color-warning-container); color: var(--md-sys-color-on-warning-container); }
-.ct-stock.in-stock { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
-.ct-stock:hover { transform: scale(1.05); }
 
-/* ── Awwwards Step 4: Value Score Gauge ───────────────────────────── */
-.score-gauge {
-  position: relative;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
-}
-.score-gauge:hover {
-  transform: scale(1.15);
-}
-.score-gauge .gauge-track {
-  fill: none;
-  stroke: var(--md-sys-color-outline-variant);
-  stroke-width: 2;
-}
-.score-gauge .gauge-fill {
-  fill: none;
-  stroke: var(--color-warm-coffee);
-  stroke-width: 2;
-  stroke-dasharray: 88;
-  stroke-dashoffset: 88;
-  animation: gauge-fill 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  transition: stroke-dashoffset 0.3s ease-out;
-}
-@keyframes gauge-fill {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-.score-gauge .score-label {
-  position: absolute;
-  font-size: 9px;
-  font-weight: 600;
-  color: var(--md-sys-color-on-surface);
-}
-
-/* ── Awwwards Steps 6, 7, 18: Animation System & Best Practices ───── */
-/* Animation timing functions (Awwwards Step 18) */
-:root {
-  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-emphasized: cubic-bezier(0.3, 0, 0.8, 0.15);
-  --ease-bouncy: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-/* Animation durations (Awwdoors Step 18) */
-:root {
-  --duration-micro: 150ms;
-  --duration-macro: 300ms;
-  --duration-complex: 500ms;
-}
-
-/* Reduce motion fallback (Awwdoors Step 18) */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+/* ── Dark mode polish enhancements ─────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .lightness-scheme {
+    --lightness-amount: 2;
   }
 }
 
-/* Staggered row entry (Awwdoors Step 6) */
-@keyframes row-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
+html[data-theme="dark"] .lightness-scheme {
+  --lightness-amount: 2;
 }
 
-@keyframes row-in-stagger {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: none; }
+/* Dark mode card hover polish */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .card:hover,
+  html:not([data-theme="light"]) .CoffeeTable-card:hover {
+    box-shadow: 0 12px 32px hsl(200 50% 2% / 0.2);
+  }
 }
 
-/* Parallax table header (Awwdoors Step 6) */
-@keyframes parallax-in {
-  from { transform: translateY(15px); }
-  to { transform: translateY(0); }
+html[data-theme="dark"] .card:hover,
+html[data-theme="dark"] .CoffeeTable-card:hover {
+  box-shadow: 0 12px 32px hsl(200 50% 2% / 0.2);
 }
 
-/* Micro-interactions (Awwdoors Step 7) */
-@keyframes button-scale-hover {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.03); }
-  100% { transform: scale(1.03); }
+/* Dark mode navigation polish */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .nav-link::before {
+    background: var(--md-sys-color-primary);
+  }
 }
 
-@keyframes button-scale-active {
-  0% { transform: scale(1.03); }
-  100% { transform: scale(0.97); }
-}
-
-/* Price drop animation (Awwdoors Step 9) */
-@keyframes price-drop-fall {
-  0% { transform: translateY(-10px) scale(1.2); opacity: 0; }
-  70% { transform: translateY(2px) scale(0.9); }
-  100% { transform: translateY(0) scale(1); opacity: 1; }
-}
-
-/* Sparkline expansion (Awwdoors Step 9) */
-@keyframes sparkline-expand {
-  from { width: 0; opacity: 0; }
-  to { width: 100%; opacity: 1; }
-}
-
-/* Loading skeleton shimmer (Awwdoors Step 8) */
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-/* Processing ripple (Awwdoors Step 8) */
-@keyframes processing-ripple {
-  0% { width: 0; height: 0; opacity: 1; }
-  100% { width: 100px; height: 100px; opacity: 0; }
-}
-
-/* Bouncy pulse for buttons (Awwdoors Step 7/18) */
-@keyframes button-pulse {
-  0% { box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 -3px 0 rgba(0,0,0,0.16) inset, 0 6px 14px -4px rgba(179,42,1,0.55); }
-  50% { box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 -3px 0 rgba(0,0,0,0.16) inset, 0 8px 18px -4px rgba(179,42,1,0.6); transform: scale(1.03); }
-  100% { box-shadow: 0 -2px 0 rgba(0,0,0,0.18) inset, 0 2px 6px -2px rgba(179,42,1,0.5); transform: scale(0.97); }
-}
-
-/* Bouncy spring for filter toggle (Awwdoors Step 7/18) */
-@keyframes spring-expand {
-  from { height: 0; opacity: 0; transforms: translateY(-10px); }
-  50% { height: 200px; opacity: 1; transforms: translateY(5px); }
-  to { height: 100%; opacity: 1; transforms: translateY(0); }
-}
-
-/* Smooth scale transition (Awwdoors Step 7/18) */
-.scale-smooth {
-  transition: transform 0.3s var(--ease-standard);
-}
-
-/* Hover scale (Awwdoors Step 7) */
-.hover-scale:hover {
-  transform: scale(1.03);
-}
-
-/* Active scale (Awwdoors Step 7) */
-.active-scale {
-  transform: scale(0.97);
-}
-
-/* Smooth border glow (Awwdoors Step 7) */
-.border-glow {
-  transition: box-shadow 0.2s var(--ease-emphasized);
-}
-
-.border-glow:hover {
-  box-shadow: 0 0 0 1px color-mix(in oklch, var(--md-sys-color-primary) 30%, transparent);
-}
-
-/* ── Awwdoors Step 15: Enhanced Grid System ───────────────────────── */
-/* Enhanced grid for cards */
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 32px;
-  margin: 32px 0;
-}
-
-.card {
-  padding: 24px;
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-medium);
-  background: color-mix(in oklch, var(--md-sys-color-surface) 95%, transparent);
-  transition: transform 0.3s var(--ease-standard);
-}
-
-.card:hover {
-  transform: scale(1.02);
-}
-
-/* Section gutters */
-.section {
-  padding: 64px 32px;
-}
-
-.section-sm {
-  padding: 48px 32px;
-}
-
-.section-xs {
-  padding: 32px 16px;
+html[data-theme="dark"] .nav-link::before {
+  background: var(--md-sys-color-primary);
 }

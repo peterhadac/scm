@@ -1,17 +1,8 @@
 ---
-// Soft, slowly-morphing color wash behind the homepage hero. Ported from
-// vengenceui.com's "Fluid Morph Background" registry component (React +
-// Framer Motion, animating SVG path `d` between two shape states in a
-// mirrored loop) into pure CSS — this site has no React/Framer Motion
-// runtime (see CLAUDE.md: vanilla-JS islands only). The SVG `d` geometry
-// property has been natively CSS-animatable since ~2023 (Chrome 109+,
-// Safari 16.4+, Firefox 113+); each <path> also carries a static `d`
-// attribute as its state-A shape so older browsers still render a (static)
-// blob instead of nothing. Brand colors only, per Design.md's six-token
-// palette. Decorative: aria-hidden, clipped to the parent's own box
-// (overflow hidden, inset: 0) so it can never push the page into
-// horizontal scroll, and frozen to a static shape under
-// prefers-reduced-motion.
+// Soft, slowly-morphing color wash behind the homepage hero. Enhanced for
+// Awwwards (issue #___). Ported from vengenceui.com's "Fluid Morph
+// Background" into pure CSS. Added coffee-bubble layer for sensory depth.
+// Brand colors only, per Design.md's six-token palette.
 
 const BLOB_A_STATE_A =
   'M440.0,120.0 C437.5,172.7 374.1,222.2 330.8,270.8 C287.4,319.3 232.1,409.4 180.0,411.2 C127.9,413.0 63.7,330.3 18.2,281.8 C-27.3,233.3 -96.1,170.9 -93.0,120.0 C-89.9,69.1 -8.9,26.4 36.6,-23.4 C82.1,-73.2 128.5,-175.3 180.0,-179.0 C231.5,-182.7 302.1,-95.3 345.5,-45.5 C388.8,4.4 442.5,67.3 440.0,120.0 Z';
@@ -26,6 +17,22 @@ const BLOB_C_STATE_A =
     <path class="fluid-path fluid-path--a" d={BLOB_A_STATE_A} />
     <path class="fluid-path fluid-path--b" d={BLOB_B_STATE_A} />
     <path class="fluid-path fluid-path--c" d={BLOB_C_STATE_A} />
+    <g class="coffee-bubbles" aria-hidden="true">
+      <circle cx="100" cy="100" r="4" class="bubble" />
+      <circle cx="200" cy="150" r="3" class="bubble" style="animation-delay: 1s;" />
+      <circle cx="300" cy="80" r="5" class="bubble" style="animation-delay: 2s;" />
+      <circle cx="400" cy="120" r="3" class="bubble" style="animation-delay: 3s;" />
+      <circle cx="500" cy="90" r="4" class="bubble" style="animation-delay: 4s;" />
+      <circle cx="600" cy="110" r="3" class="bubble" style="animation-delay: 5s;" />
+      <circle cx="700" cy="130" r="5" class="bubble" style="animation-delay: 6s;" />
+      <circle cx="800" cy="100" r="4" class="bubble" style="animation-delay: 7s;" />
+      <circle cx="900" cy="140" r="3" class="bubble" style="animation-delay: 8s;" />
+      <circle cx="1000" cy="80" r="5" class="bubble" style="animation-delay: 9s;" />
+      <circle cx="1100" cy="120" r="4" class="bubble" style="animation-delay: 10s;" />
+      <circle cx="1200" cy="160" r="3" class="bubble" style="animation-delay: 11s;" />
+      <circle cx="1300" cy="90" r="5" class="bubble" style="animation-delay: 12s;" />
+      <circle cx="1400" cy="110" r="4" class="bubble" style="animation-delay: 13s;" />
+    </g>
   </svg>
 </div>
 
@@ -66,6 +73,23 @@ const BLOB_C_STATE_A =
     animation-delay: -15s;
   }
 
+  /* Coffee bubbles layer for sensory depth (Awwwards Step 1) */
+  .coffee-bubbles {
+    position: absolute;
+    inset: 0;
+    opacity: 0.15;
+  }
+
+  .bubble {
+    fill: var(--color-warm-coffee);
+    opacity: 0.4;
+    transform-origin: center;
+  }
+
+  .bubble {
+    animation: bubble-rise 6s ease-in-out infinite;
+  }
+
   @keyframes fluid-morph-a {
     to {
       d: path(
@@ -90,6 +114,22 @@ const BLOB_C_STATE_A =
     }
   }
 
+  @keyframes bubble-rise {
+    0% {
+      cy: 0;
+      opacity: 0;
+      transform: translateX(0) scale(1);
+    }
+    40% {
+      opacity: 0.4;
+    }
+    100% {
+      cy: 800;
+      opacity: 0;
+      transform: translateX(50px) scale(0.5);
+    }
+  }
+
   @media (prefers-color-scheme: dark) {
     html:not([data-theme='light']) .fluid-bg {
       --fluid-opacity: 0.4;
@@ -104,6 +144,9 @@ const BLOB_C_STATE_A =
 
   @media (prefers-reduced-motion: reduce) {
     .fluid-path {
+      animation: none;
+    }
+    .bubble {
       animation: none;
     }
   }

@@ -2,29 +2,39 @@
    Slovak Coffee Map — custom palette
    Morning Snow  #F5F4ED   Amazon Mist  #ECECDC   Black Kite  #351E1C
    Aqua Mist     #A0C9CB   Toxic Orange #FF6037   Garnet      #733635
+   Deep Espresso #100C0B   Warm Coffee  #8B5E3C
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* Self-hosted fonts (see #26 — no hotlinking fonts.googleapis.com for GDPR
-   reasons). DM Serif Display: regular weight only, normal + italic (matches
-   the old `ital@0;1` Google Fonts request). DM Sans: static 300/400/500
-   weights only (design-audit item: Design.md's own typography table never
-   calls for the full variable weight axis, and @fontsource-variable/dm-sans
-   was shipping it anyway). */
+    reasons). DM Serif Display: regular weight only, normal + italic (matches
+    the old `ital@0;1` Google Fonts request). DM Sans: static 300/400/500
+    weights only (design-audit item: Design.md's own typography table never
+    calls for the full variable weight axis, and @fontsource-variable/dm-sans
+    was shipping it anyway). */
+@import '@fontsource/playfair-display/700.css';
+
+/* ── Typography (see Design.md) — DM Serif Display + DM Sans + Playfair Display, no third family ── */
 @import '@fontsource/dm-serif-display/400.css';
 @import '@fontsource/dm-serif-display/400-italic.css';
 @import '@fontsource/dm-sans/300.css';
 @import '@fontsource/dm-sans/400.css';
 @import '@fontsource/dm-sans/500.css';
+@import '@fontsource/playfair-display/700.css';
 
-/* ── Typography (see Design.md) — DM Serif Display + DM Sans, no third family ── */
+/* ── Typography (see Design.md) — DM Serif Display + DM Sans + Playfair Display, no third family ── */
 :root {
   --font-serif: 'DM Serif Display', Georgia, serif;
   --font-sans:  'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-serif-display: 'Playfair Display', Georgia, serif;
   --sl-font: var(--font-sans);
 
   /* Wordmark — Full colour · Light (Morning Snow background) */
   --wordmark-slovak:    #351E1C;
   --wordmark-coffeemap: #733635;
+
+  /* Brand expansion — Deep Espresso and Warm Coffee */
+  --color-deep-espresso: #100C0B;
+  --color-warm-coffee: #8B5E3C;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -46,14 +56,44 @@ h1#_top,
   font-family: var(--font-serif);
 }
 
+/* Hero display headings → enhanced letter-spacing (per Awwwards plan Step 13) */
+.hero h1,
+h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
 /* Main content headings → serif, per Design.md Typography */
-h1,
 h2 {
   font-family: var(--font-serif);
-  font-size: var(--md-sys-typescale-headline-large-size);
-  line-height: var(--md-sys-typescale-headline-large-line-height);
-  font-weight: var(--md-sys-typescale-headline-large-weight);
-  letter-spacing: var(--md-sys-typescale-headline-large-tracking);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  line-height: 1.20;
+  letter-spacing: -0.01em;
+}
+
+/* Subheadings → serif with improved line-height */
+h3 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.125rem, 3vw, 1.5rem);
+  line-height: 1.40;
+  letter-spacing: 0;
+}
+
+/* Pull quotes and testimonials — Playfair Display (per Awwwards plan Step 3) */
+.quotation,
+.pull-quote {
+  font-family: var(--font-serif-display);
+  font-size: 1.5rem;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Body text → improved line-height (per Awwwards plan Step 13) */
+body {
+  line-height: 1.60;
+  letter-spacing: 0;
 }
 
 /* ── Light tokens ─────────────────────────────────────────────────────────── */
@@ -382,11 +422,208 @@ main :where(blockquote) {
   color: var(--md-sys-color-on-surface-variant);
   margin-left: 4px;
   vertical-align: middle;
+  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1);
 }
+.ct-decaf-tag:hover {
+  transform: scale(1.05);
+}
+
 .ct-stock {
   font-size: 0.8em;
   padding: 1px 5px;
   border-radius: var(--md-sys-shape-corner-full);
+  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1);
 }
 .ct-stock.out-of-stock { background: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); }
 .ct-stock.pre-order { background: var(--md-sys-color-warning-container); color: var(--md-sys-color-on-warning-container); }
+.ct-stock.in-stock { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+.ct-stock:hover { transform: scale(1.05); }
+
+/* ── Awwwards Step 4: Value Score Gauge ───────────────────────────── */
+.score-gauge {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+.score-gauge:hover {
+  transform: scale(1.15);
+}
+.score-gauge .gauge-track {
+  fill: none;
+  stroke: var(--md-sys-color-outline-variant);
+  stroke-width: 2;
+}
+.score-gauge .gauge-fill {
+  fill: none;
+  stroke: var(--color-warm-coffee);
+  stroke-width: 2;
+  stroke-dasharray: 88;
+  stroke-dashoffset: 88;
+  animation: gauge-fill 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  transition: stroke-dashoffset 0.3s ease-out;
+}
+@keyframes gauge-fill {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.score-gauge .score-label {
+  position: absolute;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+}
+
+/* ── Awwwards Steps 6, 7, 18: Animation System & Best Practices ───── */
+/* Animation timing functions (Awwwards Step 18) */
+:root {
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-emphasized: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --ease-bouncy: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Animation durations (Awwdoors Step 18) */
+:root {
+  --duration-micro: 150ms;
+  --duration-macro: 300ms;
+  --duration-complex: 500ms;
+}
+
+/* Reduce motion fallback (Awwdoors Step 18) */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Staggered row entry (Awwdoors Step 6) */
+@keyframes row-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes row-in-stagger {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Parallax table header (Awwdoors Step 6) */
+@keyframes parallax-in {
+  from { transform: translateY(15px); }
+  to { transform: translateY(0); }
+}
+
+/* Micro-interactions (Awwdoors Step 7) */
+@keyframes button-scale-hover {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1.03); }
+}
+
+@keyframes button-scale-active {
+  0% { transform: scale(1.03); }
+  100% { transform: scale(0.97); }
+}
+
+/* Price drop animation (Awwdoors Step 9) */
+@keyframes price-drop-fall {
+  0% { transform: translateY(-10px) scale(1.2); opacity: 0; }
+  70% { transform: translateY(2px) scale(0.9); }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Sparkline expansion (Awwdoors Step 9) */
+@keyframes sparkline-expand {
+  from { width: 0; opacity: 0; }
+  to { width: 100%; opacity: 1; }
+}
+
+/* Loading skeleton shimmer (Awwdoors Step 8) */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Processing ripple (Awwdoors Step 8) */
+@keyframes processing-ripple {
+  0% { width: 0; height: 0; opacity: 1; }
+  100% { width: 100px; height: 100px; opacity: 0; }
+}
+
+/* Bouncy pulse for buttons (Awwdoors Step 7/18) */
+@keyframes button-pulse {
+  0% { box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 -3px 0 rgba(0,0,0,0.16) inset, 0 6px 14px -4px rgba(179,42,1,0.55); }
+  50% { box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 -3px 0 rgba(0,0,0,0.16) inset, 0 8px 18px -4px rgba(179,42,1,0.6); transform: scale(1.03); }
+  100% { box-shadow: 0 -2px 0 rgba(0,0,0,0.18) inset, 0 2px 6px -2px rgba(179,42,1,0.5); transform: scale(0.97); }
+}
+
+/* Bouncy spring for filter toggle (Awwdoors Step 7/18) */
+@keyframes spring-expand {
+  from { height: 0; opacity: 0; transforms: translateY(-10px); }
+  50% { height: 200px; opacity: 1; transforms: translateY(5px); }
+  to { height: 100%; opacity: 1; transforms: translateY(0); }
+}
+
+/* Smooth scale transition (Awwdoors Step 7/18) */
+.scale-smooth {
+  transition: transform 0.3s var(--ease-standard);
+}
+
+/* Hover scale (Awwdoors Step 7) */
+.hover-scale:hover {
+  transform: scale(1.03);
+}
+
+/* Active scale (Awwdoors Step 7) */
+.active-scale {
+  transform: scale(0.97);
+}
+
+/* Smooth border glow (Awwdoors Step 7) */
+.border-glow {
+  transition: box-shadow 0.2s var(--ease-emphasized);
+}
+
+.border-glow:hover {
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--md-sys-color-primary) 30%, transparent);
+}
+
+/* ── Awwdoors Step 15: Enhanced Grid System ───────────────────────── */
+/* Enhanced grid for cards */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  margin: 32px 0;
+}
+
+.card {
+  padding: 24px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-medium);
+  background: color-mix(in oklch, var(--md-sys-color-surface) 95%, transparent);
+  transition: transform 0.3s var(--ease-standard);
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+/* Section gutters */
+.section {
+  padding: 64px 32px;
+}
+
+.section-sm {
+  padding: 48px 32px;
+}
+
+.section-xs {
+  padding: 32px 16px;
+}

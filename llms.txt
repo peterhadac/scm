@@ -1,0 +1,31 @@
+ Slovak Coffee Map
+
+A weekly-updated catalogue of coffees available on the Slovak market,
+scraped from roaster websites, stored as JSON, and published via GitHub Pages.
+
+## Tech Stack
+- Frontend: Astro + custom layout (no Starlight)
+- Data: Python scraper with crawl4ai + OpenRouter LLM
+- Deployment: GitHub Actions + GitHub Pages
+
+## Project Structure
+- `data/products.yaml` - scraped coffee products
+- `data/roasters.yaml` - roaster configuration
+- `scraper/scrape.py` - main scraping script
+- `src/` - Astro site source (components, pages, lib)
+- `.github/workflows/` - CI/CD workflows
+
+## Key Files
+- `Architecture.md` - detailed system architecture
+- `CLAUDE.md` - project documentation
+- `Design.md` - brand and design system
+
+## Development
+- Scraper: uv run --directory scraper python scrape.py
+- Site: pnpm dev
+
+## Live Site
+https://peterhadac.github.io/scm/
+
+## License
+MIT License (code only; scraped data remains property of respective roasters)

@@ -1,7 +1,11 @@
-# GSD context snapshot (2026-07-22T20:35:11.477Z)
+# GSD context snapshot (2026-07-22T22:15:15.986Z)
+
+## Active context
+Active: M002-kxtqne / S01 / T04 - Create Slovak translations for drinks UI
 
 ## Recent gsd_exec runs
-- [51a93e90-c56c-4151-941f-e0ee3689b656] python exit:1
-- [ee83fbac-dd88-48d8-be13-0ac8430200d9] python exit:1
-- [251ed2b1-6bda-49f3-abbd-7b60c402dc89] bash exit:1
-- [dc8b7fae-6f2c-4aa9-82ab-075bd5dc6b41] bash exit:0
+- [8af186c5-22a6-4811-8ac1-d8667ea58394] bash exit:0
+- [f33f090f-c20d-42a4-b61b-152908747c7c] bash exit:0
+- [bca21697-e5b6-41e9-86dd-41af46822481] bash exit:0
+- [bb12371b-4440-41dc-b170-86b09dbf974d] bash exit:0
+- [a5464bef-6949-4ab0-a456-d7b0d4f341ca] bash exit:1

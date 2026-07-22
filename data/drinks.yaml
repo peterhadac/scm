@@ -1,1 +1,1318 @@
-drinks: []
+drinks:
+- title: Espresso
+  description: Espresso
+  ingredients:
+  - espresso
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: "Italy \u2014 Milan"
+  family: espresso
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Ristretto
+  description: Ristretto
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: 'Italy also: corto'
+  family: espresso
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Lungo
+  description: Lungo
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: "Italy also: caff\xE8 lungo"
+  family: espresso
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Doppio
+  description: Doppio
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: 'Italy also: double espresso'
+  family: espresso
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Caff\xE8 Americano"
+  description: "Caff\xE8 Americano"
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: "Italy/US \u2014 WWII lore: GIs stretching espresso to drip strength\
+    \ also: americano"
+  family: espresso
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Long Black
+  description: Long Black
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Australia/New Zealand
+  family: espresso
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Red Eye
+  description: Red Eye
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: 'United States (named for overnight ''red-eye'' flights) also: shot
+    in the dark'
+  family: espresso
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Caff\xE8 Crema"
+  description: "Caff\xE8 Crema"
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: "Alpine Europe \u2014 Switzerland/Austria"
+  family: espresso
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Espresso Romano
+  description: Espresso Romano
+  ingredients:
+  - espresso
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: "Disputed \u2014 likely Italian-American; rare in actual Rome"
+  family: espresso
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Caff\xE8 Latte"
+  description: "Caff\xE8 Latte"
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: "Italy (home breakfast) \u2192 US caf\xE9 standard (1980s Seattle\
+    \ wave) also: latte"
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Cappuccino
+  description: Cappuccino
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: "Italy \u2014 via Vienna's Kapuziner (coffee + cream matched to\
+    \ Capuchin friars' robe color)"
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Flat White
+  description: Flat White
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: 'Contested: Sydney (Alan Preston'
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Cortado
+  description: Cortado
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: "Spain ('cortar' \u2014 to cut) also: Gibraltar"
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Espresso Macchiato
+  description: Espresso Macchiato
+  ingredients:
+  - espresso
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: "Italy ('macchiato' = stained) also: caff\xE8 macchiato"
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Latte Macchiato
+  description: Latte Macchiato
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: 'Italy also: latte macchiato'
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Caff\xE8 Mocha"
+  description: "Caff\xE8 Mocha"
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: "United States (Seattle caf\xE9 wave"
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Caff\xE8 Breve"
+  description: "Caff\xE8 Breve"
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: 'United States (Starbucks popularized it) also: breve'
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Piccolo Latte
+  description: Piccolo Latte
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: 'Australia also: baby latte'
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Magic
+  description: Magic
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: Australia
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Caf\xE9 con Leche"
+  description: "Caf\xE9 con Leche"
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: "Spain (home breakfast) also: caf\xE9 con leche"
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Caf\xE9 au Lait"
+  description: "Caf\xE9 au Lait"
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: "France (home breakfast) also: caf\xE9 au lait"
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Gal\xE3o"
+  description: "Gal\xE3o"
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: "Portugal ( Lisbon caf\xE9s"
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Caf\xE9 Bomb\xF3n"
+  description: "Caf\xE9 Bomb\xF3n"
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: Spain (Valencia)
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Wiener Melange
+  description: Wiener Melange
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: "Austria (Vienna caf\xE9s"
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Spanish Latte
+  description: Spanish Latte
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: "United Arab Emirates (Dubaicaf\xE9s)"
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Dirty Chai
+  description: Dirty Chai
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: "United States (Brooklyn caf\xE9s"
+  family: milk-based
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Drip Coffee
+  description: Drip Coffee
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: United States (drip machines
+  family: brewed
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Pour-Over
+  description: Pour-Over
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Japan (Hario
+  family: brewed
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: French Press
+  description: French Press
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: France (1920s)
+  family: brewed
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: AeroPress
+  description: AeroPress
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: United States (Aeropress
+  family: brewed
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Moka Pot Coffee
+  description: Moka Pot Coffee
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Italy (Moka Pot
+  family: brewed
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Percolator Coffee
+  description: Percolator Coffee
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: United States (percolators
+  family: brewed
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Siphon Coffee
+  description: Siphon Coffee
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Germany (Siphon
+  family: brewed
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Cowboy Coffee
+  description: Cowboy Coffee
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: United States (cowboys
+  family: brewed
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Instant Coffee
+  description: Instant Coffee
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: United States (Nestle
+  family: brewed
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Butter Coffee
+  description: Butter Coffee
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: United States (doughnut shops
+  family: brewed
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Iced Coffee
+  description: Iced Coffee
+  ingredients:
+  - coffee
+  - ice
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: United States (refrigerated
+  family: iced
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Cold Brew
+  description: Cold Brew
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: United States (Japan
+  family: iced
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Nitro Cold Brew
+  description: Nitro Cold Brew
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: United States (nitrogeninfused
+  family: iced
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Kyoto-Style Slow Drip
+  description: Kyoto-Style Slow Drip
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: Japan (Edo period
+  family: iced
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Iced Latte
+  description: Iced Latte
+  ingredients:
+  - ice
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: United States (iced
+  family: iced
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Iced Americano
+  description: Iced Americano
+  ingredients:
+  - ice
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: South Korea (iced americano
+  family: iced
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Greek Frapp\xE9"
+  description: "Greek Frapp\xE9"
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: Greece (1957
+  family: iced
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Freddo Espresso & Freddo Cappuccino
+  description: Freddo Espresso
+  ingredients:
+  - espresso
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: Greece (2000s
+  family: iced
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Espresso Tonic
+  description: Espresso Tonic
+  ingredients:
+  - espresso
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: Sweden (Gothenburg
+  family: iced
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Coffee Soda
+  description: Coffee Soda
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: United States (soda fountain
+  family: iced
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Mazagran
+  description: Mazagran
+  ingredients:
+  - coffee
+  - milk
+  method:
+  - espresso
+  temperature: hot
+  milk_content: milk
+  origin_country: Algeria (1840s
+  family: iced
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Eiskaffee
+  description: Eiskaffee
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Germany (Berlin
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Turkish Coffee
+  description: Turkish Coffee
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: "T\xFCrkiye (Ottoman Empire"
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Arabic Coffee (Qahwa)
+  description: Arabic Coffee (Qahwa)
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Saudi Arabia (1500s
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Vietnamese Coffee (C\xE0 Ph\xEA S\u1EEFa \u0110\xE1)"
+  description: "Vietnamese Coffee (C\xE0 Ph\xEA S\u1EEFa \u0110\xE1)"
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Vietnam (French colonial era
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Egg Coffee (C\xE0 Ph\xEA Tr\u1EE9ng)"
+  description: "Egg Coffee (C\xE0 Ph\xEA Tr\u1EE9ng)"
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Vietnam (Hanoi
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Caf\xE9 de Olla"
+  description: "Caf\xE9 de Olla"
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Mexico (revolution
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Cafezinho
+  description: Cafezinho
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Brazil (home breakfast
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Tinto
+  description: Tinto
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Colombia (home breakfast
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Cuban Coffee (Cafecito, Colada, Cortadito)
+  description: Cuban Coffee (Cafecito, Colada, Cortadito)
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Cuba (1800s
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: South Indian Filter Coffee (Kaapi)
+  description: South Indian Filter Coffee (Kaapi)
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: India (Madras
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Kopi (Nanyang Coffee)
+  description: Kopi (Nanyang Coffee)
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Singapore (Malaya
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Oliang (Thai Iced Coffee)
+  description: Oliang (Thai Iced Coffee)
+  ingredients:
+  - coffee
+  - ice
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Thailand (Chiang Mai
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Yuanyang
+  description: Yuanyang
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Hong Kong (1960s
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Caf\xE9 Touba"
+  description: "Caf\xE9 Touba"
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Senegal (Touba
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Ethiopian Coffee Ceremony (Buna)
+  description: Eth Ethiopian Coffee Ceremony (Buna)
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Ethiopia (1500s
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Scandinavian Egg Coffee
+  description: Scandinavian Egg Coffee
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: United States (Nordic immigrants
+  family: regional
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Kaffeost
+  description: Kaffeost
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Sweden (Lappland
+  family: dessert
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Kopi Joss
+  description: Kopi Joss
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Indonesia (Jakarta
+  family: dessert
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Kopi Tubruk
+  description: Kopi Tubruk
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Indonesia (Cirebon
+  family: dessert
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Caf\xE9 L\xE1grima"
+  description: "Caf\xE9 L\xE1grima"
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Argentina (Buenos Aires
+  family: dessert
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Caf\xE9 Chorreado"
+  description: "Caf\xE9 Chorreado"
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Costa Rica (1800s
+  family: dessert
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Chicory Coffee (New Orleans Style)
+  description: Chicory Coffee (New Orleans Style)
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: United States (New Orleans
+  family: dessert
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Double-Double
+  description: Double-Double
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Canada (Tim Hortons
+  family: dessert
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Affogato
+  description: Affogato
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Italy (Milan
+  family: dessert
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Espresso con Panna
+  description: Espresso con Panna
+  ingredients:
+  - espresso
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: "Italy also: caff\xE8 con panna"
+  family: dessert
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Einsp\xE4nner (Vienna Coffee)"
+  description: "Einsp\xE4nner (Vienna Coffee)"
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: "Austria (Vienna caf\xE9s"
+  family: dessert
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Dalgona Coffee
+  description: Dalgona Coffee
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: South Korea (2020
+  family: dessert
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Marocchino
+  description: Marocchino
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Italy (Milan
+  family: dessert
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Bicerin
+  description: Bicerin
+  ingredients:
+  - ice
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Italy (Turin
+  family: dessert
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Babyccino
+  description: Babyccino
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: 'Australia also: babyccino'
+  family: dessert
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Irish Coffee
+  description: Irish Coffee
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Ireland (Killarney
+  family: spirited
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Espresso Martini
+  description: Espresso Martini
+  ingredients:
+  - espresso
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: United Kingdom (London
+  family: spirited
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Carajillo
+  description: Carajillo
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Spain (Cuba
+  family: spirited
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Caff\xE8 Corretto"
+  description: "Caff\xE8 Corretto"
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Italy (Milan
+  family: spirited
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "R\xFCdesheimer Kaffee"
+  description: "R\xFCdesheimer Kaffee"
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: "Germany (R\xFCdesheim"
+  family: spirited
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Pharis\xE4er"
+  description: "Pharis\xE4er"
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Germany (North Sea coast
+  family: spirited
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Karsk
+  description: Karsk
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Norway (Oslo
+  family: spirited
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: "Caf\xE9 Royale"
+  description: "Caf\xE9 Royale"
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: France (Paris
+  family: spirited
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0
+- title: Liqueur Coffees (The Family)
+  description: Liqueur Coffees (The Family)
+  ingredients:
+  - coffee
+  method:
+  - espresso
+  temperature: hot
+  milk_content: no milk
+  origin_country: Various (1800s
+  family: spirited
+  status: ok
+  last_seen: '2026-07-22'
+  schema_version: 1
+  caffeine_mg: 0
+  volume_ml: 0

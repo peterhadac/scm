@@ -1727,7 +1727,7 @@ alternativ-coffee:
   body: null
   brewing_recommendations: espresso, filter
   is_decaffeinated: null
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-26'
   name: Peach Sunset - broskyňová káva
   origin: Blend
   packaging:
@@ -4656,7 +4656,11 @@ epera-coffee:
   status: ok
   url: https://www.praziarenepera.sk/produkt/kava-etiopia-west-arsi-werka-nensebo/
 good-times-coffee-roasters:
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-26'
+  page_hash: 067904df6faaa33ab83195f28281438e08a02dab59dbf7c25ac9037a596db64e
+  status: not_a_product
+  url: https://goodtimes.coffee/obchod/
+- last_seen: '2026-07-26'
   page_hash: 4874cdc6686c972bd428db7a25458ee94be675755f71a7fef90a53cd28593154
   status: not_a_product
   url: https://goodtimes.coffee/kavieran/
@@ -4664,12 +4668,10 @@ good-times-coffee-roasters:
   bitterness: null
   body: null
   brewing_recommendations: Vhodné pre pákové kávovary, automatické kávovary a koťogo.
-  is_decaffeinated: false
-  last_seen: '2026-07-20'
-  missing_fields:
-  - origin
+  is_decaffeinated: null
+  last_seen: '2026-07-26'
   name: Brazil Doce Diamantina
-  origin: null
+  origin: Brazil
   packaging:
   - price: 9.0
     weight_g: 200
@@ -4680,45 +4682,16 @@ good-times-coffee-roasters:
   price_to: null
   process: null
   quantity: null
-  reextract_attempts: 2
-  roast_type: espresso
-  schema_version: 22
-  status: incomplete
-  stock_status: null
-  sweetness: null
-  tasting_notes: Lieskovce, kakaové bôby, cukrová trstina
-  url: https://goodtimes.coffee/produkt/brazil-doce-diamantina/
-- acidity: null
-  bitterness: null
-  blend: true
-  blend_origins:
-  - Brazil
-  - India
-  body: null
-  brewing_recommendations: Vhodné pre pákové kávovary, automatické kávovary a koťogo.
-  is_decaffeinated: false
-  last_seen: '2026-07-20'
-  name: Daily Espresso Seasonal Blend
-  origin: Blend
-  packaging:
-  - price: 8.5
-    weight_g: 200
-  - price: 32.0
-    weight_g: 1000
-  page_hash: c4033cc42244e077362de4fabc677da6fe2a3b91c094c36b7b8e14bbcb74ba8c
-  price_from: null
-  price_to: null
-  process: null
-  quantity: null
   roast_type: espresso
   schema_version: 22
   status: ok
-  stock_status: null
+  stock_status: in-stock
   sweetness: null
-  tasting_notes: Tmavá čokoláda, vlašské orechy
-  url: https://goodtimes.coffee/produkt/daily-espresso-seasonal-blend/
-- last_seen: '2026-07-20'
-  page_hash: d8b160478f3928517f980fccac98fe0b1ac590e705c582f4277e2fd55ce66319
+  tasting_notes: Lieskovce, kakaové bôby, cukrová trstina; Horká čokoláda, karamel,
+    lieskové orechy
+  url: https://goodtimes.coffee/produkt/brazil-doce-diamantina/
+- last_seen: '2026-07-26'
+  page_hash: ccf9e2cc38599228af47f27b66da4619d58f7c897c8a979fbd0d4123e6dabcaa
   status: not_a_product
   url: https://goodtimes.coffee/contact/
 - acidity: null
@@ -4726,7 +4699,7 @@ good-times-coffee-roasters:
   body: null
   brewing_recommendations: Vhodné pre pákové kávovary, automatické kávovary a koťogo.
   is_decaffeinated: null
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-26'
   name: Honduras COMSA co-operative
   origin: Honduras
   packaging:
@@ -4746,10 +4719,35 @@ good-times-coffee-roasters:
   sweetness: null
   tasting_notes: Čučoriedky, portské víno
   url: https://goodtimes.coffee/produkt/honduras-comsa-co-operative/
-- last_seen: '2026-07-20'
-  page_hash: 067904df6faaa33ab83195f28281438e08a02dab59dbf7c25ac9037a596db64e
-  status: not_a_product
-  url: https://goodtimes.coffee/obchod/
+- acidity: null
+  bitterness: null
+  blend: true
+  blend_origins:
+  - Brazil
+  - India
+  body: null
+  brewing_recommendations: Vhodné pre pákové kávovary, automatické kávovary a koťogo.
+  is_decaffeinated: false
+  last_seen: '2026-07-26'
+  name: Daily Espresso Seasonal Blend
+  origin: Blend
+  packaging:
+  - price: 8.5
+    weight_g: 200
+  - price: 32.0
+    weight_g: 1000
+  page_hash: c4033cc42244e077362de4fabc677da6fe2a3b91c094c36b7b8e14bbcb74ba8c
+  price_from: null
+  price_to: null
+  process: null
+  quantity: null
+  roast_type: espresso
+  schema_version: 22
+  status: ok
+  stock_status: null
+  sweetness: null
+  tasting_notes: Tmavá čokoláda, vlašské orechy
+  url: https://goodtimes.coffee/produkt/daily-espresso-seasonal-blend/
 goriffee:
 - last_seen: '2026-07-10'
   name: Highlander espresso blend
@@ -6589,7 +6587,7 @@ incuple:
   page_hash: 0096fee0f4d973f5f0f878fdfbd7063037343f4d9d8c5341cd158d2c7d64de3d
   status: not_a_product
   url: https://incuple.sk/my-sme-incuple/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-26'
   page_hash: 761e79d9e3a34de1a400b2613989d5344a9e4ece149305eb767d0961b8e4c19f
   status: not_a_product
   url: https://incuple.sk/denna-davka-nitra/
@@ -11351,7 +11349,7 @@ spojka-roastery:
   brewing_recommendations: Drip bag ti umožní pripraviť si výberovú kávu kdekoľvek
     – stačí horúca voda a hrnček. Bez potreby vybavenia, bez kompromisov na chuti.
   is_decaffeinated: null
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-26'
   name: Rocket Flower – Colombia (Drip Bag)
   origin: Colombia
   packaging:
@@ -11609,7 +11607,7 @@ spojka-roastery:
   sweetness: null
   tasting_notes: Jasmine flower, black tea, honey, floral notes
   url: https://shop.spojkaroastery.com/en/products/brewteaful-coffee
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-26'
   page_hash: c34069c973b344942852c6a91d0bbdc8a993bf46c2518b08737037f4eadc1ccd
   status: not_a_product
   url: https://shop.spojkaroastery.com/en/products/ciapka-hladka
@@ -11644,7 +11642,7 @@ spojka-roastery:
   body: null
   brewing_recommendations: null
   is_decaffeinated: null
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-26'
   name: Condor, Filter
   origin: Colombia
   packaging:
@@ -11676,7 +11674,7 @@ spojka-roastery:
   brewing_recommendations: Drip bag ti umožní pripraviť si výberovú kávu kdekoľvek
     – stačí horúca voda a hrnček. Bez potreby vybavenia, bez kompromisov na chuti.
   is_decaffeinated: null
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-26'
   name: Bach – Costa Rica (Drip Bag)
   origin: Costa Rica
   packaging:
@@ -13431,7 +13429,7 @@ trip-roasters:
   tasting_notes: Karamel, jablko a mliečna čokoláda
   url: https://triproasters.sk/colombia-tumbaga-decaf/
 triple-five-coffee:
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-26'
   page_hash: 914b73b699ea739e0750adc4ff237575918362b73a1a7a2dcba727089f2df27d
   status: not_a_product
   url: https://triplefivecoffee.com/prenajom-priestorov/
@@ -13588,7 +13586,7 @@ triple-five-coffee:
   page_hash: 9b5935fb9acda25c55e2952950e741ae47d147e40f5ecafe46ba0c51590260e8
   status: not_a_product
   url: https://triplefivecoffee.com/napisali-o-nas/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-26'
   page_hash: d67b171702d08edb44d9457cc80ef89f79f13efc824ac333e75a00eded8b83ec
   status: not_a_product
   url: https://triplefivecoffee.com/merch/
@@ -13684,7 +13682,7 @@ triple-five-coffee:
   sweetness: null
   tasting_notes: Black tea, bergamot, lemon, rose
   url: https://triplefivecoffee.com/product/tanzania-tembo-tembo-espresso/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-26'
   page_hash: cb067376dba7ce44888abd42a3c579ebb4be7aa1ed0db1f938a9cbdf57531aa8
   status: not_a_product
   url: https://triplefivecoffee.com/ponuka-prace/
@@ -13751,7 +13749,7 @@ two-hands:
   page_hash: 9dd7d88af93491c4d6fa2234d6eb9cb21dca33ece8134b1cc8ed339891cd5b7d
   status: not_a_product
   url: https://www.twohands.sk/2hr-mencestrova-siltovka/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-26'
   page_hash: 84e8352ae06b38817b964a11ec9f89721affd0773eca52a0633546b585d2b225
   status: not_a_product
   url: https://www.twohands.sk/pins-%f0%9f%93%8c/
@@ -13869,7 +13867,7 @@ two-hands:
   body: null
   brewing_recommendations: null
   is_decaffeinated: null
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-26'
   name: Brazil Doce Diamntina
   origin: Brazil
   packaging:

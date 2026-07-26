@@ -302,10 +302,10 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
                 {c.weight_g ?? '—'}
               </td>
               <td class="ct-num">
-                {per100g}
+                {fmtEur(c.price)}
               </td>
               <td class="ct-num ct-price">
-                {fmtEur(c.price)}
+                {per100g}
               </td>
             </tr>
           );
@@ -1194,7 +1194,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     .ct-table {
       min-width: 0;
     }
-    
+
     /* Show mobile nav on tablet and smaller */
     .nav-toggle {
       display: inline-flex;
@@ -1217,7 +1217,7 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     .site-nav[data-open='true'] > ul {
       display: flex;
     }
-    
+
     .ct-toolbar {
       flex-direction: column;
       align-items: stretch;

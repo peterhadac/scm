@@ -7,7 +7,7 @@ drinks:
   - espresso
   temperature: hot
   milk_content: no milk
-  origin_country: "Italy \u2014 Milan"
+  origin_country: Italy — Milan
   family: espresso
   status: ok
   last_seen: '2026-07-22'
@@ -37,7 +37,7 @@ drinks:
   - espresso
   temperature: hot
   milk_content: no milk
-  origin_country: "Italy also: caff\xE8 lungo"
+  origin_country: 'Italy also: caffè lungo'
   family: espresso
   status: ok
   last_seen: '2026-07-22'
@@ -59,16 +59,16 @@ drinks:
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Caff\xE8 Americano"
-  description: "Caff\xE8 Americano"
+- title: Caffè Americano
+  description: Caffè Americano
   ingredients:
   - coffee
   method:
-  - espresso
+  - drip machine
   temperature: hot
   milk_content: no milk
-  origin_country: "Italy/US \u2014 WWII lore: GIs stretching espresso to drip strength\
-    \ also: americano"
+  origin_country: 'Italy/US — WWII lore: GIs stretching espresso to drip strength
+    also: americano'
   family: espresso
   status: ok
   last_seen: '2026-07-22'
@@ -80,7 +80,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - drip machine
   temperature: hot
   milk_content: no milk
   origin_country: Australia/New Zealand
@@ -95,7 +95,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - drip machine
   temperature: hot
   milk_content: no milk
   origin_country: 'United States (named for overnight ''red-eye'' flights) also: shot
@@ -106,15 +106,15 @@ drinks:
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Caff\xE8 Crema"
-  description: "Caff\xE8 Crema"
+- title: Caffè Crema
+  description: Caffè Crema
   ingredients:
   - coffee
   method:
   - espresso
   temperature: hot
   milk_content: no milk
-  origin_country: "Alpine Europe \u2014 Switzerland/Austria"
+  origin_country: Alpine Europe — Switzerland/Austria
   family: espresso
   status: ok
   last_seen: '2026-07-22'
@@ -129,24 +129,24 @@ drinks:
   - espresso
   temperature: hot
   milk_content: no milk
-  origin_country: "Disputed \u2014 likely Italian-American; rare in actual Rome"
+  origin_country: Disputed — likely Italian-American; rare in actual Rome
   family: espresso
   status: ok
   last_seen: '2026-07-22'
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Caff\xE8 Latte"
-  description: "Caff\xE8 Latte"
+- title: Caffè Latte
+  description: Caffè Latte
   ingredients:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
-  origin_country: "Italy (home breakfast) \u2192 US caf\xE9 standard (1980s Seattle\
-    \ wave) also: latte"
+  origin_country: 'Italy (home breakfast) → US café standard (1980s Seattle wave)
+    also: latte'
   family: milk-based
   status: ok
   last_seen: '2026-07-22'
@@ -159,11 +159,11 @@ drinks:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
-  origin_country: "Italy \u2014 via Vienna's Kapuziner (coffee + cream matched to\
-    \ Capuchin friars' robe color)"
+  origin_country: Italy — via Vienna's Kapuziner (coffee + cream matched to Capuchin
+    friars' robe color)
   family: milk-based
   status: ok
   last_seen: '2026-07-22'
@@ -176,7 +176,7 @@ drinks:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
   origin_country: 'Contested: Sydney (Alan Preston'
@@ -192,10 +192,10 @@ drinks:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
-  origin_country: "Spain ('cortar' \u2014 to cut) also: Gibraltar"
+  origin_country: 'Spain (''cortar'' — to cut) also: Gibraltar'
   family: milk-based
   status: ok
   last_seen: '2026-07-22'
@@ -207,10 +207,10 @@ drinks:
   ingredients:
   - espresso
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
-  origin_country: "Italy ('macchiato' = stained) also: caff\xE8 macchiato"
+  origin_country: 'Italy (''macchiato'' = stained) also: caffè macchiato'
   family: milk-based
   status: ok
   last_seen: '2026-07-22'
@@ -223,7 +223,7 @@ drinks:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
   origin_country: 'Italy also: latte macchiato'
@@ -233,29 +233,29 @@ drinks:
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Caff\xE8 Mocha"
-  description: "Caff\xE8 Mocha"
+- title: Caffè Mocha
+  description: Caffè Mocha
   ingredients:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
-  origin_country: "United States (Seattle caf\xE9 wave"
+  origin_country: United States (Seattle café wave
   family: milk-based
   status: ok
   last_seen: '2026-07-22'
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Caff\xE8 Breve"
-  description: "Caff\xE8 Breve"
+- title: Caffè Breve
+  description: Caffè Breve
   ingredients:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
   origin_country: 'United States (Starbucks popularized it) also: breve'
@@ -271,7 +271,7 @@ drinks:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
   origin_country: 'Australia also: baby latte'
@@ -287,7 +287,7 @@ drinks:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
   origin_country: Australia
@@ -297,61 +297,61 @@ drinks:
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Caf\xE9 con Leche"
-  description: "Caf\xE9 con Leche"
+- title: Café con Leche
+  description: Café con Leche
   ingredients:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
-  origin_country: "Spain (home breakfast) also: caf\xE9 con leche"
+  origin_country: 'Spain (home breakfast) also: café con leche'
   family: milk-based
   status: ok
   last_seen: '2026-07-22'
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Caf\xE9 au Lait"
-  description: "Caf\xE9 au Lait"
+- title: Café au Lait
+  description: Café au Lait
   ingredients:
   - coffee
   - milk
   method:
-  - espresso
+  - drip machine
   temperature: hot
   milk_content: milk
-  origin_country: "France (home breakfast) also: caf\xE9 au lait"
+  origin_country: 'France (home breakfast) also: café au lait'
   family: milk-based
   status: ok
   last_seen: '2026-07-22'
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Gal\xE3o"
-  description: "Gal\xE3o"
+- title: Galão
+  description: Galão
   ingredients:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
-  origin_country: "Portugal ( Lisbon caf\xE9s"
+  origin_country: Portugal ( Lisbon cafés
   family: milk-based
   status: ok
   last_seen: '2026-07-22'
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Caf\xE9 Bomb\xF3n"
-  description: "Caf\xE9 Bomb\xF3n"
+- title: Café Bombón
+  description: Café Bombón
   ingredients:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
   origin_country: Spain (Valencia)
@@ -367,10 +367,10 @@ drinks:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
-  origin_country: "Austria (Vienna caf\xE9s"
+  origin_country: Austria (Vienna cafés
   family: milk-based
   status: ok
   last_seen: '2026-07-22'
@@ -383,10 +383,10 @@ drinks:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
-  origin_country: "United Arab Emirates (Dubaicaf\xE9s)"
+  origin_country: United Arab Emirates (Dubaicafés)
   family: milk-based
   status: ok
   last_seen: '2026-07-22'
@@ -399,10 +399,10 @@ drinks:
   - coffee
   - milk
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: milk
-  origin_country: "United States (Brooklyn caf\xE9s"
+  origin_country: United States (Brooklyn cafés
   family: milk-based
   status: ok
   last_seen: '2026-07-22'
@@ -414,7 +414,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - drip machine
   temperature: hot
   milk_content: no milk
   origin_country: United States (drip machines
@@ -429,7 +429,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - pour-over
   temperature: hot
   milk_content: no milk
   origin_country: Japan (Hario
@@ -444,7 +444,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - french press
   temperature: hot
   milk_content: no milk
   origin_country: France (1920s)
@@ -459,7 +459,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - aeropress
   temperature: hot
   milk_content: no milk
   origin_country: United States (Aeropress
@@ -474,7 +474,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - stovetop moka pot
   temperature: hot
   milk_content: no milk
   origin_country: Italy (Moka Pot
@@ -489,7 +489,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - percolator
   temperature: hot
   milk_content: no milk
   origin_country: United States (percolators
@@ -504,7 +504,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - vacuum pot
   temperature: hot
   milk_content: no milk
   origin_country: Germany (Siphon
@@ -519,7 +519,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - boiled
   temperature: hot
   milk_content: no milk
   origin_country: United States (cowboys
@@ -534,7 +534,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - instant
   temperature: hot
   milk_content: no milk
   origin_country: United States (Nestle
@@ -549,7 +549,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - blended
   temperature: hot
   milk_content: no milk
   origin_country: United States (doughnut shops
@@ -565,8 +565,8 @@ drinks:
   - coffee
   - ice
   method:
-  - espresso
-  temperature: hot
+  - drip machine
+  temperature: cold
   milk_content: milk
   origin_country: United States (refrigerated
   family: iced
@@ -581,8 +581,8 @@ drinks:
   - coffee
   - milk
   method:
-  - espresso
-  temperature: hot
+  - cold extraction
+  temperature: cold
   milk_content: milk
   origin_country: United States (Japan
   family: iced
@@ -597,8 +597,8 @@ drinks:
   - coffee
   - milk
   method:
-  - espresso
-  temperature: hot
+  - infused with nitrogen
+  temperature: cold
   milk_content: milk
   origin_country: United States (nitrogeninfused
   family: iced
@@ -613,8 +613,8 @@ drinks:
   - coffee
   - milk
   method:
-  - espresso
-  temperature: hot
+  - slow drip
+  temperature: cold
   milk_content: milk
   origin_country: Japan (Edo period
   family: iced
@@ -628,8 +628,8 @@ drinks:
   ingredients:
   - ice
   method:
-  - espresso
-  temperature: hot
+  - steamed milk
+  temperature: cold
   milk_content: milk
   origin_country: United States (iced
   family: iced
@@ -643,8 +643,8 @@ drinks:
   ingredients:
   - ice
   method:
-  - espresso
-  temperature: hot
+  - drip machine
+  temperature: cold
   milk_content: milk
   origin_country: South Korea (iced americano
   family: iced
@@ -653,14 +653,14 @@ drinks:
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Greek Frapp\xE9"
-  description: "Greek Frapp\xE9"
+- title: Greek Frappé
+  description: Greek Frappé
   ingredients:
   - coffee
   - milk
   method:
-  - espresso
-  temperature: hot
+  - shaken
+  temperature: cold
   milk_content: milk
   origin_country: Greece (1957
   family: iced
@@ -674,8 +674,8 @@ drinks:
   ingredients:
   - espresso
   method:
-  - espresso
-  temperature: hot
+  - shaken with ice
+  temperature: cold
   milk_content: milk
   origin_country: Greece (2000s
   family: iced
@@ -689,8 +689,8 @@ drinks:
   ingredients:
   - espresso
   method:
-  - espresso
-  temperature: hot
+  - shaken with ice
+  temperature: cold
   milk_content: milk
   origin_country: Sweden (Gothenburg
   family: iced
@@ -704,8 +704,8 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
-  temperature: hot
+  - shaken with ice
+  temperature: cold
   milk_content: milk
   origin_country: United States (soda fountain
   family: iced
@@ -720,8 +720,8 @@ drinks:
   - coffee
   - milk
   method:
-  - espresso
-  temperature: hot
+  - shaken
+  temperature: cold
   milk_content: milk
   origin_country: Algeria (1840s
   family: iced
@@ -735,8 +735,8 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
-  temperature: hot
+  - brewed with egg
+  temperature: cold
   milk_content: no milk
   origin_country: Germany (Berlin
   family: regional
@@ -750,10 +750,10 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - turkish coffee pot
   temperature: hot
   milk_content: no milk
-  origin_country: "T\xFCrkiye (Ottoman Empire"
+  origin_country: Türkiye (Ottoman Empire
   family: regional
   status: ok
   last_seen: '2026-07-22'
@@ -765,7 +765,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - filtration sock
   temperature: hot
   milk_content: no milk
   origin_country: Saudi Arabia (1500s
@@ -775,12 +775,12 @@ drinks:
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Vietnamese Coffee (C\xE0 Ph\xEA S\u1EEFa \u0110\xE1)"
-  description: "Vietnamese Coffee (C\xE0 Ph\xEA S\u1EEFa \u0110\xE1)"
+- title: Vietnamese Coffee (Cà Phê Sữa Đá)
+  description: Vietnamese Coffee (Cà Phê Sữa Đá)
   ingredients:
   - coffee
   method:
-  - espresso
+  - filtration sock
   temperature: hot
   milk_content: no milk
   origin_country: Vietnam (French colonial era
@@ -790,12 +790,12 @@ drinks:
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Egg Coffee (C\xE0 Ph\xEA Tr\u1EE9ng)"
-  description: "Egg Coffee (C\xE0 Ph\xEA Tr\u1EE9ng)"
+- title: Egg Coffee (Cà Phê Trứng)
+  description: Egg Coffee (Cà Phê Trứng)
   ingredients:
   - coffee
   method:
-  - espresso
+  - brewed with egg
   temperature: hot
   milk_content: no milk
   origin_country: Vietnam (Hanoi
@@ -805,12 +805,12 @@ drinks:
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Caf\xE9 de Olla"
-  description: "Caf\xE9 de Olla"
+- title: Café de Olla
+  description: Café de Olla
   ingredients:
   - coffee
   method:
-  - espresso
+  - boiled
   temperature: hot
   milk_content: no milk
   origin_country: Mexico (revolution
@@ -825,7 +825,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - filtration sock
   temperature: hot
   milk_content: no milk
   origin_country: Brazil (home breakfast
@@ -840,7 +840,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - filtration sock
   temperature: hot
   milk_content: no milk
   origin_country: Colombia (home breakfast
@@ -855,7 +855,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - stovetop moka pot
   temperature: hot
   milk_content: no milk
   origin_country: Cuba (1800s
@@ -870,7 +870,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - filtration sock
   temperature: hot
   milk_content: no milk
   origin_country: India (Madras
@@ -885,7 +885,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - filtration sock
   temperature: hot
   milk_content: no milk
   origin_country: Singapore (Malaya
@@ -901,8 +901,8 @@ drinks:
   - coffee
   - ice
   method:
-  - espresso
-  temperature: hot
+  - filtration sock
+  temperature: cold
   milk_content: no milk
   origin_country: Thailand (Chiang Mai
   family: regional
@@ -916,7 +916,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - blended
   temperature: hot
   milk_content: no milk
   origin_country: Hong Kong (1960s
@@ -926,12 +926,12 @@ drinks:
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Caf\xE9 Touba"
-  description: "Caf\xE9 Touba"
+- title: Café Touba
+  description: Café Touba
   ingredients:
   - coffee
   method:
-  - espresso
+  - filtration sock
   temperature: hot
   milk_content: no milk
   origin_country: Senegal (Touba
@@ -946,7 +946,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - filtration sock
   temperature: hot
   milk_content: no milk
   origin_country: Ethiopia (1500s
@@ -961,7 +961,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - brewed with egg
   temperature: hot
   milk_content: no milk
   origin_country: United States (Nordic immigrants
@@ -976,7 +976,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - steeped
   temperature: hot
   milk_content: no milk
   origin_country: Sweden (Lappland
@@ -991,7 +991,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - charcoal
   temperature: hot
   milk_content: no milk
   origin_country: Indonesia (Jakarta
@@ -1006,7 +1006,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - filtration sock
   temperature: hot
   milk_content: no milk
   origin_country: Indonesia (Cirebon
@@ -1016,12 +1016,12 @@ drinks:
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Caf\xE9 L\xE1grima"
-  description: "Caf\xE9 L\xE1grima"
+- title: Café Lágrima
+  description: Café Lágrima
   ingredients:
   - coffee
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: no milk
   origin_country: Argentina (Buenos Aires
@@ -1031,12 +1031,12 @@ drinks:
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Caf\xE9 Chorreado"
-  description: "Caf\xE9 Chorreado"
+- title: Café Chorreado
+  description: Café Chorreado
   ingredients:
   - coffee
   method:
-  - espresso
+  - filtration sock
   temperature: hot
   milk_content: no milk
   origin_country: Costa Rica (1800s
@@ -1051,7 +1051,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - drip machine
   temperature: hot
   milk_content: no milk
   origin_country: United States (New Orleans
@@ -1066,7 +1066,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - drip machine
   temperature: hot
   milk_content: no milk
   origin_country: Canada (Tim Hortons
@@ -1081,7 +1081,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - blended
   temperature: hot
   milk_content: no milk
   origin_country: Italy (Milan
@@ -1099,22 +1099,22 @@ drinks:
   - espresso
   temperature: hot
   milk_content: no milk
-  origin_country: "Italy also: caff\xE8 con panna"
+  origin_country: 'Italy also: caffè con panna'
   family: dessert
   status: ok
   last_seen: '2026-07-22'
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Einsp\xE4nner (Vienna Coffee)"
-  description: "Einsp\xE4nner (Vienna Coffee)"
+- title: Einspänner (Vienna Coffee)
+  description: Einspänner (Vienna Coffee)
   ingredients:
   - coffee
   method:
   - espresso
   temperature: hot
   milk_content: no milk
-  origin_country: "Austria (Vienna caf\xE9s"
+  origin_country: Austria (Vienna cafés
   family: dessert
   status: ok
   last_seen: '2026-07-22'
@@ -1126,7 +1126,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - shaken
   temperature: hot
   milk_content: no milk
   origin_country: South Korea (2020
@@ -1156,7 +1156,7 @@ drinks:
   ingredients:
   - ice
   method:
-  - espresso
+  - blended
   temperature: hot
   milk_content: no milk
   origin_country: Italy (Turin
@@ -1171,7 +1171,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - steamed milk
   temperature: hot
   milk_content: no milk
   origin_country: 'Australia also: babyccino'
@@ -1186,7 +1186,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - steeped
   temperature: hot
   milk_content: no milk
   origin_country: Ireland (Killarney
@@ -1201,7 +1201,7 @@ drinks:
   ingredients:
   - espresso
   method:
-  - espresso
+  - shaken with ice
   temperature: hot
   milk_content: no milk
   origin_country: United Kingdom (London
@@ -1216,7 +1216,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - shaken with ice
   temperature: hot
   milk_content: no milk
   origin_country: Spain (Cuba
@@ -1226,8 +1226,8 @@ drinks:
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Caff\xE8 Corretto"
-  description: "Caff\xE8 Corretto"
+- title: Caffè Corretto
+  description: Caffè Corretto
   ingredients:
   - coffee
   method:
@@ -1241,27 +1241,27 @@ drinks:
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "R\xFCdesheimer Kaffee"
-  description: "R\xFCdesheimer Kaffee"
+- title: Rüdesheimer Kaffee
+  description: Rüdesheimer Kaffee
   ingredients:
   - coffee
   method:
-  - espresso
+  - flamed
   temperature: hot
   milk_content: no milk
-  origin_country: "Germany (R\xFCdesheim"
+  origin_country: Germany (Rüdesheim
   family: spirited
   status: ok
   last_seen: '2026-07-22'
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Pharis\xE4er"
-  description: "Pharis\xE4er"
+- title: Pharisäer
+  description: Pharisäer
   ingredients:
   - coffee
   method:
-  - espresso
+  - steeped
   temperature: hot
   milk_content: no milk
   origin_country: Germany (North Sea coast
@@ -1276,7 +1276,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - steeped
   temperature: hot
   milk_content: no milk
   origin_country: Norway (Oslo
@@ -1286,12 +1286,12 @@ drinks:
   schema_version: 1
   caffeine_mg: 0
   volume_ml: 0
-- title: "Caf\xE9 Royale"
-  description: "Caf\xE9 Royale"
+- title: Café Royale
+  description: Café Royale
   ingredients:
   - coffee
   method:
-  - espresso
+  - flamed
   temperature: hot
   milk_content: no milk
   origin_country: France (Paris
@@ -1306,7 +1306,7 @@ drinks:
   ingredients:
   - coffee
   method:
-  - espresso
+  - steeped
   temperature: hot
   milk_content: no milk
   origin_country: Various (1800s

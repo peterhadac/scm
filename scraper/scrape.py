@@ -127,7 +127,9 @@ _PROCESS_NAME_PATTERNS: list[tuple[str, str]] = [
 # Overridable without a code change via OPENROUTER_MODELS (comma-separated
 # OpenRouter model ids) — read once at import, like every other constant
 # here. Every model listed must support OpenAI-style function calling.
-DEFAULT_MODELS = "google/gemini-2.5-flash-lite,google/gemini-2.5-flash"
+# Gemma 4 26B: strong tool calling, $0.00, 262K context
+# Gemma 4 31B: fallback with even better reasoning, $0.00
+DEFAULT_MODELS = "google/gemma-4-26b-a4b-it:free,google/gemma-4-31b-it:free"
 
 
 def _parse_models(value):

@@ -1,6 +1,6 @@
 9-grams-coffee:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: 9 Grams Coffee
   product_count: 86
   product_urls:
@@ -92,8 +92,8 @@
   - https://www.coffeeart.me/9-grams-coffee-barrel-age-coffee--cofa/
   status: failed
 alternativ-coffee:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Alternativ Coffee
   product_count: 36
   product_urls:
@@ -135,8 +135,8 @@ alternativ-coffee:
   - https://avcoffee.sk/prazena-kava/17515-19838-rwanda-honeyfer-zrnkova-kava.html
   status: failed
 black:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Black.
   product_count: 20
   product_urls:
@@ -162,8 +162,8 @@ black:
   - https://www.black.sk/sk/e-shop
   status: failed
 blue-mondays-coffee:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Blue Mondays Coffee
   product_count: 5
   product_urls:
@@ -174,8 +174,8 @@ blue-mondays-coffee:
   - https://bluemondays.sk/products/brazil-fazenda-primavera
   status: failed
 caffe4u:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Caffe4u
   product_count: 30
   product_urls:
@@ -209,10 +209,10 @@ caffe4u:
   - https://caffe4u.sk/subory-cookies/
   - https://caffe4u.sk/prazena-kava/
   - https://caffe4u.sk/limitovane-zrnkove-kavy/
-  status: failed
+  status: needs_js
 casa-del-caffe:
-  consecutive_non_ok: 2
-  last_run: '2026-07-26'
+  consecutive_non_ok: 3
+  last_run: '2026-07-27'
   name: Casa del Caffe
   product_count: 18
   product_urls:
@@ -236,8 +236,8 @@ casa-del-caffe:
   - https://casadelcaffe.sk/zber-zrniecok/
   status: failed
 coffeein:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Coffeein
   product_count: 26
   product_urls:
@@ -269,8 +269,8 @@ coffeein:
   - https://www.coffeein.sk/detail/730/kava-pre-mamicku-200-g-zrnkova-kava/
   status: failed
 concept-coffee-roasters:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Concept Coffee Roasters
   product_count: 17
   product_urls:
@@ -293,8 +293,8 @@ concept-coffee-roasters:
   - https://www.conceptcoffee.sk/espresso/
   status: failed
 diamonds-roastery:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Diamond's Roastery
   product_count: 23
   product_urls:
@@ -323,8 +323,8 @@ diamonds-roastery:
   - https://diroastery.sk/produkt/kolumbia-penas-blancas-zrnkova-kava/
   status: failed
 doraz:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Doraz
   product_count: 20
   product_urls:
@@ -350,8 +350,8 @@ doraz:
   - https://doraz.sk/obchod/brasil-cerrado-doce-diamantina/
   status: failed
 epera-coffee:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Epera Coffee
   product_count: 27
   product_urls:
@@ -385,20 +385,20 @@ epera-coffee:
   status: failed
 good-times-coffee-roasters:
   consecutive_non_ok: 0
-  last_run: '2026-07-26'
+  last_run: '2026-07-27'
   name: Good Times Coffee Roasters
   product_count: 6
   product_urls:
+  - https://goodtimes.coffee/produkt/daily-espresso-seasonal-blend/
   - https://goodtimes.coffee/obchod/
-  - https://goodtimes.coffee/kavieran/
-  - https://goodtimes.coffee/produkt/brazil-doce-diamantina/
   - https://goodtimes.coffee/contact/
   - https://goodtimes.coffee/produkt/honduras-comsa-co-operative/
-  - https://goodtimes.coffee/produkt/daily-espresso-seasonal-blend/
+  - https://goodtimes.coffee/kavieran/
+  - https://goodtimes.coffee/produkt/brazil-doce-diamantina/
   status: ok
 goriffee:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Goriffee
   product_count: 21
   product_urls:
@@ -430,8 +430,8 @@ green-plantation:
   name: Green Plantation
   status: ok
 incuple:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Incuple
   product_count: 35
   product_urls:
@@ -472,8 +472,8 @@ incuple:
   - https://incuple.sk/produkt/indonesia-sumatra/
   status: failed
 jungle-roastery:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Jungle Roastery
   product_count: 7
   product_urls:
@@ -486,8 +486,8 @@ jungle-roastery:
   - https://www.jungleroastery.sk/podmienky-ochrany-osobnych-udajov/
   status: failed
 kaan-roastery:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: KAAN Roastery
   product_count: 22
   product_urls:
@@ -515,8 +515,8 @@ kaan-roastery:
   - https://kaan.sk/produkt/tasty-decaf/
   status: failed
 kaffa-roastery:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Kaffa Roastery
   product_count: 18
   product_urls:
@@ -540,8 +540,8 @@ kaffa-roastery:
   - https://kaffaroastery.sk/kariera/
   status: failed
 karma-coffee:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Karma Coffee
   product_count: 14
   product_urls:
@@ -561,8 +561,8 @@ karma-coffee:
   - https://www.karmacoffee.sk/obchod/funky-filter-kolumbia/
   status: failed
 kavoholik:
-  consecutive_non_ok: 2
-  last_run: '2026-07-26'
+  consecutive_non_ok: 3
+  last_run: '2026-07-27'
   name: Kavoholik
   product_count: 121
   product_urls:
@@ -689,8 +689,8 @@ kavoholik:
   - https://kavoholik.sk/brand/45-la-marzocco
   status: failed
 praziaren-rydze:
-  consecutive_non_ok: 2
-  last_run: '2026-07-26'
+  consecutive_non_ok: 3
+  last_run: '2026-07-27'
   name: Pražiareň Rýdze
   product_count: 37
   product_urls:
@@ -733,8 +733,8 @@ praziaren-rydze:
   - https://praziarenrydze.sk/prazenakava/8-64-brazilia-serra-negra-vyberova-espresso.html
   status: failed
 praziaren-velke-zaluzie:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Pražiareň Veľké Zálužie
   product_count: 63
   product_urls:
@@ -803,8 +803,8 @@ praziaren-velke-zaluzie:
   - https://www.praziarenvelkezaluzie.sk/tanzania/
   status: failed
 ready-after:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Ready After
   product_count: 123
   product_urls:
@@ -933,15 +933,15 @@ ready-after:
   - https://www.readyafter.sk/kava-do-kaviarne/
   status: failed
 sedmitchka-coffee-roasters:
-  consecutive_non_ok: 2
-  last_run: '2026-07-26'
+  consecutive_non_ok: 3
+  last_run: '2026-07-27'
   name: Sedmitchka Coffee Roasters
   product_count: 0
   product_urls: []
   status: failed
 simple-coffee:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Simple Coffee
   product_count: 45
   product_urls:
@@ -992,8 +992,8 @@ simple-coffee:
   - https://simplecoffee.sk/blog-o-kave/
   status: failed
 spojka-roastery:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Spojka Roastery
   product_count: 32
   product_urls:
@@ -1031,8 +1031,8 @@ spojka-roastery:
   - https://shop.spojkaroastery.com/en/products/siltovka-s-vysivkou-1
   status: failed
 suca-roastery:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Suca Roastery
   product_count: 52
   product_urls:
@@ -1090,8 +1090,8 @@ suca-roastery:
   - https://www.sucaroastery.sk/customer/find-order/
   status: failed
 sweet-beans-coffee:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Sweet Beans Coffee
   product_count: 27
   product_urls:
@@ -1124,8 +1124,8 @@ sweet-beans-coffee:
   - https://www.sweetbeans.coffee/loyalty-program/
   status: failed
 trinity-beans:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Trinity Beans
   product_count: 15
   product_urls:
@@ -1146,8 +1146,8 @@ trinity-beans:
   - https://www.trinitybeans.sk/produkt/costa-rica-shb-los-santos-tarrazu/
   status: failed
 trip-roasters:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Trip Coffee Roasters
   product_count: 30
   product_urls:
@@ -1183,8 +1183,8 @@ trip-roasters:
   - https://triproasters.sk/colombia-tumbaga-decaf/
   status: failed
 triple-five-coffee:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Triple Five Coffee
   product_count: 21
   product_urls:
@@ -1211,8 +1211,8 @@ triple-five-coffee:
   - https://triplefivecoffee.com/ponuka-prace/
   status: failed
 two-hands:
-  consecutive_non_ok: 1
-  last_run: '2026-07-26'
+  consecutive_non_ok: 2
+  last_run: '2026-07-27'
   name: Two Hands
   product_count: 16
   product_urls:

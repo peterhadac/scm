@@ -1715,7 +1715,7 @@ alternativ-coffee:
   page_hash: 0ce383a6fb585ab604c3a628f5a2a726a5f948ce47057861001a05b144d4fca1
   status: not_a_product
   url: https://avcoffee.sk/58-zdielane-prazicky
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-28'
   page_hash: 04a3b270bb0dfc1259bdfc679f38119a804e73eaaa5d300f29c212a5f1860252
   status: not_a_product
   url: https://avcoffee.sk/85-velkoobchod
@@ -4685,7 +4685,7 @@ good-times-coffee-roasters:
   sweetness: null
   tasting_notes: Tmavá čokoláda, vlašské orechy
   url: https://goodtimes.coffee/produkt/daily-espresso-seasonal-blend/
-- last_seen: '2026-07-26'
+- last_seen: '2026-07-28'
   page_hash: 067904df6faaa33ab83195f28281438e08a02dab59dbf7c25ac9037a596db64e
   status: not_a_product
   url: https://goodtimes.coffee/obchod/
@@ -4698,7 +4698,7 @@ good-times-coffee-roasters:
   body: null
   brewing_recommendations: Vhodné pre pákové kávovary, automatické kávovary a koťogo.
   is_decaffeinated: null
-  last_seen: '2026-07-27'
+  last_seen: '2026-07-28'
   name: Honduras COMSA co-operative
   origin: Honduras
   packaging:
@@ -4718,7 +4718,7 @@ good-times-coffee-roasters:
   sweetness: null
   tasting_notes: Čučoriedky, portské víno
   url: https://goodtimes.coffee/produkt/honduras-comsa-co-operative/
-- last_seen: '2026-07-27'
+- last_seen: '2026-07-28'
   page_hash: 4874cdc6686c972bd428db7a25458ee94be675755f71a7fef90a53cd28593154
   status: not_a_product
   url: https://goodtimes.coffee/kavieran/
@@ -4727,7 +4727,7 @@ good-times-coffee-roasters:
   body: null
   brewing_recommendations: Vhodné pre pákové kávovary, automatické kávovary a koťogo.
   is_decaffeinated: null
-  last_seen: '2026-07-27'
+  last_seen: '2026-07-28'
   name: Brazil Doce Diamantina
   origin: Brazil
   packaging:
@@ -6436,7 +6436,7 @@ incuple:
   page_hash: e4393eb6ea3806539664c6f9157b4f9552d11c56615f8a406d448b39e470dbab
   status: not_a_product
   url: https://incuple.sk/coffeeshop/
-- last_seen: '2026-07-27'
+- last_seen: '2026-07-28'
   page_hash: 7e9dc169c2e315ac354c9d8522143073b3b746b99652435dd117e475ab980d95
   status: not_a_product
   url: https://incuple.sk/coffee-shop-banovce/
@@ -7375,7 +7375,7 @@ kaffa-roastery:
   page_hash: bf2e663b4ba0543e6550d8f52fa57b74954f9d9ca9ccd06a18fa984cd8940275
   status: not_a_product
   url: https://kaffaroastery.sk/kava-na-filter/
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-28'
   page_hash: 6a17b5e16a0302968646be14b96ac4d880df002ed61db8754c8d426554ee02f6
   status: not_a_product
   url: https://kaffaroastery.sk/tradicne-espresso/
@@ -7468,7 +7468,7 @@ kaffa-roastery:
   status: not_a_product
   url: https://kaffaroastery.sk/kariera/
 karma-coffee:
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-28'
   page_hash: 3aacc394b2cc4ec24abcf04d8bb79bc6f508517aaf5395f239c7939b0a03a60f
   status: not_a_product
   url: https://www.karmacoffee.sk/obchod/matcha-japonsko/
@@ -11186,7 +11186,7 @@ simple-coffee:
   status: not_a_product
   url: https://simplecoffee.sk/blog-o-kave/
 spojka-roastery:
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-28'
   page_hash: ad6565d2d17c6e4755d90e1ccef971d24d3f13027ccf3a2da968f91714f21b22
   status: not_a_product
   url: https://shop.spojkaroastery.com/en/products/moli
@@ -11233,7 +11233,7 @@ spojka-roastery:
   body: null
   brewing_recommendations: null
   is_decaffeinated: null
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-28'
   name: Condor, Espresso
   origin: Colombia
   packaging:
@@ -11260,7 +11260,7 @@ spojka-roastery:
   body: null
   brewing_recommendations: null
   is_decaffeinated: false
-  last_seen: '2026-07-27'
+  last_seen: '2026-07-28'
   name: Pina Colada
   origin: Colombia
   packaging:
@@ -11278,7 +11278,7 @@ spojka-roastery:
   sweetness: null
   tasting_notes: Citrus, coconut, lemonade and creamy texture with tropical fruits
   url: https://shop.spojkaroastery.com/en/products/pina-colada
-- last_seen: '2026-07-27'
+- last_seen: '2026-07-28'
   page_hash: a453fa334d8a2086bb7329ab86100569b0444da8f7c7ae52f22cd3d81886a358
   status: not_a_product
   url: https://shop.spojkaroastery.com/en/products/peking
@@ -11307,7 +11307,7 @@ spojka-roastery:
   sweetness: null
   tasting_notes: null
   url: https://shop.spojkaroastery.com/en/products/kikobero-organic-coffee-kapsule
-- last_seen: '2026-07-27'
+- last_seen: '2026-07-28'
   page_hash: 3b63070a5542acadc0a19cdee26e7d081aa8a2b223e85f011729c6dd14eb6c87
   status: not_a_product
   url: https://shop.spojkaroastery.com/en/pages/pravne-dokumenty
@@ -11339,7 +11339,7 @@ spojka-roastery:
   sweetness: null
   tasting_notes: hibiskus, čokoláda a čerešne
   url: https://shop.spojkaroastery.com/en/products/humming-bird-costa-rica-drip-bag
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-28'
   page_hash: bcde51bd1774d4732d734896a220968978b02d021e975d6bb0db18cc7703fb8e
   status: not_a_product
   url: https://shop.spojkaroastery.com/en/pages/gdpr-a-ochrana-osobnych-udajov
@@ -11349,7 +11349,7 @@ spojka-roastery:
   brewing_recommendations: Drip bag ti umožní pripraviť si výberovú kávu kdekoľvek
     – stačí horúca voda a hrnček. Bez potreby vybavenia, bez kompromisov na chuti.
   is_decaffeinated: null
-  last_seen: '2026-07-26'
+  last_seen: '2026-07-28'
   name: Rocket Flower – Colombia (Drip Bag)
   origin: Colombia
   packaging:
@@ -11372,7 +11372,7 @@ spojka-roastery:
   body: null
   brewing_recommendations: null
   is_decaffeinated: null
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-28'
   name: Slow Dry Society, omni roast
   origin: Panama
   packaging:
@@ -11451,7 +11451,7 @@ spojka-roastery:
   sweetness: null
   tasting_notes: Almonds, panela, citric acid and clover
   url: https://shop.spojkaroastery.com/en/products/condor-decaf
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-28'
   page_hash: fd9ec8f8f6d260396efc033f1c4455f9b7e9e4c81c083aee22e75b25c2e47470
   status: not_a_product
   url: https://shop.spojkaroastery.com/en/products/siltovka-s-nasivkami
@@ -11489,7 +11489,7 @@ spojka-roastery:
   body: null
   brewing_recommendations: null
   is_decaffeinated: null
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-28'
   name: Wake the f*ck up
   origin: Indonesia
   packaging:
@@ -11517,7 +11517,7 @@ spojka-roastery:
   body: null
   brewing_recommendations: null
   is_decaffeinated: false
-  last_seen: '2026-07-20'
+  last_seen: '2026-07-28'
   name: Bach
   origin: Costa Rica
   packaging:
@@ -11539,15 +11539,15 @@ spojka-roastery:
   sweetness: null
   tasting_notes: cognac, raisins, candied hibiscus
   url: https://shop.spojkaroastery.com/en/products/bach
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-28'
   page_hash: dedd943e64a3f5506e47664185673120d24f069d8f3d43f4460704649c6e06ac
   status: not_a_product
   url: https://shop.spojkaroastery.com/en/products/ciapka-vrubkovana
-- last_seen: '2026-07-27'
+- last_seen: '2026-07-28'
   page_hash: 56ce2e89079e6ae8a6f5979574ca08c235fb511268043d3164f6f3867afddb09
   status: not_a_product
   url: https://shop.spojkaroastery.com/en/products/rio-mate
-- last_seen: '2026-07-27'
+- last_seen: '2026-07-28'
   page_hash: 1709ae7db40846dab018c449202ec10d5f1e265fd34189de753260a5f0f57731
   status: not_a_product
   url: https://shop.spojkaroastery.com/en/products/rumcheck
@@ -11607,7 +11607,7 @@ spojka-roastery:
   sweetness: null
   tasting_notes: Jasmine flower, black tea, honey, floral notes
   url: https://shop.spojkaroastery.com/en/products/brewteaful-coffee
-- last_seen: '2026-07-26'
+- last_seen: '2026-07-28'
   page_hash: c34069c973b344942852c6a91d0bbdc8a993bf46c2518b08737037f4eadc1ccd
   status: not_a_product
   url: https://shop.spojkaroastery.com/en/products/ciapka-hladka
@@ -11642,7 +11642,7 @@ spojka-roastery:
   body: null
   brewing_recommendations: null
   is_decaffeinated: null
-  last_seen: '2026-07-26'
+  last_seen: '2026-07-28'
   name: Condor, Filter
   origin: Colombia
   packaging:
@@ -11664,7 +11664,7 @@ spojka-roastery:
   sweetness: null
   tasting_notes: Brusnica, maslo, melasa, med
   url: https://shop.spojkaroastery.com/en/products/condor-1
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-28'
   page_hash: 34b6154d891b8ecf2ea56f4b02c781a9786b5e0832c276d273f2c250c3aaf954
   status: not_a_product
   url: https://shop.spojkaroastery.com/en/products/siltovka-s-vysivkou-classic
@@ -11674,7 +11674,7 @@ spojka-roastery:
   brewing_recommendations: Drip bag ti umožní pripraviť si výberovú kávu kdekoľvek
     – stačí horúca voda a hrnček. Bez potreby vybavenia, bez kompromisov na chuti.
   is_decaffeinated: null
-  last_seen: '2026-07-27'
+  last_seen: '2026-07-28'
   name: Bach – Costa Rica (Drip Bag)
   origin: Costa Rica
   packaging:
@@ -11698,7 +11698,7 @@ spojka-roastery:
   body: null
   brewing_recommendations: null
   is_decaffeinated: null
-  last_seen: '2026-07-27'
+  last_seen: '2026-07-28'
   name: Gold Digger – Colombia (Drip Bag)
   origin: Colombia
   packaging:
@@ -11718,7 +11718,7 @@ spojka-roastery:
   tasting_notes: Citrusová acidita, pomaranč, mandľa, sladké korenie, hnedý cukor,
     karamel, zelený čaj, mandarínka, biela čokoláda
   url: https://shop.spojkaroastery.com/en/products/gold-digger-colombia-drip-bag
-- last_seen: '2026-07-20'
+- last_seen: '2026-07-28'
   page_hash: d0248e7479a8d0c6a07fc1e3ff44a58779404a75db2691e4658f83b2ab5eade8
   status: not_a_product
   url: https://shop.spojkaroastery.com/en/products/siltovka-s-vysivkou-1

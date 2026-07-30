@@ -27,6 +27,7 @@ from crawl4ai import (
 )
 from crawl4ai.async_configs import HTTPCrawlerConfig
 from crawl4ai.async_crawler_strategy import AsyncHTTPCrawlerStrategy
+from crawl4ai.async_crawler_strategy import ConnectionTimeoutError
 
 ROOT = Path(__file__).resolve().parent.parent
 ROASTERS_PATH = ROOT / "roasters.yaml"
@@ -169,6 +170,10 @@ MAX_INCOMPLETE_REEXTRACTIONS = 3
 # generous on purpose — a roaster with a genuinely large catalog shouldn't
 # have its tail silently truncated (issue #22).
 MAX_PAGES = 30
+# Number of times to retry a fetch before giving up on a connection error
+# (ConnectionTimeoutError, ClientConnectorError, etc.)
+MAX_RETRIES = 3
+
 
 # A page whose extracted text is shorter than this is almost certainly a
 # JS-rendered shell rather than real content (used for both listing and
@@ -1261,10 +1266,25 @@ async def _crawl_listing_links(crawler, start_url, max_pages=MAX_PAGES, throttle
             break
         seen_pages.add(url)
         await _politeness_wait(throttle)
-        try:
-            result = await crawler.arun(url, config=DISCOVERY_CONFIG)
-        except Exception:
-            result = None
+        # Retry up to MAX_RETRIES times for connection timeouts before giving up
+        result = None
+        for retry_attempt in range(MAX_RETRIES):
+            try:
+                result = await crawler.arun(url, config=DISCOVERY_CONFIG)
+                break  # Success, exit retry loop
+            except ConnectionTimeoutError as exc:
+                # Retry on timeout
+                print(
+                    f"  WARNING: {url} timed out (attempt {retry_attempt + 1}/{MAX_RETRIES}) - {exc}"
+                )
+                if retry_attempt < MAX_RETRIES - 1:
+                    await asyncio.sleep(1.0)  # Brief delay before retry
+                if retry_attempt == MAX_RETRIES - 1:
+                    print(f"  ERROR: {url} failed after {MAX_RETRIES} retry attempts")
+            except Exception as exc:
+                # Non-timeout errors don't get retry treatment
+                print(f"  ERROR: {url} failed with {exc.__class__.__name__}: {exc}")
+                break
         if first_result is None:
             first_result = result
         if not result or not result.success:
@@ -1407,10 +1427,25 @@ async def extract_shopify_variations(crawler, html, product_url, throttle=None):
         return []
     variants_url = product_url.split("?")[0].rstrip("/") + ".js"
     await _politeness_wait(throttle)
-    try:
-        result = await crawler.arun(variants_url, config=DETAIL_CONFIG)
-    except Exception:
-        return []
+    # Retry up to MAX_RETRIES times for connection timeouts before giving up
+    result = None
+    for retry_attempt in range(MAX_RETRIES):
+        try:
+            result = await crawler.arun(variants_url, config=DETAIL_CONFIG)
+            break  # Success, exit retry loop
+        except ConnectionTimeoutError as exc:
+            # Retry on timeout
+            print(
+                f"  WARNING: {variants_url} timed out (attempt {retry_attempt + 1}/{MAX_RETRIES}) - {exc}"
+            )
+            if retry_attempt < MAX_RETRIES - 1:
+                await asyncio.sleep(1.0)  # Brief delay before retry
+            if retry_attempt == MAX_RETRIES - 1:
+                print(f"  ERROR: {variants_url} failed after {MAX_RETRIES} retry attempts")
+        except Exception as exc:
+            # Non-timeout errors don't get retry treatment
+            print(f"  ERROR: {variants_url} failed with {exc.__class__.__name__}: {exc}")
+            break
     if not result or not result.success:
         return []
     try:
@@ -2257,10 +2292,25 @@ async def process_roaster(crawler, client, roaster, existing_entries, today, max
     for url in discovered:
         group_priors = existing_by_url.get(url, [])
         await _politeness_wait(throttle)
-        try:
-            result = await crawler.arun(url, config=DETAIL_CONFIG)
-        except Exception:
-            result = None
+        # Retry up to MAX_RETRIES times for connection timeouts before giving up
+        result = None
+        for retry_attempt in range(MAX_RETRIES):
+            try:
+                result = await crawler.arun(url, config=DETAIL_CONFIG)
+                break  # Success, exit retry loop
+            except ConnectionTimeoutError as exc:
+                # Retry on timeout
+                print(
+                    f"  WARNING: {url} timed out (attempt {retry_attempt + 1}/{MAX_RETRIES}) - {exc}"
+                )
+                if retry_attempt < MAX_RETRIES - 1:
+                    await asyncio.sleep(1.0)  # Brief delay before retry
+                if retry_attempt == MAX_RETRIES - 1:
+                    print(f"  ERROR: {url} failed after {MAX_RETRIES} retry attempts")
+            except Exception as exc:
+                # Non-timeout errors don't get retry treatment
+                print(f"  ERROR: {url} failed with {exc.__class__.__name__}: {exc}")
+                break
         if not result or not result.success:
             kept.extend(group_priors)
             continue

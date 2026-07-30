@@ -38,7 +38,7 @@ jobs:
       - run: uv run --directory scraper crawl4ai-setup
       - run: uv run --directory scraper python scrape.py
         env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
       # Issue #62: run one known-good fixture page through the real
       # extraction pipeline and ::warning:: on drift — the model fallback
       # (issue #42) catches errors, this catches silently wrong answers.
@@ -46,7 +46,9 @@ jobs:
       - name: LLM extraction canary
         run: uv run --directory scraper python scrape.py --canary
         env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          OPENROUTER_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          DEFAULT_MODELS: 'openai/gpt-oss-120b,openai/gpt-oss-20b'
       # Issue #28, suggested fix 3: data/scrape_status.yaml (just written by
       # the scraper run above) tracks each roaster's consecutive_non_ok
       # streak. A roaster stuck non-ok for 3+ runs in a row is past "one

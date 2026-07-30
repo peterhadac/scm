@@ -1828,11 +1828,6 @@ def extract_product(client, url, markdown):
         ) from last_error
 
     _record_usage(response)
-    if response.choices is None:
-        raise ExtractionFailed(
-            f"OpenRouter API returned None for choices for {url} - this indicates a model-level failure or configuration issue"
-        )
-
     choice = response.choices[0]
     for call in choice.message.tool_calls or []:
         if call.function.name != "extract_product":

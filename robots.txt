@@ -1,0 +1,16 @@
+# Robots.txt for Slovak Coffee Map
+# https://peterhadac.github.io/scm/
+
+# Allow all robots to access the site
+User-agent: *
+Allow: /
+
+# Disallow admin/system files
+Disallow: /api/
+Disallow: /sk/api/
+
+# Sitemap location
+Sitemap: https://peterhadac.github.io/scm/sitemap.xml
+
+# Link to llms.txt for AI agents
+# https://github.com/peterhadac/scm/blob/main/llms.txt

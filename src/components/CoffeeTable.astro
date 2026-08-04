@@ -244,7 +244,6 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
           const dropped = prevPoint !== null && series[series.length - 1].price < prevPoint.price;
           return (
             <tr
-              style={`--i: ${Math.min(i, 20)}`}
               data-name={c.name}
               data-roaster={c.roaster}
               data-origin={c.origin ?? ''}
@@ -975,16 +974,9 @@ const fmtEur = (n: number) => `€${n.toFixed(2)}`;
     line-height: 1;
   }
 
-  @keyframes row-in {
-    from { opacity: 0; transform: translateY(4px); }
-    to   { opacity: 1; transform: none; }
-  }
-
   .ct-table tbody tr {
     border-bottom: 1px solid var(--md-sys-color-outline-variant);
     transition: background var(--md3-motion-duration-state) var(--md-sys-motion-easing-standard);
-    animation: row-in 0.22s ease both;
-    animation-delay: calc(var(--i, 0) * 12ms);
   }
 
   .ct-table tbody tr:last-child { border-bottom: none; }

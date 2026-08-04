@@ -78,6 +78,20 @@ class FakeCrawler:
             return fake_result(success=False)
         return result
 
+    async def arun_many(self, urls, config=None):
+        """Parallel arun via asyncio.gather — returns results in input order."""
+        if not urls:
+            return []
+
+        async def _one(url):
+            self.calls.append(url)
+            result = self.responses.get(url)
+            if result is None:
+                return fake_result(success=False)
+            return result
+
+        return await asyncio.gather(*[_one(url) for url in urls])
+
 
 @pytest.fixture(autouse=True)
 def _no_real_politeness_sleep(monkeypatch):

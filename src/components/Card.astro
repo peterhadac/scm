@@ -7,28 +7,30 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<div class="card">
-  <h3>{title}</h3>
+<article class="card">
+  <h3 class="card-title">{title}</h3>
   <div class="card-body">
     <slot />
   </div>
-</div>
+</article>
 
 <style>
   .card {
-    border: 1px solid var(--md-sys-color-outline-variant);
-    border-radius: var(--md-sys-shape-corner-medium);
     padding: 1.25rem;
     background: var(--md-sys-color-surface-container-low);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
   }
 
-  .card h3 {
-    margin: 0 0 0.5rem;
-    font-size: var(--md-sys-typescale-title-medium-size);
+  .card-title {
+    margin: 0 0 0.75rem;
+    font-size: var(--md-sys-typescale-title-large-size);
+    color: var(--md-sys-color-on-surface);
   }
 
   .card-body {
     color: var(--md-sys-color-on-surface-variant);
-    font-size: var(--md-sys-typescale-body-medium-size);
+    font-size: var(--md-sys-typescale-body-large-size);
+    line-height: 1.65;
   }
 </style>

@@ -1,13 +1,11 @@
 ---
-// shadcn-shaped Badge, re-themed to Design.md's six brand tokens. Replaces
-// the four near-duplicate `.ct-badge--washed/--honey/--natural/--other`
-// CSS blocks in CoffeeTable.astro with one typed variant — see
-// docs/design-audit-followups.md.
+// Flat Badge, themed to Design.md's six brand tokens. No hover
+// animations -- these are data labels, not interactive elements.
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
 const badgeVariants = cva(
-  'inline-flex max-w-[14rem] items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-full border px-[0.65em] py-[0.18em] font-sans text-[11px] font-medium transition-all duration-150 ease-out',
+  'inline-flex max-w-[14rem] items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-full border px-[0.65em] py-[0.18em] font-sans text-[11px] font-medium',
   {
     variants: {
       // washed → secondary role (Aqua Mist, clean water)
@@ -20,11 +18,6 @@ const badgeVariants = cva(
         other: 'border-border bg-muted text-muted-foreground',
         // Awwwards Step 4: Value score gauge variant
         'value-score': 'border-0 bg-transparent text-foreground',
-        // Process badges with improved hover (Awwwards Step 7)
-        'washed-hover': 'border-secondary/40 bg-secondary/20 text-foreground hover:brightness-110 hover:scale-105',
-        'honey-hover': 'border-primary/40 bg-primary/15 text-foreground hover:brightness-110 hover:scale-105',
-        'natural-hover': 'border-tertiary/40 bg-tertiary/15 text-foreground hover:brightness-110 hover:scale-105',
-        'other-hover': 'border-border bg-muted text-muted-foreground hover:brightness-110 hover:scale-105',
       },
     },
     defaultVariants: {

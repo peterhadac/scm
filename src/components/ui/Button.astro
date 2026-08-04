@@ -1,23 +1,20 @@
 ---
-// shadcn-shaped Button, re-themed to Design.md's six brand tokens (not
-// shadcn's default palette). "Candy" treatment: a glossy top-highlight layer
-// plus a bottom-weighted shadow read as a raised, pressable pill; the
-// highlight is a ::before overlay (not a background-image) so it composites
-// correctly over both the primary and secondary fills. Replaces the
-// hand-rolled `.action.primary` / `.action.secondary` pill buttons — see
-// docs/design-audit-followups.md.
+// Flat Button, themed to Design.md's six brand tokens. No candy gloss,
+// no multi-layer shadows — just a clean, tactile pill with a color transition
+// on hover and a subtle physical press on active. Replaces the
+// "candy" treatment from the previous version.
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
-  'candy-btn relative isolate inline-flex items-center justify-center rounded-full font-sans font-medium transition-[transform,box-shadow,background-color] duration-150 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 disabled:shadow-none disabled:active:scale-100 focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+  'relative isolate inline-flex items-center justify-center rounded-full font-sans font-medium border transition-colors duration-150 active:translate-y-[1px] disabled:pointer-events-none disabled:opacity-40 disabled:active:translate-y-0 focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary',
   {
     variants: {
       variant: {
         primary:
-          'bg-primary text-primary-foreground shadow-[0_1px_0_rgba(255,255,255,0.35)_inset,0_-3px_0_rgba(0,0,0,0.16)_inset,0_6px_14px_-4px_rgba(179,42,1,0.55)] hover:brightness-105 hover:shadow-[0_1px_0_rgba(255,255,255,0.4)_inset,0_-3px_0_rgba(0,0,0,0.16)_inset,0_8px_18px_-4px_rgba(179,42,1,0.6)] active:shadow-[0_-2px_0_rgba(0,0,0,0.18)_inset,0_2px_6px_-2px_rgba(179,42,1,0.5)]',
+          'border-transparent text-white bg-secondary hover:bg-primary hover:brightness-95 active:bg-primary',
         secondary:
-          'border border-border bg-surface text-primary shadow-[0_1px_0_rgba(255,255,255,0.6)_inset,0_-2px_0_rgba(0,0,0,0.05)_inset,0_4px_10px_-4px_rgba(53,30,28,0.18)] hover:bg-primary/8 active:shadow-[0_-2px_0_rgba(0,0,0,0.06)_inset,0_1px_4px_-2px_rgba(53,30,28,0.16)]',
+          'border-outline/40 bg-surface text-on-surface hover:border-primary hover:text-primary',
       },
       size: {
         default: 'px-6 py-2.5 text-sm',
@@ -46,19 +43,3 @@ const Tag = href ? 'a' : 'button';
 <Tag class={classes} href={href} target={target} rel={rel} type={href ? undefined : 'button'}>
   <slot />
 </Tag>
-
-<style>
-  /* Gloss highlight: a soft light sweep across the top third, clipped to the
-     pill's own radius. z-index: -1 keeps it above the button's own solid
-     background but below the label — including plain text slot content,
-     which has no box to give a z-index of its own. */
-  .candy-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0) 55%);
-    pointer-events: none;
-    z-index: -1;
-  }
-</style>

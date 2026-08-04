@@ -136,8 +136,26 @@ def _parse_models(value):
     return tuple(m.strip() for m in value.split(",") if m.strip())
 
 
+def _parse_bool(value):
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 MODELS = _parse_models(os.environ.get("OPENROUTER_MODELS", DEFAULT_MODELS))
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+DEFAULT_OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+# Any OpenAI-compatible /chat/completions endpoint works here — override to
+# point extraction at a self-hosted server (e.g. vLLM with
+# --enable-auto-tool-choice and the model-appropriate --tool-call-parser)
+# instead of OpenRouter, paired with OPENROUTER_MODELS naming a model that
+# server actually serves.
+OPENROUTER_BASE_URL = os.environ.get("OPENROUTER_BASE_URL", DEFAULT_OPENROUTER_BASE_URL)
+# Opt-in for self-hosted reasoning models (Qwen3-family etc.): sends vLLM's
+# chat-template toggle that disables thinking. Without it such a model burns
+# extract_product's max_tokens budget on reasoning before ever reaching the
+# tool call (verified against Qwen3.6-35B: thinking-on truncates every
+# extraction at finish_reason=length; thinking-off answers the same prompts
+# in under 100 completion tokens). Off by default because OpenRouter-hosted
+# models don't take chat_template_kwargs.
+DISABLE_THINKING = _parse_bool(os.environ.get("OPENROUTER_DISABLE_THINKING", ""))
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/120.0 Safari/537.36"
@@ -1789,6 +1807,13 @@ def extract_product(client, url, markdown):
     # accepted) moves to the next model immediately — retrying the same
     # model can't fix those — while transient errors (429/5xx/connection)
     # get the usual bounded retries before this model is given up on.
+    # Read at call time (not import time) so tests — and anything else that
+    # monkeypatches scrape.DISABLE_THINKING — see the toggle take effect.
+    extra_kwargs = (
+        {"extra_body": {"chat_template_kwargs": {"enable_thinking": False}}}
+        if DISABLE_THINKING
+        else {}
+    )
     response = None
     last_error = None
     for model in MODELS:
@@ -1802,6 +1827,7 @@ def extract_product(client, url, markdown):
                     temperature=0,
                     seed=0,
                     tools=[EXTRACT_PRODUCT_TOOL],
+                    **extra_kwargs,
                     messages=[
                         {"role": "system", "content": EXTRACT_SYSTEM_PROMPT},
                         {
@@ -2598,9 +2624,18 @@ def _require_openrouter_api_key():
     OpenAI client silently constructed with an empty key that only fails
     much later, mid-run, on the first extraction call) is a worse failure
     mode than refusing to start at all (issue #23).
+
+    Exception: when OPENROUTER_BASE_URL is overridden away from the real
+    OpenRouter endpoint, a missing key falls back to a placeholder instead of
+    refusing to start — self-hosted OpenAI-compatible servers (vLLM,
+    llama.cpp) typically don't check credentials, and demanding a dummy env
+    var just to run against one is pure friction. A server that *does* check
+    will reject the placeholder with a clear 401.
     """
     api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
+        if OPENROUTER_BASE_URL != DEFAULT_OPENROUTER_BASE_URL:
+            return "unused"
         raise RuntimeError(
             "OPENROUTER_API_KEY environment variable is not set — required "
             "for LLM extraction. Set it before running the scraper."

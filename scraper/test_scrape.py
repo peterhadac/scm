@@ -1809,6 +1809,70 @@ def test_extract_product_omits_url_and_uses_system_message():
     assert "<page_content>" in messages[1]["content"]
 
 
+def test_extract_product_sends_no_extra_body_by_default(monkeypatch):
+    monkeypatch.setattr(scrape, "DISABLE_THINKING", False)
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]})]
+    )
+
+    scrape.extract_product(fake_client, "https://x.sk/rwanda/", "markdown text")
+
+    assert "extra_body" not in fake_client.chat.completions.create.call_args.kwargs
+
+
+def test_extract_product_sends_thinking_toggle_when_enabled(monkeypatch):
+    # OPENROUTER_DISABLE_THINKING=1 (self-hosted reasoning model): the vLLM
+    # chat-template toggle must ride along on the completions call, or the
+    # model spends the whole max_tokens budget thinking and every extraction
+    # dies as finish_reason=length.
+    monkeypatch.setattr(scrape, "DISABLE_THINKING", True)
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.return_value = fake_completion(
+        [fake_tool_call("extract_product", {"name": "Rwanda", "packaging": [{"price": "12,50 €"}]})]
+    )
+
+    scrape.extract_product(fake_client, "https://x.sk/rwanda/", "markdown text")
+
+    kwargs = fake_client.chat.completions.create.call_args.kwargs
+    assert kwargs["extra_body"] == {"chat_template_kwargs": {"enable_thinking": False}}
+
+
+def test_parse_bool_accepts_common_truthy_spellings():
+    for value in ("1", "true", "True", " YES ", "on"):
+        assert scrape._parse_bool(value) is True
+    for value in ("", "0", "false", "no", "off", "banana"):
+        assert scrape._parse_bool(value) is False
+
+
+# --- OPENROUTER_BASE_URL override / API-key requirement ----------------------
+
+
+def test_require_api_key_raises_without_key_on_default_base_url(monkeypatch):
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.setattr(scrape, "OPENROUTER_BASE_URL", scrape.DEFAULT_OPENROUTER_BASE_URL)
+
+    with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY"):
+        scrape._require_openrouter_api_key()
+
+
+def test_require_api_key_placeholder_when_base_url_overridden(monkeypatch):
+    # A self-hosted OpenAI-compatible server (vLLM on a local box) doesn't
+    # check credentials — pointing OPENROUTER_BASE_URL at one must not demand
+    # a dummy OPENROUTER_API_KEY just to start.
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.setattr(scrape, "OPENROUTER_BASE_URL", "http://192.0.2.1:8000/v1")
+
+    assert scrape._require_openrouter_api_key() == "unused"
+
+
+def test_require_api_key_prefers_real_key_even_when_base_url_overridden(monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-real")
+    monkeypatch.setattr(scrape, "OPENROUTER_BASE_URL", "http://192.0.2.1:8000/v1")
+
+    assert scrape._require_openrouter_api_key() == "sk-real"
+
+
 def test_extract_product_retries_on_transient_api_error(monkeypatch):
     import httpx
 

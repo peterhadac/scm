@@ -1843,20 +1843,20 @@ def extract_product(client, url, markdown):
                 f"[LLM]...  → {model} | {last_url} | try {attempt}/{EXTRACT_RETRY_ATTEMPTS}"
             )
             try:
-                    response = client.chat.completions.create(
-                        model=model,
-                        max_completion_tokens=1024,
-                        temperature=0,
-                        seed=0,
-                        response_format={"type": "json_object"},
-                        messages=[
-                            {"role": "system", "content": EXTRACT_SYSTEM_PROMPT},
-                            {
-                                "role": "user",
-                                "content": f"<page_content>\n{truncated_markdown}\n</page_content>",
-                            },
-                        ],
-                    )
+                response = client.chat.completions.create(
+                    model=model,
+                    max_completion_tokens=1024,
+                    temperature=0,
+                    seed=0,
+                    response_format={"type": "json_object"},
+                    messages=[
+                        {"role": "system", "content": EXTRACT_SYSTEM_PROMPT},
+                        {
+                            "role": "user",
+                            "content": f"<page_content>\n{truncated_markdown}\n</page_content>",
+                        },
+                    ],
+                )
                 break
             except (openai.NotFoundError, openai.BadRequestError) as exc:
                 last_error = exc

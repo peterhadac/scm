@@ -2693,6 +2693,50 @@ async def run(
         return f"{s[:4]}...{s[-4:]}"
     print(f"OPENROUTER_BASE_URL: {base_url}")
     print(f"OPENROUTER_API_KEY: {_mask_key(api_key_env)}")
+    # Diagnostic: warn if a preferred model (OPENROUTER_MODELS) isn't present
+    # in the local models.json snapshot or on the provider. This helps catch
+    # subtle mismatches like a trailing ":free" suffix in the model id.
+    preferred_models_env = os.environ.get("OPENROUTER_MODELS")
+    def _models_from_local_snapshot(path="models.json"):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                j = json.load(f)
+            ids = [item.get("id") for item in j.get("data", []) if isinstance(item, dict) and item.get("id")]
+            return set(ids)
+        except Exception:
+            return None
+
+    def _models_from_api(base_url, api_key):
+        try:
+            url = base_url.rstrip("/") + "/models?limit=1000"
+            req = urllib.request.Request(url, headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = resp.read()
+            j = json.loads(data)
+            ids = [item.get("id") for item in j.get("data", []) if isinstance(item, dict) and item.get("id")]
+            return set(ids)
+        except Exception:
+            return None
+
+    if preferred_models_env:
+        preferred_list = [m.strip() for m in preferred_models_env.split(",") if m.strip()]
+        local_ids = _models_from_local_snapshot(os.path.join(Path(__file__).resolve().parent.parent, "models.json"))
+        missing = []
+        for pm in preferred_list:
+            found = False
+            if local_ids is not None and pm in local_ids:
+                found = True
+            if not found:
+                # Try remote check if local snapshot doesn't contain it
+                remote_ids = _models_from_api(base_url, api_key_env) if api_key_env else None
+                if remote_ids is not None and pm in remote_ids:
+                    found = True
+            if not found:
+                missing.append(pm)
+        if missing:
+            print("WARNING: Preferred model(s) not found:", ", ".join(missing))
+            print(" - Check OPENROUTER_MODELS env, or use an exact id from models.json (note ':free' suffixes).")
+
     client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=_require_openrouter_api_key())
     all_roasters = load_roasters(roasters_path)
     roasters = all_roasters

@@ -2513,12 +2513,12 @@ def build_scrape_status_records(statuses_by_slug, today, previous=None, products
         prior = previous.get(slug) or {}
         prior_streak = prior.get("consecutive_non_ok", 0) if isinstance(prior, dict) else 0
         consecutive_non_ok = 0 if status == "ok" else prior_streak + 1
-        
+
         # Include product count and URLs in the status record
         product_entries = products_by_slug.get(slug, []) if products_by_slug else []
         product_count = len(product_entries)
         product_urls = [p["url"] for p in product_entries if p.get("url")]
-        
+
         # For failed/needs_js/partial status, preserve prior product URLs if no new data
         if status in ("failed", "needs_js", "partial") and slug in previous:
             prior_urls = previous[slug].get("product_urls", [])
@@ -2528,7 +2528,7 @@ def build_scrape_status_records(statuses_by_slug, today, previous=None, products
             prior_count = previous[slug].get("product_count", 0)
             if prior_count > 0:
                 product_count = prior_count
-        
+
         records[slug] = {
             "name": info.get("name", slug),
             "status": status,
@@ -2567,7 +2567,7 @@ def write_github_step_summary(statuses_by_slug, summary_path=None, records=None)
         lines.append(f"| {info['name']} | {status} | {product_count} | {note} |")
     with open(summary_path, "a", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
-    
+
     # Add product URLs section
     lines = ["", "## Product URLs by Roaster", ""]
     for slug in sorted(statuses_by_slug, key=lambda s: statuses_by_slug[s]["name"].lower()):
@@ -2680,6 +2680,19 @@ async def run(
     status_path=STATUS_PATH,
     history_path=HISTORY_PATH,
 ):
+    # Log configured OpenRouter endpoint and a masked API key for diagnostics.
+    # The real key is not printed; only a short masked form is shown.
+    base_url = os.environ.get("OPENROUTER_BASE_URL", OPENROUTER_BASE_URL)
+    api_key_env = os.environ.get("OPENROUTER_API_KEY")
+    def _mask_key(key: str | None) -> str:
+        if not key:
+            return "(not set)"
+        s = str(key)
+        if len(s) <= 8:
+            return "****"
+        return f"{s[:4]}...{s[-4:]}"
+    print(f"OPENROUTER_BASE_URL: {base_url}")
+    print(f"OPENROUTER_API_KEY: {_mask_key(api_key_env)}")
     client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=_require_openrouter_api_key())
     all_roasters = load_roasters(roasters_path)
     roasters = all_roasters
@@ -2786,7 +2799,7 @@ async def run(
     previous_status_records = load_scrape_status(status_path)
     status_records = build_scrape_status_records(statuses_by_slug, today, previous_status_records, products_by_slug)
     save_scrape_status(status_records, status_path)
-    
+
     print("scrape_status:")
     # Sorted for readable, deterministic output — completion order (and so
     # dict insertion order) is no longer list order once roasters run

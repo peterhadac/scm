@@ -1,0 +1,17 @@
+---
+// Slovenské zrkadlo stránky drinks/machine (DrinkSelector demo).
+import Layout from '../../../layouts/Layout.astro';
+import DrinkSelector from '../../../components/DrinkSelector.astro';
+---
+
+<Layout
+  title="Výber nápoja"
+  description="Dotyková obrazovka automatického kávovaru, prerobená na komponent."
+>
+  <h1>Výber nápoja</h1>
+  <p>
+    Dotykové menu nápojov automatického kávovaru, nakreslené v čistom CSS a
+    SVG — ťuknutím si vyberte nápoj.
+  </p>
+  <DrinkSelector lang="sk" />
+</Layout>

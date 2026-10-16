@@ -1,0 +1,18 @@
+---
+// Demo page for the DrinkSelector component — a reproduction of a
+// bean-to-cup machine's touchscreen drink menu. Not linked from the nav.
+import Layout from '../../layouts/Layout.astro';
+import DrinkSelector from '../../components/DrinkSelector.astro';
+---
+
+<Layout
+  title="Drink selector"
+  description="A bean-to-cup machine's touchscreen drink menu, rebuilt as a component."
+>
+  <h1>Drink selector</h1>
+  <p>
+    The touchscreen drink menu of a bean-to-cup machine, rebuilt in plain
+    CSS and SVG — tap a drink to select it.
+  </p>
+  <DrinkSelector lang="en" />
+</Layout>

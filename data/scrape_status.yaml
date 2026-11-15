@@ -1,6 +1,6 @@
 9-grams-coffee:
-  consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  consecutive_non_ok: 1
+  last_run: '2026-11-15'
   name: 9 Grams Coffee
   product_count: 42
   product_urls:
@@ -46,27 +46,27 @@
   - https://www.coffeeart.me/9-grams-coffee-real-gentleman/
   - https://www.coffeeart.me/9-grams-coffee-ethiopia-shantawene-gr1-natural/
   - https://www.coffeeart.me/9-grams-coffee-ethiopia-sidamo-gr4-guji-natural/
-  status: ok
+  status: failed
 alternativ-coffee:
-  consecutive_non_ok: 5
-  last_run: '2026-11-14'
+  consecutive_non_ok: 6
+  last_run: '2026-11-15'
   name: Alternativ Coffee
   product_count: 27
   product_urls:
-  - https://avcoffee.sk/85-velkoobchod
-  - https://avcoffee.sk/prazena-kava/17478-19780-kava-pre-ucitelov.html
-  - https://avcoffee.sk/15-vyberova_kava_espresso_filter
-  - https://avcoffee.sk/ucet
   - https://avcoffee.sk/prazena-kava/810-cascara-caj-z-kavovych-ceresni.html
+  - https://avcoffee.sk/kontaktujte-nas
+  - https://avcoffee.sk/ucet
+  - https://avcoffee.sk/prazena-kava/17409-19579-kava-pre-otca.html
   - https://avcoffee.sk/23-prazicky-kavy
+  - https://avcoffee.sk/prazena-kava/17478-19780-kava-pre-ucitelov.html
+  - https://avcoffee.sk/31-doplnky
+  - https://avcoffee.sk/index.php
+  - https://avcoffee.sk/blog.html
+  - https://avcoffee.sk/85-velkoobchod
+  - https://avcoffee.sk/15-vyberova_kava_espresso_filter
   - https://avcoffee.sk/15-kava
   - https://avcoffee.sk/prazena-kava/10187-19558-kava-pre-mamu.html
   - https://avcoffee.sk/customer-support
-  - https://avcoffee.sk/kontaktujte-nas
-  - https://avcoffee.sk/index.php
-  - https://avcoffee.sk/blog.html
-  - https://avcoffee.sk/31-doplnky
-  - https://avcoffee.sk/prazena-kava/17409-19579-kava-pre-otca.html
   - https://avcoffee.sk/prazena-kava/17231-19852-indonesia-flowertron-zrnkova-kava.html
   - https://avcoffee.sk/prazena-kava/17491-19783-strawberry-kiss-jahodova-kava-.html
   - https://avcoffee.sk/prazena-kava/9442-19510-vyberova-kava-papua-new-guinea-lamari.html
@@ -80,42 +80,42 @@ alternativ-coffee:
   - https://avcoffee.sk/prazena-kava/17508-19829-costa-rica-los-pinos.html
   - https://avcoffee.sk/prazena-kava/17516-19842-indonesia-black-star-zrnkova-kavy-.html
   - https://avcoffee.sk/prazena-kava/17473-19768-burundi-turaco.html
-  status: failed
+  status: suspect
 black:
   consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  last_run: '2026-11-15'
   name: Black.
   product_count: 14
   product_urls:
-  - https://www.black.sk/sk/brazil-doce-citrus
-  - https://www.black.sk/sk/doprava-platba
-  - https://www.black.sk/sk/drippin
-  - https://www.black.sk/e-shop
-  - https://www.black.sk/en
-  - https://www.black.sk/sk
-  - https://www.black.sk/sk/nase-kaviarne
   - https://www.black.sk/sk/juicy-pussy
-  - https://www.black.sk/sk/home
+  - https://www.black.sk/sk
+  - https://www.black.sk/sk/brazil-doce-citrus
+  - https://www.black.sk/sk/drippin
+  - https://www.black.sk/sk/doprava-platba
   - https://www.black.sk/sk/e-shop/kava
-  - https://www.black.sk/sk/blend-black-sheep
   - https://www.black.sk/sk/e-shop/merch
+  - https://www.black.sk/e-shop
+  - https://www.black.sk/sk/blend-black-sheep
+  - https://www.black.sk/en
   - https://www.black.sk/sk/
+  - https://www.black.sk/sk/home
   - https://www.black.sk/sk/e-shop
+  - https://www.black.sk/sk/nase-kaviarne
   status: ok
 blue-mondays-coffee:
-  consecutive_non_ok: 8
-  last_run: '2026-11-14'
+  consecutive_non_ok: 0
+  last_run: '2026-11-15'
   name: Blue Mondays Coffee
   product_count: 4
   product_urls:
-  - https://bluemondays.sk/products/candy-crop-house-blend
-  - https://bluemondays.sk/products/brazil-fazenda-rodomunho
   - https://bluemondays.sk/pages/contact
+  - https://bluemondays.sk/products/candy-crop-house-blend
   - https://bluemondays.sk/products/brazil-fazenda-primavera
-  status: failed
+  - https://bluemondays.sk/products/brazil-fazenda-rodomunho
+  status: ok
 caffe4u:
-  consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  consecutive_non_ok: 1
+  last_run: '2026-11-15'
   name: Caffe4u
   product_count: 29
   product_urls:
@@ -148,10 +148,10 @@ caffe4u:
   - https://caffe4u.sk/prazena-zrnkova-kava/
   - https://caffe4u.sk/produkt/salvador-el-borbollon/
   - https://caffe4u.sk/produkt/kostarika-bach/
-  status: ok
+  status: needs_js
 casa-del-caffe:
-  consecutive_non_ok: 17
-  last_run: '2026-11-14'
+  consecutive_non_ok: 18
+  last_run: '2026-11-15'
   name: Casa del Caffe
   product_count: 18
   product_urls:
@@ -175,8 +175,8 @@ casa-del-caffe:
   - https://casadelcaffe.sk/reklamacia/
   status: partial
 coffeein:
-  consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  consecutive_non_ok: 1
+  last_run: '2026-11-15'
   name: Coffeein
   product_count: 15
   product_urls:
@@ -195,10 +195,10 @@ coffeein:
   - https://www.coffeein.sk/uzivatel/reklamacia/
   - https://www.coffeein.sk/odber-noviniek/
   - https://www.coffeein.sk/blog-kategoria/7/o-pestovatelskych-krajinach/1/
-  status: ok
+  status: failed
 concept-coffee-roasters:
-  consecutive_non_ok: 90
-  last_run: '2026-11-14'
+  consecutive_non_ok: 91
+  last_run: '2026-11-15'
   name: Concept Coffee Roasters
   product_count: 17
   product_urls:
@@ -219,10 +219,10 @@ concept-coffee-roasters:
   - https://www.conceptcoffee.sk/banana-swirl-colombia/
   - https://www.conceptcoffee.sk/cold-shock-colombia/
   - https://www.conceptcoffee.sk/ngoma-rwanda/
-  status: suspect
+  status: failed
 diamonds-roastery:
-  consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  consecutive_non_ok: 1
+  last_run: '2026-11-15'
   name: Diamond's Roastery
   product_count: 9
   product_urls:
@@ -235,10 +235,10 @@ diamonds-roastery:
   - https://diroastery.sk/preco-nakupit-v-diamonds-roastery-slovenska-rodinna-praziaren/
   - https://diroastery.sk/preco-nakupit-v-diamonds-roastery-kava-a-cokolada-ktore-maju-pribeh/
   - https://diroastery.sk/najcastejsie-otazky/
-  status: ok
+  status: partial
 doraz:
-  consecutive_non_ok: 42
-  last_run: '2026-11-14'
+  consecutive_non_ok: 43
+  last_run: '2026-11-15'
   name: Doraz
   product_count: 20
   product_urls:
@@ -265,38 +265,38 @@ doraz:
   status: failed
 epera-coffee:
   consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  last_run: '2026-11-15'
   name: Epera Coffee
   product_count: 24
   product_urls:
-  - https://www.praziarenepera.sk/produkt/kava-dominikanska-republika/
-  - https://www.praziarenepera.sk/vernostny-system/
-  - https://www.praziarenepera.sk/produkt/guatemala-bezkofeinova/
-  - https://www.praziarenepera.sk/produkt/ranny-blend/
-  - https://www.praziarenepera.sk/produkt/guatemala/
-  - https://www.praziarenepera.sk/produkt/salvador-shg/
-  - https://www.praziarenepera.sk/ako-nakupovat/
-  - https://www.praziarenepera.sk/produkt/kava-kolumbia-bezkofeinova/
-  - https://www.praziarenepera.sk/produkt/india/
-  - https://www.praziarenepera.sk/produkt/nitro-cold-brew-tonic/
-  - https://www.praziarenepera.sk/produkt/etiopia/
-  - https://www.praziarenepera.sk/produkt/kolumbia/
-  - https://www.praziarenepera.sk/produkt/kava-honduras-san-andres/
   - https://www.praziarenepera.sk/produkt/kava-kena/
-  - https://www.praziarenepera.sk/produkt/brazilia/
-  - https://www.praziarenepera.sk/sutaze-a-statuty/
-  - https://www.praziarenepera.sk/produkt/kava-kolumbia-la-claudina/
-  - https://www.praziarenepera.sk/produkt/peru/
+  - https://www.praziarenepera.sk/produkt/ranny-blend/
   - https://www.praziarenepera.sk/produkt/vietnam-100-robusta/
-  - https://www.praziarenepera.sk/produkt/bar-blend/
-  - https://www.praziarenepera.sk/produkt/kava-latino-blend/
-  - https://www.praziarenepera.sk/produkt/epera-blend/
   - https://www.praziarenepera.sk/velkoobchodna-spolupraca/
+  - https://www.praziarenepera.sk/vernostny-system/
+  - https://www.praziarenepera.sk/sutaze-a-statuty/
+  - https://www.praziarenepera.sk/produkt/brazilia/
+  - https://www.praziarenepera.sk/produkt/kolumbia/
+  - https://www.praziarenepera.sk/produkt/peru/
+  - https://www.praziarenepera.sk/produkt/bar-blend/
+  - https://www.praziarenepera.sk/produkt/kava-dominikanska-republika/
+  - https://www.praziarenepera.sk/produkt/guatemala-bezkofeinova/
   - https://www.praziarenepera.sk/produkt/mexiko-esmeralda/
+  - https://www.praziarenepera.sk/produkt/guatemala/
+  - https://www.praziarenepera.sk/produkt/epera-blend/
+  - https://www.praziarenepera.sk/produkt/kava-honduras-san-andres/
+  - https://www.praziarenepera.sk/produkt/salvador-shg/
+  - https://www.praziarenepera.sk/produkt/kava-kolumbia-bezkofeinova/
+  - https://www.praziarenepera.sk/produkt/kava-latino-blend/
+  - https://www.praziarenepera.sk/produkt/india/
+  - https://www.praziarenepera.sk/ako-nakupovat/
+  - https://www.praziarenepera.sk/produkt/kava-kolumbia-la-claudina/
+  - https://www.praziarenepera.sk/produkt/etiopia/
+  - https://www.praziarenepera.sk/produkt/nitro-cold-brew-tonic/
   status: ok
 good-times-coffee-roasters:
-  consecutive_non_ok: 30
-  last_run: '2026-11-14'
+  consecutive_non_ok: 31
+  last_run: '2026-11-15'
   name: Good Times Coffee Roasters
   product_count: 6
   product_urls:
@@ -309,23 +309,23 @@ good-times-coffee-roasters:
   status: failed
 goriffee:
   consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  last_run: '2026-11-15'
   name: Goriffee
   product_count: 13
   product_urls:
-  - https://www.goriffee.com/kavovy-catering-goriffee/
-  - https://www.goriffee.com/shop/kava/vyhodne-baliky/vyhodny-balik-3x-klasicke-espresso/
-  - https://www.goriffee.com/velkoobchod-kava-do-firiem/
-  - https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/milkyway-espresso-blend/
-  - https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/highlander-espresso-blend/
   - https://www.goriffee.com/vseobecne-obchodne-podmienky/
-  - https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/brazil-caramelo-natural/
+  - https://www.goriffee.com/nase-kaviarne/
   - https://www.goriffee.com/shop/kava/kavove-kapsule/vyhodny-balik-3x-kavove-kapsule-pre-nespresso/
+  - https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/brazil-caramelo-natural/
+  - https://www.goriffee.com/produkty/
+  - https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/highlander-espresso-blend/
+  - https://www.goriffee.com/shop/kava/vyhodne-baliky/vyhodny-balik-3x-klasicke-espresso/
+  - https://www.goriffee.com/kavovy-catering-goriffee/
+  - https://www.goriffee.com/velkoobchod-kava-do-firiem/
+  - https://www.goriffee.com/shop/kava/bezkofeinova-kava/colombia-tumbaga-decaf-kavove-kapsule/
   - https://www.goriffee.com/zasady-spracuvania-cookies/
   - https://www.goriffee.com/kontaktujte-nas/
-  - https://www.goriffee.com/nase-kaviarne/
-  - https://www.goriffee.com/produkty/
-  - https://www.goriffee.com/shop/kava/bezkofeinova-kava/colombia-tumbaga-decaf-kavove-kapsule/
+  - https://www.goriffee.com/shop/kava/vyberova-kava-na-espresso/milkyway-espresso-blend/
   status: ok
 green-plantation:
   consecutive_non_ok: 0
@@ -334,45 +334,45 @@ green-plantation:
   status: ok
 incuple:
   consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  last_run: '2026-11-15'
   name: Incuple
   product_count: 31
   product_urls:
-  - https://incuple.sk/produkt/latte-art-kurz-2/
-  - https://incuple.sk/produkt/testovacie-kilecko-4-x-250-g/
-  - https://incuple.sk/produkt/house-blend/
-  - https://incuple.sk/produkt/colombia-excelso-magdalena/
-  - https://incuple.sk/coffee-shop-academy-topolcany/
-  - https://incuple.sk/produkt/outin-coffee-stand/
-  - https://incuple.sk/nase-prevadzky/
-  - https://incuple.sk/kaviaren/
-  - https://incuple.sk/denna-davka-nitra/
-  - https://incuple.sk/produkt/go-blend/
-  - https://incuple.sk/produkt/dominikanska-republika-aa/
-  - https://incuple.sk/coffeeshop/
-  - https://incuple.sk/coffee-shop-banovce/
   - https://incuple.sk/praziaren-a-kaviaren-kamanova/
-  - https://incuple.sk/obchod/
-  - https://incuple.sk/produkt/india-plantation-bababudangiri/
-  - https://incuple.sk/produkt/peru-san-martin/
-  - https://incuple.sk/tim/
-  - https://incuple.sk/napisali-sme/
-  - https://incuple.sk/coffee-bar-topolcany/
   - https://incuple.sk/napisali-o-nas/
+  - https://incuple.sk/denna-davka-nitra/
+  - https://incuple.sk/kaviaren/
+  - https://incuple.sk/produkt/testovacie-kilecko-4-x-250-g/
   - https://incuple.sk/produkt/ethiopia-bensa/
-  - https://incuple.sk/produkt/help/
-  - https://incuple.sk/pribeh/
+  - https://incuple.sk/coffee-shop-banovce/
+  - https://incuple.sk/produkt/colombia-excelso-magdalena/
+  - https://incuple.sk/produkt/dominikanska-republika-aa/
+  - https://incuple.sk/coffee-bar-topolcany/
+  - https://incuple.sk/produkt/india-plantation-bababudangiri/
   - https://incuple.sk/my-sme-incuple/
-  - https://incuple.sk/produkt/street-blend-80-arabica-20-robusta/
   - https://incuple.sk/produkt/costa-rica/
-  - https://incuple.sk/office/
-  - https://incuple.sk/produkt/colombia-sugarcane-decaf/
   - https://incuple.sk/produkt/power-blend/
+  - https://incuple.sk/produkt/go-blend/
+  - https://incuple.sk/coffee-shop-academy-topolcany/
+  - https://incuple.sk/tim/
   - https://incuple.sk/produkt/cesta-okolo-sveta-6-x-125-g/
+  - https://incuple.sk/produkt/colombia-sugarcane-decaf/
+  - https://incuple.sk/nase-prevadzky/
+  - https://incuple.sk/produkt/street-blend-80-arabica-20-robusta/
+  - https://incuple.sk/produkt/peru-san-martin/
+  - https://incuple.sk/produkt/help/
+  - https://incuple.sk/napisali-sme/
+  - https://incuple.sk/produkt/house-blend/
+  - https://incuple.sk/produkt/outin-coffee-stand/
+  - https://incuple.sk/office/
+  - https://incuple.sk/obchod/
+  - https://incuple.sk/coffeeshop/
+  - https://incuple.sk/pribeh/
+  - https://incuple.sk/produkt/latte-art-kurz-2/
   status: ok
 jungle-roastery:
-  consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  consecutive_non_ok: 1
+  last_run: '2026-11-15'
   name: Jungle Roastery
   product_count: 6
   product_urls:
@@ -382,67 +382,67 @@ jungle-roastery:
   - https://www.jungleroastery.sk/kava/
   - https://www.jungleroastery.sk/honduras/
   - https://www.jungleroastery.sk/rwanda/
-  status: ok
+  status: failed
 kaan-roastery:
-  consecutive_non_ok: 1
-  last_run: '2026-11-14'
+  consecutive_non_ok: 0
+  last_run: '2026-11-15'
   name: KAAN Roastery
   product_count: 16
   product_urls:
-  - https://kaan.sk/produkt/banana-split/
-  - https://kaan.sk/produkt/tasty-decaf/
-  - https://kaan.sk/newsletter/
   - https://kaan.sk/produkt/brazilia-diamond/
-  - https://kaan.sk/kava-do-kaviarne/
+  - https://kaan.sk/produkt/feeling-good/
   - https://kaan.sk/produkt/sumatra-avatara/
-  - https://kaan.sk/produkt/brazilia-cerrado-fine/
-  - https://kaan.sk/produkt/india-kaapi-royal/
-  - https://kaan.sk/kava-na-mieru/
-  - https://kaan.sk/praziaren/
+  - https://kaan.sk/produkt/peel-good/
   - https://kaan.sk/produkt/wake-me-up/
+  - https://kaan.sk/newsletter/
   - https://kaan.sk/produkt/colombia-supremo/
   - https://kaan.sk/produkt/banana-bread/
-  - https://kaan.sk/produkt/feeling-good/
-  - https://kaan.sk/produkt/peel-good/
+  - https://kaan.sk/produkt/brazilia-cerrado-fine/
+  - https://kaan.sk/kava-na-mieru/
   - https://kaan.sk/produkt/energy-booster/
-  status: failed
+  - https://kaan.sk/kava-do-kaviarne/
+  - https://kaan.sk/produkt/tasty-decaf/
+  - https://kaan.sk/produkt/banana-split/
+  - https://kaan.sk/produkt/india-kaapi-royal/
+  - https://kaan.sk/praziaren/
+  status: ok
 kaffa-roastery:
-  consecutive_non_ok: 15
-  last_run: '2026-11-14'
+  consecutive_non_ok: 16
+  last_run: '2026-11-15'
   name: Kaffa Roastery
   product_count: 9
   product_urls:
-  - https://kaffaroastery.sk/tradicne-espresso/
-  - https://kaffaroastery.sk/kariera/
-  - https://kaffaroastery.sk/kava-na-filter/
-  - https://kaffaroastery.sk/shop/
   - https://kaffaroastery.sk/merch/
   - https://kaffaroastery.sk/moderne-espresso/
+  - https://kaffaroastery.sk/kava-na-filter/
+  - https://kaffaroastery.sk/tradicne-espresso/
+  - https://kaffaroastery.sk/shop/
+  - https://kaffaroastery.sk/kariera/
   - https://kaffaroastery.sk/produkt/costa-rica-hacienda-sonora/
   - https://kaffaroastery.sk/produkt/ethiopia-shantawene-ayla/
   - https://kaffaroastery.sk/produkt/kenya-kabingara-estate/
   status: suspect
 karma-coffee:
   consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  last_run: '2026-11-15'
   name: Karma Coffee
   product_count: 11
   product_urls:
-  - https://www.karmacoffee.sk/nasa-kava/
+  - https://www.karmacoffee.sk/obchod/mandala-blend-brazilia-kolumbia/
   - https://www.karmacoffee.sk/obchod/condor-decafe-kolumbia/
   - https://www.karmacoffee.sk/obchod/kivu-reserve-organic-black-tea-rwanda/
-  - https://www.karmacoffee.sk/obchod/nemba-burundi/
-  - https://www.karmacoffee.sk/obchod/blackespresso1-brazilia/
   - https://www.karmacoffee.sk/kurzy/
-  - https://www.karmacoffee.sk/obchod/aricha-barrel-aged-etiopia-copy/
-  - https://www.karmacoffee.sk/obchod/matcha-japonsko/
-  - https://www.karmacoffee.sk/obchod/mandala-blend-brazilia-kolumbia/
-  - https://www.karmacoffee.sk/obchod/funky-filter-kolumbia/
+  - https://www.karmacoffee.sk/nasa-kava/
+  - https://www.karmacoffee.sk/obchod/nemba-burundi/
   - https://www.karmacoffee.sk/obchod/kivu-reserve-organicgreen-tea-rwanda/
+  - https://www.karmacoffee.sk/obchod/matcha-japonsko/
+  - https://www.karmacoffee.sk/obchod/blackespresso1-brazilia/
+  - https://www.karmacoffee.sk/obchod/aricha-barrel-aged-etiopia-copy/
+  - https://www.karmacoffee.sk/obchod/funky-filter-kolumbia/
   status: ok
 kavoholik:
-  consecutive_non_ok: 91
-  last_run: '2026-11-14'
+  consecutive_non_ok: 92
+  last_run: '2026-11-15'
   name: Kavoholik
   product_count: 121
   product_urls:
@@ -567,45 +567,45 @@ kavoholik:
   - https://kavoholik.sk/828-bezkofeinova-decaf
   - https://kavoholik.sk/brand/30-mahlkonig
   - https://kavoholik.sk/brand/45-la-marzocco
-  status: partial
+  status: failed
 praziaren-rydze:
-  consecutive_non_ok: 1
-  last_run: '2026-11-14'
+  consecutive_non_ok: 0
+  last_run: '2026-11-15'
   name: Pražiareň Rýdze
   product_count: 28
   product_urls:
-  - https://praziarenrydze.sk/prazenakava/507-rydze-kilecko-vyberova-espresso.html
+  - https://praziarenrydze.sk/17-kava-do-coffee-shopov
+  - https://praziarenrydze.sk/13-kava-do-prace
+  - https://praziarenrydze.sk/18-zelena-kava
+  - https://praziarenrydze.sk/najpredavanejsie-produkty
+  - https://praziarenrydze.sk/nove-produkty
+  - https://praziarenrydze.sk/prihlasit-sa
+  - https://praziarenrydze.sk/21-merch
+  - https://praziarenrydze.sk/prazenakava/8-64-brazilia-serra-negra-vyberova-espresso.html
+  - https://praziarenrydze.sk/espresso/500-srdcova-zalezitost-bestseller-set-espresso.html
+  - https://praziarenrydze.sk/obsah/2-doprava-a-platba
   - https://praziarenrydze.sk/obsah/6-subory-cookies
+  - https://praziarenrydze.sk/domu/13-69-rwanda-1000-hills-vyberova-espresso.html
+  - https://praziarenrydze.sk/obsah/8-prehlasenie-o-pouziti-cookies
+  - https://praziarenrydze.sk/domu/488-harok-nalepiek-od-kubka-misia-panda.html
+  - https://praziarenrydze.sk/19-espresso
+  - https://praziarenrydze.sk/akciove-produkty
+  - https://praziarenrydze.sk/obsah/5-ochrany-osobnych-udajov
+  - https://praziarenrydze.sk/kontaktujte-nas
   - https://praziarenrydze.sk/obsah/3-obchodne-podmienky
   - https://praziarenrydze.sk/index.php
-  - https://praziarenrydze.sk/akciove-produkty
-  - https://praziarenrydze.sk/domu/482-91-kolumbia-asomujer-decaf-bezkofeinova-kava-espresso.html
-  - https://praziarenrydze.sk/12-prazenakava
+  - https://praziarenrydze.sk/prazenakava/507-rydze-kilecko-vyberova-espresso.html
   - https://praziarenrydze.sk/domu/489-100-brazilia-chocolate-vyberova-espresso.html
-  - https://praziarenrydze.sk/obsah/2-doprava-a-platba
-  - https://praziarenrydze.sk/13-kava-do-prace
-  - https://praziarenrydze.sk/19-espresso
-  - https://praziarenrydze.sk/domu/13-69-rwanda-1000-hills-vyberova-espresso.html
-  - https://praziarenrydze.sk/18-zelena-kava
-  - https://praziarenrydze.sk/prihlasit-sa
-  - https://praziarenrydze.sk/20-filter
-  - https://praziarenrydze.sk/nove-produkty
-  - https://praziarenrydze.sk/obsah/4-reklamacia-tovaru
+  - https://praziarenrydze.sk/domu/482-91-kolumbia-asomujer-decaf-bezkofeinova-kava-espresso.html
   - https://praziarenrydze.sk/domu/497-118-mexiko-puebla-vyberova-espresso.html
-  - https://praziarenrydze.sk/kontaktujte-nas
-  - https://praziarenrydze.sk/prazenakava/8-64-brazilia-serra-negra-vyberova-espresso.html
-  - https://praziarenrydze.sk/17-kava-do-coffee-shopov
   - https://praziarenrydze.sk/15-kava-s-vasim-logom
-  - https://praziarenrydze.sk/espresso/500-srdcova-zalezitost-bestseller-set-espresso.html
-  - https://praziarenrydze.sk/obsah/5-ochrany-osobnych-udajov
-  - https://praziarenrydze.sk/najpredavanejsie-produkty
-  - https://praziarenrydze.sk/domu/488-harok-nalepiek-od-kubka-misia-panda.html
-  - https://praziarenrydze.sk/21-merch
-  - https://praziarenrydze.sk/obsah/8-prehlasenie-o-pouziti-cookies
-  status: failed
+  - https://praziarenrydze.sk/12-prazenakava
+  - https://praziarenrydze.sk/obsah/4-reklamacia-tovaru
+  - https://praziarenrydze.sk/20-filter
+  status: ok
 praziaren-velke-zaluzie:
-  consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  consecutive_non_ok: 1
+  last_run: '2026-11-15'
   name: Pražiareň Veľké Zálužie
   product_count: 52
   product_urls:
@@ -661,10 +661,10 @@ praziaren-velke-zaluzie:
   - https://www.praziarenvelkezaluzie.sk/kolekcia-amazonia-sahara/
   - https://www.praziarenvelkezaluzie.sk/teplomery/
   - https://www.praziarenvelkezaluzie.sk/podlozky-pod-tamper-a-paku/
-  status: ok
+  status: failed
 ready-after:
-  consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  consecutive_non_ok: 1
+  last_run: '2026-11-15'
   name: Ready After
   product_count: 106
   product_urls:
@@ -774,68 +774,68 @@ ready-after:
   - https://www.readyafter.sk/ostatne/
   - https://www.readyafter.sk/filtre-na-kavu/
   - https://www.readyafter.sk/ethiopia-sookoo-coffee-guji-okoluu-g1-organic/
-  status: ok
+  status: failed
 sedmitchka-coffee-roasters:
   consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  last_run: '2026-11-15'
   name: Sedmitchka Coffee Roasters
   product_count: 0
   product_urls: []
   status: ok
 simple-coffee:
   consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  last_run: '2026-11-15'
   name: Simple Coffee
   product_count: 44
   product_urls:
-  - https://simplecoffee.sk/produkt/zrnkova-kava-z-peru/
-  - https://simplecoffee.sk/produkt/degustacny-balicek-kavy-podla-vlastneho-vyberu-8-x-80-g/
-  - https://simplecoffee.sk/kava-na-kazdy-den/
-  - https://simplecoffee.sk/produkt/zrnkova-bezkofeinova-kava-decaf/
-  - https://simplecoffee.sk/produkt/zrnkova-kava-z-brazilie-brazil-cerrado-santos/
-  - https://simplecoffee.sk/ochrana-soukromia/
-  - https://simplecoffee.sk/produkt/degustacny-balicek-kavy-podla-vlastneho-vyberu-6-x-80-g/
-  - https://simplecoffee.sk/ranna-kava/
-  - https://simplecoffee.sk/blog-o-kave/
-  - https://simplecoffee.sk/produkt/coffee-ride/
-  - https://simplecoffee.sk/produkt/degustacny-balicek-kavy-podla-vlastneho-vyberu-4-x-1kg/
-  - https://simplecoffee.sk/produkt/zrnkova-kava-z-burundi/
-  - https://simplecoffee.sk/produkt/zrnkova-kava-z-kostariky/
-  - https://simplecoffee.sk/produkt/zrnkova-kava-z-bolivie/
-  - https://simplecoffee.sk/kava-ako-darcek/
-  - https://simplecoffee.sk/produkt/zrnkova-kava-z-etiopie-etiopie-yirgacheffe/
-  - https://simplecoffee.sk/produkt/el-salvador-washed-200g-special/
-  - https://simplecoffee.sk/kava-pre-sportovcov/
-  - https://simplecoffee.sk/produkt/zrnkova-kava-z-guatemala-guatemala-el-quiche/
-  - https://simplecoffee.sk/produkt/zrnkova-kava-z-kolumbie/
-  - https://simplecoffee.sk/ovocna-a-svieza-kava/
-  - https://simplecoffee.sk/produkt/zrnkova-kava-z-mexika/
-  - https://simplecoffee.sk/kava-do-firmy-a-kancelarie/
-  - https://simplecoffee.sk/produkt/degustacny-balicek-kavy-podla-vlastneho-vyberu-6-x-250-g/
-  - https://simplecoffee.sk/produkt/zrnkova-kava-oro-nero/
-  - https://simplecoffee.sk/ucet/
-  - https://simplecoffee.sk/produkt/running-high-svieza-ovocna-kava-na-filter/
-  - https://simplecoffee.sk/produkt/zrnkova-kava-z-keni/
-  - https://simplecoffee.sk/produkt/salka-nadeje-pre-vilyho/
-  - https://simplecoffee.sk/produkt/degustacny-balicek-kava-podla-vlastniho-vyberu-4-x-250-g/
-  - https://simplecoffee.sk/kava-po-obede/
-  - https://simplecoffee.sk/sladka-a-cokoladova-kava/
-  - https://simplecoffee.sk/produkt/simple-special-praziara/
-  - https://simplecoffee.sk/produkt/zrnkova-kava-z-dominikanske-republiky/
-  - https://simplecoffee.sk/produkt/degustacny-balicek-kavy-podla-vlastneho-vyberu-8-x-250-g/
-  - https://simplecoffee.sk/kosik-simple/
-  - https://simplecoffee.sk/reklamacia/
-  - https://simplecoffee.sk/kde-kupite-simple-coffee/
-  - https://simplecoffee.sk/produkt/laskava-kava/
-  - https://simplecoffee.sk/produkt/ta-prava-kava/
-  - https://simplecoffee.sk/produkt/simple-new-wave-espresso-blend/
   - https://simplecoffee.sk/produkt/zrnkova-kava-espresso-blend-kostarika-indie/
-  - https://simplecoffee.sk/produkt/zrnkova-kava-espresso-blend-brazil-indie/
+  - https://simplecoffee.sk/produkt/salka-nadeje-pre-vilyho/
+  - https://simplecoffee.sk/produkt/zrnkova-kava-z-dominikanske-republiky/
+  - https://simplecoffee.sk/kava-na-kazdy-den/
   - https://simplecoffee.sk/kava-bez-vyraznej-kyslosti/
+  - https://simplecoffee.sk/produkt/laskava-kava/
+  - https://simplecoffee.sk/kde-kupite-simple-coffee/
+  - https://simplecoffee.sk/produkt/zrnkova-kava-z-brazilie-brazil-cerrado-santos/
+  - https://simplecoffee.sk/produkt/el-salvador-washed-200g-special/
+  - https://simplecoffee.sk/produkt/zrnkova-kava-espresso-blend-brazil-indie/
+  - https://simplecoffee.sk/produkt/coffee-ride/
+  - https://simplecoffee.sk/produkt/ta-prava-kava/
+  - https://simplecoffee.sk/produkt/degustacny-balicek-kavy-podla-vlastneho-vyberu-8-x-80-g/
+  - https://simplecoffee.sk/kava-ako-darcek/
+  - https://simplecoffee.sk/produkt/degustacny-balicek-kava-podla-vlastniho-vyberu-4-x-250-g/
+  - https://simplecoffee.sk/produkt/degustacny-balicek-kavy-podla-vlastneho-vyberu-4-x-1kg/
+  - https://simplecoffee.sk/produkt/running-high-svieza-ovocna-kava-na-filter/
+  - https://simplecoffee.sk/produkt/simple-special-praziara/
+  - https://simplecoffee.sk/produkt/zrnkova-bezkofeinova-kava-decaf/
+  - https://simplecoffee.sk/sladka-a-cokoladova-kava/
+  - https://simplecoffee.sk/produkt/degustacny-balicek-kavy-podla-vlastneho-vyberu-8-x-250-g/
+  - https://simplecoffee.sk/produkt/degustacny-balicek-kavy-podla-vlastneho-vyberu-6-x-250-g/
+  - https://simplecoffee.sk/ranna-kava/
+  - https://simplecoffee.sk/kava-pre-sportovcov/
+  - https://simplecoffee.sk/produkt/zrnkova-kava-z-kostariky/
+  - https://simplecoffee.sk/kosik-simple/
+  - https://simplecoffee.sk/produkt/simple-new-wave-espresso-blend/
+  - https://simplecoffee.sk/reklamacia/
+  - https://simplecoffee.sk/ovocna-a-svieza-kava/
+  - https://simplecoffee.sk/produkt/zrnkova-kava-z-burundi/
+  - https://simplecoffee.sk/produkt/zrnkova-kava-z-guatemala-guatemala-el-quiche/
+  - https://simplecoffee.sk/kava-do-firmy-a-kancelarie/
+  - https://simplecoffee.sk/produkt/degustacny-balicek-kavy-podla-vlastneho-vyberu-6-x-80-g/
+  - https://simplecoffee.sk/kava-po-obede/
+  - https://simplecoffee.sk/produkt/zrnkova-kava-z-mexika/
+  - https://simplecoffee.sk/blog-o-kave/
+  - https://simplecoffee.sk/produkt/zrnkova-kava-oro-nero/
+  - https://simplecoffee.sk/ochrana-soukromia/
+  - https://simplecoffee.sk/ucet/
+  - https://simplecoffee.sk/produkt/zrnkova-kava-z-etiopie-etiopie-yirgacheffe/
+  - https://simplecoffee.sk/produkt/zrnkova-kava-z-bolivie/
+  - https://simplecoffee.sk/produkt/zrnkova-kava-z-kolumbie/
+  - https://simplecoffee.sk/produkt/zrnkova-kava-z-keni/
+  - https://simplecoffee.sk/produkt/zrnkova-kava-z-peru/
   status: ok
 spojka-roastery:
-  consecutive_non_ok: 8
-  last_run: '2026-11-14'
+  consecutive_non_ok: 9
+  last_run: '2026-11-15'
   name: Spojka Roastery
   product_count: 17
   product_urls:
@@ -858,29 +858,29 @@ spojka-roastery:
   - https://shop.spojkaroastery.com/en/pages/widerruf-formular
   status: failed
 suca-roastery:
-  consecutive_non_ok: 90
-  last_run: '2026-11-14'
+  consecutive_non_ok: 91
+  last_run: '2026-11-15'
   name: Suca Roastery
   product_count: 52
   product_urls:
   - https://www.sucaroastery.sk/o-nasej-praziarni-ako-to-cele-vzniklo
+  - https://www.sucaroastery.sk/co-fermented
+  - https://www.sucaroastery.sk/customer/find-order/
   - https://www.sucaroastery.sk/zrnkova-kava-na-espresso
   - https://www.sucaroastery.sk/ako-nakupit
-  - https://www.sucaroastery.sk/co-fermented
-  - https://www.sucaroastery.sk/feed-rss.xml
-  - https://www.sucaroastery.sk/customer/find-order/
-  - https://www.sucaroastery.sk/vsetko-o-nakupe
-  - https://www.sucaroastery.sk/compare
-  - https://www.sucaroastery.sk/customer/registration/
   - https://www.sucaroastery.sk/newsletter
-  - https://www.sucaroastery.sk/kava
   - https://www.sucaroastery.sk/sitemap
-  - https://www.sucaroastery.sk/kilove-balenia-1
-  - https://www.sucaroastery.sk/navigacia
-  - https://www.sucaroastery.sk/bezkofeinova-kava
-  - https://www.sucaroastery.sk/zrnkova-kava-na-filter
   - https://www.sucaroastery.sk/kontakty-praziaren
+  - https://www.sucaroastery.sk/bezkofeinova-kava
   - https://www.sucaroastery.sk/vyberova-kava
+  - https://www.sucaroastery.sk/customer/registration/
+  - https://www.sucaroastery.sk/navigacia
+  - https://www.sucaroastery.sk/kilove-balenia-1
+  - https://www.sucaroastery.sk/feed-rss.xml
+  - https://www.sucaroastery.sk/compare
+  - https://www.sucaroastery.sk/vsetko-o-nakupe
+  - https://www.sucaroastery.sk/kava
+  - https://www.sucaroastery.sk/zrnkova-kava-na-filter
   - https://www.sucaroastery.sk/https-www-sucaroastery-sk-velkoobchod
   - https://www.sucaroastery.sk/p/colombia-finca-la-rosa
   - https://www.sucaroastery.sk/p/colombia-finca-la-rosa
@@ -917,8 +917,8 @@ suca-roastery:
   - https://www.sucaroastery.sk/p/guatemala-la-bella-natural
   status: suspect
 sweet-beans-coffee:
-  consecutive_non_ok: 1
-  last_run: '2026-11-14'
+  consecutive_non_ok: 2
+  last_run: '2026-11-15'
   name: Sweet Beans Coffee
   product_count: 19
   product_urls:
@@ -943,8 +943,8 @@ sweet-beans-coffee:
   - https://www.sweetbeans.coffee/produkt/spring-filter-blend/
   status: partial
 trinity-beans:
-  consecutive_non_ok: 1
-  last_run: '2026-11-14'
+  consecutive_non_ok: 2
+  last_run: '2026-11-15'
   name: Trinity Beans
   product_count: 11
   product_urls:
@@ -959,42 +959,42 @@ trinity-beans:
   - https://www.trinitybeans.sk/obchod/
   - https://www.trinitybeans.sk/produkt/brasil-santos-co2-decaf-bezkofeinova/
   - https://www.trinitybeans.sk/produkt/brail-cerrado-fine/
-  status: failed
+  status: partial
 trip-roasters:
   consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  last_run: '2026-11-15'
   name: Trip Coffee Roasters
   product_count: 25
   product_urls:
+  - https://triproasters.sk/vyberova-kava/
+  - https://triproasters.sk/office-time/
+  - https://triproasters.sk/mexico-santa-cruz/
+  - https://triproasters.sk/prislusenstvo-ku-kave/
+  - https://triproasters.sk/panama-finca-hartmann/
+  - https://triproasters.sk/papua-new-guinea-lamari/
+  - https://triproasters.sk/vseobecne-obchodne-podmienky/
+  - https://triproasters.sk/salky-na-kavu/
+  - https://triproasters.sk/ochrana-osobnych-udajov-a-subory-cookies/
+  - https://triproasters.sk/darcekovy-set/
   - https://triproasters.sk/indonesia-kamala/
-  - https://triproasters.sk/obchod/
-  - https://triproasters.sk/colombia-huila/
+  - https://triproasters.sk/filter/
+  - https://triproasters.sk/kavovy-slovnik/
+  - https://triproasters.sk/bezkofeinova-kava/
   - https://triproasters.sk/pokladna/
   - https://triproasters.sk/espresso/
-  - https://triproasters.sk/cistiace-tablety/
-  - https://triproasters.sk/vyberova-kava/
-  - https://triproasters.sk/mexico-santa-cruz/
-  - https://triproasters.sk/reklamacny-formular/
-  - https://triproasters.sk/prislusenstvo-ku-kave/
-  - https://triproasters.sk/doprava-a-platby/
-  - https://triproasters.sk/ochrana-osobnych-udajov-a-subory-cookies/
   - https://triproasters.sk/darcekove-poukazky/
-  - https://triproasters.sk/vseobecne-obchodne-podmienky/
   - https://triproasters.sk/brazil-fazenda-malhada/
-  - https://triproasters.sk/bezkofeinova-kava/
-  - https://triproasters.sk/darcekovy-set/
-  - https://triproasters.sk/kavovy-slovnik/
-  - https://triproasters.sk/papua-new-guinea-lamari/
-  - https://triproasters.sk/office-time/
+  - https://triproasters.sk/reklamacny-formular/
+  - https://triproasters.sk/obchod/
+  - https://triproasters.sk/doprava-a-platby/
+  - https://triproasters.sk/cistiace-tablety/
   - https://triproasters.sk/colombia-tumbaga-decaf/
-  - https://triproasters.sk/filter/
+  - https://triproasters.sk/colombia-huila/
   - https://triproasters.sk/el-salvador-apaneca/
-  - https://triproasters.sk/salky-na-kavu/
-  - https://triproasters.sk/panama-finca-hartmann/
   status: ok
 triple-five-coffee:
-  consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  consecutive_non_ok: 1
+  last_run: '2026-11-15'
   name: Triple Five Coffee
   product_count: 15
   product_urls:
@@ -1013,10 +1013,10 @@ triple-five-coffee:
   - https://triplefivecoffee.com/napisali-o-nas/
   - https://triplefivecoffee.com/kaviarne/
   - https://triplefivecoffee.com/product/colombia-pink-bourbon-omni/
-  status: ok
+  status: failed
 two-hands:
-  consecutive_non_ok: 0
-  last_run: '2026-11-14'
+  consecutive_non_ok: 1
+  last_run: '2026-11-15'
   name: Two Hands
   product_count: 16
   product_urls:
@@ -1036,4 +1036,4 @@ two-hands:
   - https://www.twohands.sk/etiopia-dont-touch/
   - https://www.twohands.sk/pins-%f0%9f%93%8c/
   - https://www.twohands.sk/prazena-kava-blend-two-hands/
-  status: ok
+  status: failed
